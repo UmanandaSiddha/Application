@@ -21,7 +21,7 @@ export function TreeCard({ tree }: PropsType) {
 
     const generateCode = async () => {
         try {
-            const link = `http://localhost:5173/display/tree?treeId=${tree?._id!}`
+            const link = `${window.location.protocol}//${window.location.hostname}/display/tree?treeId=${tree?._id!}`
             const qre = await QrCode.toDataURL(link, {width: 200, margin: 2})
             setQr(qre)
         } catch (error) {

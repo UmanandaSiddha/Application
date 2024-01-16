@@ -27,7 +27,7 @@ const ViewCreator = () => {
         try {
             const data = await viewCreator();
             dispatch(creatorExist(data.creator));
-            const link = `${window.location.protocol}//${window.location.hostname}:5173/display/creator?creatorId=${data.creator?._id.toString()}`;
+            const link = `${window.location.protocol}//${window.location.hostname}/display/creator?creatorId=${data.creator?._id.toString()}`;
             const qre = await QrCode.toDataURL(link, {width: 200, margin: 2});
             setQr(qre)
         } catch (error: any) {

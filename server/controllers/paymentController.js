@@ -5,6 +5,7 @@ import User from "../models/userModel.js";
 import Payment from "../models/paymentModel.js";
 import { instance } from "../server.js";
 import sendEmail from "../utils/sendEmail.js";
+import { CLIENT_URL } from "../server.js";
 
 export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
@@ -78,7 +79,7 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Payment Not Verified", 400));
     }
 
-    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+    res.redirect(`${CLIENT_URL}/dashboard`);
 });
 
 export const getPayments = catchAsyncErrors(async (req, res, next) => {

@@ -4,6 +4,7 @@ import User from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
+import { CLIENT_URL } from "../server.js";
 
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -14,7 +15,7 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${process.env.CLIENT_URL}/verify?token=${resetToken}`;
+    const resetPasswordUrl = `${CLIENT_URL}/verify?token=${resetToken}`;
 
     const message = `Email verification link ( valid for 15 minutes ) :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
 
@@ -42,7 +43,7 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${process.env.CLIENT_URL}/verify?token=${resetToken}`;
+    const resetPasswordUrl = `${CLIENT_URL}/verify?token=${resetToken}`;
 
     const message = `Email verification link ( valid for 15 minutes ) :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
 
@@ -153,7 +154,7 @@ export const forgotPassword = catchAsyncErrors( async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${process.env.CLIENT_URL}/reset?token=${resetToken}`;
+    const resetPasswordUrl = `${CLIENT_URL}/reset?token=${resetToken}`;
 
     const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
 
