@@ -1,0 +1,20 @@
+```properties
+PORT=7070
+MONGO_URL=
+MONGO_URI=
+
+CLIENT_URL=http://localhost:5173
+
+JWT_SECRET=dackdcvar
+JWT_EXPIRE=7d
+COOKIE_EXPIRE=7
+
+SMPT_HOST=smtp.gmail.com
+SMPT_PORT=465
+SMPT_SERVICE=gmail
+SMPT_MAIL=te6095639@gmail.com
+SMPT_PASSWORD="hnml sgid clyz qyzf"
+
+RAZORPAY_KEY_ID=rzp_test_XEchPNMaUE5wVC
+RAZORPAY_KEY_SECRET=q67HswnkFkdUHTHknjqaWfYH
+```
