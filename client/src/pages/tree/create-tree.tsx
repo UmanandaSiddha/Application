@@ -55,7 +55,7 @@ const CreateTree = () => {
         try {
             await createTree(treeData);
             toast.success("Tree VCard Created")
-            navigate("/dashboard/tree");
+            navigate(-1);
         } catch (error: any) {
             toast.error(error.response.data.message);
         }

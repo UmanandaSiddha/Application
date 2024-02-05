@@ -29,7 +29,7 @@ const ViewPersonal = () => {
         try {
             const data = await viewPersonal();
             dispatch(personalExist(data.personal));
-            const link = `${window.location.protocol}//${window.location.hostname}/display/personal?personalId=${data.personal._id.toString()}`;
+            const link = `${window.location.protocol}//${window.location.hostname}:5173/display/personal?personalId=${data.personal._id.toString()}`;
             const qre = await QrCode.toDataURL(link, {width: 200, margin: 2});
             setQr(qre)
         } catch (error: any) {

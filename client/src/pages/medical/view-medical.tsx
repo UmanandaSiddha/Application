@@ -28,7 +28,7 @@ const ViewMedical = () => {
         try {
             const data = await viewMedical();
             dispatch(medicalExist(data.medical));
-            const link = `${window.location.protocol}//${window.location.hostname}/display/medical?medicalId=${data.medical._id.toString()}`;
+            const link = `${window.location.protocol}//${window.location.hostname}:5173/display/medical?medicalId=${data.medical._id.toString()}`;
             const qre = await QrCode.toDataURL(link, {width: 200, margin: 2});
             setQr(qre)
         } catch (error: any) {

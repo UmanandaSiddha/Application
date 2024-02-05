@@ -15,6 +15,8 @@ const plans = [
     },   
 ]
 
+// https://medium.com/@aifuture/razorpay-payment-gateway-integration-in-node-js-react-js-6a560740bba7
+
 const Plans = () => {
 
     const { isPaid, user } = useSelector(
