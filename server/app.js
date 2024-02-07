@@ -19,8 +19,8 @@ const corsOptions = {
       const allowedOrigins = [
         "http://localhost:5173",
         "http://localhost:4173",
-        "https://umanandasiddha.site",
-        "https://www.umanandasiddha.site",
+        "https://app.umanandasiddha.site",
+        "https://www.app.umanandasiddha.site",
       ];
       const isAllowed = allowedOrigins.includes(origin);
       callback(null, isAllowed ? origin : false);
