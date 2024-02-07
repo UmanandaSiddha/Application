@@ -77,7 +77,7 @@ const ViewPersonal = () => {
                     ) : (
                         <div className="flex flex-col justify-center items-center">
                             <Button onClick={() => navigate("/dashboard/personal/input")} disabled={!isPaid}>Create Vcard</Button>
-                            {/* {!isPaid && <p>You are not Subscribed</p>} */}
+                            {!isPaid && <p>You are not Subscribed</p>}
                         </div>
                     )}
                 </>
