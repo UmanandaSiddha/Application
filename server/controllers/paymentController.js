@@ -88,4 +88,4 @@ export const getPayments = catchAsyncErrors(async (req, res, next) => {
         success: true,
         payments,
     });
-})
+});

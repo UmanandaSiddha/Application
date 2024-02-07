@@ -6,7 +6,6 @@ import { userNotExist } from "../../redux/reducer/userReducer";
 import {
     Cloud,
     CreditCard,
-    Github,
     Keyboard,
     LifeBuoy,
     LogOut,
@@ -42,7 +41,7 @@ export function DropdownMenuDemo({
             toast.success("User Logged Out Successfully");
             navigate("/");
         } catch (error: any) {
-            console.log(error.response.data);
+            // console.log(error.response.data);
             toast.error(error.response.data.message);
         }
     }
@@ -76,10 +75,6 @@ export function DropdownMenuDemo({
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                    <Github className="mr-2 h-4 w-4" />
-                    <span>GitHub</span>
-                </DropdownMenuItem>
                 <DropdownMenuItem>
                     <LifeBuoy className="mr-2 h-4 w-4" />
                     <span>Support</span>

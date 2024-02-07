@@ -14,6 +14,7 @@ export type UserResponse = {
 
 export type TreeResponse = {
     success: boolean;
+    count: number;
     tree: Tree[];
 }
 

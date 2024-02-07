@@ -28,9 +28,10 @@ const ViewPersonal = () => {
     const handlePersonal = async () => {
         try {
             const data = await viewPersonal();
+            // console.log(data);
             dispatch(personalExist(data.personal));
             const link = `${window.location.protocol}//${window.location.hostname}:5173/display/personal?personalId=${data.personal._id.toString()}`;
-            const qre = await QrCode.toDataURL(link, {width: 200, margin: 2});
+            const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
             setQr(qre)
         } catch (error: any) {
             dispatch(personalNotExist());
@@ -48,25 +49,35 @@ const ViewPersonal = () => {
                 <Loader />
             ) : (
                 <>
+                    <h1 className="text-3xl font-semibold">Personal VCard</h1>
                     {personal ? (
                         <div className="flex flex-col justify-center items-center">
-                            <h1 className="text-3xl font-semibold">Personal VCard</h1>
                             <div className="flex gap-4">
                                 <Button onClick={() => navigate("/dashboard/personal/input")} disabled={!isPaid}>Update Vcard</Button>
-                                <Button><a href={qr} download={`${personal?._id}.png`}>Downlaod</a></Button>
+                                <Button disabled={!isPaid}><a href={qr} download={`${personal?._id}.png`}>Downlaod</a></Button>
                             </div>
                             {!isPaid && <p>You are not Subscribed</p>}
                             <div>
-                                <img src={qr} alt={personal?._id} />
+                                {isPaid ? (
+                                    <img src={qr} alt={personal?._id} />
+                                ) : (
+                                    <p>Subscribe to view QR</p>
+                                )}
                             </div>
-                            <div className="space-y-4">
-                                <Same personal={personal} />
-                            </div>
+                            {isPaid ? (
+                                <div className="space-y-4">
+                                    <Same personal={personal} />
+                                </div>
+                            ) : (
+                                <div>
+                                    Subscribe to view Personal Details
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center items-center">
                             <Button onClick={() => navigate("/dashboard/personal/input")} disabled={!isPaid}>Create Vcard</Button>
-                            {!isPaid && <p>You are not Subscribed</p>}
+                            {/* {!isPaid && <p>You are not Subscribed</p>} */}
                         </div>
                     )}
                 </>

@@ -20,6 +20,10 @@ export const treeReducer = createSlice({
             state.loading = false;
             state.trus = action.payload;
         },
+        treeNotTemp: (state) => {
+            state.loading = false;
+            state.trus = null;
+        },
         treeNotExist: (state) => {
             state.loading = false;
             state.tree = [];
@@ -27,4 +31,4 @@ export const treeReducer = createSlice({
     },
 });
 
-export const { treeExist, treeNotExist, treeTemp } = treeReducer.actions;
+export const { treeExist, treeNotExist, treeTemp, treeNotTemp } = treeReducer.actions;

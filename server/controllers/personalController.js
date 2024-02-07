@@ -1,6 +1,7 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import Personal from "../models/personalModel.js";
+import User from "../models/userModel.js";
 
 export const createPersonalVCard = catchAsyncErrors( async (req, res, next) => {
 
@@ -37,6 +38,13 @@ export const updatePersonalVCard = catchAsyncErrors( async (req, res, next) => {
 
 export const getPersonalVCard = catchAsyncErrors( async (req, res, next) => {
     const personal = await Personal.findOne({ user: req.user.id });
+    if (personal) {
+        const user = await User.findById(personal.user);
+        if ( user.currentPlan.endDate < Date.now() ) {
+            return next(new ErrorHandler("Subscription Expired", 400));
+        }
+    }
+
     res.status(201).json({
         success: true,
         personal,
@@ -45,6 +53,13 @@ export const getPersonalVCard = catchAsyncErrors( async (req, res, next) => {
 
 export const getGeneralVCard = catchAsyncErrors( async (req, res, next) => {
     const personal = await Personal.findById(req.params.id);
+    if (!personal) {
+        const user = await User.findById(personal.user);
+        if ( user.currentPlan.endDate < Date.now() ) {
+            return next(new ErrorHandler("Subscription Expired", 400));
+        }
+    }
+
     res.status(201).json({
         success: true,
         personal,

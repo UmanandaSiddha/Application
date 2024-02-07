@@ -1,9 +1,9 @@
 import axios from "axios";
 import { TreeResponse, SingleTreeResponse } from "../../types/api-types";
 
-export const getUserTree = async () => {
+export const getUserTree = async (currentPage: number) => {
     try {
-        const { data }: { data: TreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/tree/userTree`, { withCredentials: true } );
+        const { data }: { data: TreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/tree/userTree?page=${currentPage}`, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;

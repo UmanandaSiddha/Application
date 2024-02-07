@@ -18,7 +18,6 @@ const Profile = lazy(() => import ("./pages/profile"));
 const Tree = lazy(() => import ("./pages/tree/tree"));
 const CreateTree = lazy(() => import ("./pages/tree/create-tree"));
 const ViewTree = lazy(() => import ("./pages/tree/view-tree"));
-const UpdateTree = lazy(() => import ("./pages/tree/update-tree"));
 const DisplayTree = lazy(() => import ("./pages/tree/display-tree"));
 const Plans = lazy(() => import ("./pages/plans"));
 const Verify = lazy(() => import ("./pages/verify"));
@@ -129,7 +128,6 @@ const App = () => {
                     <Route
                         element={<ProtectedRoute isAuthenticated={(user && isPaid)  ? true : false} />}
                     >
-                        <Route path="/dashboard/tree/update" element={<UpdateTree />} />
                         <Route path="/dashboard/creator/update" element={<UpdateCreator />} />
 
                         <Route path="/dashboard/tree/create" element={<CreateTree />} />

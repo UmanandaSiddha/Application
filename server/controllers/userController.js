@@ -5,6 +5,10 @@ import sendToken from "../utils/jwtToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { CLIENT_URL } from "../server.js";
+import Tree from "../models/treeModel.js";
+import Personal from "../models/personalModel.js";
+import Medical from "../models/medicalModel.js";
+import Creator from "../models/creatorModel.js";
 
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -210,6 +214,7 @@ export const resetPassword = catchAsyncErrors( async (req, res, next) => {
 
 // Get User Details
 export const getUserDetails = catchAsyncErrors( async (req, res, next) => {
+
     const user = await User.findById(req.user.id);
 
     res.status(200).json({
@@ -261,7 +266,7 @@ export const updateProfile = catchAsyncErrors( async (req, res, next) => {
     res.status(200).json({
         success: true,  
         user,
-    })
+    });
 });
 
 // Get all Users - Only Admin
@@ -312,7 +317,28 @@ export const updateRole = catchAsyncErrors( async (req, res, next) => {
 
 // Delete Account
 export const deleteAccount = catchAsyncErrors( async (req, res, next) => {
-    const user = await User.findById(req.user.id);
+
+    const tree =  await Tree.find({ user: req.user.id });
+    if (tree) {
+        for (let i = 0; i < tree.length; i++) {
+            await Tree.findOneAndDelete({ user: req.user.id });
+        }
+    }
+
+    const personal = await Personal.findOne({ user: req.user.id });
+    if (personal) {
+        await Personal.findOneAndDelete({ user: req.user.id });
+    }
+
+    const medical = await Medical.findOne({ user: req.user.id });
+    if (medical) {
+        await Medical.findOneAndDelete({ user: req.user.id });
+    }
+
+    const creator = await Creator.findOne({ user: req.user.id });
+    if (creator) {
+        await Creator.findOneAndDelete({ user: req.user.id });
+    }
 
     await User.findByIdAndDelete(req.user.id);
 
@@ -328,6 +354,28 @@ export const deleteUser = catchAsyncErrors( async (req, res, next) => {
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
+    }
+
+    const tree =  await Tree.find({ user: req.params.id });
+    if (tree) {
+        for (let i = 0; i < tree.length; i++) {
+            await Tree.findOneAndDelete({ user: req.params.id });
+        }
+    }
+
+    const personal = await Personal.findOne({ user: req.params.id });
+    if (personal) {
+        await Personal.findOneAndDelete({ user: req.params.id });
+    }
+
+    const medical = await Medical.findOne({ user: req.params.id });
+    if (medical) {
+        await Medical.findOneAndDelete({ user: req.params.id });
+    }
+
+    const creator = await Creator.findOne({ user: req.params.id });
+    if (creator) {
+        await Creator.findOneAndDelete({ user: req.params.id });
     }
 
     await User.findByIdAndDelete(req.params.id);

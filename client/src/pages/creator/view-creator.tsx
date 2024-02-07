@@ -28,55 +28,65 @@ const ViewCreator = () => {
             const data = await viewCreator();
             dispatch(creatorExist(data.creator));
             const link = `${window.location.protocol}//${window.location.hostname}:5173/display/creator?creatorId=${data.creator?._id.toString()}`;
-            const qre = await QrCode.toDataURL(link, {width: 200, margin: 2});
+            const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
             setQr(qre)
         } catch (error: any) {
             dispatch(creatorNotExist());
             toast.error(error.response.data.message);
         }
     }
-    
+
     useEffect(() => {
         handleCreator();
     }, []);
 
     return (
         <div className="flex flex-col gap-4 justify-center items-center mt-8">
-        {loading ? (
-            <Loader />
-        ) : (
-            <>
-                {creator ? (
+            {loading ? (
+                <Loader />
+            ) : (
+                <>
+                    <h1 className="text-3xl font-semibold">Creator VCard</h1>
+                    {creator ? (
                         <div className="flex flex-col gap-2 justify-center items-center">
-                            <h1 className="text-3xl font-semibold">Creator VCard</h1>
                             <div className="flex gap-4">
                                 <Button onClick={() => navigate("/dashboard/creator/update")} disabled={!isPaid}>Update Vcard</Button>
-                                <Button><a href={qr} download={`${creator?._id}.png`}>Downlaod</a></Button>
+                                <Button disabled={!isPaid}><a href={qr} download={`${creator?._id}.png`}>Downlaod</a></Button>
                             </div>
                             {!isPaid && <p>You are not Subscribed</p>}
                             <div>
-                                <img src={qr} alt={creator?._id} />
+                                {isPaid ? (
+                                    <img src={qr} alt={creator?._id} />
+                                ) : (
+                                    <p>Subscribe to view QR</p>
+                                )}
                             </div>
-                            <div className="space-y-4">
-                                <p><span className="font-semibold">CreatorId:</span> {creator._id}</p>
-                                <p><span className="font-semibold">Name:</span> {creator.name}</p>
-                                <div>
-                                    <h1 className="text-2xl font-semibold">Social Links</h1>
-                                    {creator.links.map((link: any, index: number) => (
-                                        <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
-                                    ))}
+                            {isPaid ? (
+                                <div className="space-y-4">
+                                    <p><span className="font-semibold">CreatorId:</span> {creator._id}</p>
+                                    <p><span className="font-semibold">Name:</span> {creator.name}</p>
+                                    <div>
+                                        <h1 className="text-2xl font-semibold">Social Links</h1>
+                                        {creator.links.map((link: any, index: number) => (
+                                            <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div>
+                                    Subscribe to view Creator Details
+                                </div>
+                            )}
                         </div>
-                ) : (
-                    <div className="flex flex-col justify-center items-center">
-                        <Button onClick={() => navigate("/dashboard/creator/input")} disabled={!isPaid}>Create Vcard</Button>
-                        {!isPaid && <p>You are not Subscribed</p>}
-                    </div>
-                )}
-            </>
-        )}
-    </div>
+                    ) : (
+                        <div className="flex flex-col justify-center items-center">
+                            <Button onClick={() => navigate("/dashboard/creator/input")} disabled={!isPaid}>Create Vcard</Button>
+                            {/* {!isPaid && <p>You are not Subscribed</p>} */}
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
     )
 }
 

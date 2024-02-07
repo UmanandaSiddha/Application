@@ -9,33 +9,39 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { inputs } from "@/types/form-inputs";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { createTree } from "@/redux/api/treeApi";
+import { createTree, updateTree } from "@/redux/api/treeApi";
 
 import { toast } from 'react-toastify';
 
 const CreateTree = () => {
 
     const navigate = useNavigate();
+    const [search] = useSearchParams();
+    const id = search.get("treeId");
 
     const { user } = useSelector(
         (state: RootState) => state.userReducer
     );
 
+    const { trus } = useSelector(
+        (state: RootState) => state.treeReducer
+    );
+
     const form = useForm({
         defaultValues: {
-            name: "",
-            scientificName: "",
-            treeType: "",
-            location: "",
-            description: "",
-            features: "",
-            maintenance: "",
-            benefits: "",
-            funFact: "",
+            name: trus?.name || "",
+            scientificName: trus?.scientificName || "",
+            treeType: trus?.treeType || "",
+            location: trus?.location || "",
+            description: trus?.description || "",
+            features: trus?.features || "",
+            maintenance: trus?.maintenance || "",
+            benefits: trus?.benefits || "",
+            funFact: trus?.funFact || "",
         },
     });
 
@@ -53,8 +59,15 @@ const CreateTree = () => {
             user: user?._id
         }
         try {
-            await createTree(treeData);
-            toast.success("Tree VCard Created")
+            if (trus) {
+                await updateTree(treeData, id!);
+                // const data = await updateTree(treeData, id!);
+                // console.log(data);
+                toast.success("Tree VCard Updated")
+            } else {
+                await createTree(treeData);
+                toast.success("Tree VCard Created")
+            }
             navigate(-1);
         } catch (error: any) {
             toast.error(error.response.data.message);

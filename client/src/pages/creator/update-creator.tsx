@@ -85,7 +85,7 @@ const UpdateCreator = () => {
             const data = await updateCreator(creatorData, creator?._id!);
             dispatch(creatorExist(data.creator));
             toast.success("Crrator VCard Updated");
-            navigate("/dashboard/creator/view");
+            navigate(-1);
         } catch (error: any) {
             dispatch(creatorNotExist());
             toast.error(error.response.data.message)

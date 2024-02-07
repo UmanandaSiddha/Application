@@ -232,7 +232,7 @@ const InputVCard = () => {
                 dispatch(personalExist(data.personal));
                 toast.success("Personal VCards created!");
             }
-            navigate("/dashboard/personal/view");
+            navigate(-1);
         } catch (error: any) {
             dispatch(personalNotExist());
             toast.error(error.response.data.message);

@@ -29,9 +29,13 @@ const DisplayMedical = () => {
         <div>
             {id ? (
                 <div className='flex flex-col justify-center gap-4 items-center mt-8'>
-                    <div className="space-y-4">
-                        <Same medical={creatorData} />
-                    </div>
+                    {creatorData ? (
+                        <div className="space-y-4">
+                            <Same medical={creatorData} />
+                        </div>
+                    ) : (
+                        <p>Medical Data Not Found</p>
+                    )}
                 </div>
             ) : (
                 <Loader />

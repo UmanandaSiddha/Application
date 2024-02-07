@@ -47,25 +47,35 @@ const ViewMedical = () => {
                 <Loader />
             ) : (
                 <>
+                    <h1 className="text-3xl font-semibold">Medical VCard</h1>
                     {medical ? (
                         <div className="flex flex-col gap-2 justify-center items-center">
-                            <h1 className="text-3xl font-semibold">Medical VCard</h1>
                             <div className="flex gap-4">
                                 <Button onClick={() => navigate("/dashboard/medical/input")} disabled={!isPaid}>Update Vcard</Button>
-                                <Button><a href={qr} download={`${medical?._id}.png`}>Downlaod</a></Button>
+                                <Button disabled={!isPaid}><a href={qr} download={`${medical?._id}.png`}>Downlaod</a></Button>
                             </div>
                             {!isPaid && <p>You are not Subscribed</p>}
                             <div>
-                                <img src={qr} alt={medical._id} />
+                                {isPaid ? (
+                                    <img src={qr} alt={medical._id} />
+                                ) : (
+                                    <p>Subscribe to view QR</p>
+                                )}
                             </div>
-                            <div className="space-y-4">
-                                <Same medical={medical} />
-                            </div>
+                            {isPaid ? (
+                                <div className="space-y-4">
+                                    <Same medical={medical} />
+                                </div>
+                            ) : (
+                                <div>
+                                    Subscribe to view Medical Details
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center items-center">
                             <Button onClick={() => navigate("/dashboard/medical/input")} disabled={!isPaid}>Create Vcard</Button>
-                            {!isPaid && <p>You are not Subscribed</p>}
+                            {/* {!isPaid && <p>You are not Subscribed</p>} */}
                         </div>
                     )}
                 </>

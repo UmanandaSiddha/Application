@@ -41,7 +41,7 @@ export const logoutUser = async () => {
 
 export const deleteUser = async () => {
     try {
-        const { data }: { data: any } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/delete/account`, { withCredentials: true } );
+        const { data }: { data: any } = await axios.delete(`${import.meta.env.VITE_BASE_URL}/user/delete/account`, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;

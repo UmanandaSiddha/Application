@@ -6,7 +6,7 @@ import {
     deleteTreeVCard,
     updateTreeVCard
 } from "../controllers/treeController.js";
-import { isAuthenticatedUser, authorizeRoles } from "../middleware/auth.js";
+import { isAuthenticatedUser } from "../middleware/auth.js";
 
 const router = express.Router();
 

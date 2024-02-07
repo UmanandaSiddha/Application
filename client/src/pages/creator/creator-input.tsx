@@ -80,7 +80,7 @@ const CreatorInput = () => {
             const data = await createCreator(creatorData);
             dispatch(creatorExist(data.creator));
             toast.success("Crrator VCard Created");
-            navigate("/dashboard/creator/view");
+            navigate(-1);
         } catch (error: any) {
             dispatch(creatorNotExist());
             toast.error(error.response.data.message)

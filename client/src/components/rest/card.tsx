@@ -12,20 +12,23 @@ import { useEffect, useState } from "react";
 
 interface PropsType {
     tree: Tree | null;
+    isPaid: boolean;
 }
 
-export function TreeCard({ tree }: PropsType) {
+export function TreeCard({ tree, isPaid }: PropsType) {
 
     const navigate = useNavigate();
     const [qr, setQr] = useState("");
 
     const generateCode = async () => {
         try {
-            const link = `${window.location.protocol}//${window.location.hostname}/display/tree?treeId=${tree?._id!}`
-            const qre = await QrCode.toDataURL(link, {width: 200, margin: 2})
-            setQr(qre)
+            if (isPaid) {
+                const link = `${window.location.protocol}//${window.location.hostname}/display/tree?treeId=${tree?._id!}`
+                const qre = await QrCode.toDataURL(link, {width: 200, margin: 2})
+                setQr(qre)
+            }
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
@@ -40,7 +43,11 @@ export function TreeCard({ tree }: PropsType) {
                 <CardDescription>{tree?.scientificName}</CardDescription>
             </CardHeader>
             <CardContent>
-                <img src={qr} alt={tree?._id} />
+                {isPaid ? (
+                    <img src={qr} alt={tree?._id} />
+                ) : (
+                    <p>Subscribe to view QR</p>
+                )}
             </CardContent>
         </Card>
     )

@@ -118,7 +118,7 @@ const MedicalInput = () => {
                 dispatch(medicalExist(data.medical));
                 toast.success("Medical VCards created!");
             }
-            navigate("/dashboard/medical/view");
+            navigate(-1);
         } catch (error: any) {
             dispatch(medicalNotExist());
             toast.error(error.response.data.message);

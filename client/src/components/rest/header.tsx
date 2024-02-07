@@ -3,7 +3,6 @@ import { User } from "../../types/types";
 import {
     Avatar,
     AvatarFallback,
-    // AvatarImage,
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuDemo } from "./drop-down";
@@ -23,7 +22,6 @@ const Header = ({ user }: PropsType,) => {
                         <p className="hidden sm:block">{user.name}</p>
                         <DropdownMenuDemo>
                             <Avatar>
-                                {/* <AvatarImage src={user.avatar?.url} alt={user.avatar?.public_id} /> */}
                                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                             </Avatar>
                         </DropdownMenuDemo>

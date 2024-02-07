@@ -28,16 +28,20 @@ const DisplayCreator = () => {
         <>
             {id ? (
                 <div className='flex flex-col justify-center gap-4 items-center mt-8'>
-                    <div className="space-y-4">
-                        <p><span className="font-semibold">CreatorId:</span> {creatorData?._id}</p>
-                        <p><span className="font-semibold">Name:</span> {creatorData?.name}</p>
-                        <div>
-                            <h1 className="text-2xl font-semibold">Social Links</h1>
-                            {creatorData?.links.map((link: any, index: number) => (
-                                <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
-                            ))}
+                    {creatorData ? (
+                        <div className="space-y-4">
+                            <p><span className="font-semibold">CreatorId:</span> {creatorData?._id}</p>
+                            <p><span className="font-semibold">Name:</span> {creatorData?.name}</p>
+                            <div>
+                                <h1 className="text-2xl font-semibold">Social Links</h1>
+                                {creatorData?.links.map((link: any, index: number) => (
+                                    <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <p>Creator Data Not Found</p>
+                    )}
                 </div>
             ) : (
                 <Loader />

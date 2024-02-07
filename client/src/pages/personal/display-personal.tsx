@@ -29,9 +29,13 @@ const DisplayPersonal = () => {
         <div>
             {id ? (
                 <div className='flex flex-col justify-center gap-4 items-center mt-8'>
-                    <div className="space-y-4">
-                        <Same personal={creatorData} />
-                    </div>
+                    {creatorData ? (
+                        <div className="space-y-4">
+                            <Same personal={creatorData} />
+                        </div>
+                    ) : (
+                        <p>Personal Data Not Found</p>
+                    )}
                 </div>
             ) : (
                 <Loader />
