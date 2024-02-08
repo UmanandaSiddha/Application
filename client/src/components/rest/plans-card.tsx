@@ -38,7 +38,7 @@ export function PlansCard({ plan } : any) {
                 name: "Shivaji",
                 description: "just fine",
                 order_id: data.order.id,
-                callback_url: `${import.meta.env.VITE_BASE_URL}/pay/verify/${data.razInfo.validity}/${data.razInfo.amount}/${data.razInfo.planName}`,
+                callback_url: `https://api.umanandasiddha.site/api/v1/pay/verify/${data.razInfo.validity}/${data.razInfo.amount}/${data.razInfo.planName}`,
                 prefill: {
                     name: user?.name,
                     email: user?.email,

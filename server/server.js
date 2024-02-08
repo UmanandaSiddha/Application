@@ -26,7 +26,7 @@ export const instance = new Razorpay({
 
 app.get("/", (req, res) => {
     res.status(200).json({
-        message: "Server Working2!"
+        message: "Server Working Test!"
     })
 });
 
