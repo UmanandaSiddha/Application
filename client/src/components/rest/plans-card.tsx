@@ -25,12 +25,7 @@ export function PlansCard({ plan } : any) {
 
     const handlePayment = async () => {
         try {
-            const paymentInfo = {
-                amount: plan.price,
-                planName: plan.name,
-                validity: plan.validity
-            }
-            const data = await checkoutPayments(paymentInfo);
+            const data = await checkoutPayments({ amount: plan.price });
             if (!data) {
                 toast.error("Failed to Execute Payment");
             }
@@ -42,7 +37,21 @@ export function PlansCard({ plan } : any) {
                 description: "just fine",
                 order_id: data.order.id,
                 // callback_url: `${import.meta.env.VITE_BASE_URL}/pay/verify/${data.razInfo.validity}/${data.razInfo.amount}/${data.razInfo.planName}`,
-                callback_url: `${import.meta.env.VITE_BASE_URL}/pay/verify`,
+                // callback_url: `${import.meta.env.VITE_BASE_URL}/pay/verify`,
+                handler: async function (response: any){
+                    const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/verify`, {
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature,
+                        amount: plan.price,
+                        planName: plan.name,
+                        validity: plan.validity
+                    }, {withCredentials: true});
+                    console.log(data);
+                    dispatch(togglePaid(data.user));
+                    toast.success("Payment Successful");
+                    navigate("/")
+                },
                 prefill: {
                     name: user?.name,
                     email: user?.email,
@@ -57,8 +66,8 @@ export function PlansCard({ plan } : any) {
             }
             const razor = new (window as any).Razorpay(options);
             razor.open();
-            dispatch(togglePaid(data.user));
-            toast.success("Payment Successful");
+            // dispatch(togglePaid(data.user));
+            // toast.success("Payment Successful");
         } catch (error: any) {
             toast.error(error.response.data.message);
         }

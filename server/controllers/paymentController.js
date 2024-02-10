@@ -24,63 +24,62 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         success: true,
         key: process.env.RAZORPAY_KEY_ID,
         order,
-        razInfo: {
-            amount: req.body.amount,
-            planName: req.body.planName,
-            validity: req.body.validity
-        }
     });
     
 });
 
 export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
 
-    // const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-    // const toBe = razorpay_order_id + "|" + razorpay_payment_id;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const toBe = razorpay_order_id + "|" + razorpay_payment_id;
 
-    // const user = await User.findById(req.user.id);
+    const expectedSigntaure = crypto
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+        .update(toBe.toString())
+        .digest("hex")
 
-    // const startDate = Date.now();
-    // const endDate = Date.now() + Number(req.params.validity) * 60 * 1000;
+    if ( !(expectedSigntaure === razorpay_signature) ) {
+        return next(new ErrorHandler("Payment Not Verified", 400));
+    }
 
-    // user.currentPlan = {
-    //     planName: req.params.planName,
-    //     planPrice: req.params.amount,
-    //     planValidity: req.params.validity,
-    //     startDate,
-    //     endDate,
-    // };
-    // await user.save();
+    const user = await User.findById(req.user.id);
 
-    // await Payment.create({
-    //     amount: req.params.amount,
-    //     plan: req.params.planName,
-    //     paymentDate: new Date(startDate),
-    //     paymentValidity: new Date(endDate),
-    //     razorpayOrderId: razorpay_order_id, 
-    //     razorpayPaymentId: razorpay_payment_id, 
-    //     razorpaySignature: razorpay_signature, 
-    //     user: req.user.id
-    // });
+    const startDate = Date.now();
+    const endDate = Date.now() + Number(req.body.validity) * 60 * 1000;
 
-    // const message = `Subscription successful \n\n Plan Name: ${req.params.planName} \n\n Plan Price: ${req.params.amount} \n\n Plan Valid till: ${new Date(endDate).toLocaleString()}`
+    user.currentPlan = {
+        planName: req.body.planName,
+        planPrice: req.body.amount,
+        planValidity: req.body.validity,
+        startDate,
+        endDate,
+    };
+    await user.save();
 
-    // await sendEmail ({
-    //     email: user.email,
-    //     subject: `Account Subscription`,
-    //     message,
-    // });
+    await Payment.create({
+        amount: req.body.amount,
+        plan: req.body.planName,
+        paymentDate: new Date(startDate),
+        paymentValidity: new Date(endDate),
+        razorpayOrderId: razorpay_order_id, 
+        razorpayPaymentId: razorpay_payment_id, 
+        razorpaySignature: razorpay_signature, 
+        user: req.user.id
+    });
 
-    // const expectedSigntaure = crypto
-    //     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-    //     .update(toBe.toString())
-    //     .digest("hex")
+    const message = `Subscription successful \n\n Plan Name: ${req.body.planName} \n\n Plan Price: ${req.body.amount} \n\n Plan Valid till: ${new Date(endDate).toLocaleString()}`
 
-    // if ( !(expectedSigntaure === razorpay_signature) ) {
-    //     return next(new ErrorHandler("Payment Not Verified", 400));
-    // }
+    await sendEmail ({
+        email: user.email,
+        subject: `Account Subscription`,
+        message,
+    });
 
-    res.redirect(`${CLIENT_URL}/dashboard`);
+    res.status(200).json({
+        success: true,
+        message: "Payment Verified",
+        user
+    });
 });
 
 export const getPayments = catchAsyncErrors(async (req, res, next) => {

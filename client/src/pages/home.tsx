@@ -2,7 +2,7 @@ const Home = () => {
     const currentHost = `${window.location.protocol}//${window.location.hostname}`;
     return (
         <div className='flex flex-col justify-center gap-8 items-center mt-8'>
-            Landing Page {currentHost}
+            Landing Page 2 {currentHost}
             <div className="space-y-4">
                 <p className="text-xl font-semibold">Login or Register if not</p>
                 <p className="text-xl font-semibold">Click on the avatar to navigate</p>
