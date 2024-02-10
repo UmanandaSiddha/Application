@@ -2,6 +2,7 @@ import app from "./app.js";
 import dotenv from "dotenv";
 import connectDatabase from "./config/database.js";
 import Razorpay from "razorpay";
+import Stripe from "stripe";
 
 // Handling Uncaught Exception
 process.on("uncaughtException", (err) => {
@@ -18,6 +19,9 @@ const PORT = process.env.PORT || 4000;
 connectDatabase();
 
 export const CLIENT_URL="https://app.umanandasiddha.site";
+// export const CLIENT_URL = "http://localhost:5173";
+
+export const stripe = new Stripe(process.env.STRIPE_KEY || "");
 
 export const instance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,

@@ -11,10 +11,13 @@ import { togglePaid } from "@/redux/reducer/userReducer";
 import { RootState } from "../../redux/store";
 import { checkoutPayments } from "@/redux/api/paymentApi";
 import { toast } from 'react-toastify';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function PlansCard({ plan } : any) {
 
     const dispatch = useDispatch();
+    const navigate =  useNavigate();
 
     const { isPaid, user } = useSelector(
         (state: RootState) => state.userReducer
@@ -32,13 +35,14 @@ export function PlansCard({ plan } : any) {
                 toast.error("Failed to Execute Payment");
             }
             const options = {
-                key: "rzp_test_XEchPNMaUE5wVC",
+                key: data.key,
                 amount: data.order.amount,
                 currency: data.order.currency,
                 name: "Shivaji",
                 description: "just fine",
                 order_id: data.order.id,
-                callback_url: `https://api.umanandasiddha.site/api/v1/pay/verify/${data.razInfo.validity}/${data.razInfo.amount}/${data.razInfo.planName}`,
+                // callback_url: `${import.meta.env.VITE_BASE_URL}/pay/verify/${data.razInfo.validity}/${data.razInfo.amount}/${data.razInfo.planName}`,
+                callback_url: `${import.meta.env.VITE_BASE_URL}/pay/verify`,
                 prefill: {
                     name: user?.name,
                     email: user?.email,
@@ -60,6 +64,17 @@ export function PlansCard({ plan } : any) {
         }
     }
 
+    const handleStripePayment = async () => {
+        try {
+            const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/stripe/new`, { amount: plan.price }, { withCredentials: true });
+            navigate("/pay", {
+                state: data.clientSecret
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <Card className="w-[300px]">
             <CardHeader className="items-center">
@@ -71,8 +86,10 @@ export function PlansCard({ plan } : any) {
                     <p>Plan Price: {isPaid? plan.planPrice : plan.price}</p>
                 </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex flex-col space-y-3">
+                <p>Gateway Testing Under Work</p>
                 <Button onClick={handlePayment} className="w-full" disabled={isPaid}>Buy Plan</Button>
+                <Button onClick={handleStripePayment} className="w-full" disabled={isPaid}>Stripe</Button>
             </CardFooter>
         </Card>
     )

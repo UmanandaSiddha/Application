@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.route("/view").get(isAuthenticatedUser, getPayments)
 router.route("/checkout").post(isAuthenticatedUser, checkoutPayment);
-router.route("/verify/:validity/:amount/:planName").post(isAuthenticatedUser, verifyPayment);
+router.route("/verify").post(isAuthenticatedUser, verifyPayment);
+// router.route("/verify/:validity/:amount/:planName").post(isAuthenticatedUser, verifyPayment);
 
 export default router;
