@@ -10,7 +10,7 @@ import { CLIENT_URL } from "../server.js";
 export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
     const options = {
-        amount: Number(req.body.amount) * 100, 
+        amount: Number(req.body.amount) * 100,
         currency: "INR",
         receipt: "order_rcptid_11"
     };
@@ -20,12 +20,23 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Order Failed", 400));
     }
 
+    // const customer = await instance.customers.create({
+    //     name: req.user.name,
+    //     contact: 9123456780,
+    //     email: req.user.email,
+    //     fail_existing: 0,
+    // });
+    // if (!customer) {
+    //     return next(new ErrorHandler("Customer Failed", 400));
+    // }
+
     res.status(200).json({
         success: true,
         key: process.env.RAZORPAY_KEY_ID,
         order,
+        // customer_id: customer.id
     });
-    
+
 });
 
 export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
@@ -38,7 +49,7 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
         .update(toBe.toString())
         .digest("hex")
 
-    if ( !(expectedSigntaure === razorpay_signature) ) {
+    if (!(expectedSigntaure === razorpay_signature)) {
         return next(new ErrorHandler("Payment Not Verified", 400));
     }
 
@@ -61,15 +72,15 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
         plan: req.body.planName,
         paymentDate: new Date(startDate),
         paymentValidity: new Date(endDate),
-        razorpayOrderId: razorpay_order_id, 
-        razorpayPaymentId: razorpay_payment_id, 
-        razorpaySignature: razorpay_signature, 
+        razorpayOrderId: razorpay_order_id,
+        razorpayPaymentId: razorpay_payment_id,
+        razorpaySignature: razorpay_signature,
         user: req.user.id
     });
 
     const message = `Subscription successful \n\n Plan Name: ${req.body.planName} \n\n Plan Price: ${req.body.amount} \n\n Plan Valid till: ${new Date(endDate).toLocaleString()}`
 
-    await sendEmail ({
+    await sendEmail({
         email: user.email,
         subject: `Account Subscription`,
         message,

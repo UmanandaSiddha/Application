@@ -7,11 +7,25 @@ export const isAuthenticatedUser = catchAsyncErrors( async (req, res, next) => {
     const {token} = req.cookies;
 
     if (!token) {
-        return next(new ErrorHandler("Please Login to access this resource", 401));
+        return next(new ErrorHandler("Please login to access this resource", 401));
     }
 
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decodedToken.id);
+    next();
+});
+
+export const isUserVerified = catchAsyncErrors( async (req, res, next) => {
+    if (!req.user.isVerified) {
+        return next(new ErrorHandler("Please verify your email to access this resource", 401));
+    }
+    next();
+});
+
+export const isUserPaid = catchAsyncErrors( async (req, res, next) => {
+    if ( req.user.currentPlan.endDate < Date.now() ) {
+        return next(new ErrorHandler("Subscription Expired Recharge", 400));
+    }
     next();
 });
 

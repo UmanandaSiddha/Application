@@ -33,7 +33,7 @@ const UpdateCreator = lazy(() => import ("./pages/creator/update-creator"));
 const DisplayCreator = lazy(() => import("./pages/creator/display-creator"));
 const DisplayPersonal = lazy(() => import ("./pages/personal/display-personal"));
 const DisplayMedical = lazy(() => import ("./pages/medical/display-medical"));
-const Checkout = lazy(() => import ("./pages/checkout"));
+// const Checkout = lazy(() => import ("./pages/checkout"));
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -123,7 +123,7 @@ const App = () => {
                         <Route path="/dashboard/personal/view" element={<ViewPersonal />} />
                         <Route path="/dashboard/medical/view" element={<ViewMedical />} />
                         <Route path="/dashboard/creator/view" element={<ViewCreator />} />
-                        <Route path="/pay" element={<Checkout />} />
+                        {/* <Route path="/pay" element={<Checkout />} /> */}
                     </Route>
 
                     {/* Logged In User and Paid Routes */}

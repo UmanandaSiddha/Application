@@ -19,9 +19,9 @@ export const viewPersonal = async () => {
     }
 };
 
-export const updatePersonal = async (personalUpdate: any, id: string) => {
+export const updatePersonal = async (personalUpdate: any) => {
     try {
-        const { data }: { data: PersonalResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/personal/update/${id}`, personalUpdate, { withCredentials: true } );
+        const { data }: { data: PersonalResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/personal/update`, personalUpdate, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;

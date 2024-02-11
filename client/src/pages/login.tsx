@@ -76,7 +76,7 @@ const Login = () => {
             const data = await loginUser(loginData);
             dispatch(userExist(data.user));
             toast.success("Logged In!")
-            navigate("/dashboard");
+            // navigate("/dashboard");
         } catch (error: any) {
             dispatch(userNotExist());
             toast.error(error.response.data.message);

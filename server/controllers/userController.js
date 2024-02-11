@@ -15,27 +15,6 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.create(req.body);
 
-    const resetToken = user.getResetPasswordToken();
-
-    await user.save({ validateBeforeSave: false });
-
-    const resetPasswordUrl = `${CLIENT_URL}/verify?token=${resetToken}`;
-
-    const message = `Email verification link ( valid for 15 minutes ) :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
-
-    try {
-        await sendEmail ({
-            email: user.email,
-            subject: `Email Veification`,
-            message,
-        });
-    } catch (error) {
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpire = undefined;
-
-        await user.save({ validateBeforeSave: false });
-    }
-
     sendToken(user, 201, res);
 });
 

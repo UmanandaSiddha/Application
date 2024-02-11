@@ -20,7 +20,7 @@ export const createCreatorVCard = catchAsyncErrors( async (req, res, next) => {
 
 export const updateCreatorVCard = catchAsyncErrors( async (req, res, next) => {
 
-    const creator = await Creator.findByIdAndUpdate(req.params.id, req.body, {
+    const creator = await Creator.findByIdAndUpdate({ user: req.user.id }, req.body, {
         new: true,
         runValidators: true,
         useFindAndModify: false,
@@ -36,14 +36,18 @@ export const updateCreatorVCard = catchAsyncErrors( async (req, res, next) => {
     });
 });
 
+export const deleteCreatorVCard = catchAsyncErrors( async (req, res, next) => {
+
+    await Creator.findOneAndDelete({ user: req.user.id });
+
+    res.status(200).json({
+        success: true,  
+        message: "Creator Card Deleted"
+    });
+});
+
 export const getCreatorVCard = catchAsyncErrors( async (req, res, next) => {
     const creator = await Creator.findOne({ user: req.user.id });
-    if (creator) {
-        const user = await User.findById(creator.user);
-        if ( user.currentPlan.endDate < Date.now() ) {
-            return next(new ErrorHandler("Subscription Expired", 400));
-        }
-    }
 
     res.status(201).json({
         success: true,

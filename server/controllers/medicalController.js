@@ -20,7 +20,7 @@ export const createMedicalVCard = catchAsyncErrors( async (req, res, next) => {
 
 export const updateMedicalVCard = catchAsyncErrors( async (req, res, next) => {
 
-    const medical = await Medical.findByIdAndUpdate(req.params.id, req.body, {
+    const medical = await Medical.findByIdAndUpdate({ user: req.user.id }, req.body, {
         new: true,
         runValidators: true,
         useFindAndModify: false,
@@ -36,14 +36,18 @@ export const updateMedicalVCard = catchAsyncErrors( async (req, res, next) => {
     });
 });
 
+export const deleteMedicalVCard = catchAsyncErrors( async (req, res, next) => {
+
+    await Medical.findOneAndDelete({ user: req.user.id });
+
+    res.status(200).json({
+        success: true,  
+        message: "Medical Card Deleted"
+    });
+});
+
 export const getMedicalVCard = catchAsyncErrors( async (req, res, next) => {
     const medical = await Medical.findOne({ user: req.user.id });
-    if (medical) {
-        const user = await User.findById(medical.user);
-        if ( user.currentPlan.endDate < Date.now() ) {
-            return next(new ErrorHandler("Subscription Expired", 400));
-        }
-    }
 
     res.status(201).json({
         success: true,

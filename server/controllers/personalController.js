@@ -20,7 +20,7 @@ export const createPersonalVCard = catchAsyncErrors( async (req, res, next) => {
 
 export const updatePersonalVCard = catchAsyncErrors( async (req, res, next) => {
 
-    const personal = await Personal.findByIdAndUpdate(req.params.id, req.body, {
+    const personal = await Personal.findOneAndUpdate({ user: req.user.id }, req.body, {
         new: true,
         runValidators: true,
         useFindAndModify: false,
@@ -36,15 +36,20 @@ export const updatePersonalVCard = catchAsyncErrors( async (req, res, next) => {
     });
 });
 
+export const deletePersonalVCard = catchAsyncErrors( async (req, res, next) => {
+
+    await Personal.findOneAndDelete({ user: req.user.id });
+
+    res.status(200).json({
+        success: true,  
+        message: "Personal Card Deleted"
+    });
+});
+
+
 export const getPersonalVCard = catchAsyncErrors( async (req, res, next) => {
     const personal = await Personal.findOne({ user: req.user.id });
-    if (personal) {
-        const user = await User.findById(personal.user);
-        if ( user.currentPlan.endDate < Date.now() ) {
-            return next(new ErrorHandler("Subscription Expired", 400));
-        }
-    }
-
+    
     res.status(201).json({
         success: true,
         personal,

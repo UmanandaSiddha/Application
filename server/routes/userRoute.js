@@ -16,7 +16,7 @@ import {
     requestVerification,
     deleteAccount
 } from "../controllers/userController.js";
-import { isAuthenticatedUser, authorizeRoles } from "../middleware/auth.js";
+import { isAuthenticatedUser, isUserVerified, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -28,13 +28,13 @@ router.route("/request/verification").get(isAuthenticatedUser, requestVerificati
 router.route("/verify/:token").put(verifyUser);
 router.route("/logout").get(isAuthenticatedUser, logoutUser);
 router.route("/me").get(isAuthenticatedUser, getUserDetails);
-router.route("/me/update").put(isAuthenticatedUser, updateProfile);
-router.route("/password/update").put(isAuthenticatedUser, updatePassword);
-router.route("/delete/account").delete(isAuthenticatedUser, deleteAccount);
-router.route("/admin/users").get(isAuthenticatedUser, authorizeRoles("admin"), getAllUsers);
+router.route("/me/update").put(isAuthenticatedUser, isUserVerified, updateProfile);
+router.route("/password/update").put(isAuthenticatedUser, isUserVerified, updatePassword);
+router.route("/delete/account").delete(isAuthenticatedUser, isUserVerified, deleteAccount);
+router.route("/admin/users").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAllUsers);
 router.route("/admin/user/:id")
-    .get(isAuthenticatedUser, authorizeRoles("admin"), getSingleUser)
-    .put(isAuthenticatedUser, authorizeRoles("admin"), updateRole)
-    .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteUser);
+    .get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getSingleUser)
+    .put(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), updateRole)
+    .delete(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), deleteUser);
 
 export default router;

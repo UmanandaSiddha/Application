@@ -4,13 +4,12 @@ import {
     verifyPayment,
     getPayments
 } from "../controllers/paymentController.js";
-import { isAuthenticatedUser } from "../middleware/auth.js";
+import { isAuthenticatedUser, isUserVerified } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.route("/view").get(isAuthenticatedUser, getPayments)
-router.route("/checkout").post(isAuthenticatedUser, checkoutPayment);
-router.route("/verify").post(isAuthenticatedUser, verifyPayment);
-// router.route("/verify/:validity/:amount/:planName").post(isAuthenticatedUser, verifyPayment);
+router.route("/view").get(isAuthenticatedUser, isUserVerified, getPayments)
+router.route("/checkout").post(isAuthenticatedUser, isUserVerified, checkoutPayment);
+router.route("/verify").post(isAuthenticatedUser, isUserVerified, verifyPayment);
 
 export default router;

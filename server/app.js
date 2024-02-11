@@ -12,6 +12,7 @@ import personal from "./routes/peronalRoute.js";
 import medical from "./routes/medicalRoute.js";
 import creator from "./routes/creatorRoute.js";
 import stripeRoute from "./routes/stripeRoute.js";
+import admin from "./routes/adminRoute.js";
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use("/api/v1/personal", personal);
 app.use("/api/v1/medical", medical);
 app.use("/api/v1/creator", creator);
 app.use("/api/v1/stripe", stripeRoute);
+app.use("/api/v1/admin", admin);
 
 app.use(ErrorMiddleware);
 

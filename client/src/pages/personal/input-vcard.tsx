@@ -224,7 +224,7 @@ const InputVCard = () => {
         }
         try {
             if (personal) {
-                const data = await updatePersonal(personalData, personal._id);
+                const data = await updatePersonal(personalData);
                 dispatch(personalExist(data.personal));
                 toast.success("Personal VCards updated!");
             } else {
