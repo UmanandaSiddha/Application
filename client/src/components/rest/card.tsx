@@ -46,7 +46,8 @@ export function TreeCard({ tree, isPaid }: PropsType) {
                 {isPaid ? (
                     <img src={qr} alt={tree?._id} />
                 ) : (
-                    <p>Subscribe to view QR</p>
+                    // <p>Subscribe to view QR</p>
+                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
                 )}
             </CardContent>
         </Card>

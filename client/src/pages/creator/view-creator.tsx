@@ -58,25 +58,20 @@ const ViewCreator = () => {
                                 {isPaid ? (
                                     <img src={qr} alt={creator?._id} />
                                 ) : (
-                                    <p>Subscribe to view QR</p>
+                                    // <p>Subscribe to view QR</p>
+                                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
                                 )}
                             </div>
-                            {isPaid ? (
-                                <div className="space-y-4">
-                                    <p><span className="font-semibold">CreatorId:</span> {creator._id}</p>
-                                    <p><span className="font-semibold">Name:</span> {creator.name}</p>
-                                    <div>
-                                        <h1 className="text-2xl font-semibold">Social Links</h1>
-                                        {creator.links.map((link: any, index: number) => (
-                                            <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
-                                        ))}
-                                    </div>
-                                </div>
-                            ) : (
+                            <div className="space-y-4">
+                                <p><span className="font-semibold">CreatorId:</span> {creator._id}</p>
+                                <p><span className="font-semibold">Name:</span> {creator.name}</p>
                                 <div>
-                                    Subscribe to view Creator Details
+                                    <h1 className="text-2xl font-semibold">Social Links</h1>
+                                    {creator.links.map((link: any, index: number) => (
+                                        <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
+                                    ))}
                                 </div>
-                            )}
+                            </div>
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center items-center">

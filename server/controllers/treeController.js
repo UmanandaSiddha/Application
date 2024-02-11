@@ -72,6 +72,18 @@ export const getTreeVCard = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Tree Not Found", 400));
     }
 
+    res.status(201).json({
+        success: true,
+        tree,
+    });
+});
+
+export const getGeneralVCard = catchAsyncErrors(async (req, res, next) => {
+    const tree = await Tree.findById(req.params.id);
+    if (!tree) {
+        return next(new ErrorHandler("Tree Not Found", 400));
+    }
+
     const user = await User.findById(tree.user);
     if ( user.currentPlan.endDate < Date.now() ) {
         return next(new ErrorHandler("Subscription Expired", 400));

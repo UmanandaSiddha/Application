@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.route("/new").post(isAuthenticatedUser, isUserVerified, isUserPaid, createCreatorVCard);
 router.route("/details/:id").get(getGeneralVCard);
-router.route("/view").get(isAuthenticatedUser, isUserVerified, isUserPaid, getCreatorVCard);
+router.route("/view").get(isAuthenticatedUser, isUserVerified, getCreatorVCard);
 router.route("/update").put(isAuthenticatedUser, isUserVerified, isUserPaid, updateCreatorVCard);
 router.route("/delete").delete(isAuthenticatedUser, isUserVerified, isUserPaid, deleteCreatorVCard);
 

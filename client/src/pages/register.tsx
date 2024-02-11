@@ -16,6 +16,7 @@ import { registerUser } from "@/redux/api/userApi";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 const formSchema = z.object({
     username: z.string()
@@ -40,6 +41,8 @@ const Register = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const [registerLoading, setRegisterLoading] = useState<boolean>(false);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -50,6 +53,7 @@ const Register = () => {
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        setRegisterLoading(true);
         const registerData = {
             name: values.username,
             email: values.email,
@@ -65,6 +69,7 @@ const Register = () => {
             dispatch(userNotExist());
             toast.error(error.response.data.message);
         }
+        setRegisterLoading(false);
     }
 
     return (
@@ -110,7 +115,7 @@ const Register = () => {
                             </FormItem>
                         )}
                     />
-                    <Button className="w-[350px]" type="submit">Register</Button>
+                    <Button className="w-[350px]" type="submit" disabled={registerLoading}>{registerLoading ? "Registering..." : "Register"}</Button>
                 </form>
             </Form>
             <Button variant="link"><Link to="/login">Already have an account? Login</Link></Button>

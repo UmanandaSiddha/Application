@@ -30,6 +30,7 @@ import { creatorInput } from "@/types/form-inputs";
 
 const UpdateCreator = () => {
 
+    const [creatorLoading, setCreatorLoading] = useState<boolean>(false);
     const { user } = useSelector(
         (state: RootState) => state.userReducer
     );
@@ -68,6 +69,7 @@ const UpdateCreator = () => {
     })
 
     const onSubmit = async (values: any) => {
+        setCreatorLoading(true);
         let final = [];
         for (let i = 0; i < arrData.length; i++) {
             const element = {
@@ -90,6 +92,7 @@ const UpdateCreator = () => {
             dispatch(creatorNotExist());
             toast.error(error.response.data.message)
         }
+        setCreatorLoading(false);
     }
 
     return (
@@ -169,7 +172,7 @@ const UpdateCreator = () => {
                                 </DialogContent>
                             </Dialog>
                         </div>
-                        <Button className="my-4 w-[350px]">Update</Button>
+                        <Button className="my-4 w-[350px]" disabled={creatorLoading}>{creatorLoading ? "Updating..." : "Update"}</Button>
                     </form>
                 </Form>
             )}

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { forgotPassword, loginUser } from "@/redux/api/userApi";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
@@ -28,6 +28,8 @@ import { useState } from "react";
 import { toast } from 'react-toastify';
 
 const Login = () => {
+
+    const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
     const formSchema = z.object({
         email: z.string()
@@ -48,7 +50,6 @@ const Login = () => {
     });
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const [open, setOpen] = useState(false);
 
@@ -68,6 +69,7 @@ const Login = () => {
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        setLoginLoading(true)
         const loginData = {
             email: values.email,
             password: values.password,
@@ -75,12 +77,12 @@ const Login = () => {
         try {
             const data = await loginUser(loginData);
             dispatch(userExist(data.user));
-            toast.success("Logged In!")
-            // navigate("/dashboard");
+            toast.success("Logged In!");
         } catch (error: any) {
             dispatch(userNotExist());
             toast.error(error.response.data.message);
         }
+        setLoginLoading(false)
     }
 
     const onForgot = async (values: z.infer<typeof forgotFormSchema>) => {
@@ -124,7 +126,7 @@ const Login = () => {
                             </FormItem>
                         )}
                     />
-                    <Button className="w-[350px]" type="submit">Login</Button>
+                    <Button className="w-[350px]" type="submit" disabled={loginLoading}>{loginLoading ? "Logging..." : "Login"}</Button>
                 </form>
             </Form>
             <Dialog open={open} onOpenChange={setOpen}>

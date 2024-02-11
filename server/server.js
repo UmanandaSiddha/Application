@@ -18,8 +18,8 @@ const PORT = process.env.PORT || 4000;
 
 connectDatabase();
 
-// export const CLIENT_URL="https://app.umanandasiddha.site";
-export const CLIENT_URL = "http://localhost:5173";
+export const CLIENT_URL="https://app.umanandasiddha.site";
+// export const CLIENT_URL = "http://localhost:5173";
 
 export const stripe = new Stripe(process.env.STRIPE_KEY || "");
 

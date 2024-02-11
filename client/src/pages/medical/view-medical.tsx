@@ -29,7 +29,7 @@ const ViewMedical = () => {
             const data = await viewMedical();
             dispatch(medicalExist(data.medical));
             const link = `${window.location.protocol}//${window.location.hostname}/display/medical?medicalId=${data.medical._id.toString()}`;
-            const qre = await QrCode.toDataURL(link, {width: 200, margin: 2});
+            const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
             setQr(qre)
         } catch (error: any) {
             dispatch(medicalNotExist());
@@ -59,18 +59,13 @@ const ViewMedical = () => {
                                 {isPaid ? (
                                     <img src={qr} alt={medical._id} />
                                 ) : (
-                                    <p>Subscribe to view QR</p>
+                                    // <p>Subscribe to view QR</p>
+                                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
                                 )}
                             </div>
-                            {isPaid ? (
-                                <div className="space-y-4">
-                                    <Same medical={medical} />
-                                </div>
-                            ) : (
-                                <div>
-                                    Subscribe to view Medical Details
-                                </div>
-                            )}
+                            <div className="space-y-4">
+                                <Same medical={medical} />
+                            </div>
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center items-center">

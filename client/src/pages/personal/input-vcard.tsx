@@ -40,6 +40,8 @@ import { useNavigate } from "react-router-dom";
 const InputVCard = () => {
 
     const navigate = useNavigate();
+    const [personalLoading, setPersonalLoading] = useState<boolean>(false);
+
     const { user } = useSelector(
         (state: RootState) => state.userReducer
     );
@@ -133,6 +135,7 @@ const InputVCard = () => {
     });
 
     const onSubmit = async (values: any) => {
+        setPersonalLoading(true);
         let final = [];
         for (let i = 0; i < arrData.length; i++) {
             const element = {
@@ -237,6 +240,7 @@ const InputVCard = () => {
             dispatch(personalNotExist());
             toast.error(error.response.data.message);
         }
+        setPersonalLoading(false);
     }
 
     return (
@@ -537,7 +541,7 @@ const InputVCard = () => {
                         />
                     ))}
 
-                    <Button className="w-[350px]" type="submit">Save</Button>
+                    <Button className="w-[350px]" type="submit" disabled={personalLoading}>{personalLoading ? "Saving..." : "Save"}</Button>
                 </form>
             </Form>
         </div>

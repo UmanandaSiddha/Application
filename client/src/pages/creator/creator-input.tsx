@@ -34,6 +34,7 @@ const CreatorInput = () => {
     const [open, setOpen] = useState(false);
     const [otherName, setOtherName] = useState("");
     const [otherLink, setOtherLink] = useState("");
+    const [creatorLoading, setCreatorLoading] = useState<boolean>(false);
 
     const { user } = useSelector(
         (state: RootState) => state.userReducer
@@ -63,6 +64,7 @@ const CreatorInput = () => {
     })
 
     const onSubmit = async (values: any) => {
+        setCreatorLoading(true);
         let final = [];
         for (let i = 0; i < arrData.length; i++) {
             const element = {
@@ -85,6 +87,7 @@ const CreatorInput = () => {
             dispatch(creatorNotExist());
             toast.error(error.response.data.message)
         }
+        setCreatorLoading(false);
     }
 
     return (
@@ -163,7 +166,7 @@ const CreatorInput = () => {
                             </DialogContent>
                         </Dialog>
                     </div>
-                    <Button className="my-4 w-[350px]">Create</Button>
+                    <Button className="my-4 w-[350px]" disabled={creatorLoading}>{creatorLoading ? "Creating..." : "Create"}</Button>
                 </form>
             </Form>
         </div>

@@ -29,11 +29,26 @@ const userSchema = new mongoose.Schema(
             default: false,
         },
         currentPlan: {
-            planName: String,
-            planPrice: Number,
-            planValidity: Number,
-            startDate: Number,
-            endDate: Number,
+            planName: {
+                type: String,
+                default: "Plan Name"
+            },
+            planPrice: {
+                type: Number,
+                default: 0
+            },
+            planValidity: {
+                type: Number,
+                default: 0
+            },
+            startDate: {
+                type: Number,
+                default: 0
+            },
+            endDate: {
+                type: Number,
+                default: 0
+            },
         },
         role:{
             type: String,

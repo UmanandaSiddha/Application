@@ -36,7 +36,7 @@ const CheckoutForm = () => {
             console.log("placing order")
             navigate("/dashboard")
         }
-        setIsProcessing(false)
+        setIsProcessing(false);
     }
 
     return (

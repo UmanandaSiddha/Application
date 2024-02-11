@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export function PlansCard({ plan }: any) {
+export function PlansCard({ plan, value, onChange }: any) {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -38,6 +38,7 @@ export function PlansCard({ plan }: any) {
                 // image: "",
                 order_id: data.order.id,
                 handler: async function (response: any) {
+                    onChange(true);
                     const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/verify`, {
                         razorpay_payment_id: response.razorpay_payment_id,
                         razorpay_order_id: response.razorpay_order_id,
@@ -46,9 +47,10 @@ export function PlansCard({ plan }: any) {
                         planName: plan.name,
                         validity: plan.validity
                     }, { withCredentials: true });
-                    console.log(data);
+                    // console.log(data);
                     dispatch(togglePaid(data.user));
                     toast.success("Payment Successful");
+                    onChange(false);
                     navigate("/");
                 },
                 prefill: {
@@ -112,7 +114,7 @@ export function PlansCard({ plan }: any) {
                 )}
             </CardContent>
             <CardFooter className="flex flex-col space-y-3">
-                <Button onClick={handlePayment} className="w-full" disabled={isPaid}>Buy Plan</Button>
+                <Button onClick={handlePayment} className="w-full" disabled={isPaid && value}>Buy Plan</Button>
                 {/* <Button onClick={handleStripePayment} className="w-full" disabled={isPaid}>Stripe</Button> */}
             </CardFooter>
         </Card>

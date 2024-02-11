@@ -50,8 +50,10 @@ const formSchema = z.object({
 
 const Profile = () => {
 
-    const [open, setOpen] = useState(false);
-    const [openSep, setOpenSep] = useState(false);
+    const [open, setOpen] = useState<boolean>(false);
+    const [openSep, setOpenSep] = useState<boolean>(false);
+    const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
+    const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
     const dispatch = useDispatch();
 
@@ -64,11 +66,13 @@ const Profile = () => {
     );
 
     const gotPayment = async () => {
-        try {
-            const data = await getAllPayments();
-            dispatch(paymentExist(data.payments));
-        } catch (error: any) {
-            toast.error(error.response.data.message);
+        if (user?.isVerified) {
+            try {
+                const data = await getAllPayments();
+                dispatch(paymentExist(data.payments));
+            } catch (error: any) {
+                toast.error(error.response.data.message);
+            }
         }
     }
 
@@ -98,7 +102,6 @@ const Profile = () => {
             name: values.name,
             email: values.email,
         }
-        console.log(updateData)
         try {
             const data = await updateUserProfile(updateData);
             dispatch(userExist(data.user));
@@ -111,15 +114,18 @@ const Profile = () => {
     }
 
     const handleRequestVerify = async () => {
+        setVerifyLoading(true);
         try {
             await requestVerifyUser();
             toast.success("Email Sent  Successfully")
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
+        setVerifyLoading(false);
     }
 
     const handleDeleteAccount = async () => {
+        setDeleteLoading(true);
         try {
             await deleteUser();
             dispatch(userNotExist());
@@ -127,6 +133,7 @@ const Profile = () => {
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
+        setDeleteLoading(false);
     }
 
     const handleResetPassword = async (resetValues: any) => {
@@ -167,7 +174,7 @@ const Profile = () => {
                                 {!user?.isVerified && (
                                     <div className="flex flex-col justify-center items-center space-y-4">
                                         <p className="text-red-600 font-semibold">You are not verified</p>
-                                        <Button onClick={handleRequestVerify}>Verify Email</Button>
+                                        <Button onClick={handleRequestVerify} disabled={verifyLoading}>{verifyLoading ? "Sending Email..." : "Verify Email"}</Button>
                                     </div>
                                 )}
                                 <Dialog open={open} onOpenChange={setOpen}>
@@ -270,7 +277,7 @@ const Profile = () => {
                                         </DialogFooter>
                                     </DialogContent>
                                 </Dialog>
-                                <Button onClick={handleDeleteAccount} variant="destructive">Delete Account</Button>
+                                <Button onClick={handleDeleteAccount} variant="destructive" disabled={deleteLoading}>{deleteLoading ? "Deleting Account..." : "Delete Account"}</Button>
                             </div>
                             <div className="w-[400px] border border-primary p-4">
                                 <h1 className="text-3xl font-semibold">Payment History</h1>

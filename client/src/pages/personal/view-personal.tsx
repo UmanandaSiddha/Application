@@ -61,18 +61,13 @@ const ViewPersonal = () => {
                                 {isPaid ? (
                                     <img src={qr} alt={personal?._id} />
                                 ) : (
-                                    <p>Subscribe to view QR</p>
+                                    // <p>Subscribe to view QR</p>
+                                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
                                 )}
                             </div>
-                            {isPaid ? (
-                                <div className="space-y-4">
-                                    <Same personal={personal} />
-                                </div>
-                            ) : (
-                                <div>
-                                    Subscribe to view Personal Details
-                                </div>
-                            )}
+                            <div className="space-y-4">
+                                <Same personal={personal} />
+                            </div>
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center items-center">

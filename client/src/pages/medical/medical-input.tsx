@@ -23,10 +23,12 @@ import { createMedical, updateMedical } from "@/redux/api/medicalApi";
 import { toast } from "react-toastify";
 import { medicalExist, medicalNotExist } from "@/redux/reducer/medicalReducer";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const MedicalInput = () => {
 
     const navigate = useNavigate();
+    const [medicalLoading, setMedicalLoading] = useState<boolean>(false);
     const { user } = useSelector(
         (state: RootState) => state.userReducer
     );
@@ -68,6 +70,7 @@ const MedicalInput = () => {
     });
 
     const onSubmit = async (values: any) => {
+        setMedicalLoading(true);
         const medicalData = {
             personalInfo: {
                 name: values.name,
@@ -123,6 +126,7 @@ const MedicalInput = () => {
             dispatch(medicalNotExist());
             toast.error(error.response.data.message);
         }
+        setMedicalLoading(false);
     }
 
     return (
@@ -281,7 +285,7 @@ const MedicalInput = () => {
 
 
                     </div>
-                    <Button type="submit" className="w-[350px]">Save</Button>
+                    <Button type="submit" className="w-[350px]" disabled={medicalLoading}>{medicalLoading ? "Saving..." : "Save"}</Button>
                 </form>   
             </Form>
         </div>

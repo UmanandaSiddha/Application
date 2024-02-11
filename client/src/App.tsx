@@ -1,8 +1,7 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
-import { getUser } from "./redux/api/userApi";
 import { userExist, userNotExist } from "./redux/reducer/userReducer";
 
 import Header from "./components/rest/header";
@@ -37,10 +36,14 @@ const DisplayMedical = lazy(() => import ("./pages/medical/display-medical"));
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { UserResponse } from "./types/api-types";
+import axios from "axios";
 
 const App = () => {
 
-    const { user, isPaid, loading } = useSelector(
+    let location = useLocation();
+
+    const { user, loading } = useSelector(
         (state: RootState) => state.userReducer
     );
 
@@ -48,7 +51,7 @@ const App = () => {
 
     const gotUser = async () => {
         try {
-            const data = await getUser();
+            const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true } );
             dispatch(userExist(data.user));
         } catch (error: any) {
             dispatch(userNotExist());
@@ -57,13 +60,13 @@ const App = () => {
     
     useEffect(() => {
         gotUser();
-    }, []);
+    }, [location.pathname]);
 
     return (
         loading ? (
             <Loader />
         ) : (
-        <BrowserRouter>
+        <div>
             <ToastContainer
                 position="top-center"
                 autoClose={5000}
@@ -79,7 +82,7 @@ const App = () => {
             <Header user={user} />
             <Suspense fallback={<Loader />}>
                 <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<Home user={user} />} />
                     <Route path="/display/tree" element={<DisplayTree />} />
                     <Route path="/display/creator" element={<DisplayCreator />} />
                     <Route path="/display/personal" element={<DisplayPersonal />} />
@@ -124,24 +127,29 @@ const App = () => {
                         <Route path="/dashboard/medical/view" element={<ViewMedical />} />
                         <Route path="/dashboard/creator/view" element={<ViewCreator />} />
                         {/* <Route path="/pay" element={<Checkout />} /> */}
-                    </Route>
 
-                    {/* Logged In User and Paid Routes */}
-                    <Route
-                        element={<ProtectedRoute isAuthenticated={(user && isPaid)  ? true : false} />}
-                    >
                         <Route path="/dashboard/creator/update" element={<UpdateCreator />} />
-
                         <Route path="/dashboard/tree/create" element={<CreateTree />} />
                         <Route path="/dashboard/personal/input" element={<InputVCard />} />
                         <Route path="/dashboard/medical/input" element={<MedicalInput />} />
                         <Route path="/dashboard/creator/input" element={<CreatorInput />} />
                     </Route>
 
+                    {/* Logged In User and Paid Routes */}
+                    {/* <Route
+                        element={<ProtectedRoute isAuthenticated={(user && isPaid)  ? true : false} />}
+                    >
+                        <Route path="/dashboard/creator/update" element={<UpdateCreator />} />
+                        <Route path="/dashboard/tree/create" element={<CreateTree />} />
+                        <Route path="/dashboard/personal/input" element={<InputVCard />} />
+                        <Route path="/dashboard/medical/input" element={<MedicalInput />} />
+                        <Route path="/dashboard/creator/input" element={<CreatorInput />} />
+                    </Route> */}
+
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </Suspense>
-        </BrowserRouter>
+        </div>
         )
     )
 }
