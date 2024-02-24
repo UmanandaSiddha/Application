@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword, loginUser } from "@/redux/api/userApi";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
@@ -30,6 +30,7 @@ import { toast } from 'react-toastify';
 const Login = () => {
 
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const formSchema = z.object({
         email: z.string()
@@ -76,6 +77,7 @@ const Login = () => {
         }
         try {
             const data = await loginUser(loginData);
+            navigate("/dashboard");
             dispatch(userExist(data.user));
             toast.success("Logged In!");
         } catch (error: any) {

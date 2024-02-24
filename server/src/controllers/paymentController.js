@@ -6,6 +6,7 @@ import Payment from "../models/paymentModel.js";
 import { instance } from "../server.js";
 import sendEmail from "../utils/sendEmail.js";
 import { CLIENT_URL } from "../server.js";
+import fs from 'fs';
 
 export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
@@ -37,6 +38,26 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         // customer_id: customer.id
     });
 
+});
+
+export const testVerify = catchAsyncErrors(async (req, res, next) => {
+
+    const secret = "12345678";
+
+    const expectedSigntaure = crypto
+        .createHmac("sha256", secret)
+        .update(JSON.stringify(req.body))
+        .digest("hex")
+
+    console.log(expectedSigntaure);
+    console.log(req.headers['x-razorpay-signature']);
+
+    if (expectedSigntaure === req.headers['x-razorpay-signature']) {
+        console.log("success");
+        fs.writeFileSync("payment.json", JSON.stringify(req.body, null, 4));
+    }
+
+    res.json({ status: "ok" })
 });
 
 export const verifyPayment = catchAsyncErrors(async (req, res, next) => {

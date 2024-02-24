@@ -58,9 +58,13 @@ const App = () => {
         }
     }
     
+    // useEffect(() => {
+    //     gotUser();
+    // }, [location.pathname]);
+
     useEffect(() => {
         gotUser();
-    }, [location.pathname]);
+    }, []);
 
     return (
         loading ? (

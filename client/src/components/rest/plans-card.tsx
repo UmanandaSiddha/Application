@@ -38,20 +38,22 @@ export function PlansCard({ plan, value, onChange }: any) {
                 // image: "",
                 order_id: data.order.id,
                 handler: async function (response: any) {
-                    onChange(true);
-                    const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/verify`, {
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_signature: response.razorpay_signature,
-                        amount: plan.price,
-                        planName: plan.name,
-                        validity: plan.validity
-                    }, { withCredentials: true });
-                    // console.log(data);
-                    dispatch(togglePaid(data.user));
-                    toast.success("Payment Successful");
-                    onChange(false);
-                    navigate("/");
+                    alert("success");
+                    console.log(response);
+                    // onChange(true);
+                    // const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/verify`, {
+                    //     razorpay_payment_id: response.razorpay_payment_id,
+                    //     razorpay_order_id: response.razorpay_order_id,
+                    //     razorpay_signature: response.razorpay_signature,
+                    //     amount: plan.price,
+                    //     planName: plan.name,
+                    //     validity: plan.validity
+                    // }, { withCredentials: true });
+                    // // console.log(data);
+                    // dispatch(togglePaid(data.user));
+                    // toast.success("Payment Successful");
+                    // onChange(false);
+                    // navigate("/");
                 },
                 prefill: {
                     email: user?.email,

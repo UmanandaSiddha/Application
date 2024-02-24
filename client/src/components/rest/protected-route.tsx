@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate, useLocation } from "react-router-dom";
 
 interface Props {
     children?: ReactElement;
@@ -11,7 +11,10 @@ const ProtectedRoute = ({
     children,
 }: Props) => {
 
-    if (!isAuthenticated) return window.location.href = '/';
+    let location = useLocation();
+
+    // if (!isAuthenticated) return window.location.href = '/';
+    if (!isAuthenticated) return <Navigate to="/" state={{ from: location}} replace />;
 
     return children ? children : <Outlet />;
 }
