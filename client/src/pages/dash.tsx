@@ -40,9 +40,9 @@ const Dashboard = () => {
                     )}
                     <div className="flex flex-wrap justify-center">
                         <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/tree")}>Tree VCard</Button>
-                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/personal/view")}>Personal VCard</Button>
-                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/medical/view")}>Medical VCard</Button>
-                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/creator/view")}>Creator VCard</Button>
+                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/personal")}>Personal VCard</Button>
+                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/medical")}>Medical VCard</Button>
+                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/creator")}>Creator VCard</Button>
                     </div>
                 </>
             )}

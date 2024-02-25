@@ -7,12 +7,14 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { useDispatch, useSelector } from "react-redux";
-import { togglePaid } from "@/redux/reducer/userReducer";
+import { togglePaid, userExist } from "@/redux/reducer/userReducer";
 import { RootState } from "../../redux/store";
 import { checkoutPayments } from "@/redux/api/paymentApi";
 import { toast } from 'react-toastify';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { UserResponse } from "@/types/api-types";
+import { useState } from "react";
 
 export function PlansCard({ plan, value, onChange }: any) {
 
@@ -25,7 +27,12 @@ export function PlansCard({ plan, value, onChange }: any) {
 
     const handlePayment = async () => {
         try {
-            const data = await checkoutPayments({ amount: plan.price });
+            const checkoutData = {
+                amount: plan.price,
+                planName: plan.name,
+                validity: plan.validity
+            }
+            const data = await checkoutPayments(checkoutData);
             if (!data) {
                 toast.error("Failed to Execute Payment");
             }
@@ -37,7 +44,7 @@ export function PlansCard({ plan, value, onChange }: any) {
                 description: "just fine",
                 // image: "",
                 order_id: data.order.id,
-                handler: async function (response: any) {
+                handler: function (response: any) {
                     alert("success");
                     console.log(response);
                     // onChange(true);
@@ -58,7 +65,7 @@ export function PlansCard({ plan, value, onChange }: any) {
                 prefill: {
                     email: user?.email,
                 },
-                // customer_id: data.customer_id,
+                // customer_id: "data.customer_id",
                 // remember_customer: true,
                 timeout: 120,
                 readonly: {
@@ -116,7 +123,7 @@ export function PlansCard({ plan, value, onChange }: any) {
                 )}
             </CardContent>
             <CardFooter className="flex flex-col space-y-3">
-                <Button onClick={handlePayment} className="w-full" disabled={isPaid && value}>Buy Plan</Button>
+                <Button onClick={handlePayment} className="w-full" disabled={isPaid}>Buy Plan</Button>
                 {/* <Button onClick={handleStripePayment} className="w-full" disabled={isPaid}>Stripe</Button> */}
             </CardFooter>
         </Card>

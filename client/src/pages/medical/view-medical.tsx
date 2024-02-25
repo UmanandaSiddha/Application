@@ -1,38 +1,36 @@
 import { useEffect, useState } from "react";
-import Loader from "@/components/rest/loader";
-import { useNavigate } from "react-router-dom";
-import { viewMedical } from "@/redux/api/medicalApi";
-import { medicalExist, medicalNotExist } from "@/redux/reducer/medicalReducer";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast } from 'react-toastify';
 import { Button } from "@/components/ui/button";
 import Same from "./same";
 import QrCode from "qrcode";
+import { SingleMedicalResponse } from "@/types/api-types";
+import axios from "axios";
 
 const ViewMedical = () => {
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [search] = useSearchParams();
+    const id = search.get("medicalId");
+    
     const [qr, setQr] = useState("");
+    const [singleTree, setSingleTree] = useState<any | null>(null);
 
     const { isPaid } = useSelector(
         (state: RootState) => state.userReducer
     );
 
-    const { medical, loadings } = useSelector(
-        (state: RootState) => state.medicalReducer
-    );
-
     const handleMedical = async () => {
         try {
-            const data = await viewMedical();
-            dispatch(medicalExist(data.medical));
-            const link = `${window.location.protocol}//${window.location.hostname}/display/medical?medicalId=${data.medical._id.toString()}`;
+            const { data }: { data: SingleMedicalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/medical/detailed/${id!}`, { withCredentials: true });
+            setSingleTree(data.medical);
+            console.log(data.medical);
+            const link = `${window.location.protocol}//${window.location.hostname}/display/medical?medicalId=${id!}`;
             const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
             setQr(qre)
         } catch (error: any) {
-            dispatch(medicalNotExist());
             toast.error(error.response.data.message);
         }
     }
@@ -41,40 +39,35 @@ const ViewMedical = () => {
         handleMedical();
     }, []);
 
+    const delMedical = async () => {
+        try {
+            await axios.delete(`${import.meta.env.VITE_BASE_URL}/medical/delete/${id!}`)
+            toast.success("Medical Deleted");
+            navigate(-1);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
+
+
     return (
-        <div className="flex flex-col gap-4 justify-center items-center mt-8">
-            {loadings ? (
-                <Loader />
-            ) : (
-                <>
-                    <h1 className="text-3xl font-semibold">Medical VCard</h1>
-                    {medical ? (
-                        <div className="flex flex-col gap-2 justify-center items-center">
-                            <div className="flex gap-4">
-                                <Button onClick={() => navigate("/dashboard/medical/input")} disabled={!isPaid}>Update Vcard</Button>
-                                <Button disabled={!isPaid}><a href={qr} download={`${medical?._id}.png`}>Downlaod</a></Button>
-                            </div>
-                            {!isPaid && <p>You are not Subscribed</p>}
-                            <div>
-                                {isPaid ? (
-                                    <img src={qr} alt={medical._id} />
-                                ) : (
-                                    // <p>Subscribe to view QR</p>
-                                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
-                                )}
-                            </div>
-                            <div className="space-y-4">
-                                <Same medical={medical} />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col justify-center items-center">
-                            <Button onClick={() => navigate("/dashboard/medical/input")} disabled={!isPaid}>Create Vcard</Button>
-                            {!isPaid && <p>You are not Subscribed</p>}
-                        </div>
-                    )}
-                </>
-            )}
+        <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
+            <h1 className="text-3xl font-semibold">Medical Details</h1>
+            <div>
+                {isPaid ? (
+                    <img src={qr} alt={singleTree?._id} />
+                ) : (
+                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
+                )}
+            </div>
+            <div className="space-y-4">
+                <Same medical={singleTree} />
+            </div>
+            <div className="flex gap-6">
+                <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Downlaod</a></Button>
+                <Button variant="outline" disabled={!isPaid} onClick={() => navigate(`/dashboard/medical/input?medicalId=${singleTree?._id}`)}>Edit</Button>
+                <Button onClick={() => delMedical()} disabled={!isPaid} variant="destructive">Delete</Button>
+            </div>
         </div>
     )
 }

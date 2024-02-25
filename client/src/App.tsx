@@ -15,6 +15,9 @@ const NotFound = lazy(() => import("./pages/not-found"));
 const Dashboard = lazy(() => import("./pages/dash"));
 const Profile = lazy(() => import ("./pages/profile"));
 const Tree = lazy(() => import ("./pages/tree/tree"));
+const Personal = lazy(() => import ("./pages/personal/personal"));
+const Medical = lazy(() => import ("./pages/medical/medical"));
+const Creator = lazy(() => import ("./pages/creator/creator"));
 const CreateTree = lazy(() => import ("./pages/tree/create-tree"));
 const ViewTree = lazy(() => import ("./pages/tree/view-tree"));
 const DisplayTree = lazy(() => import ("./pages/tree/display-tree"));
@@ -53,18 +56,19 @@ const App = () => {
         try {
             const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true } );
             dispatch(userExist(data.user));
+            console.log(data)
         } catch (error: any) {
             dispatch(userNotExist());
         }
     }
     
-    // useEffect(() => {
-    //     gotUser();
-    // }, [location.pathname]);
-
     useEffect(() => {
         gotUser();
-    }, []);
+    }, [location.pathname]);
+
+    // useEffect(() => {
+    //     gotUser();
+    // }, []);
 
     return (
         loading ? (
@@ -124,6 +128,9 @@ const App = () => {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/dashboard/tree" element={<Tree />} />
+                        <Route path="/dashboard/personal" element={<Personal />} />
+                        <Route path="/dashboard/medical" element={<Medical />} />
+                        <Route path="/dashboard/creator" element={<Creator />} />
                         <Route path="/dashboard/tree/view" element={<ViewTree />} />
                         <Route path="/plans" element={<Plans />} />
                         <Route path="/verify" element={<Verify />} />

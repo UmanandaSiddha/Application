@@ -21,6 +21,32 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Order Failed", 400));
     }
 
+    const user = await User.findById(req.user.id);
+
+    const startDate = Date.now();
+    const endDate = Date.now() + Number(req.body.validity) * 60 * 1000;
+
+    user.currentPlan = {
+        planStatus: "processing",
+        planName: req.body.planName,
+        planPrice: req.body.amount,
+        planValidity: req.body.validity,
+        startDate,
+        endDate,
+        orderId: order.id,
+    };
+    await user.save();
+
+    await Payment.create({
+        amount: req.body.amount,
+        plan: req.body.planName,
+        paymentDate: new Date(startDate),
+        paymentValidity: new Date(endDate),
+        razorpayOrderId: order.id,
+        razorpayPaymentId: "pending",
+        user: req.user.id
+    });
+
     // const customer = await instance.customers.create({
     //     name: req.user.name,
     //     contact: 9123456780,
@@ -48,13 +74,24 @@ export const testVerify = catchAsyncErrors(async (req, res, next) => {
         .createHmac("sha256", secret)
         .update(JSON.stringify(req.body))
         .digest("hex")
-
-    console.log(expectedSigntaure);
-    console.log(req.headers['x-razorpay-signature']);
-
+        
     if (expectedSigntaure === req.headers['x-razorpay-signature']) {
+
+        const user = await User.findOneAndUpdate({ "currentPlan.orderId": req.body.payload.payment.entity.order_id }, {
+            "currentPlan.planStatus": "succeeded",
+        }, {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false,
+        });
+
+        const payment = await Payment.findOne({ razorpayOrderId: req.body.payload.payment.entity.order_id });
+        
+        payment.razorpayPaymentId = req.body.payload.payment.entity.id;
+        payment.paymentStatus = "succeeded";
+        await payment.save();
+
         console.log("success");
-        fs.writeFileSync("payment.json", JSON.stringify(req.body, null, 4));
     }
 
     res.json({ status: "ok" })

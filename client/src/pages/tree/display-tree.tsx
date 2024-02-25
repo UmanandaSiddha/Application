@@ -17,7 +17,6 @@ const DisplayTree = () => {
             setTreeData(data.tree);
         } catch (error: any) {
             toast.error(error.response.data.message);
-            // console.log(error.response.data.message);
         }
     }
 

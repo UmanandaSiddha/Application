@@ -15,7 +15,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RootState } from "../../redux/store";
@@ -23,14 +23,45 @@ import { Label } from "@/components/ui/label";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { creatorInput } from "@/types/form-inputs";
-import { createCreator } from "@/redux/api/creatorApi";
-import { creatorExist, creatorNotExist } from "@/redux/reducer/creatorreducer";
-import { useNavigate } from "react-router-dom";
+import { createCreator, updateCreator } from "@/redux/api/creatorApi";
+import { creatorExist, creatorNotTemp, creatorTemp } from "@/redux/reducer/creatorreducer";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { SingleCreatorResponse } from "@/types/api-types";
+import axios from "axios";
 
 const CreatorInput = () => {
 
     const navigate = useNavigate();
-    const [arrData, setArrData] = useState<any | null>(creatorInput);
+    const [search] = useSearchParams();
+    const id = search.get("creatorId");
+    const [isCreator, setIsCreator] = useState<boolean>(id ? true : false);
+
+    const { creator } = useSelector(
+        (state: RootState) => state.creatorReducer
+    );
+
+    const { isPaid } = useSelector(
+        (state: RootState) => state.userReducer
+    );
+
+    const gotCreator = async () => {
+        if (id) {
+            try {
+                const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/creator/detailed/${id!}`, { withCredentials: true });
+                dispatch(creatorTemp(data.creator));
+                setIsCreator(true);
+            } catch (error: any) {
+                toast.error(error.response.data.message);
+                dispatch(creatorNotTemp());
+            }
+        }
+    }
+
+    useEffect(() => {
+        gotCreator();
+    }, []);
+
+    const [arrData, setArrData] = useState<any | null>(creator ? creator?.links : creatorInput);
     const [open, setOpen] = useState(false);
     const [otherName, setOtherName] = useState("");
     const [otherLink, setOtherLink] = useState("");
@@ -59,7 +90,7 @@ const CreatorInput = () => {
 
     const form = useForm({
         defaultValues: {
-            name: "",
+            name: creator?.name || "",
         }
     })
 
@@ -79,13 +110,25 @@ const CreatorInput = () => {
             user: user?._id,
         }
         try {
-            const data = await createCreator(creatorData);
-            dispatch(creatorExist(data.creator));
-            toast.success("Crrator VCard Created");
-            navigate(-1);
+            if (isCreator) {
+                const data = await updateCreator(creatorData, id!);
+                dispatch(creatorExist(data.creator));
+                toast.success("Crrator VCard Updated");
+            } else {
+                const data = await createCreator(creatorData);
+                dispatch(creatorExist(data.creator));
+                toast.success("Crrator VCard Created");
+            }
+            if (isPaid) {
+                navigate(-1);
+            } else {
+                navigate("/plans");
+            }
         } catch (error: any) {
-            dispatch(creatorNotExist());
-            toast.error(error.response.data.message)
+            toast.error(error.response.data.message);
+            if (!isPaid) {
+                navigate("/plans");
+            }
         }
         setCreatorLoading(false);
     }

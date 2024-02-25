@@ -4,7 +4,8 @@ import {
     updateCreatorVCard,
     getCreatorVCard,
     getGeneralVCard,
-    deleteCreatorVCard
+    deleteCreatorVCard,
+    getCreatorUserVCard
 } from "../controllers/creatorController.js";
 import { isAuthenticatedUser, authorizeRoles, isUserVerified, isUserPaid } from "../middleware/auth.js";
 
@@ -12,8 +13,10 @@ const router = express.Router();
 
 router.route("/new").post(isAuthenticatedUser, isUserVerified, isUserPaid, createCreatorVCard);
 router.route("/details/:id").get(getGeneralVCard);
-router.route("/view").get(isAuthenticatedUser, isUserVerified, getCreatorVCard);
-router.route("/update").put(isAuthenticatedUser, isUserVerified, isUserPaid, updateCreatorVCard);
-router.route("/delete").delete(isAuthenticatedUser, isUserVerified, isUserPaid, deleteCreatorVCard);
+router.route("/detailed/:id").get(isAuthenticatedUser,  isUserVerified, getCreatorVCard);
+router.route("/userCreator").get(isAuthenticatedUser, isUserVerified, getCreatorUserVCard);
+router.route("/delete/:id")
+    .delete(isAuthenticatedUser, isUserVerified, isUserPaid, deleteCreatorVCard)
+    .put(isAuthenticatedUser, isUserVerified, isUserPaid, updateCreatorVCard);
 
 export default router;

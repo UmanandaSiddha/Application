@@ -29,20 +29,26 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { phNum, emailAdd, homeTown, motto, seleInp, seloInp, textAr } from "@/redux/inputs/personal-inputs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { creatorInput } from "@/types/form-inputs";
 import { createPersonal, updatePersonal } from "@/redux/api/personalApi";
-import { personalExist, personalNotExist } from "@/redux/reducer/personalReducer";
-import { useNavigate } from "react-router-dom";
+import { personalNotTemp, personalTemp } from "@/redux/reducer/personalReducer";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { SinglePersonalResponse } from "@/types/api-types";
 
 const InputVCard = () => {
 
     const navigate = useNavigate();
+    const [search] = useSearchParams();
+    const id = search.get("personalId");
+
+    const [isPersonal, setIsPersonal] = useState<boolean>(id ? true : false);
     const [personalLoading, setPersonalLoading] = useState<boolean>(false);
 
-    const { user } = useSelector(
+    const { user, isPaid } = useSelector(
         (state: RootState) => state.userReducer
     );
 
@@ -56,6 +62,23 @@ const InputVCard = () => {
     const [open, setOpen] = useState(false);
     const [otherName, setOtherName] = useState("");
     const [otherLink, setOtherLink] = useState("");
+
+    const gotPersonal = async () => {
+        if (id) {
+            try {
+                const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/personal/detailed/${id!}`, { withCredentials: true });
+                dispatch(personalTemp(data.personal));
+                setIsPersonal(true);
+            } catch (error: any) {
+                toast.error(error.response.data.message);
+                dispatch(personalNotTemp());
+            }
+        }
+    }
+
+    useEffect(() => {
+        gotPersonal();
+    }, []);
 
     const handleAdd = () => {
         setArrData([...arrData, {
@@ -225,27 +248,31 @@ const InputVCard = () => {
             },
             user: user?._id,
         }
+        console.log(personalData)
         try {
-            if (personal) {
-                const data = await updatePersonal(personalData);
-                dispatch(personalExist(data.personal));
+            if (isPersonal) {
+                await updatePersonal(personalData, id!);
                 toast.success("Personal VCards updated!");
             } else {
-                const data = await createPersonal(personalData);
-                dispatch(personalExist(data.personal));
+                await createPersonal(personalData);
                 toast.success("Personal VCards created!");
             }
-            navigate(-1);
+            if (isPaid) {
+                navigate(-1);
+            } else {
+                navigate("/plans");
+            }
         } catch (error: any) {
-            dispatch(personalNotExist());
             toast.error(error.response.data.message);
+            if (!isPaid) {
+                navigate("/plans");
+            }
         }
         setPersonalLoading(false);
     }
 
     return (
         <div className="flex flex-col justify-center items-center my-8">
-            <h1 className="text-3xl font-semibold">Create Personal VCard</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 

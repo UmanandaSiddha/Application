@@ -21,15 +21,22 @@ import { RootState } from "../../redux/store";
 import { perInfo, emCon, medAdd, healthHistory, healthhabits, inSur } from "@/redux/inputs/medical-input";
 import { createMedical, updateMedical } from "@/redux/api/medicalApi";
 import { toast } from "react-toastify";
-import { medicalExist, medicalNotExist } from "@/redux/reducer/medicalReducer";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { medicalNotTemp, medicalTemp } from "@/redux/reducer/medicalReducer";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { SingleMedicalResponse } from "@/types/api-types";
 
 const MedicalInput = () => {
 
     const navigate = useNavigate();
+    const [search] = useSearchParams();
+    const id = search.get("medicalId");
+
+    const [isMedical, setIsMedical] = useState<boolean>(id ? true : false);
     const [medicalLoading, setMedicalLoading] = useState<boolean>(false);
-    const { user } = useSelector(
+
+    const { user, isPaid } = useSelector(
         (state: RootState) => state.userReducer
     );
 
@@ -38,6 +45,23 @@ const MedicalInput = () => {
     );
 
     const dispatch = useDispatch();
+
+    const gotMedical = async () => {
+        if (id) {
+            try {
+                const { data }: { data: SingleMedicalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/medical/detailed/${id!}`, { withCredentials: true });
+                dispatch(medicalTemp(data.medical));
+                setIsMedical(true);
+            } catch (error: any) {
+                toast.error(error.response.data.message);
+                dispatch(medicalNotTemp());
+            }
+        }
+    }
+
+    useEffect(() => {
+        gotMedical();
+    }, []);
 
     const form = useForm({
         defaultValues: {
@@ -112,26 +136,29 @@ const MedicalInput = () => {
             user: user?._id,
         }
         try {
-            if (medical) {
-                const data = await updateMedical(medicalData, medical._id);
-                dispatch(medicalExist(data.medical));
+            if (isMedical) {
+                await updateMedical(medicalData, id!);
                 toast.success("Medical VCards updated!");
             } else {
-                const data = await createMedical(medicalData);
-                dispatch(medicalExist(data.medical));
+                await createMedical(medicalData);
                 toast.success("Medical VCards created!");
             }
-            navigate(-1);
+            if (isPaid) {
+                navigate(-1);
+            } else {
+                navigate("/plans");
+            }
         } catch (error: any) {
-            dispatch(medicalNotExist());
             toast.error(error.response.data.message);
+            if (!isPaid) {
+                navigate("/plans");
+            }
         }
         setMedicalLoading(false);
     }
 
     return (
         <div className="flex flex-col justify-center items-center my-8">
-            <h1 className="text-3xl font-semibold">{medical ? "Update" : "Create"} Medical VCard</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <div className="space-y-8">

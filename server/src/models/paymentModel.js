@@ -26,10 +26,10 @@ const paymentSchema = new mongoose.Schema(
             type: String,
             required: true
         }, 
-        razorpaySignature: {
+        paymentStatus: {
             type: String,
-            required: true
-        }, 
+            default: "pending"
+        },
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",

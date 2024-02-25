@@ -1,37 +1,35 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import Loader from "@/components/rest/loader";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast } from 'react-toastify';
-import { viewCreator } from "@/redux/api/creatorApi";
-import { creatorExist, creatorNotExist } from "@/redux/reducer/creatorreducer";
 import QrCode from "qrcode";
+import { SingleCreatorResponse } from "@/types/api-types";
+import axios from "axios";
 
 const ViewCreator = () => {
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [search] = useSearchParams();
+    const id = search.get("creatorId");
+
     const [qr, setQr] = useState("");
+    const [singleTree, setSingleTree] = useState<any | null>(null);
 
     const { isPaid } = useSelector(
         (state: RootState) => state.userReducer
     );
 
-    const { creator, loading } = useSelector(
-        (state: RootState) => state.creatorReducer
-    );
-
     const handleCreator = async () => {
         try {
-            const data = await viewCreator();
-            dispatch(creatorExist(data.creator));
-            const link = `${window.location.protocol}//${window.location.hostname}/display/creator?creatorId=${data.creator?._id.toString()}`;
+            const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/creator/detailed/${id!}`, { withCredentials: true });
+            setSingleTree(data.creator);
+            console.log(data.creator)
+            const link = `${window.location.protocol}//${window.location.hostname}/display/creator?creatorId=${id!}`;
             const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
             setQr(qre)
         } catch (error: any) {
-            dispatch(creatorNotExist());
             toast.error(error.response.data.message);
         }
     }
@@ -40,47 +38,41 @@ const ViewCreator = () => {
         handleCreator();
     }, []);
 
+    const delCreator = async () => {
+        try {
+            await axios.delete(`${import.meta.env.VITE_BASE_URL}/creator/delete/${id!}`)
+            toast.success("Creator Deleted");
+            navigate(-1);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
+
     return (
-        <div className="flex flex-col gap-4 justify-center items-center mt-8">
-            {loading ? (
-                <Loader />
-            ) : (
-                <>
-                    <h1 className="text-3xl font-semibold">Creator VCard</h1>
-                    {creator ? (
-                        <div className="flex flex-col gap-2 justify-center items-center">
-                            <div className="flex gap-4">
-                                <Button onClick={() => navigate("/dashboard/creator/update")} disabled={!isPaid}>Update Vcard</Button>
-                                <Button disabled={!isPaid}><a href={qr} download={`${creator?._id}.png`}>Downlaod</a></Button>
-                            </div>
-                            {!isPaid && <p>You are not Subscribed</p>}
-                            <div>
-                                {isPaid ? (
-                                    <img src={qr} alt={creator?._id} />
-                                ) : (
-                                    // <p>Subscribe to view QR</p>
-                                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
-                                )}
-                            </div>
-                            <div className="space-y-4">
-                                <p><span className="font-semibold">CreatorId:</span> {creator._id}</p>
-                                <p><span className="font-semibold">Name:</span> {creator.name}</p>
-                                <div>
-                                    <h1 className="text-2xl font-semibold">Social Links</h1>
-                                    {creator.links.map((link: any, index: number) => (
-                                        <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col justify-center items-center">
-                            <Button onClick={() => navigate("/dashboard/creator/input")} disabled={!isPaid}>Create Vcard</Button>
-                            {!isPaid && <p>You are not Subscribed</p>}
-                        </div>
-                    )}
-                </>
-            )}
+        <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
+            <h1 className="text-3xl font-semibold">Creator Details</h1>
+            <div>
+                {isPaid ? (
+                    <img src={qr} alt={singleTree?._id} />
+                ) : (
+                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
+                )}
+            </div>
+            <div className="space-y-4">
+                <p><span className="font-semibold">CreatorId:</span> {singleTree?._id}</p>
+                <p><span className="font-semibold">Name:</span> {singleTree?.name}</p>
+                <div>
+                    <h1 className="text-2xl font-semibold">Social Links</h1>
+                    {(singleTree?.links)?.map((link: any, index: number) => (
+                        <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
+                    ))}
+                </div>
+            </div>
+            <div className="flex gap-6">
+                <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Downlaod</a></Button>
+                <Button variant="outline" disabled={!isPaid} onClick={() => navigate(`/dashboard/creator/input?creatorId=${singleTree?._id}`)}>Edit</Button>
+                <Button onClick={() => delCreator()} disabled={!isPaid} variant="destructive">Delete</Button>
+            </div>
         </div>
     )
 }

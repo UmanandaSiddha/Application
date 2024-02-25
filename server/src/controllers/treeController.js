@@ -18,7 +18,7 @@ export const updateTreeVCard = catchAsyncErrors(async (req, res, next) => {
 
     const trex = await Tree.findById(req.params.id);
     if (!trex) {
-        return next(new ErrorHandler(`Tree does not exist with Id: ${req.params.id}`), 404);
+        return next(new ErrorHandler(`Tree does not exist with Id: ${req.params.id}`, 404));
     }
 
     const tree = await Tree.findByIdAndUpdate(req.params.id, req.body, {
@@ -26,6 +26,7 @@ export const updateTreeVCard = catchAsyncErrors(async (req, res, next) => {
         runValidators: true,
         useFindAndModify: false,
     });
+
     if (!tree) {
         return next(new ErrorHandler(`Update Failed`), 404);
     }
@@ -40,7 +41,7 @@ export const deleteTreeVCard = catchAsyncErrors(async (req, res, next) => {
 
     const tree = await Tree.findById(req.params.id);
     if (!tree) {
-        return next(new ErrorHandler(`Tree does not exist with Id: ${req.params.id}`), 404);
+        return next(new ErrorHandler(`Tree does not exist with Id: ${req.params.id}`, 404));
     }
 
     await Tree.findByIdAndDelete(req.params.id);

@@ -30,15 +30,33 @@ export type PaymentResponse = {
 
 export type PersonalResponse = {
     success: boolean;
+    count: number;
+    personal: Personal[];
+}
+
+export type SinglePersonalResponse = {
+    success: boolean;
     personal: Personal;
 }
 
 export type MedicalResponse = {
     success: boolean;
+    count: number;
+    medical: MedicalType[];
+}
+
+export type SingleMedicalResponse = {
+    success: boolean;
     medical: MedicalType;
 }
 
 export type CreatorResponse = {
+    success: boolean;
+    count: number;
+    creator: Creator[];
+}
+
+export type SingleCreatorResponse = {
     success: boolean;
     creator: Creator;
 }

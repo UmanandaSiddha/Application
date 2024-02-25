@@ -3,6 +3,7 @@ import { PersonalReducerInitialState } from "../../types/reducer-types";
 import { Personal } from "../../types/types";
 
 const initialState: PersonalReducerInitialState = {
+    personals: [],
     personal: null,
     loading: true,
 };
@@ -11,15 +12,23 @@ export const personalReducer = createSlice({
     name: "personalReducer",
     initialState,
     reducers: {
-        personalExist: (state, action: PayloadAction<Personal>) => {
+        personalExist: (state, action: PayloadAction<Personal[]>) => {
+            state.loading = false;
+            state.personals = action.payload;
+        },
+        personalTemp: (state, action: PayloadAction<Personal>) => {
             state.loading = false;
             state.personal = action.payload;
         },
-        personalNotExist: (state) => {
+        personalNotTemp: (state) => {
             state.loading = false;
             state.personal = null;
         },
+        personalNotExist: (state) => {
+            state.loading = false;
+            state.personals = [];
+        },     
     },
 });
 
-export const { personalExist, personalNotExist } = personalReducer.actions;
+export const { personalExist, personalNotExist, personalTemp, personalNotTemp } = personalReducer.actions;

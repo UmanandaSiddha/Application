@@ -19,16 +19,19 @@ export interface PaymentReducerInitialState {
 }
 
 export interface PersonalReducerInitialState {
+    personals: Personal[];
     personal: Personal | null;
     loading: boolean;
 }
 
 export interface MedicalReducerInitialState {
+    medicals: MedicalType[];
     medical: MedicalType | null;
     loadings: boolean;
 }
 
 export interface CreatorReducerInitialState {
+    creators: Creator[];
     creator: Creator | null;
     loading: boolean;
 }
