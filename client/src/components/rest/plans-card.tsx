@@ -12,7 +12,7 @@ import { checkoutPayments } from "@/redux/api/paymentApi";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 
-export function PlansCard({ plan, value, onChange }: any) {
+export function PlansCard({ plan }: any) {
 
     const navigate = useNavigate();
 
