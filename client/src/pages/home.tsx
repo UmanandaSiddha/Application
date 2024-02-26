@@ -38,7 +38,7 @@ const Home = ({ user }: PropsType) => {
                                 Get started
                             </button>
                             <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-                                Testing 2 <span aria-hidden="true">→</span>
+                                Testing 3 <span aria-hidden="true">→</span>
                             </a>
                         </div>
                     </div>
