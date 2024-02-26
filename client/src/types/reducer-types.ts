@@ -1,4 +1,4 @@
-import { User, Tree, Payment, Personal, MedicalType, Creator } from "./types";
+import { User, Tree, Payment, Personal, MedicalType, Creator, Animal } from "./types";
 
 export interface UserReducerInitialState {
     user: User | null;
@@ -36,4 +36,9 @@ export interface CreatorReducerInitialState {
     loading: boolean;
 }
 
+export interface AnimalReducerInitialState {
+    animals: Animal[];
+    animal: Animal | null;
+    loading: boolean;
+}
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast } from 'react-toastify';
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,12 @@ import Same from "./same";
 import QrCode from "qrcode";
 import { SingleMedicalResponse } from "@/types/api-types";
 import axios from "axios";
+import { medicalTemp } from "@/redux/reducer/medicalReducer";
 
 const ViewMedical = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [search] = useSearchParams();
     const id = search.get("medicalId");
     
@@ -26,7 +28,7 @@ const ViewMedical = () => {
         try {
             const { data }: { data: SingleMedicalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/medical/detailed/${id!}`, { withCredentials: true });
             setSingleTree(data.medical);
-            console.log(data.medical);
+            dispatch(medicalTemp(data.medical));
             const link = `${window.location.protocol}//${window.location.hostname}/display/medical?medicalId=${id!}`;
             const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
             setQr(qre)
@@ -41,7 +43,7 @@ const ViewMedical = () => {
 
     const delMedical = async () => {
         try {
-            await axios.delete(`${import.meta.env.VITE_BASE_URL}/medical/delete/${id!}`)
+            await axios.delete(`${import.meta.env.VITE_BASE_URL}/medical/delete/${id!}`, {withCredentials: true})
             toast.success("Medical Deleted");
             navigate(-1);
         } catch (error: any) {

@@ -18,7 +18,7 @@ import { useState } from "react";
 
 export function PlansCard({ plan, value, onChange }: any) {
 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const { isPaid, user } = useSelector(
@@ -45,8 +45,9 @@ export function PlansCard({ plan, value, onChange }: any) {
                 // image: "",
                 order_id: data.order.id,
                 handler: function (response: any) {
-                    alert("success");
+                    // alert("success");
                     console.log(response);
+                    navigate("/dashboard");
                     // onChange(true);
                     // const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/verify`, {
                     //     razorpay_payment_id: response.razorpay_payment_id,

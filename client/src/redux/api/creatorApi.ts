@@ -21,7 +21,7 @@ export const viewCreator = async () => {
 
 export const updateCreator = async (creatorUpdate: any, id: string) => {
     try {
-        const { data }: { data: CreatorResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/creator/update/${id}`, creatorUpdate, { withCredentials: true } );
+        const { data }: { data: CreatorResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/creator/delete/${id}`, creatorUpdate, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;

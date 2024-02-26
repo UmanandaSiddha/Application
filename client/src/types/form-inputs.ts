@@ -46,6 +46,49 @@ export const inputs = [
     }
 ] as const;
 
+export const animalInputs = [
+    {
+        name: "species",
+        label: "Species",
+        text : "Enter Species"
+    },
+    {
+        name: "name",
+        label: "Name",
+        text : "Enter Animal Name"
+    },
+    {
+        name: "age",
+        label: "Age",
+        text : "Enter Animal Age"
+    },
+    {
+        name: "gender",
+        label: "Gender",
+        text : "Enter Animal Gender"
+    },
+    {
+        name: "color",
+        label: "Color / Marking",
+        text : "Enter Color / Marking"
+    },
+    {
+        name: "location",
+        label: "Location",
+        text : "Enter Tree Location"
+    }, 
+    {
+        name: "owner",
+        label: "Owner Name",
+        text : "Enter Owner Name"
+    },
+    {
+        name: "phone",
+        label: "Phone Number",
+        text : "Enter Phone Number"
+    }
+] as const;
+
 export const creatorInput = [
     {
         name: "",

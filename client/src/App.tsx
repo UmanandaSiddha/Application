@@ -14,27 +14,36 @@ const Register = lazy(() => import("./pages/register"));
 const NotFound = lazy(() => import("./pages/not-found"));
 const Dashboard = lazy(() => import("./pages/dash"));
 const Profile = lazy(() => import ("./pages/profile"));
-const Tree = lazy(() => import ("./pages/tree/tree"));
-const Personal = lazy(() => import ("./pages/personal/personal"));
-const Medical = lazy(() => import ("./pages/medical/medical"));
-const Creator = lazy(() => import ("./pages/creator/creator"));
-const CreateTree = lazy(() => import ("./pages/tree/create-tree"));
-const ViewTree = lazy(() => import ("./pages/tree/view-tree"));
-const DisplayTree = lazy(() => import ("./pages/tree/display-tree"));
 const Plans = lazy(() => import ("./pages/plans"));
 const Verify = lazy(() => import ("./pages/verify"));
 const ResetPassword = lazy(() => import ("./pages/reset-password"));
 
+const Tree = lazy(() => import ("./pages/tree/tree"));
+const ViewTree = lazy(() => import ("./pages/tree/view-tree"));
+const DisplayTree = lazy(() => import ("./pages/tree/display-tree"));
+const CreateTree = lazy(() => import ("./pages/tree/create-tree"));
+
+const Personal = lazy(() => import ("./pages/personal/personal"));
 const InputVCard = lazy(() => import ("./pages/personal/input-vcard"));
-const MedicalInput = lazy(() => import ("./pages/medical/medical-input"));
-const ViewMedical = lazy(() => import ("./pages/medical/view-medical"));
+const DisplayPersonal = lazy(() => import ("./pages/personal/display-personal"));
 const ViewPersonal = lazy(() => import ("./pages/personal/view-personal"));
+
+const Medical = lazy(() => import ("./pages/medical/medical"));
+const MedicalInput = lazy(() => import ("./pages/medical/medical-input"));
+const DisplayMedical = lazy(() => import ("./pages/medical/display-medical"));
+const ViewMedical = lazy(() => import ("./pages/medical/view-medical"));
+
+const Creator = lazy(() => import ("./pages/creator/creator"));
 const CreatorInput = lazy(() => import ("./pages/creator/creator-input"));
 const ViewCreator = lazy(() => import ("./pages/creator/view-creator"));
 const UpdateCreator = lazy(() => import ("./pages/creator/update-creator"));
 const DisplayCreator = lazy(() => import("./pages/creator/display-creator"));
-const DisplayPersonal = lazy(() => import ("./pages/personal/display-personal"));
-const DisplayMedical = lazy(() => import ("./pages/medical/display-medical"));
+
+const Animal = lazy(() => import ("./pages/animal/animal"));
+const ViewAnimal = lazy(() => import ("./pages/animal/view-animal"));
+const CreateAnimal = lazy(() => import ("./pages/animal/create-animal"));
+const DisplayAnmial = lazy(() => import ("./pages/animal/display-animal"));
+
 // const Checkout = lazy(() => import ("./pages/checkout"));
 
 import { ToastContainer } from 'react-toastify';
@@ -56,7 +65,6 @@ const App = () => {
         try {
             const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true } );
             dispatch(userExist(data.user));
-            console.log(data)
         } catch (error: any) {
             dispatch(userNotExist());
         }
@@ -65,11 +73,7 @@ const App = () => {
     useEffect(() => {
         gotUser();
     }, [location.pathname]);
-
-    // useEffect(() => {
-    //     gotUser();
-    // }, []);
-
+    
     return (
         loading ? (
             <Loader />
@@ -95,6 +99,7 @@ const App = () => {
                     <Route path="/display/creator" element={<DisplayCreator />} />
                     <Route path="/display/personal" element={<DisplayPersonal />} />
                     <Route path="/display/medical" element={<DisplayMedical />} />
+                    <Route path="/display/animal" element={<DisplayAnmial />} />
                     {/* Not logged In Route */}
                     <Route
                         path="/login"
@@ -127,35 +132,32 @@ const App = () => {
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/profile" element={<Profile />} />
-                        <Route path="/dashboard/tree" element={<Tree />} />
-                        <Route path="/dashboard/personal" element={<Personal />} />
-                        <Route path="/dashboard/medical" element={<Medical />} />
-                        <Route path="/dashboard/creator" element={<Creator />} />
-                        <Route path="/dashboard/tree/view" element={<ViewTree />} />
                         <Route path="/plans" element={<Plans />} />
                         <Route path="/verify" element={<Verify />} />
+
+                        <Route path="/dashboard/tree" element={<Tree />} />
+                        <Route path="/dashboard/tree/view" element={<ViewTree />} />
+                        <Route path="/dashboard/tree/create" element={<CreateTree />} />
+
+                        <Route path="/dashboard/personal" element={<Personal />} />
                         <Route path="/dashboard/personal/view" element={<ViewPersonal />} />
+                        <Route path="/dashboard/personal/input" element={<InputVCard />} />
+
+                        <Route path="/dashboard/medical" element={<Medical />} />
                         <Route path="/dashboard/medical/view" element={<ViewMedical />} />
+                        <Route path="/dashboard/medical/input" element={<MedicalInput />} />
+
+                        <Route path="/dashboard/creator" element={<Creator />} />
                         <Route path="/dashboard/creator/view" element={<ViewCreator />} />
+                        <Route path="/dashboard/creator/update" element={<UpdateCreator />} />
+                        <Route path="/dashboard/creator/input" element={<CreatorInput />} />
+
+                        <Route path="/dashboard/animal" element={<Animal />} />
+                        <Route path="/dashboard/animal/view" element={<ViewAnimal />} />
+                        <Route path="/dashboard/animal/create" element={<CreateAnimal />} />
+
                         {/* <Route path="/pay" element={<Checkout />} /> */}
-
-                        <Route path="/dashboard/creator/update" element={<UpdateCreator />} />
-                        <Route path="/dashboard/tree/create" element={<CreateTree />} />
-                        <Route path="/dashboard/personal/input" element={<InputVCard />} />
-                        <Route path="/dashboard/medical/input" element={<MedicalInput />} />
-                        <Route path="/dashboard/creator/input" element={<CreatorInput />} />
                     </Route>
-
-                    {/* Logged In User and Paid Routes */}
-                    {/* <Route
-                        element={<ProtectedRoute isAuthenticated={(user && isPaid)  ? true : false} />}
-                    >
-                        <Route path="/dashboard/creator/update" element={<UpdateCreator />} />
-                        <Route path="/dashboard/tree/create" element={<CreateTree />} />
-                        <Route path="/dashboard/personal/input" element={<InputVCard />} />
-                        <Route path="/dashboard/medical/input" element={<MedicalInput />} />
-                        <Route path="/dashboard/creator/input" element={<CreatorInput />} />
-                    </Route> */}
 
                     <Route path="*" element={<NotFound />} />
                 </Routes>

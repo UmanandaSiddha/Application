@@ -4,7 +4,8 @@ import {
     Payment,
     Personal,
     MedicalType,
-    Creator
+    Creator,
+    Animal
 } from "./types";
 
 export type UserResponse = {
@@ -26,6 +27,17 @@ export type SingleTreeResponse = {
 export type PaymentResponse = {
     success: boolean;
     payments: Payment[];
+}
+
+export type AnimalResponse = {
+    success: boolean;
+    count: number;
+    animal: Animal[];
+}
+
+export type SingleAnimalResponse = {
+    success: boolean;
+    animal: Animal;
 }
 
 export type PersonalResponse = {

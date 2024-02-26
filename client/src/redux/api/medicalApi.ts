@@ -21,7 +21,7 @@ export const viewMedical = async () => {
 
 export const updateMedical = async (personalUpdate: any, id: string) => {
     try {
-        const { data }: { data: MedicalResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/medical/update/${id}`, personalUpdate, { withCredentials: true } );
+        const { data }: { data: MedicalResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/medical/delete/${id}`, personalUpdate, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;

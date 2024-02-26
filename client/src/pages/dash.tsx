@@ -43,6 +43,7 @@ const Dashboard = () => {
                         <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/personal")}>Personal VCard</Button>
                         <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/medical")}>Medical VCard</Button>
                         <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/creator")}>Creator VCard</Button>
+                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/animal")}>Animal VCard</Button>
                     </div>
                 </>
             )}

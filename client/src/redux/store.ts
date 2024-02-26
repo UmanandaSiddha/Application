@@ -5,6 +5,7 @@ import { paymentReducer } from './reducer/paymentReducer';
 import { personalReducer } from './reducer/personalReducer';
 import { medicalReducer } from './reducer/medicalReducer';
 import { creatorReducer } from './reducer/creatorreducer';
+import { animalReducer } from './reducer/animalReducer';
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
         [personalReducer.name]: personalReducer.reducer,
         [medicalReducer.name]: medicalReducer.reducer,
         [creatorReducer.name]: creatorReducer.reducer,
+        [animalReducer.name]: animalReducer.reducer,
     },
 });
 

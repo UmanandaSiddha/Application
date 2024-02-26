@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import QrCode from "qrcode";
 
@@ -9,10 +9,12 @@ import { toast } from "react-toastify";
 import { SinglePersonalResponse } from "@/types/api-types";
 import axios from "axios";
 import Same from "./same";
+import { personalTemp } from "@/redux/reducer/personalReducer";
 
 const ViewPersonal = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [search] = useSearchParams();
     const id = search.get("personalId");
     
@@ -27,6 +29,7 @@ const ViewPersonal = () => {
         try {
             const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/personal/detailed/${id!}`, { withCredentials: true });
             setSingleTree(data.personal);
+            dispatch(personalTemp(data.personal));
             const link = `${window.location.protocol}//${window.location.hostname}/display/personal?personalId=${id!}`;
             const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
             setQr(qre)
@@ -41,7 +44,7 @@ const ViewPersonal = () => {
 
     const delPersonal = async () => {
         try {
-            await axios.delete(`${import.meta.env.VITE_BASE_URL}/personal/delete/${id!}`)
+            await axios.delete(`${import.meta.env.VITE_BASE_URL}/personal/delete/${id!}`, {withCredentials: true})
             toast.success("Personal Deleted");
             navigate(-1);
         } catch (error: any) {

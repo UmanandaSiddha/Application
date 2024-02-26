@@ -80,6 +80,8 @@ const CreatorInput = () => {
             text: "",
         }]);
         setOpen(false);
+        setOtherLink("");
+        setOtherName("");
     }
 
     const handleChange = (event: any, index: number) => {

@@ -33,6 +33,19 @@ export type Payment = {
     user: string;
 };
 
+export type Animal = {
+    _id: string;
+    species: string;
+    name: string;
+    age: number;
+    gender: string;
+    color: string;
+    location: string;
+    owner: string;
+    phone:  number;
+    user: string;
+}
+
 export type Personal = {
     _id: string;
     name: string;

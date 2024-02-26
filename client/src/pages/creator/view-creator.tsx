@@ -1,16 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast } from 'react-toastify';
 import QrCode from "qrcode";
 import { SingleCreatorResponse } from "@/types/api-types";
 import axios from "axios";
+import { creatorTemp } from "@/redux/reducer/creatorreducer";
 
 const ViewCreator = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [search] = useSearchParams();
     const id = search.get("creatorId");
 
@@ -25,7 +27,7 @@ const ViewCreator = () => {
         try {
             const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/creator/detailed/${id!}`, { withCredentials: true });
             setSingleTree(data.creator);
-            console.log(data.creator)
+            dispatch(creatorTemp(data.creator))
             const link = `${window.location.protocol}//${window.location.hostname}/display/creator?creatorId=${id!}`;
             const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
             setQr(qre)
@@ -40,7 +42,7 @@ const ViewCreator = () => {
 
     const delCreator = async () => {
         try {
-            await axios.delete(`${import.meta.env.VITE_BASE_URL}/creator/delete/${id!}`)
+            await axios.delete(`${import.meta.env.VITE_BASE_URL}/creator/delete/${id!}`, {withCredentials: true})
             toast.success("Creator Deleted");
             navigate(-1);
         } catch (error: any) {
