@@ -7,12 +7,12 @@ import Loader from '@/components/rest/loader';
 const plans = [
     {
         name: "Diamond Plan",
-        validity: 10,
+        validity: 30,
         price: 200
     },
     {
         name: "Premium Plan",
-        validity: 20,
+        validity: 60,
         price: 400
     },
 ]

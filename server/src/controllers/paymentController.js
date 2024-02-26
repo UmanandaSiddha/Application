@@ -24,7 +24,7 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id);
 
     const startDate = Date.now();
-    const endDate = Date.now() + Number(req.body.validity) * 60 * 1000;
+    const endDate = Date.now() + Number(req.body.validity) * 24 * 60 * 60 * 1000;
 
     user.currentPlan = {
         planStatus: "processing",

@@ -6,19 +6,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { useDispatch, useSelector } from "react-redux";
-import { togglePaid, userExist } from "@/redux/reducer/userReducer";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { checkoutPayments } from "@/redux/api/paymentApi";
 import { toast } from 'react-toastify';
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { UserResponse } from "@/types/api-types";
-import { useState } from "react";
 
 export function PlansCard({ plan, value, onChange }: any) {
 
-    // const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const { isPaid, user } = useSelector(
@@ -44,24 +39,9 @@ export function PlansCard({ plan, value, onChange }: any) {
                 description: "just fine",
                 // image: "",
                 order_id: data.order.id,
-                handler: function (response: any) {
-                    // alert("success");
-                    console.log(response);
+                handler: async function (response: any) {
                     navigate("/dashboard");
-                    // onChange(true);
-                    // const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/verify`, {
-                    //     razorpay_payment_id: response.razorpay_payment_id,
-                    //     razorpay_order_id: response.razorpay_order_id,
-                    //     razorpay_signature: response.razorpay_signature,
-                    //     amount: plan.price,
-                    //     planName: plan.name,
-                    //     validity: plan.validity
-                    // }, { withCredentials: true });
-                    // // console.log(data);
-                    // dispatch(togglePaid(data.user));
-                    // toast.success("Payment Successful");
-                    // onChange(false);
-                    // navigate("/");
+                    toast.success(`Payment Successful with Payment Id ${response.razorpay_payment_id}`);
                 },
                 prefill: {
                     email: user?.email,
@@ -112,7 +92,7 @@ export function PlansCard({ plan, value, onChange }: any) {
             </CardHeader>
             <CardContent className="grid gap-4">
                 <div className="space-y-4">
-                    <p>Plan Validity: {isPaid ? plan.planValidity : plan.validity} minutes</p>
+                    <p>Plan Validity: {isPaid ? plan.planValidity : plan.validity} days</p>
                     <p>Plan Price: {isPaid ? plan.planPrice : plan.price}</p>
                 </div>
 
