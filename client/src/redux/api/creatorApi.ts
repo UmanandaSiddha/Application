@@ -1,9 +1,9 @@
 import axios from "axios";
-import { CreatorResponse } from "@/types/api-types";
+import { CreatorResponse, SingleCreatorResponse } from "@/types/api-types";
 
 export const createCreator = async (creatorData: any) => {
     try {
-        const { data }: { data: CreatorResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/creator/new`, creatorData, { withCredentials: true } );
+        const { data }: { data: SingleCreatorResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/creator/new`, creatorData, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;
@@ -21,7 +21,7 @@ export const viewCreator = async () => {
 
 export const updateCreator = async (creatorUpdate: any, id: string) => {
     try {
-        const { data }: { data: CreatorResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/creator/delete/${id}`, creatorUpdate, { withCredentials: true } );
+        const { data }: { data: SingleCreatorResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/creator/delete/${id}`, creatorUpdate, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;

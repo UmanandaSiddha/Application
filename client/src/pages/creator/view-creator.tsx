@@ -72,7 +72,7 @@ const ViewCreator = () => {
             </div>
             <div className="flex gap-6">
                 <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Downlaod</a></Button>
-                <Button variant="outline" disabled={!isPaid} onClick={() => navigate(`/dashboard/creator/update`)}>Edit</Button>
+                <Button variant="outline" disabled={!isPaid} onClick={() => navigate(`/dashboard/creator/input?creatorId=${singleTree?._id}`)}>Edit</Button>
                 <Button onClick={() => delCreator()} disabled={!isPaid} variant="destructive">Delete</Button>
             </div>
         </div>

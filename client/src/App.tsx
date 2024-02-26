@@ -36,7 +36,6 @@ const ViewMedical = lazy(() => import ("./pages/medical/view-medical"));
 const Creator = lazy(() => import ("./pages/creator/creator"));
 const CreatorInput = lazy(() => import ("./pages/creator/creator-input"));
 const ViewCreator = lazy(() => import ("./pages/creator/view-creator"));
-const UpdateCreator = lazy(() => import ("./pages/creator/update-creator"));
 const DisplayCreator = lazy(() => import("./pages/creator/display-creator"));
 
 const Animal = lazy(() => import ("./pages/animal/animal"));
@@ -149,7 +148,6 @@ const App = () => {
 
                         <Route path="/dashboard/creator" element={<Creator />} />
                         <Route path="/dashboard/creator/view" element={<ViewCreator />} />
-                        <Route path="/dashboard/creator/update" element={<UpdateCreator />} />
                         <Route path="/dashboard/creator/input" element={<CreatorInput />} />
 
                         <Route path="/dashboard/animal" element={<Animal />} />

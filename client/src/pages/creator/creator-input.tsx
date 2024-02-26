@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { creatorInput } from "@/types/form-inputs";
 import { createCreator, updateCreator } from "@/redux/api/creatorApi";
-import { creatorExist, creatorNotTemp, creatorTemp } from "@/redux/reducer/creatorreducer";
+import { creatorNotTemp, creatorTemp } from "@/redux/reducer/creatorreducer";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { SingleCreatorResponse } from "@/types/api-types";
 import axios from "axios";
@@ -61,7 +61,7 @@ const CreatorInput = () => {
         gotCreator();
     }, []);
 
-    const [arrData, setArrData] = useState<any | null>(creator ? creator?.links : creatorInput);
+    const [arrData, setArrData] = useState<any | null>(isCreator ? creator?.links : creatorInput);
     const [open, setOpen] = useState(false);
     const [otherName, setOtherName] = useState("");
     const [otherLink, setOtherLink] = useState("");
@@ -85,14 +85,19 @@ const CreatorInput = () => {
     }
 
     const handleChange = (event: any, index: number) => {
-        let data = [...arrData];
-        data[index][event.target.name] = event.target.value;
-        setArrData(data)
+        setArrData((prevData: any) => [
+            ...prevData.slice(0, index),
+            {
+                ...prevData[index],
+                [event.target.name]: event.target.value,
+            },
+            ...prevData.slice(index + 1),
+        ]);
     }
 
     const form = useForm({
         defaultValues: {
-            name: creator?.name || "",
+            name: isCreator ? creator?.name : "",
         }
     })
 
@@ -114,12 +119,12 @@ const CreatorInput = () => {
         try {
             if (isCreator) {
                 const data = await updateCreator(creatorData, id!);
-                dispatch(creatorExist(data.creator));
-                toast.success("Crrator VCard Updated");
+                dispatch(creatorTemp(data.creator));
+                toast.success("Creator VCard Updated");
             } else {
                 const data = await createCreator(creatorData);
-                dispatch(creatorExist(data.creator));
-                toast.success("Crrator VCard Created");
+                dispatch(creatorTemp(data.creator));
+                toast.success("Creator VCard Created");
             }
             if (isPaid) {
                 navigate(-1);
