@@ -23,7 +23,7 @@ export const isUserVerified = catchAsyncErrors( async (req, res, next) => {
 });
 
 export const isUserPaid = catchAsyncErrors( async (req, res, next) => {
-    if ( req.user?.currentPlan?.endDate < Date.now() ) {
+    if ( req.user?.currentPlan?.endDate < Date.now() && req.user?.currentPlan.planStatus === "succeeded" ) {
         return next(new ErrorHandler("Subscription Expired Recharge", 400));
     }
     next();
