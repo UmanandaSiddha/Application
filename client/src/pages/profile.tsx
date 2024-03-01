@@ -1,12 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import Loader from "@/components/rest/loader";
-import { useEffect, useState } from "react";
-import {
-    Avatar,
-    AvatarFallback,
-    // AvatarImage,
-} from "@/components/ui/avatar";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -37,16 +32,7 @@ import { paymentExist } from "@/redux/reducer/paymentReducer";
 
 import { toast } from 'react-toastify';
 
-const formSchema = z.object({
-    name: z.string()
-        .min(8, {
-            message: "Pssword must be at least 8 characters.",
-        }),
-    email: z.string()
-        .email({
-            message: "Please enter a valid email address."
-        }),
-});
+// import BackButton from '../components/BackButton'
 
 const Profile = () => {
 
@@ -80,24 +66,31 @@ const Profile = () => {
         gotPayment();
     }, []);
 
+    const formSchema = useMemo(() => z.object({
+        name: z.string(),
+        email: z.string()
+            .email({
+                message: "Please enter a valid email address."
+            }),
+    }), []);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             name: user?.name,
             email: user?.email,
-        },
+        }), [user]),
     });
 
     const sepForm = useForm({
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             oldPassword: "",
             newPassword: "",
             confirmPassword: "",
-        },
+        }), []),
     })
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
         const updateData = {
             name: values.name,
             email: values.email,
@@ -111,9 +104,9 @@ const Profile = () => {
             setOpen(false);
             toast.error(error.response.data.message);
         }
-    }
+    }, [formSchema, dispatch]);
 
-    const handleRequestVerify = async () => {
+    const handleRequestVerify = useCallback(async () => {
         setVerifyLoading(true);
         try {
             await requestVerifyUser();
@@ -122,9 +115,9 @@ const Profile = () => {
             toast.error(error.response.data.message);
         }
         setVerifyLoading(false);
-    }
+    }, []);
 
-    const handleDeleteAccount = async () => {
+    const handleDeleteAccount = useCallback(async () => {
         setDeleteLoading(true);
         try {
             await deleteUser();
@@ -134,9 +127,9 @@ const Profile = () => {
             toast.error(error.response.data.message);
         }
         setDeleteLoading(false);
-    }
+    }, [dispatch]);
 
-    const handleResetPassword = async (resetValues: any) => {
+    const handleResetPassword = useCallback(async (resetValues: any) => {
         const resetDate = {
             oldPassword: resetValues.oldPassword,
             newPassword: resetValues.newPassword,
@@ -151,22 +144,20 @@ const Profile = () => {
             setOpenSep(false);
             toast.error(error.response.data.message);
         }
-    } 
+    }, [dispatch]);
 
     return (
         loading ? (
             <Loader />
         ) : (
             <div className='flex flex-row justify-center gap-8 items-center mt-8'>
+                {/* <BackButton/> */}
                 {
                     user ? (
                         <div className="space-y-4">
                             <div className="flex flex-col items-center border border-primary p-4 gap-5">
-                                <div>
-                                    <Avatar>
-                                        {/* <AvatarImage src={user.avatar?.url} alt={user.avatar?.public_id} /> */}
-                                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                    </Avatar>
+                                <div className="bg-slate-300 w-14 h-14 flex items-center justify-center rounded-full">
+                                    <p className="text-xl font-semibold">{user.name.charAt(0)}</p>
                                 </div>
                                 <p>UserId: {user._id}</p>
                                 <p>Name : {user.name}</p>
@@ -174,7 +165,7 @@ const Profile = () => {
                                 {!user?.isVerified && (
                                     <div className="flex flex-col justify-center items-center space-y-4">
                                         <p className="text-red-600 font-semibold">You are not verified</p>
-                                        <Button onClick={handleRequestVerify} disabled={verifyLoading}>{verifyLoading ? "Sending Email..." : "Verify Email"}</Button>
+                                        <button onClick={handleRequestVerify} disabled={verifyLoading}>{verifyLoading ? "Sending Email..." : "Verify Email"}</button>
                                     </div>
                                 )}
                                 <Dialog open={open} onOpenChange={setOpen}>
@@ -299,4 +290,4 @@ const Profile = () => {
     )
 }
 
-export default Profile
+export default Profile;

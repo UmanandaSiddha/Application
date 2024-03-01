@@ -16,9 +16,9 @@ import { registerUser } from "@/redux/api/userApi";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 
-const formSchema = z.object({
+const formSchema = useMemo(() => z.object({
     username: z.string()
         .min(2, {
             message: "Username must be at least 2 characters.",
@@ -34,7 +34,7 @@ const formSchema = z.object({
         .min(8, {
             message: "Pssword must be at least 8 characters.",
         }),
-})
+}), []);
 
 const Register = () => {
 
@@ -45,14 +45,14 @@ const Register = () => {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             username: "",
             email: "",
             password: "",
-        },
+        }), []),
     });
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
         setRegisterLoading(true);
         const registerData = {
             name: values.username,
@@ -70,7 +70,7 @@ const Register = () => {
             toast.error(error.response.data.message);
         }
         setRegisterLoading(false);
-    }
+    }, [formSchema, dispatch, navigate]);
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen">
