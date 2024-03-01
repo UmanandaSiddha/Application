@@ -5,7 +5,9 @@ import { RootState } from "../redux/store";
 import Loader from "@/components/rest/loader";
 import { requestVerifyUser } from "@/redux/api/userApi";
 
+
 import { toast } from 'react-toastify';
+import { useCallback } from "react";
 
 const Dashboard = () => {
 
@@ -15,7 +17,7 @@ const Dashboard = () => {
         (state: RootState) => state.userReducer
     );
 
-    const handleRequestVerify = async () => {
+    const handleRequestVerify = useCallback(async () => {
         try {
             await requestVerifyUser();
             toast.success("Email Sent!")
@@ -23,7 +25,7 @@ const Dashboard = () => {
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
-    }
+    }, [navigate]);
 
     return (
         <div className='flex flex-col justify-center gap-8 items-center mt-8'>
@@ -39,11 +41,11 @@ const Dashboard = () => {
                         </div>
                     )}
                     <div className="flex flex-wrap justify-center">
-                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/tree")}>Tree VCard</Button>
-                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/personal")}>Personal VCard</Button>
-                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/medical")}>Medical VCard</Button>
-                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/creator")}>Creator VCard</Button>
-                        <Button variant="link" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/animal")}>Animal VCard</Button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/tree")}>Tree VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/personal")}>Personal VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/medical")}>Medical VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/creator")}>Creator VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/animal")}>Animal VCard</button>
                     </div>
                 </>
             )}

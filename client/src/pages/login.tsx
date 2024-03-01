@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword, loginUser } from "@/redux/api/userApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
 import {
     Dialog,
@@ -23,16 +23,24 @@ import {
     DialogFooter,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { toast } from 'react-toastify';
+import { RootState } from "@/redux/store";
+
 
 const Login = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { loading } = useSelector(
+        (state: RootState) => state.userReducer
+    );
 
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
-    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
 
-    const formSchema = z.object({
+    const formSchema = useMemo(() => z.object({
         email: z.string()
             .email({
                 message: "Please enter a valid email address."
@@ -41,35 +49,31 @@ const Login = () => {
             .min(8, {
                 message: "Pssword must be at least 8 characters.",
             }),
-    });
+    }), []);
 
-    const forgotFormSchema = z.object({
+    const forgotFormSchema = useMemo(() => z.object({
         email: z.string()
             .email({
                 message: "Please enter a valid email address."
             }),
-    });
-
-    const dispatch = useDispatch();
-
-    const [open, setOpen] = useState(false);
+    }), []);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             email: "",
             password: "",
-        },
+        }), []),
     });
 
     const forgotForm = useForm<z.infer<typeof forgotFormSchema>>({
         resolver: zodResolver(forgotFormSchema),
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             email: "",
-        },
+        }), []),
     });
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
         setLoginLoading(true)
         const loginData = {
             email: values.email,
@@ -85,9 +89,9 @@ const Login = () => {
             toast.error(error.response.data.message);
         }
         setLoginLoading(false)
-    }
+    }, [navigate, dispatch, formSchema]);
 
-    const onForgot = async (values: z.infer<typeof forgotFormSchema>) => {
+    const onForgot = useCallback(async (values: z.infer<typeof forgotFormSchema>) => {
         try {
             const data = await forgotPassword({ email: values.email});
             setOpen(false)
@@ -96,7 +100,14 @@ const Login = () => {
             setOpen(false);
             toast.error(error.response.data.message);
         }
-    }
+    }, [forgotFormSchema]);
+
+    useEffect(() => {
+        if (!loading) {
+            form.reset();
+            forgotForm.reset();
+        }
+    }, [loading, form, forgotForm]);
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen">
@@ -165,5 +176,4 @@ const Login = () => {
         </div>
     )
 }
-
 export default Login;

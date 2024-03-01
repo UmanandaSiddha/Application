@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useCallback, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 const stripePromise = loadStripe('pk_test_51J8sXESGhBJ7KgqpF4kn84ivFdh2ncDMKBxtLWqssyo2cz9vdx8ivzozmM3Tqa1KyUmnASya2jyoGCpZps29fHyC00G7ZNY4wT');
@@ -14,30 +14,36 @@ const CheckoutForm = () => {
 
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    //useCallback hook to memoize the handleSubmit function so that it doesn't get recreated on every render.
+
+    const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!stripe || !elements) return;
 
         setIsProcessing(true);
 
-        const { paymentIntent, error } = await stripe.confirmPayment({ 
-            elements,
-            confirmParams: { return_url: window.location.origin },
-            redirect: "if_required"
-        });
+        try {
+            const { paymentIntent, error } = await stripe.confirmPayment({
+                elements,
+                confirmParams: { return_url: window.location.origin },
+                redirect: "if_required"
+            });
 
-        if (error) {
-            setIsProcessing(false)
-            return console.log(error);
-        }
+            if (error) {
+                throw new Error(error.message);
+            }
 
-        if (paymentIntent.status === "succeeded") {
-            console.log("placing order")
-            navigate("/dashboard")
+            if (paymentIntent.status === "succeeded") {
+                console.log("placing order")
+                navigate("/dashboard")
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsProcessing(false);
         }
-        setIsProcessing(false);
-    }
+    }, [stripe, elements, navigate]);
 
     return (
         <div className=''>
