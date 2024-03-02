@@ -87,12 +87,22 @@ const InputVCard = () => {
             text: "",
         }]);
         setOpen(false);
+        setOtherLink("");
+        setOtherName("");
     }
 
     const handleChange = (event: any, index: number) => {
-        let data = [...arrData];
-        data[index][event.target.name] = event.target.value;
-        setArrData(data)
+        // let data = [...arrData];
+        // data[index][event.target.name] = event.target.value;
+        // setArrData(data);
+        setArrData((prevData: any) => [
+            ...prevData.slice(0, index),
+            {
+                ...prevData[index],
+                [event.target.name]: event.target.value,
+            },
+            ...prevData.slice(index + 1),
+        ]);
     }
 
     const form = useForm({
