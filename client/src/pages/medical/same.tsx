@@ -1,120 +1,179 @@
-const Same = ({medical}: any) => {
-    return (
-        <div>
-            <p>
-                <span className="font-semibold">Name:</span>{" "}
-                {medical?.personalInfo?.name}
-            </p>
-            <p>
-                <span className="font-semibold">Birth:</span>{" "}
-                {medical?.personalInfo.birth}
-            </p>
-            <p>
-                <span className="font-semibold">Gender:</span>{" "}
-                {medical?.personalInfo.gender}
-            </p>
-            <p>
-                <span className="font-semibold">Address:</span>
-            </p>
-            <p>
-                <span className="font-semibold">Street Address:</span>{" "}
-                {medical?.personalInfo.address.street}
-            </p>
-            <p>
-                <span className="font-semibold">City:</span>{" "}
-                {medical?.personalInfo.address.city}
-            </p>
-            <p>
-                <span className="font-semibold">State:</span>{" "}
-                {medical?.personalInfo.address.state}
-            </p>
-            <p>
-                <span className="font-semibold">Postal Code:</span>{" "}
-                {medical?.personalInfo.address.postalCode}
-            </p>
-            <p>
-                <span className="font-semibold">Phone Number:</span>{" "}
-                {medical?.personalInfo.phone}
-            </p>
-            <p>
-                <span className="font-semibold">Email:</span>{" "}
-                {medical?.personalInfo.email}
-            </p>
-            <p>
-                <span className="font-semibold">Name:</span>{" "}
-                {medical?.personalInfo.emergency.name}
-            </p>
-            <p>
-                <span className="font-semibold">Relationship:</span>{" "}
-                {medical?.personalInfo.emergency.relation}
-            </p>
-            <p>
-                <span className="font-semibold">Phone Number:</span>{" "}
-                {medical?.personalInfo.emergency.phone}
-            </p>
-            <p>
-                <span className="font-semibold">Health History:</span>
-            </p>
-            <p>
-                <span className="font-semibold">Known Allergies:</span>{" "}
-                {medical?.healthHistory.allergy}
-            </p>
-            <p>
-                <span className="font-semibold">Chronic Medical Conditions :</span>{" "}
-                {medical?.healthHistory.chronic}
-            </p>
-            <p>
-                <span className="font-semibold">Current Medication:</span>{" "}
-                {medical?.currentMedication}
-            </p>
-            <p>
-                <span className="font-semibold">Previous Surgeries:</span>{" "}
-                {medical?.previousSurgeries}
-            </p>
-            <p>
-                <span className="font-semibold">Health Habits:</span>
-            </p>
-            <p>
-                <span className="font-semibold">Smoker:</span>{" "}
-                {medical?.healthHabits.smoker}
-            </p>
-            <p>
-                <span className="font-semibold">Alcohol Consumption:</span>{" "}
-                {medical?.healthHabits.alcohol}
-            </p>
-            <p>
-                <span className="font-semibold">Exercise:</span>{" "}
-                {medical?.healthHabits.exercise}
-            </p>
-            <p>
-                <span className="font-semibold">Exercise:</span>{" "}
-                {medical?.healthHabits.diet}
-            </p>
-            <p>
-                <span className="font-semibold">Exercise:</span>{" "}
-                {medical?.healthHabits.mentalCondition}
-            </p>
-            <p>
-                <span className="font-semibold">Exercise:</span>{" "}
-                {medical?.healthHabits.vaccinationHistory}
-            </p>
-            <p>
-                <span className="font-semibold">Insurance Provider:</span>
-            </p>
-            <p>
-                <span className="font-semibold">Insurance Provider:</span>{" "}
-                {medical?.insuranceInfo.provider}
-            </p>
-            <p>
-                <span className="font-semibold">Insurance Provider:</span>{" "}
-                {medical?.insuranceInfo.policyNumber}
-            </p>
-            <p>
-                <span className="font-semibold">Insurance Provider:</span>{" "}
-                {medical?.insuranceInfo.grpNumber}
-            </p>
+const Same = ({ medical }: any) => {
+  return (
+    <div className="font-Kanit w-[280px]">
+        <div className="flex justify-center items-center py-2">
+        <span className="text-xl underline font-bold">Personal Information:</span>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Name:</span>{" "}
         </div>
-    )
-}
+        <div className="basis-1/2">{medical?.personalInfo.name}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Birth:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.birth}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Gender:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.gender}</div>
+      </div>
+      <div className="flex justify-center items-center py-2">
+        <span className="text-xl underline font-bold">Address:</span>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Street Address:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.address.street}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">City:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.address.city}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">State:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.address.state}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Postal Code:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.address.postalCode}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Phone Number:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.phone}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Email:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.email}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">City:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.address.city}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Name:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.address.city}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Relationship:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.address.relation}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Phone Number:</span>
+        </div>
+        <div className="basis-1/2">{medical?.personalInfo.address.phone}</div>
+      </div>
+      <div className="flex justify-center items-center py-2">
+        <span className="text-xl underline font-bold">Health History:</span>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Known Allergies:</span>
+        </div>
+        <div className="basis-1/2">{medical?.healthHistory.allergy}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Chronic Medical Conditions:</span>
+        </div>
+        <div className="basis-1/2">{medical?.healthHistory.chronic}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Current Medication:</span>
+        </div>
+        <div className="basis-1/2">{medical?.currentMedication}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Previous Surgeries:</span>
+        </div>
+        <div className="basis-1/2">{medical?.previousSurgeries}</div>
+      </div>
+      <div className="flex justify-center items-center py-2">
+        <span className="text-xl underline font-bold">Health Habits:</span>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Smoker:</span>
+        </div>
+        <div className="basis-1/2">{medical?.healthHabits.smoker}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Alcohol Consumption:</span>
+        </div>
+        <div className="basis-1/2">{medical?.healthHabits.alcohol}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Exercise Routine:</span>
+        </div>
+        <div className="basis-1/2">{medical?.healthHabits.exercise}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Diet:</span>
+        </div>
+        <div className="basis-1/2">{medical?.healthHabits.diet}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Mental Condition:</span>
+        </div>
+        <div className="basis-1/2">{medical?.healthHabits.mentalCondition}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Vaccination History:</span>
+        </div>
+        <div className="basis-1/2">{medical?.healthHabits.vaccinationHistory}</div>
+      </div>
+      <div className="flex justify-center items-center py-2">
+        <span className="text-xl underline font-bold">Insurance Information:</span>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Insurance Provider:</span>
+        </div>
+        <div className="basis-1/2">{medical?.insuranceInfo.provider}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Policy Number:</span>
+        </div>
+        <div className="basis-1/2">{medical?.insuranceInfo.policyNumber}</div>
+      </div>
+      <div className="flex">
+        <div className="basis-1/2">
+          <span className="font-semibold">Group Number:</span>
+        </div>
+        <div className="basis-1/2">{medical?.insuranceInfo.grpNumber}</div>
+      </div>
+    </div>
+  );
+};
 
-export default Same
+export default Same;

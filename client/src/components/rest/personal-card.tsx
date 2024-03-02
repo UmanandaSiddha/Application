@@ -39,7 +39,7 @@ const PersonalCard = ({ personal, isPaid }: PropsType) => {
     return (
         <Card onClick={() => navigate(`/dashboard/personal/view?personalId=${personal?._id}`)} className="w-[300px] flex flex-col justify-center items-center">
             <CardHeader className="text-center">
-                <CardTitle>{personal?.name}</CardTitle>
+                <CardTitle className="font-Kanit">{personal?.name}</CardTitle>
                 <CardDescription>{personal?.aboutMe.aboutme}</CardDescription>
             </CardHeader>
             <CardContent>

@@ -51,7 +51,7 @@ const Personal = () => {
         <div className='flex flex-col justify-center gap-4 items-center mt-8'>
             <Button onClick={() => navigate("/dashboard/personal/input")}>Create New Personal Vcard</Button>
             {!isPaid && <p>You are not Subscribed</p>}
-            <h1 className="text-3xl">Your Personal Vcards</h1>
+            <h1 className="text-3xl font-Kanit">Your Personal Vcards</h1>
             <div className="flex flex-wrap p-4 gap-4 justify-center">
                 {loading ? <Loader /> : (
                     personals.map((personal) => (

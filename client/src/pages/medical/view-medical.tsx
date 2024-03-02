@@ -54,7 +54,7 @@ const ViewMedical = () => {
 
     return (
         <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
-            <h1 className="text-3xl font-semibold">Medical Details</h1>
+            <h1 className="text-3xl font-semibold font-Kanit">Medical Details</h1>
             <div>
                 {isPaid ? (
                     <img src={qr} alt={singleTree?._id} />

@@ -55,7 +55,7 @@ const ViewAnimal = () => {
 
     return (
         <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
-                    <h1 className="text-3xl font-semibold">Animal Details</h1>
+                    <h1 className="text-3xl font-semibold font-Kanit">Animal Details</h1>
                     <div>
                         {isPaid ? (
                             <img src={qr} alt={singleTree?._id} />
@@ -64,18 +64,100 @@ const ViewAnimal = () => {
                         )}
                     </div>
                     <div>
-                        <p><span className="font-semibold">AnimalId:</span> {singleTree?._id}</p>
-                        <p><span className="font-semibold">Species:</span> {singleTree?.species}</p>
-                        <p><span className="font-semibold">Name:</span> {singleTree?.name}</p>
-                        <p><span className="font-semibold">Age:</span> {singleTree?.age}</p>
-                        <p><span className="font-semibold">Gender:</span> {singleTree?.gender}</p>
-                        <p><span className="font-semibold">Color / Markings:</span> {singleTree?.color}</p>
-                        <p><span className="font-semibold">Location:</span> {singleTree?.location}</p>
-                        <p><span className="font-semibold">Owner / Caretaker:</span> {singleTree?.owner}</p>
-                        <p><span className="font-semibold">Phone Number:</span> {singleTree?.phone}</p>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Animal Id:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?._id}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Species:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?.species}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Name:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?.name}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Age:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?.age}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Gender:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?.gender}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Color/Markings:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?.color}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Location:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?.location}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Owner:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?.owner}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="basis-1/2">
+                                <p className="font-Kanit font-semibold">Phone Number:</p>
+                            </div>
+                            <div className="basis-1/2">
+                                <p className="font-Kanit">
+                                    {singleTree?.phone}
+                                </p>
+                            </div>
+                        </div>
+                        
                     </div>
                     <div className="flex gap-6">
-                        <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Downlaod</a></Button>
+                        <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Download</a></Button>
                         <Button variant="outline" disabled={!isPaid} onClick={() => navigate(`/dashboard/animal/create?animalId=${singleTree?._id}`)}>Edit</Button>
                         <Button onClick={() => delAnimal()} disabled={!isPaid} variant="destructive">Delete</Button>
                     </div>
