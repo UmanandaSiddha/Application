@@ -77,7 +77,7 @@ const ViewTree = () => {
                         <p><span className="font-semibold">Fun Facts:</span> {singleTree?.funFact}</p>
                     </div>
                     <div className="flex gap-6">
-                        <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Downlaod</a></Button>
+                        <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Download</a></Button>
                         <Button variant="outline" disabled={!isPaid} onClick={() => navigate(`/dashboard/tree/create?treeId=${singleTree?._id}`)}>Edit</Button>
                         <Button onClick={() => delTree()} disabled={!isPaid} variant="destructive">Delete</Button>
                     </div>

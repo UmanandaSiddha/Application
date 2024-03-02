@@ -54,7 +54,7 @@ const ViewPersonal = () => {
 
     return (
         <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
-            <h1 className="text-3xl font-semibold">Personal Details</h1>
+            <h1 className="text-3xl font-semibold font-Kanit">Personal Details</h1>
             <div>
                 {isPaid ? (
                     <img src={qr} alt={singleTree?._id} />
@@ -66,7 +66,7 @@ const ViewPersonal = () => {
                 <Same personal={singleTree} />
             </div>
             <div className="flex gap-6">
-                <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Downlaod</a></Button>
+                <Button disabled={!isPaid}><a href={qr} download={`${singleTree?._id}.png`}>Download</a></Button>
                 <Button variant="outline" disabled={!isPaid} onClick={() => navigate(`/dashboard/personal/input?personalId=${singleTree?._id}`)}>Edit</Button>
                 <Button onClick={() => delPersonal()} disabled={!isPaid} variant="destructive">Delete</Button>
             </div>
