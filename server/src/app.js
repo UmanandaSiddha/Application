@@ -19,17 +19,17 @@ import googleRoute from "./routes/googleRoute.js";
 const app = express();
 
 const corsOptions = {
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        "http://localhost:5173",
-        "http://localhost:4173",
-        "https://app.umanandasiddha.site",
-        "https://www.app.umanandasiddha.site",
-      ];
-      const isAllowed = allowedOrigins.includes(origin);
-      callback(null, isAllowed ? origin : false);
-    },
-    // origin: "https://app.umanandasiddha.site",
+    // origin: (origin, callback) => {
+    //   const allowedOrigins = [
+    //     "http://localhost:5173",
+    //     "http://localhost:4173",
+    //     "https://app.umanandasiddha.site",
+    //     "https://www.app.umanandasiddha.site",
+    //   ];
+    //   const isAllowed = allowedOrigins.includes(origin);
+    //   callback(null, isAllowed ? origin : false);
+    // },
+    origin: "https://app.umanandasiddha.site",
     methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
     credentials: true,
   };

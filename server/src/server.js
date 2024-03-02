@@ -18,9 +18,10 @@ const PORT = process.env.PORT || 4000;
 
 connectDatabase();
 
-// export const CLIENT_URL="https://app.umanandasiddha.site";
-export const CLIENT_URL = "http://localhost:5173";
-export const SERVER_URL = "http://localhost:7070";
+export const CLIENT_URL="https://app.umanandasiddha.site";
+export const SERVER_URL="https://api.umanandasiddha.site";
+// export const CLIENT_URL = "http://localhost:5173";
+// export const SERVER_URL = "http://localhost:7070";
 
 export const stripe = new Stripe(process.env.STRIPE_KEY || "");
 
@@ -31,7 +32,7 @@ export const instance = new Razorpay({
 
 app.get("/", (req, res) => {
     res.status(200).json({
-        message: "Server Working Test 6!"
+        message: "Server Working Test 7!"
     })
 });
 
