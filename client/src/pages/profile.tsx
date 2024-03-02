@@ -31,6 +31,10 @@ import { AccordionDemo } from "@/components/rest/acordon";
 import { paymentExist } from "@/redux/reducer/paymentReducer";
 
 import { toast } from 'react-toastify';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import axios from "axios";
+import { UserResponse } from "@/types/api-types";
+import { Label } from "@/components/ui/label";
 
 // import BackButton from '../components/BackButton'
 
@@ -40,6 +44,7 @@ const Profile = () => {
     const [openSep, setOpenSep] = useState<boolean>(false);
     const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
     const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+    const [avatar, setAvatar] = useState<any>();
 
     const dispatch = useDispatch();
 
@@ -68,17 +73,12 @@ const Profile = () => {
 
     const formSchema = useMemo(() => z.object({
         name: z.string(),
-        email: z.string()
-            .email({
-                message: "Please enter a valid email address."
-            }),
     }), []);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: useMemo(() => ({
             name: user?.name,
-            email: user?.email,
         }), [user]),
     });
 
@@ -90,11 +90,12 @@ const Profile = () => {
         }), []),
     })
 
-    const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         const updateData = {
             name: values.name,
-            email: values.email,
+            image: avatar,
         }
+        console.log(updateData);
         try {
             const data = await updateUserProfile(updateData);
             dispatch(userExist(data.user));
@@ -104,7 +105,7 @@ const Profile = () => {
             setOpen(false);
             toast.error(error.response.data.message);
         }
-    }, [formSchema, dispatch]);
+    };
 
     const handleRequestVerify = useCallback(async () => {
         setVerifyLoading(true);
@@ -136,36 +137,59 @@ const Profile = () => {
             confirmPassword: resetValues.confirmPassword
         }
         try {
-            const data = await updatePassword(resetDate);
-            dispatch(userExist(data.user));
+            if (user?.accountType === "google") {
+                const config = { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true };
+                const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/set/password`, resetDate, config);
+                dispatch(userExist(data.user));
+            } else {
+                const data = await updatePassword(resetDate);
+                dispatch(userExist(data.user));
+            }
             setOpenSep(false);
-            toast.success("Password Updated Successfully")
+            toast.success("Password Updated Successfully");
         } catch (error: any) {
             setOpenSep(false);
             toast.error(error.response.data.message);
         }
     }, [dispatch]);
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files![0];
+        if (file instanceof Blob) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setAvatar(reader.result);
+                } else {
+                    console.log("Failed to read the file.");
+                }
+            };
+            reader.readAsDataURL(file);
+        } else {
+            console.error("The selected file is not a Blob.");
+        }
+    }
+
     return (
         loading ? (
             <Loader />
         ) : (
             <div className='flex flex-row justify-center gap-8 items-center mt-8'>
-                {/* <BackButton/> */}
                 {
                     user ? (
                         <div className="space-y-4">
                             <div className="flex flex-col items-center border border-primary p-4 gap-5">
-                                <div className="bg-slate-300 w-14 h-14 flex items-center justify-center rounded-full">
-                                    <p className="text-xl font-semibold">{user.name.charAt(0)}</p>
-                                </div>
+                                <Avatar className="w-14 h-14">
+                                    <AvatarImage src={user.image} alt={user._id} />
+                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
                                 <p>UserId: {user._id}</p>
                                 <p>Name : {user.name}</p>
                                 <p>Email: {user.email}</p>
                                 {!user?.isVerified && (
                                     <div className="flex flex-col justify-center items-center space-y-4">
                                         <p className="text-red-600 font-semibold">You are not verified</p>
-                                        <button onClick={handleRequestVerify} disabled={verifyLoading}>{verifyLoading ? "Sending Email..." : "Verify Email"}</button>
+                                        <Button onClick={handleRequestVerify} disabled={verifyLoading}>{verifyLoading ? "Sending Email..." : "Verify Email"}</Button>
                                     </div>
                                 )}
                                 <Dialog open={open} onOpenChange={setOpen}>
@@ -191,19 +215,17 @@ const Profile = () => {
                                                         </FormItem>
                                                     )}
                                                 />
-                                                <FormField
-                                                    control={form.control}
-                                                    name="email"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Email</FormLabel>
-                                                            <FormControl>
-                                                                <Input className="w-[350px]" placeholder="Enter your Email" {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
+                                                <div className="space-y-2">
+                                                    <Label>Profile Picture</Label>
+                                                    <Input
+                                                        name="avatar"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleChange}
+                                                        placeholder="Profile Image"
+                                                        className="w-[350px] gap-2"
+                                                    />
+                                                </div>
                                             </form>
                                         </Form>
                                         <DialogFooter>
@@ -214,27 +236,33 @@ const Profile = () => {
                                 {/* <Button onClick={handleResetPassword} variant="outline">Reset Password</Button> */}
                                 <Dialog open={openSep} onOpenChange={setOpenSep}>
                                     <DialogTrigger asChild>
-                                        <Button variant="outline">Reset Password</Button>
+                                        <Button variant="outline">
+                                            {user.accountType === "google" ? "Set Password" : "Reset Password"}
+                                        </Button>
                                     </DialogTrigger>
                                     <DialogContent className="sm:max-w-[425px]">
                                         <DialogHeader>
-                                            <DialogTitle>Reset Password</DialogTitle>
+                                            <DialogTitle>
+                                                {user.accountType === "google" ? "Set Password" : "Reset Password"}
+                                            </DialogTitle>
                                         </DialogHeader>
                                         <Form {...sepForm}>
                                             <form className="space-y-8">
-                                                <FormField
-                                                    control={sepForm.control}
-                                                    name="oldPassword"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Old Password</FormLabel>
-                                                            <FormControl>
-                                                                <Input className="w-[350px]" placeholder="Enter old password" {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
+                                                {user.accountType !== "google" && (
+                                                    <FormField
+                                                        control={sepForm.control}
+                                                        name="oldPassword"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Old Password</FormLabel>
+                                                                <FormControl>
+                                                                    <Input className="w-[350px]" placeholder="Enter old password" {...field} />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                )}
                                                 <FormField
                                                     control={sepForm.control}
                                                     name="newPassword"

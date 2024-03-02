@@ -1,6 +1,6 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
-import User from "../models/userModel.js";
+import User, { accountEnum } from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
@@ -9,11 +9,32 @@ import Tree from "../models/treeModel.js";
 import Personal from "../models/personalModel.js";
 import Medical from "../models/medicalModel.js";
 import Creator from "../models/creatorModel.js";
+import fs from "fs";
+import { SERVER_URL } from "../server.js";
 
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
 
-    const user = await User.create(req.body);
+    const user = await User.create({
+        name: req.body.name,
+        email: req.body.email,
+        image: "",
+        password: req.body.password,
+        accountType: accountEnum.EMAIL,
+    });
+
+    if (!user) {
+        return next(new ErrorHandler("Error Registering User, Try Again Later", 500));
+    }
+
+    if (req.body.image) {
+        const img = req.body.image;
+        const data = await img.replace(/^data:image\/\w+;base64,/, "");
+        const buf = Buffer.from(data, 'base64');
+        fs.writeFileSync(`./public/avatars/${user._id}.jpg`, buf);
+        user.image = `${SERVER_URL}/avatars/${user._id}.jpg`;
+        await user.save();
+    }
 
     sendToken(user, 201, res);
 });
@@ -191,6 +212,25 @@ export const resetPassword = catchAsyncErrors( async (req, res, next) => {
     sendToken(user, 200, res);
 });
 
+export const setPassword = catchAsyncErrors( async (req, res, next) => {
+    const user = await User.findById(req.user.id).select("+password");
+
+    if (user.accountType !== accountEnum.GOOGLE) {
+        return next(new ErrorHandler("Password Already Saved", 400));
+    }
+
+    if (req.body.newPassword !== req.body.confirmPassword) {
+        return next(new ErrorHandler("Password Does Not Match", 400));
+    }
+
+    user.password = req.body.newPassword;
+    user.accountType = accountEnum.HYBRID;
+
+    await user.save();
+
+    sendToken(user, 200, res);
+});
+
 // Get User Details
 export const getUserDetails = catchAsyncErrors( async (req, res, next) => {
 
@@ -225,18 +265,22 @@ export const updatePassword = catchAsyncErrors( async (req, res, next) => {
 
 // Update User Profile
 export const updateProfile = catchAsyncErrors( async (req, res, next) => {
-    const newUserData = {
-        name: req.body.name,
-        email: req.body.email,
-    };
 
     const userx = await User.findById(req.user.id);
 
-    if (userx.email !== req.body.email) {
-        newUserData.isVerified = false
+    if (req.body.image) {
+        if ((userx.image.length > 0) && (fs.existsSync(`./public/avatars/${userx._id}.jpg`))) {
+            fs.unlinkSync(`./public/avatars/${userx._id}.jpg`);
+        }
+        const img = req.body.image;
+        const data = await img.replace(/^data:image\/\w+;base64,/, "");
+        const buf = Buffer.from(data, 'base64');
+        fs.writeFileSync(`./public/avatars/${userx._id}.jpg`, buf);
+        userx.image = `${SERVER_URL}/avatars/${userx._id}.jpg`;
+        await userx.save();
     }
 
-    const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+    const user = await User.findByIdAndUpdate(req.user.id, { name: req.body.name }, {
         new: true,
         runValidators: true,
         useFindAndModify: false,

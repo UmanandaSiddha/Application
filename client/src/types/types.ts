@@ -5,6 +5,9 @@ export type User = {
     _id: string;
     isVerified: boolean;
     currentPlan: any;
+    image: string;
+    gooleId: string;
+    accountType: string;
 };
 
 export type Tree = {

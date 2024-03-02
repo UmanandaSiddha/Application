@@ -4,6 +4,12 @@ import bycrpt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
+export const accountEnum = {
+    EMAIL: "email",
+    GOOGLE: "google",
+    HYBRID: "hybrid"
+};
+
 const userSchema = new mongoose.Schema(
     {
         name: {
@@ -18,14 +24,28 @@ const userSchema = new mongoose.Schema(
             unique: true,
             validate: [validator.isEmail, "Please enter a valid Email"],
         },
+        image: String,
         password: {
             type: String,
             required: [true, "Please Enter your Password"],
             minLength: [8, "Password should have more than 8 characters"],
+            default: "GooglePassword",
             select: false,
+        },
+        googleId: {
+            type: String,
+            required: true,
+            default: "GoogleID",
+            unique: true,
+        },
+        accountType: {
+            type: String,
+            required: true,
+            enum: Object.values(accountEnum),
         },
         isVerified: {
             type: Boolean,
+            required: true,
             default: false,
         },
         currentPlan: {
@@ -104,4 +124,5 @@ userSchema.methods.getResetPasswordToken = function () {
     return resetToken;
 }
 
-export default mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;

@@ -1,5 +1,5 @@
 import {  useState } from 'react'
-import { Dialog,Popover } from '@headlessui/react'
+import { Dialog, Popover } from '@headlessui/react'
 import {
     Bars3Icon,
     XMarkIcon,
@@ -15,9 +15,6 @@ import { useDispatch } from "react-redux";
 interface PropsType {
     user: User | null;
 }
-
-
-
 
 export default function Header({ user }: PropsType) {
     
@@ -71,7 +68,6 @@ export default function Header({ user }: PropsType) {
                 </Popover.Group>
 
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-
                     {
                         user ? (
                             <div className="flex items-center gap-5">
@@ -112,35 +108,36 @@ export default function Header({ user }: PropsType) {
                             <div className="space-y-2 py-6">
                                 <Link
                                     to='/dashboard'
+                                    onClick={() => setMobileMenuOpen(false)}
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     to='/plans'
+                                    onClick={() => setMobileMenuOpen(false)}
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 >
                                     Subscription
                                 </Link>
                                 <Link
                                     to='/profile'
+                                    onClick={() => setMobileMenuOpen(false)}
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 >
                                     Profile
                                 </Link>
                             </div>
                             <div className="py-6">
-                                
                                 {
                                     user ? (
                                         <div className="flex items-center gap-5">
-                                            
+                                            <p>{user.name}</p>
                                             <button onClick={logout}>Logout</button>
-
                                         </div>
                                     ) : (
                                         <div>
-                                            <Link to="/login">Login</Link>
+                                            <Link onClick={() => setMobileMenuOpen(false)} to="/login">Login</Link>
                                         </div>
                                     )
                                 }

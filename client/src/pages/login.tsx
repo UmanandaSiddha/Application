@@ -27,6 +27,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { toast } from 'react-toastify';
 import { RootState } from "@/redux/store";
+import { getGoogleAuthUrl } from "@/lib/google";
 
 
 const Login = () => {
@@ -172,6 +173,7 @@ const Login = () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+            <Button><a href={getGoogleAuthUrl()}>Sign in with Google</a></Button>
             <Button variant="link"><Link to="/register">Don't have an account? Register</Link></Button>
         </div>
     )

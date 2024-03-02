@@ -14,7 +14,8 @@ import {
     updateRole, 
     verifyUser,
     requestVerification,
-    deleteAccount
+    deleteAccount,
+    setPassword
 } from "../controllers/userController.js";
 import { isAuthenticatedUser, isUserVerified, authorizeRoles } from "../middleware/auth.js";
 
@@ -30,6 +31,7 @@ router.route("/logout").get(isAuthenticatedUser, logoutUser);
 router.route("/me").get(isAuthenticatedUser, getUserDetails);
 router.route("/me/update").put(isAuthenticatedUser, isUserVerified, updateProfile);
 router.route("/password/update").put(isAuthenticatedUser, isUserVerified, updatePassword);
+router.route("/set/password").put(isAuthenticatedUser, isUserVerified, setPassword);
 router.route("/delete/account").delete(isAuthenticatedUser, isUserVerified, deleteAccount);
 router.route("/admin/users").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAllUsers);
 router.route("/admin/user/:id")
