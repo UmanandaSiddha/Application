@@ -3,6 +3,7 @@ import qs from "qs";
 import axios from "axios";
 import User, { accountEnum } from "../models/userModel.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
+import { CLIENT_URL } from "../server.js";
 
 const router = express.Router();
 
@@ -100,7 +101,7 @@ router.route("/api/google/oauth").get(catchAsyncErrors(async (req, res) => {
         res.status(200).cookie("token", token, options);
     }
 
-    res.redirect("http://localhost:5173/");
+    res.redirect(CLIENT_URL);
 }));
 
 export default router;
