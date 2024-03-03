@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
-import { forgotPassword } from "@/redux/api/userApi";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
 import {
@@ -27,13 +26,14 @@ const Login = () => {
         email: "",
         password: "",
     });
-    const [forgotEmail, setForgotEmail] = useState<string>();
+    const [forgotEmail, setForgotEmail] = useState<string>("");
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
+    const [forgotLoading, setForgotLoading] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setLoginLoading(true)
+        setLoginLoading(true);
         const loginData = {
             email: userData.email,
             password: userData.password,
@@ -41,6 +41,7 @@ const Login = () => {
         try {
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
             const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, loginData, config);
+            console.log(data)
             navigate("/dashboard");
             dispatch(userExist(data.user));
             toast.success("Logged In!");
@@ -48,18 +49,21 @@ const Login = () => {
             dispatch(userNotExist());
             toast.error(error.response.data.message);
         }
-        setLoginLoading(false)
+        setLoginLoading(false);
     };
 
     const onForgot = async () => {
+        setForgotLoading(true)
         try {
-            const data = await forgotPassword({ email: forgotEmail });
+            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/password/forgot`, { email: forgotEmail }, config);
             setOpen(false)
             toast.success(data.message);
         } catch (error: any) {
             setOpen(false);
             toast.error(error.response.data.message);
         }
+        setForgotLoading(false);
     };
 
     return (
@@ -100,16 +104,16 @@ const Login = () => {
                     <div className="space-y-2">
                         <Label>Email</Label>
                         <Input
-                            name="forgot email"
-                            type="text"
-                            value={userData.password}
+                            name="forgot"
+                            type="email"
+                            value={forgotEmail}
                             onChange={(e) => setForgotEmail(e.target.value)}
                             placeholder="Enter your email"
                             className="w-[350px] gap-2"
                         />
                     </div>
                     <DialogFooter>
-                        <Button onClick={onForgot} className="w-[350px]" type="submit">Send Email</Button>
+                        <Button onClick={onForgot} className="w-[350px]" disabled={forgotLoading}>{forgotLoading ? "Sending..." : "Send Email"}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

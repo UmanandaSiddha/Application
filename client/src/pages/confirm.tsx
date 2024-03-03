@@ -39,7 +39,7 @@ const Confirm = () => {
         <div className='flex flex-col justify-center gap-4 items-center mt-8'>
             <p className='text-2xl font-semibold'>Order Id: {order_id}</p>
             <p className='text-2xl font-semibold'>Payment Id: {pay_id}</p>
-            <p className='text-2xl font-semibold bg-red-600'>Do not refresh this page</p>
+            <p className='text-2xl font-semibold text-red-600'>Do not refresh this page</p>
             {valueObtained ? (
                 <p className='text-2xl font-semibold'>Payment Confirmed</p>
             ) : (
