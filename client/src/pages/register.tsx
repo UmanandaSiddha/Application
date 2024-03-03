@@ -19,7 +19,7 @@ const Register = () => {
         name: "",
         email: "",
         password: "",
-    })
+    });
     const [registerLoading, setRegisterLoading] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +67,7 @@ const Register = () => {
                 <div className="space-y-2">
                     <Label>Name</Label>
                     <Input
-                        name="password"
+                        name="name"
                         type="text"
                         value={userData.name}
                         onChange={(e) => setUserData({ ...userData, name: e.target.value })}
@@ -78,7 +78,7 @@ const Register = () => {
                 <div className="space-y-2">
                     <Label>Email</Label>
                     <Input
-                        name="password"
+                        name="email"
                         type="email"
                         value={userData.email}
                         onChange={(e) => setUserData({ ...userData, email: e.target.value })}

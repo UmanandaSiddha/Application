@@ -1,19 +1,8 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword, loginUser } from "@/redux/api/userApi";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
 import {
     Dialog,
@@ -23,62 +12,29 @@ import {
     DialogFooter,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { useCallback, useEffect, useMemo, useState } from "react";
-
 import { toast } from 'react-toastify';
-import { RootState } from "@/redux/store";
 import { getGoogleAuthUrl } from "@/lib/google";
-
+import { Label } from "@radix-ui/react-label";
+import { useState } from "react";
 
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { loading } = useSelector(
-        (state: RootState) => state.userReducer
-    );
-
+    const [userData, setUserData] = useState({
+        email: "",
+        password: "",
+    });
+    const [forgotEmail, setForgotEmail] = useState<string>();
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
 
-    const formSchema = useMemo(() => z.object({
-        email: z.string()
-            .email({
-                message: "Please enter a valid email address."
-            }),
-        password: z.string()
-            .min(8, {
-                message: "Pssword must be at least 8 characters.",
-            }),
-    }), []);
-
-    const forgotFormSchema = useMemo(() => z.object({
-        email: z.string()
-            .email({
-                message: "Please enter a valid email address."
-            }),
-    }), []);
-
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: useMemo(() => ({
-            email: "",
-            password: "",
-        }), []),
-    });
-
-    const forgotForm = useForm<z.infer<typeof forgotFormSchema>>({
-        resolver: zodResolver(forgotFormSchema),
-        defaultValues: useMemo(() => ({
-            email: "",
-        }), []),
-    });
-
-    const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setLoginLoading(true)
         const loginData = {
-            email: values.email,
-            password: values.password,
+            email: userData.email,
+            password: userData.password,
         }
         try {
             const data = await loginUser(loginData);
@@ -90,59 +46,46 @@ const Login = () => {
             toast.error(error.response.data.message);
         }
         setLoginLoading(false)
-    }, [navigate, dispatch, formSchema]);
+    };
 
-    const onForgot = useCallback(async (values: z.infer<typeof forgotFormSchema>) => {
+    const onForgot = async () => {
         try {
-            const data = await forgotPassword({ email: values.email});
+            const data = await forgotPassword({ email: forgotEmail });
             setOpen(false)
             toast.success(data.message);
         } catch (error: any) {
             setOpen(false);
             toast.error(error.response.data.message);
         }
-    }, [forgotFormSchema]);
-
-    useEffect(() => {
-        if (!loading) {
-            form.reset();
-            forgotForm.reset();
-        }
-    }, [loading, form, forgotForm]);
+    };
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen">
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
+            <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input
                         name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input className="w-[350px]" placeholder="Enter your Email" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                        type="email"
+                        value={userData.email}
+                        onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                        placeholder="Enter your email"
+                        className="w-[350px] gap-2"
                     />
-                    <FormField
-                        control={form.control}
+                </div>
+                <div className="space-y-2">
+                    <Label>Password</Label>
+                    <Input
                         name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input className="w-[350px]" placeholder="Enter your Password" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                        type="text"
+                        value={userData.password}
+                        onChange={(e) => setUserData({ ...userData, password: e.target.value })}
+                        placeholder="Enter your password"
+                        className="w-[350px] gap-2"
                     />
-                    <Button className="w-[350px]" type="submit" disabled={loginLoading}>{loginLoading ? "Logging..." : "Login"}</Button>
-                </form>
-            </Form>
+                </div>
+                <Button className="w-[350px]" type="submit" disabled={loginLoading}>{loginLoading ? "Logging..." : "Login"}</Button>
+            </form>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button variant="link">Forgot Password?</Button>
@@ -151,25 +94,19 @@ const Login = () => {
                     <DialogHeader>
                         <DialogTitle>Enter Email</DialogTitle>
                     </DialogHeader>
-                    <Form {...forgotForm}>
-                        <form className="space-y-8">
-                            <FormField
-                                control={forgotForm.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input className="w-[350px]" placeholder="Enter your Email" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />          
-                        </form>
-                    </Form>
+                    <div className="space-y-2">
+                        <Label>Email</Label>
+                        <Input
+                            name="forgot email"
+                            type="text"
+                            value={userData.password}
+                            onChange={(e) => setForgotEmail(e.target.value)}
+                            placeholder="Enter your email"
+                            className="w-[350px] gap-2"
+                        />
+                    </div>
                     <DialogFooter>
-                        <Button onClick={forgotForm.handleSubmit(onForgot)} className="w-[350px]" type="submit">Send Email</Button>
+                        <Button onClick={onForgot} className="w-[350px]" type="submit">Send Email</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

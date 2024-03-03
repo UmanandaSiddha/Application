@@ -23,16 +23,17 @@ export default function Header({ user }: PropsType) {
 
 
     const logout = async () => {
-    
         try {
             await logoutUser();
             dispatch(userNotExist());
             toast.success("User Logged Out Successfully");
             navigate("/");
+            setMobileMenuOpen(false);
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
     }
+
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     return (
