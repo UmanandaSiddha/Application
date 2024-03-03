@@ -24,7 +24,7 @@ export function AccordionDemo() {
                         <p><span className="font-semibold">Plan:</span> {payment.plan}</p>
                         <p><span className="font-semibold">RazorpayOrderId:</span> {payment.razorpayOrderId}</p>
                         <p><span className="font-semibold">RazorpayPaymentId:</span> {payment.razorpayPaymentId}</p>
-                        <p><span className="font-semibold">RazorpaySignature:</span> {payment.razorpaySignature}</p>
+                        <p><span className="font-semibold">Payment Status:</span> {payment.paymentStatus}</p>
                     </AccordionContent>
                 </AccordionItem>
             )).reverse()}
