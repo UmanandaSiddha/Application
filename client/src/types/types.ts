@@ -29,6 +29,7 @@ export type Payment = {
     amount: number;
     plan: string;
     paymentDate: Date;
+    paymentStatus: String;
     paymentValidity: Date;
     razorpayOrderId: string;
     razorpayPaymentId: string; 

@@ -43,7 +43,7 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         paymentDate: new Date(startDate),
         paymentValidity: new Date(endDate),
         razorpayOrderId: order.id,
-        razorpayPaymentId: "pending",
+        razorpayPaymentId: "processing",
         user: req.user.id
     });
 
@@ -77,7 +77,7 @@ export const testVerify = catchAsyncErrors(async (req, res, next) => {
         
     if (expectedSigntaure === req.headers['x-razorpay-signature']) {
 
-        const user = await User.findOneAndUpdate({ "currentPlan.orderId": req.body.payload.payment.entity.order_id }, {
+        await User.findOneAndUpdate({ "currentPlan.orderId": req.body.payload.payment.entity.order_id }, {
             "currentPlan.planStatus": "succeeded",
         }, {
             new: true,
@@ -90,8 +90,6 @@ export const testVerify = catchAsyncErrors(async (req, res, next) => {
         payment.razorpayPaymentId = req.body.payload.payment.entity.id;
         payment.paymentStatus = "succeeded";
         await payment.save();
-
-        console.log("success");
     }
 
     res.json({ status: "ok" })
@@ -111,43 +109,23 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Payment Not Verified", 400));
     }
 
-    const user = await User.findById(req.user.id);
-
-    const startDate = Date.now();
-    const endDate = Date.now() + Number(req.body.validity) * 60 * 1000;
-
-    user.currentPlan = {
-        planName: req.body.planName,
-        planPrice: req.body.amount,
-        planValidity: req.body.validity,
-        startDate,
-        endDate,
-    };
-    await user.save();
-
-    await Payment.create({
-        amount: req.body.amount,
-        plan: req.body.planName,
-        paymentDate: new Date(startDate),
-        paymentValidity: new Date(endDate),
-        razorpayOrderId: razorpay_order_id,
-        razorpayPaymentId: razorpay_payment_id,
-        razorpaySignature: razorpay_signature,
-        user: req.user.id
+    await User.findByIdAndUpdate(req.user.id, {
+        "currentPlan.planStatus": "verifying",
+    }, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
     });
 
-    const message = `Subscription successful \n\n Plan Name: ${req.body.planName} \n\n Plan Price: ${req.body.amount} \n\n Plan Valid till: ${new Date(endDate).toLocaleString()}`
+    const payment = await Payment.findOne({ razorpayOrderId: req.user.currentPlan.orderId });
+    payment.paymentStatus = "verifying";
+    await payment.save();
 
-    await sendEmail({
-        email: user.email,
-        subject: `Account Subscription`,
-        message,
-    });
+    console.log("verified")
 
     res.status(200).json({
         success: true,
         message: "Payment Verified",
-        user
     });
 });
 

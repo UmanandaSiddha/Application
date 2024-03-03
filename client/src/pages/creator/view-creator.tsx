@@ -99,7 +99,7 @@ const ViewCreator = () => {
               </div>
               <div className="basis-1/2">
                 <p className="font-Kanit">
-                  <a href={`${link.name}`}>{link.name}</a>
+                  <a href={link.name} target="blank">{link.name}</a>
                 </p>
               </div>
             </div>

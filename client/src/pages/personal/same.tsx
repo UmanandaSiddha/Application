@@ -77,7 +77,7 @@ const Same = ({ personal }: any) => {
             </span>
           </div>
           <div className="basis-1/2">
-            <a href={`${link.name}`}>
+            <a href={link.name} target="blank">
              {link.name}
             </a>
           </div>

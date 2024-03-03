@@ -17,6 +17,7 @@ const Profile = lazy(() => import ("./pages/profile"));
 const Plans = lazy(() => import ("./pages/plans"));
 const Verify = lazy(() => import ("./pages/verify"));
 const ResetPassword = lazy(() => import ("./pages/reset-password"));
+const Confirm = lazy(() => import ("./pages/confirm"));
 
 const Tree = lazy(() => import ("./pages/tree/tree"));
 const ViewTree = lazy(() => import ("./pages/tree/view-tree"));
@@ -62,7 +63,7 @@ const App = () => {
 
     const gotUser = async () => {
         try {
-            const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true } );
+            const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true });
             dispatch(userExist(data.user));
         } catch (error: any) {
             dispatch(userNotExist());
@@ -133,6 +134,7 @@ const App = () => {
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/plans" element={<Plans />} />
                         <Route path="/verify" element={<Verify />} />
+                        <Route path="/confirm" element={<Confirm />} />
 
                         <Route path="/dashboard/tree" element={<Tree />} />
                         <Route path="/dashboard/tree/view" element={<ViewTree />} />

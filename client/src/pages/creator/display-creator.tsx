@@ -35,7 +35,7 @@ const DisplayCreator = () => {
                             <div>
                                 <h1 className="text-2xl font-semibold">Social Links</h1>
                                 {creatorData?.links.map((link: any, index: number) => (
-                                    <p key={index}><span className="font-semibold">{link.label}:</span> {link.name}</p>
+                                    <p key={index}><span className="font-semibold">{link.label}:</span><a href={link.name} target="blank">{link.name}</a></p>
                                 ))}
                             </div>
                         </div>

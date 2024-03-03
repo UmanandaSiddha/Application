@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
-import { forgotPassword, loginUser } from "@/redux/api/userApi";
+import { forgotPassword } from "@/redux/api/userApi";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
 import {
@@ -16,6 +16,8 @@ import { toast } from 'react-toastify';
 import { getGoogleAuthUrl } from "@/lib/google";
 import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
+import axios from "axios";
+import { UserResponse } from "@/types/api-types";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -37,7 +39,8 @@ const Login = () => {
             password: userData.password,
         }
         try {
-            const data = await loginUser(loginData);
+            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
+            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, loginData, config);
             navigate("/dashboard");
             dispatch(userExist(data.user));
             toast.success("Logged In!");

@@ -8,9 +8,23 @@ import {
 } from "@/components/ui/card";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { checkoutPayments } from "@/redux/api/paymentApi";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+function loadScript(src: any) {
+    return new Promise((resolve) => {
+        const script = document.createElement('script')
+        script.src = src
+        script.onload = () => {
+            resolve(true)
+        }
+        script.onerror = () => {
+            resolve(false)
+        }
+        document.body.appendChild(script)
+    });
+}
 
 export function PlansCard({ plan }: any) {
 
@@ -21,13 +35,20 @@ export function PlansCard({ plan }: any) {
     );
 
     const handlePayment = async () => {
+        const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+        if (!res) {
+            toast.error('Razorpay SDK failed to load. Are you online?');
+            return;
+        }
+
         try {
             const checkoutData = {
                 amount: plan.price,
                 planName: plan.name,
                 validity: plan.validity
             }
-            const data = await checkoutPayments(checkoutData);
+            const config = { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true };
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/pay/checkout`, checkoutData, config);
             if (!data) {
                 toast.error("Failed to Execute Payment");
             }
@@ -40,8 +61,8 @@ export function PlansCard({ plan }: any) {
                 // image: "",
                 order_id: data.order.id,
                 handler: async function (response: any) {
-                    navigate("/dashboard");
-                    toast.success(`Payment Successful with Payment Id ${response.razorpay_payment_id}`);
+                    navigate(`/confirm?order_id=${response.razorpay_order_id}&pay_id=${response.razorpay_payment_id}`);
+                    // toast.success(`Payment Successful with Payment Id ${response.razorpay_payment_id}`);
                 },
                 prefill: {
                     email: user?.email,
