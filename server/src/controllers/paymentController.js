@@ -66,6 +66,26 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
 });
 
+export const createSubscription = catchAsyncErrors(async (req, res, next) => {
+    const subscriptions = await instance.subscriptions.create({
+        "plan_id":"plan_Nip1pQpGhbtri6",
+        "total_count":6,
+        "quantity": 1,
+        "customer_notify":1,
+        // "start_at":1580453311,
+        // "expire_by":1580626111,
+    });
+
+    console.log(subscriptions);
+
+    res.status(200).json({
+        success: true,
+        key: process.env.RAZORPAY_KEY_ID,
+        subscriptions_id: subscriptions.id,
+        // customer_id: customer.id
+    });
+});
+
 export const testVerify = catchAsyncErrors(async (req, res, next) => {
 
     const secret = "12345678";
@@ -92,7 +112,7 @@ export const testVerify = catchAsyncErrors(async (req, res, next) => {
         await payment.save();
     }
 
-    res.json({ status: "ok" })
+    res.status(200).send('OK');
 });
 
 export const verifyPayment = catchAsyncErrors(async (req, res, next) => {

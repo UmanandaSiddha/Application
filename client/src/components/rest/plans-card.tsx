@@ -24,7 +24,7 @@ function loadScript(src: any) {
         }
         document.body.appendChild(script)
     });
-}
+};
 
 export function PlansCard({ plan }: any) {
 

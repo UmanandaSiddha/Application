@@ -18,6 +18,7 @@ const Plans = lazy(() => import ("./pages/plans"));
 const Verify = lazy(() => import ("./pages/verify"));
 const ResetPassword = lazy(() => import ("./pages/reset-password"));
 const Confirm = lazy(() => import ("./pages/confirm"));
+const Subscription = lazy(() => import ("./pages/subscription"));
 
 const Tree = lazy(() => import ("./pages/tree/tree"));
 const ViewTree = lazy(() => import ("./pages/tree/view-tree"));
@@ -95,6 +96,7 @@ const App = () => {
             <Suspense fallback={<Loader />}>
                 <Routes>
                     <Route path="/" element={<Home user={user} />} />
+                    <Route path="/sub" element={<Subscription />} />
                     <Route path="/display/tree" element={<DisplayTree />} />
                     <Route path="/display/creator" element={<DisplayCreator />} />
                     <Route path="/display/personal" element={<DisplayPersonal />} />

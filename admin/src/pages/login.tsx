@@ -1,166 +1,69 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { userExist, userNotExist } from "../redux/reducer/userReducer";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { useState } from "react";
 
-import { toast } from 'react-toastify';
-import axios from "axios";
-import { UserResponse } from "@/types/api-types";
 
 const Login = () => {
-
-    const formSchema = z.object({
-        email: z.string()
-            .email({
-                message: "Please enter a valid email address."
-            }),
-        password: z.string()
-            .min(8, {
-                message: "Pssword must be at least 8 characters.",
-            }),
-    });
-
-    const forgotFormSchema = z.object({
-        email: z.string()
-            .email({
-                message: "Please enter a valid email address."
-            }),
-    });
-
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-    const [open, setOpen] = useState(false);
-
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-        },
-    });
-
-    const forgotForm = useForm<z.infer<typeof forgotFormSchema>>({
-        resolver: zodResolver(forgotFormSchema),
-        defaultValues: {
-            email: "",
-        },
-    });
-
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        const loginData = {
-            email: values.email,
-            password: values.password,
-        }
-        try {
-            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/login`, loginData, config);
-            dispatch(userExist(data.user));
-            toast.success("Logged In!")
-            navigate("/pannel");
-        } catch (error: any) {
-            dispatch(userNotExist());
-            toast.error(error.response.data.message);
-        }
-    }
-
-    const onForgot = async (values: z.infer<typeof forgotFormSchema>) => {
-        try {
-            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/password/forgot`, { email: values.email }, config);
-            setOpen(false)
-            toast.success(data.message);
-        } catch (error: any) {
-            setOpen(false);
-            toast.error(error.response.data.message);
-        }
-    }
-
     return (
-        <div className="flex flex-col justify-center items-center min-h-screen">
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input className="w-[350px]" placeholder="Enter your Email" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input className="w-[350px]" placeholder="Enter your Password" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button className="w-[350px]" type="submit">Login</Button>
-                </form>
-            </Form>
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button variant="link">Forgot Password?</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Enter Email</DialogTitle>
-                    </DialogHeader>
-                    <Form {...forgotForm}>
-                        <form className="space-y-8">
-                            <FormField
-                                control={forgotForm.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input className="w-[350px]" placeholder="Enter your Email" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+        <div className="relative isolate px-6 pt-2 lg:px-8">
+            <div className="mx-auto max-w-2xl py-10 sm:py-20 lg:py-30">
+                <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+                    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                            Sign in to your account
+                        </h2>
+                    </div>
+
+                    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                        <form className="space-y-6" action="#" method="POST">
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Email address
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        autoComplete="email"
+                                        required
+                                        className="block w-full rounded-md border-0 px-1.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <div className="flex items-center justify-between">
+                                    <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                                        Password
+                                    </label>
+                                    <div className="text-sm">
+                                        <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                                            Forgot password?
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className="mt-2">
+                                    <input
+                                        id="password"
+                                        name="password"
+                                        type="password"
+                                        autoComplete="current-password"
+                                        required
+                                        className="block w-full rounded-md border-0 px-1.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <button
+                                    type="submit"
+                                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                >
+                                    Sign in
+                                </button>
+                            </div>
                         </form>
-                    </Form>
-                    <DialogFooter>
-                        <Button onClick={forgotForm.handleSubmit(onForgot)} className="w-[350px]" type="submit">Send Email</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-            <Button variant="link"><Link to="/register">Don't have an account? Register</Link></Button>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
