@@ -4,16 +4,14 @@ import crypto from "crypto";
 import User from "../models/userModel.js";
 import Payment from "../models/paymentModel.js";
 import { instance } from "../server.js";
-import sendEmail from "../utils/sendEmail.js";
-import { CLIENT_URL } from "../server.js";
-import fs from 'fs';
+import short from "short-uuid";
 
 export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
     const options = {
         amount: Number(req.body.amount) * 100,
         currency: "INR",
-        receipt: "order_rcptid_11"
+        receipt: `receipt_${short.generate()}`
     };
 
     const order = await instance.orders.create(options);
@@ -66,27 +64,7 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
 });
 
-export const createSubscription = catchAsyncErrors(async (req, res, next) => {
-    const subscriptions = await instance.subscriptions.create({
-        "plan_id":"plan_Nip1pQpGhbtri6",
-        "total_count":6,
-        "quantity": 1,
-        "customer_notify":1,
-        // "start_at":1580453311,
-        // "expire_by":1580626111,
-    });
-
-    console.log(subscriptions);
-
-    res.status(200).json({
-        success: true,
-        key: process.env.RAZORPAY_KEY_ID,
-        subscriptions_id: subscriptions.id,
-        // customer_id: customer.id
-    });
-});
-
-export const testVerify = catchAsyncErrors(async (req, res, next) => {
+export const testVerify = async (req, res, next) => {
 
     const secret = "12345678";
 
@@ -95,25 +73,29 @@ export const testVerify = catchAsyncErrors(async (req, res, next) => {
         .update(JSON.stringify(req.body))
         .digest("hex")
         
-    if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-
-        await User.findOneAndUpdate({ "currentPlan.orderId": req.body.payload.payment.entity.order_id }, {
-            "currentPlan.planStatus": "succeeded",
-        }, {
-            new: true,
-            runValidators: true,
-            useFindAndModify: false,
-        });
-
-        const payment = await Payment.findOne({ razorpayOrderId: req.body.payload.payment.entity.order_id });
-        
-        payment.razorpayPaymentId = req.body.payload.payment.entity.id;
-        payment.paymentStatus = "succeeded";
-        await payment.save();
+    try { 
+        if (expectedSigntaure === req.headers['x-razorpay-signature']) {
+    
+            await User.findOneAndUpdate({ "currentPlan.orderId": req.body.payload.payment.entity.order_id }, {
+                "currentPlan.planStatus": "succeeded",
+            }, {
+                new: true,
+                runValidators: true,
+                useFindAndModify: false,
+            });
+    
+            const payment = await Payment.findOne({ razorpayOrderId: req.body.payload.payment.entity.order_id });
+            
+            payment.razorpayPaymentId = req.body.payload.payment.entity.id;
+            payment.paymentStatus = "succeeded";
+            await payment.save();
+        }
+    } catch (error) {
+        console.log(error.message)
     }
 
     res.status(200).send('OK');
-});
+};
 
 export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
 

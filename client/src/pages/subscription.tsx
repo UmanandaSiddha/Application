@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { RootState } from "../redux/store";
+import { useEffect, useState } from 'react';
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -23,7 +24,21 @@ const Subscription = () => {
         (state: RootState) => state.userReducer
     );
 
-    const handlePayment = async () => {
+    const [plans, setPlans] = useState<any>([]);
+
+    useEffect(() => {
+        const getPlans = async () => {
+            try {
+                const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/all`, { withCredentials: true });
+                setPlans(data.plans);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getPlans();
+    }, []);
+
+    const handlePayment = async (id: string) => {
         const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
         if (!res) {
             toast.error('Razorpay SDK failed to load. Are you online?');
@@ -31,8 +46,8 @@ const Subscription = () => {
         }
 
         try {
-            const config = { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true };
-            const { data }: { data: any } = await axios.get(`${import.meta.env.VITE_BASE_URL}/pay/sub`, config);
+            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, {id},config);
             if (!data) {
                 toast.error("Failed to Execute Payment");
             }
@@ -77,9 +92,20 @@ const Subscription = () => {
         }
     }
     return (
-        <div>
-            Subscription
-            <button onClick={handlePayment}>BUY</button>
+        <div className='flex flex-col justify-center items-center'>
+            <h1 className='text-2xl font-semibold'>Subscription</h1>
+            {plans.map((plan: any, index: number) => (
+                <div className='border-2 border-black p-2 rounded-md space-y-4' key={index}>
+                    <p>Plan ID: {plan?.razorPlanId}</p>
+                    <p>Plan Name: {plan?.name}</p>
+                    <p>Price: {plan?.amount}</p>
+                    <p>Period: {plan?.period}</p>
+                    <p>Interval: {plan?.interval}</p>
+                    <p>Vcards Allowed: {plan?.vcards}</p>
+                    <p>Description: {plan?.description}</p>
+                    <button className='bg-green-600 w-full rounded-lg text-white' onClick={() => handlePayment(plan?.razorPlanId)}>BUY</button>
+                </div>
+            ))}
         </div>
     )
 }

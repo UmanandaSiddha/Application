@@ -34,13 +34,9 @@ const Login = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoginLoading(true);
-        const loginData = {
-            email: userData.email,
-            password: userData.password,
-        }
         try {
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, loginData, config);
+            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, userData, config);
             console.log(data)
             navigate("/dashboard");
             dispatch(userExist(data.user));

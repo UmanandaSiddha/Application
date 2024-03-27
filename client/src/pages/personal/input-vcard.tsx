@@ -92,9 +92,6 @@ const InputVCard = () => {
     }
 
     const handleChange = (event: any, index: number) => {
-        // let data = [...arrData];
-        // data[index][event.target.name] = event.target.value;
-        // setArrData(data);
         setArrData((prevData: any) => [
             ...prevData.slice(0, index),
             {

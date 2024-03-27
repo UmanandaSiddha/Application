@@ -10,6 +10,12 @@ export const accountEnum = {
     HYBRID: "hybrid"
 };
 
+export const roleEnum = {
+    USER: "user",
+    ADMIN: "admin",
+    ORG: "org"
+}
+
 const userSchema = new mongoose.Schema(
     {
         name: {
@@ -36,52 +42,46 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             default: "GoogleID",
-            unique: true,
         },
         accountType: {
             type: String,
             required: true,
             enum: Object.values(accountEnum),
         },
+        role: {
+            type: String,
+            required: true,
+            enum: Object.values(roleEnum),
+            default: roleEnum.USER,
+        },
         isVerified: {
             type: Boolean,
             required: true,
             default: false,
         },
-        currentPlan: {
-            planName: {
-                type: String,
-                default: "Plan Name"
-            },
-            planPrice: {
+        activePlan: {
+            type: mongoose.Schema.ObjectId,
+            ref: "Subscription",
+        },
+        cards: {
+            total: {
                 type: Number,
+                required: true,
                 default: 0
             },
-            planValidity: {
+            created: {
                 type: Number,
+                required: true,
                 default: 0
-            },
-            startDate: {
-                type: Number,
-                default: 0
-            },
-            endDate: {
-                type: Number,
-                default: 0
-            },
-            orderId: {
-                type: String,
-                default: ""
-            },
-            planStatus: {
-                type: String,
-                default: "pending"
             }
         },
-        role:{
-            type: String,
-            default: "user",
+        orgDetails: {
+            website: String,
+            address: String,
+            phone: Number,
         },
+        oneTimePassword: String,
+        oneTimeExpire: Date,
         resetPasswordToken: String,
         resetPasswordExpire: Date,
     },
@@ -91,7 +91,7 @@ const userSchema = new mongoose.Schema(
 )
 
 // Password Hash
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) {
         next();
     }
@@ -123,6 +123,20 @@ userSchema.methods.getResetPasswordToken = function () {
 
     return resetToken;
 }
+
+// Generating One Time Password
+userSchema.methods.getOneTimePassword = function ()  {
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    this.oneTimePassword = crypto
+        .createHash("sha256")
+        .update(otp.toString())
+        .digest("hex");
+    
+    this.oneTimeExpire = Date.now() + 15 * 60 * 1000;
+
+    return otp.toString(); 
+};
 
 const User = mongoose.model("User", userSchema);
 export default User;

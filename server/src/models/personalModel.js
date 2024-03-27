@@ -22,7 +22,7 @@ const personalSchema = new mongoose.Schema(
         socialMedia: [Object],
         aboutMe: {
             aboutme: String,
-            birth: String,
+            birth: Date,
             homeTown: String,
             currentCity: String,
         },
@@ -94,4 +94,5 @@ const personalSchema = new mongoose.Schema(
     }
 )
 
-export default mongoose.model("Personal", personalSchema);
+const Personal = mongoose.model("Personal", personalSchema);
+export default Personal;

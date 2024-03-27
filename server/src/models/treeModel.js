@@ -22,4 +22,5 @@ const treeSchema = new mongoose.Schema(
     }
 )
 
-export default mongoose.model("Tree", treeSchema);
+const Tree = mongoose.model("Tree", treeSchema);
+export default Tree;

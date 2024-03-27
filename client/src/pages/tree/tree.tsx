@@ -30,7 +30,7 @@ const Tree = () => {
     const gotTree = async () => {
         try {
             const data = await getUserTree(currentPage);
-            dispatch(treeExist(data.tree));
+            dispatch(treeExist(data.vCards));
             setCountData(data.count);
         } catch (error: any) {
             dispatch(treeNotExist());

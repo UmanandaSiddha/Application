@@ -3,7 +3,7 @@ import { TreeResponse, SingleTreeResponse } from "../../types/api-types";
 
 export const getUserTree = async (currentPage: number) => {
     try {
-        const { data }: { data: TreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/tree/userTree?page=${currentPage}`, { withCredentials: true } );
+        const { data }: { data: TreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/user?page=${currentPage}&type=tree`, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;
@@ -12,7 +12,7 @@ export const getUserTree = async (currentPage: number) => {
 
 export const deleteTree = async (id: string) => {
     try {
-        const { data }: { data: SingleTreeResponse } = await axios.delete(`${import.meta.env.VITE_BASE_URL}/tree/delete/${id}`, { withCredentials: true } );
+        const { data }: { data: SingleTreeResponse } = await axios.delete(`${import.meta.env.VITE_BASE_URL}/tree/delete/${id}?type=tree`, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;
@@ -21,7 +21,7 @@ export const deleteTree = async (id: string) => {
 
 export const updateTree = async (treeData: object,id: string) => {
     try {
-        const { data }: { data: SingleTreeResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/tree/delete/${id}`, treeData, { withCredentials: true } );
+        const { data }: { data: SingleTreeResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=tree`, treeData, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;
@@ -31,7 +31,7 @@ export const updateTree = async (treeData: object,id: string) => {
 
 export const createTree = async (treeData: object) => {
     try {
-        const { data }: { data: SingleTreeResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/tree/new`, treeData, { withCredentials: true } );
+        const { data }: { data: SingleTreeResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=tree`, treeData, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;
@@ -40,7 +40,7 @@ export const createTree = async (treeData: object) => {
 
 export const getSingleTree = async (id: string) => {
     try {
-        const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/tree/details/${id}`, { withCredentials: true } );
+        const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/details/${id}?type=tree`, { withCredentials: true } );
         return data;
     } catch (error) {
         throw error;

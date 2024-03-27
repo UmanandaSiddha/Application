@@ -49,6 +49,8 @@ const Register = () => {
             image: avatar
         }
 
+        console.log(registerData)
+
         try {
             const data = await registerUser(registerData);
             dispatch(userExist(data.user));

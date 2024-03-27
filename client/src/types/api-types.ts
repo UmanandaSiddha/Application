@@ -16,7 +16,7 @@ export type UserResponse = {
 export type TreeResponse = {
     success: boolean;
     count: number;
-    tree: Tree[];
+    vCards: Tree[];
 }
 
 export type SingleTreeResponse = {

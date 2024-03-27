@@ -26,7 +26,7 @@ router.route("/login").post(loginUser);
 router.route("/password/forgot").post(forgotPassword);
 router.route("/password/reset/:token").put(resetPassword);
 router.route("/request/verification").get(isAuthenticatedUser, requestVerification);
-router.route("/verify/:token").put(verifyUser);
+router.route("/verify").put(verifyUser);
 router.route("/logout").get(isAuthenticatedUser, logoutUser);
 router.route("/me").get(isAuthenticatedUser, getUserDetails);
 router.route("/me/update").put(isAuthenticatedUser, isUserVerified, updateProfile);

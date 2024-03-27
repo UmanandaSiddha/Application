@@ -18,4 +18,5 @@ const creatorSchema = new mongoose.Schema(
     }
 )
 
-export default mongoose.model("Creator", creatorSchema);
+const Creator = mongoose.model("Creator", creatorSchema);
+export default Creator;

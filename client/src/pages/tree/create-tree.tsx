@@ -42,7 +42,7 @@ const CreateTree = () => {
     const gotTree = async () => {
         if (id) {
             try {
-                const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/tree/detailed/${id!}`, { withCredentials: true });
+                const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id!}?type=tree`, { withCredentials: true });
                 dispatch(treeTemp(data.tree));
                 setIsTree(true);
             } catch (error: any) {

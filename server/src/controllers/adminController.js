@@ -6,8 +6,7 @@ import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { CLIENT_URL } from "../server.js";
 
-
-// User Login
+// Admin Login
 export const loginAdmin = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
 

@@ -1,6 +1,6 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
-import User, { accountEnum } from "../models/userModel.js";
+import User, { accountEnum, roleEnum } from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
@@ -10,6 +10,7 @@ import Personal from "../models/personalModel.js";
 import Medical from "../models/medicalModel.js";
 import Creator from "../models/creatorModel.js";
 import fs from "fs";
+import sharp from "sharp";
 import { SERVER_URL } from "../server.js";
 
 // User Registration
@@ -27,13 +28,69 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Error Registering User, Try Again Later", 500));
     }
 
+    if (req.query.type === roleEnum.ORG) {
+        user.role = roleEnum.ORG;
+        user.orgDetails = {
+            address: req.body.address,
+            website: req.body.website,
+            phone: req.body.phone
+        }
+        await user.save();
+    }
+
     if (req.body.image) {
         const img = req.body.image;
-        const data = await img.replace(/^data:image\/\w+;base64,/, "");
-        const buf = Buffer.from(data, 'base64');
-        fs.writeFileSync(`./public/avatars/${user._id}.jpg`, buf);
-        user.image = `${SERVER_URL}/avatars/${user._id}.jpg`;
-        await user.save();
+        const data = img.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(data, 'base64');
+
+        try {
+            const resizedImageBuffer = await sharp(buffer)
+                .resize({ width: 300 })
+                .jpeg({ quality: 50 })
+                .toBuffer();
+        
+            await fs.promises.writeFile(`./public/avatars/${user._id}.jpg`, resizedImageBuffer);
+            console.log('Data has been written to the file');
+        
+            user.image = `${SERVER_URL}/avatars/${user._id}.jpg`;
+            await user.save();
+        } catch (err) {
+            console.error('Error processing or writing the image:', err.message);
+        }
+
+        // const resizedImageBuffer = await sharp(buffer)
+        //     .resize({ width: 300 })
+        //     .jpeg({ quality: 50 })  
+        //     .toBuffer();
+
+        // fs.writeFile(`./public/avatars/${user._id}.jpg`, resizedImageBuffer, async (err) => {
+        //     if (err) {
+        //         console.error('Error writing to file:', err);
+        //         await User.findByIdAndDelete(user._id);
+        //     } else {
+        //         console.log('Data has been written to the file');
+        //     }
+        // });
+        // user.image = `${SERVER_URL}/avatars/${user._id}.jpg`;
+        // await user.save();
+    }
+
+    const otp = user.getOneTimePassword();
+
+    await user.save({ validateBeforeSave: false });
+
+    const message = `Email verification OTP ( valid for 15 minutes ) :- \n\n ${otp} \n\n Please ignore if you didn't requested this email.`;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: `Email Veification`,
+            message,
+        });
+    } catch (error) {
+        user.oneTimePassword = undefined;
+        user.oneTimeExpire = undefined;
+        await user.save({ validateBeforeSave: false });
     }
 
     sendToken(user, 201, res);
@@ -43,16 +100,14 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
 export const requestVerification = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id);
 
-    const resetToken = user.getResetPasswordToken();
+    const otp = user.getOneTimePassword();
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${CLIENT_URL}/verify?token=${resetToken}`;
-
-    const message = `Email verification link ( valid for 15 minutes ) :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
+    const message = `Email verification OTP ( valid for 15 minutes ) :- \n\n ${otp} \n\n Please ignore if you didn't requested this email.`;
 
     try {
-        await sendEmail ({
+        await sendEmail({
             email: user.email,
             subject: `Email Veification`,
             message,
@@ -63,8 +118,8 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
             message: `Email sent to ${user.email} successfully`,
         });
     } catch (error) {
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpire = undefined;
+        user.oneTimePassword = undefined;
+        user.oneTimeExpire = undefined;
 
         await user.save({ validateBeforeSave: false });
 
@@ -74,23 +129,25 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
 
 // Verify User
 export const verifyUser = catchAsyncErrors(async (req, res, next) => {
-    const resetPasswordToken = crypto
+    const {otp} = req.body;
+
+    const oneTimePassword = crypto
         .createHash("sha256")
-        .update(req.params.token)
+        .update(otp.toString())
         .digest("hex");
 
     const user = await User.findOne({
-        resetPasswordToken,
-        resetPasswordExpire: { $gt: Date.now() },
+        oneTimePassword,
+        oneTimeExpire: { $gt: Date.now() },
     });
 
     if (!user) {
-        return next(new ErrorHandler("Email Veification Link has Expired", 400));
+        return next(new ErrorHandler("Email Veification OTP has Expired", 400));
     }
 
     user.isVerified = true;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
+    user.oneTimePassword = undefined;
+    user.oneTimeExpire = undefined;
 
     const uss = await user.save();
 
@@ -101,7 +158,7 @@ export const verifyUser = catchAsyncErrors(async (req, res, next) => {
         message = "Account Verification Failed, Please try again later."
     }
 
-    await sendEmail ({
+    await sendEmail({
         email: user.email,
         subject: `Account Verification Update`,
         message,
@@ -134,7 +191,7 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 // User Logout
-export const logoutUser = catchAsyncErrors( async (req, res, next) => {
+export const logoutUser = catchAsyncErrors(async (req, res, next) => {
     res.cookie("token", null, {
         expires: new Date(Date.now()),
         httpOnly: true,
@@ -147,7 +204,7 @@ export const logoutUser = catchAsyncErrors( async (req, res, next) => {
 });
 
 // Forgot Password
-export const forgotPassword = catchAsyncErrors( async (req, res, next) => {
+export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
@@ -163,7 +220,7 @@ export const forgotPassword = catchAsyncErrors( async (req, res, next) => {
     const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
 
     try {
-        await sendEmail ({
+        await sendEmail({
             email: user.email,
             subject: `Password Recovery`,
             message,
@@ -184,7 +241,7 @@ export const forgotPassword = catchAsyncErrors( async (req, res, next) => {
 });
 
 // Reset Password
-export const resetPassword = catchAsyncErrors( async (req, res, next) => {
+export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     const resetPasswordToken = crypto
         .createHash("sha256")
         .update(req.params.token)
@@ -212,7 +269,7 @@ export const resetPassword = catchAsyncErrors( async (req, res, next) => {
     sendToken(user, 200, res);
 });
 
-export const setPassword = catchAsyncErrors( async (req, res, next) => {
+export const setPassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id).select("+password");
 
     if (user.accountType !== accountEnum.GOOGLE) {
@@ -232,7 +289,7 @@ export const setPassword = catchAsyncErrors( async (req, res, next) => {
 });
 
 // Get User Details
-export const getUserDetails = catchAsyncErrors( async (req, res, next) => {
+export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
 
@@ -243,7 +300,7 @@ export const getUserDetails = catchAsyncErrors( async (req, res, next) => {
 });
 
 // Update User Password
-export const updatePassword = catchAsyncErrors( async (req, res, next) => {
+export const updatePassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id).select("+password");
 
     const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
@@ -264,7 +321,7 @@ export const updatePassword = catchAsyncErrors( async (req, res, next) => {
 });
 
 // Update User Profile
-export const updateProfile = catchAsyncErrors( async (req, res, next) => {
+export const updateProfile = catchAsyncErrors(async (req, res, next) => {
 
     const userx = await User.findById(req.user.id);
 
@@ -273,11 +330,23 @@ export const updateProfile = catchAsyncErrors( async (req, res, next) => {
             fs.unlinkSync(`./public/avatars/${userx._id}.jpg`);
         }
         const img = req.body.image;
-        const data = await img.replace(/^data:image\/\w+;base64,/, "");
-        const buf = Buffer.from(data, 'base64');
-        fs.writeFileSync(`./public/avatars/${userx._id}.jpg`, buf);
-        userx.image = `${SERVER_URL}/avatars/${userx._id}.jpg`;
-        await userx.save();
+        const data = img.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(data, 'base64');
+
+        try {
+            const resizedImageBuffer = await sharp(buffer)
+                .resize({ width: 300 })
+                .jpeg({ quality: 50 })
+                .toBuffer();
+        
+            await fs.promises.writeFile(`./public/avatars/${user._id}.jpg`, resizedImageBuffer);
+            console.log('Data has been written to the file');
+        
+            user.image = `${SERVER_URL}/avatars/${user._id}.jpg`;
+            await user.save();
+        } catch (err) {
+            console.error('Error processing or writing the image:', err.message);
+        }
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, { name: req.body.name }, {
@@ -287,13 +356,13 @@ export const updateProfile = catchAsyncErrors( async (req, res, next) => {
     });
 
     res.status(200).json({
-        success: true,  
+        success: true,
         user,
     });
 });
 
 // Get all Users - Only Admin
-export const getAllUsers = catchAsyncErrors( async (req, res, next) => {
+export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     const users = await User.find();
     const userCount = await User.countDocuments();
 
@@ -305,7 +374,7 @@ export const getAllUsers = catchAsyncErrors( async (req, res, next) => {
 });
 
 // Get User Details - Only Admin
-export const getSingleUser = catchAsyncErrors( async (req, res, next) => {
+export const getSingleUser = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
     if (!user) {
@@ -319,7 +388,7 @@ export const getSingleUser = catchAsyncErrors( async (req, res, next) => {
 });
 
 // Update User Role -- Admin
-export const updateRole = catchAsyncErrors( async (req, res, next) => {
+export const updateRole = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -333,15 +402,15 @@ export const updateRole = catchAsyncErrors( async (req, res, next) => {
     });
 
     res.status(200).json({
-        success: true,  
+        success: true,
         message: `User Role Updated`,
     })
 });
 
 // Delete Account
-export const deleteAccount = catchAsyncErrors( async (req, res, next) => {
+export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
 
-    const tree =  await Tree.find({ user: req.user.id });
+    const tree = await Tree.find({ user: req.user.id });
     if (tree) {
         for (let i = 0; i < tree.length; i++) {
             await Tree.findOneAndDelete({ user: req.user.id });
@@ -372,14 +441,14 @@ export const deleteAccount = catchAsyncErrors( async (req, res, next) => {
 });
 
 // Delete User -- Admin
-export const deleteUser = catchAsyncErrors( async (req, res, next) => {
+export const deleteUser = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
     }
 
-    const tree =  await Tree.find({ user: req.params.id });
+    const tree = await Tree.find({ user: req.params.id });
     if (tree) {
         for (let i = 0; i < tree.length; i++) {
             await Tree.findOneAndDelete({ user: req.params.id });
