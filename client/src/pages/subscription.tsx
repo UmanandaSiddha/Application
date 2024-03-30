@@ -47,7 +47,7 @@ const Subscription = () => {
 
         try {
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, {id},config);
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, { id },config);
             if (!data) {
                 toast.error("Failed to Execute Payment");
             }
@@ -101,7 +101,7 @@ const Subscription = () => {
                     <p>Price: {plan?.amount}</p>
                     <p>Period: {plan?.period}</p>
                     <p>Interval: {plan?.interval}</p>
-                    <p>Vcards Allowed: {plan?.vcards}</p>
+                    <p>Vcards Allowed: {plan?.cards}</p>
                     <p>Description: {plan?.description}</p>
                     <button className='bg-green-600 w-full rounded-lg text-white' onClick={() => handlePayment(plan?.razorPlanId)}>BUY</button>
                 </div>

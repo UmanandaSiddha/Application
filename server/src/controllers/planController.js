@@ -19,16 +19,17 @@ export const createPlan = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Failed to create plan", 500));
     }
 
-    console.log(razorPlan);
+    console.log(req.body)
 
     const plan = await Plan.create({
         name: req.body.name,
-        amount: req.body.amount,
+        amount: Number(req.body.amount),
         description: req.body.description,
-        vcards: req.body.vcards,
+        cards: Number(req.body.cards),
+        planType: req.body.planType,
         period: req.body.period,
-        interval: req.body.interval,
-        razorPlanId: razorPlan.id
+        interval: Number(req.body.interval),
+        razorPlanId: razorPlan.id,
     });
 
     res.status(200).json({

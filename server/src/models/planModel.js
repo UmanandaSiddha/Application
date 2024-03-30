@@ -7,6 +7,11 @@ export const periodEnum = {
     YEARLY: "yearly",
 };
 
+export const planEnum = {
+    USER: "user",
+    ORG: "org"
+}
+
 const planSchema = new mongoose.Schema(
     {
         name: {
@@ -17,13 +22,18 @@ const planSchema = new mongoose.Schema(
             type: Number,
             required: [true, "Enter Plan Amount"]
         },
-        vcards: {
+        cards: {
             type: Number,
-            required: [true, "Enter VCards Allowed"]
+            required: [true, "Enter Cards Allowed"]
         },
         description: {
             type: String,
             required: [true, "Enter Plan Description"]
+        },
+        planType: {
+            type: String,
+            required: true,
+            enum: Object.values(planEnum),
         },
         period: {
             type: String,

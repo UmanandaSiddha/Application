@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const subscriptionSchema = new mongoose.Schema(
     {
         planId: {
-            type: String,
+            type: mongoose.Schema.ObjectId,
+            ref: "Plan",
             required: true,
         },
         razorSubscriptionId: {
@@ -32,6 +33,10 @@ const subscriptionSchema = new mongoose.Schema(
         },
         remainingCount: {
             type: Number,
+            required: true
+        },
+        shortUrl: {
+            type: String,
             required: true
         },
         status: {

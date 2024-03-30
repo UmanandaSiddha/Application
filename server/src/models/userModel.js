@@ -54,6 +54,8 @@ const userSchema = new mongoose.Schema(
             enum: Object.values(roleEnum),
             default: roleEnum.USER,
         },
+        customerId: String,
+        donator: Boolean,
         isVerified: {
             type: Boolean,
             required: true,

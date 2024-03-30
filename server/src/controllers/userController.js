@@ -57,22 +57,6 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
         } catch (err) {
             console.error('Error processing or writing the image:', err.message);
         }
-
-        // const resizedImageBuffer = await sharp(buffer)
-        //     .resize({ width: 300 })
-        //     .jpeg({ quality: 50 })  
-        //     .toBuffer();
-
-        // fs.writeFile(`./public/avatars/${user._id}.jpg`, resizedImageBuffer, async (err) => {
-        //     if (err) {
-        //         console.error('Error writing to file:', err);
-        //         await User.findByIdAndDelete(user._id);
-        //     } else {
-        //         console.log('Data has been written to the file');
-        //     }
-        // });
-        // user.image = `${SERVER_URL}/avatars/${user._id}.jpg`;
-        // await user.save();
     }
 
     const otp = user.getOneTimePassword();
@@ -404,6 +388,26 @@ export const updateRole = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: `User Role Updated`,
+    })
+});
+
+// Update User Cards -- Admin
+export const updateCard = catchAsyncErrors(async (req, res, next) => {
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
+    }
+
+    await User.findByIdAndUpdate(req.params.id, { "cards.total": req.body.total }, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
+    });
+
+    res.status(200).json({
+        success: true,
+        message: `User Cards Updated`,
     })
 });
 

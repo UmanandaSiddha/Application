@@ -5,19 +5,40 @@ import Plan from "../models/planModel.js";
 import crypto from "crypto";
 import Subscription from "../models/subscriptionModel.js";
 import Transaction from "../models/transactionModel.js";
+import User, { roleEnum } from "../models/userModel.js";
 
 export const createSubscription = catchAsyncErrors(async (req, res, next) => {
+    
+    const user = await User.findById(req.user.id);
+
+    if (user.role === roleEnum.ADMIN) {
+        return next(new ErrorHandler("Admin don't need to buy Plans", 403))
+    }
+
+    if (!user.customerId) {
+        const customer = await instance.customers.create({
+            name: user.name,
+            email: user.email,
+            fail_existing: 0,
+        });
+        await User.findByIdAndUpdate(req.user.id, { customerId: customer.id }, {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false,
+        });
+    }
+    
     const subscriptions = await instance.subscriptions.create({
         plan_id: req.body.id,
         total_count: 12,
         quantity: 1,
-        customer_notify: 1,
+        customer_notify: 0,
     });
 
-    console.log(subscriptions);
+    const plan = await Plan.findOne({ razorPlanId: req.body.id });
 
     await Subscription.create({
-        planId: req.body.id,
+        planId: plan._id,
         razorSubscriptionId: subscriptions.id,
         start: 0,
         end: 0,
@@ -25,6 +46,7 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         totalCount: 0,
         paidCount: 0,
         remainingCount: 0,
+        shortUrl: subscriptions.short_url,
         status: "created",
         user: req.user.id,
     });
@@ -33,7 +55,16 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         success: true,
         key: process.env.RAZORPAY_KEY_ID,
         subscriptions_id: subscriptions.id,
-        // customer_id: customer.id
+        customer_id: user.customerId,
+    });
+});
+
+export const cancelSubscription = catchAsyncErrors( async (req, res, next) => {
+    await instance.subscriptions.cancel(req.body.subscriptionId);
+
+    res.status(200).json({
+        success: true,
+        message: "Subscription Cancelled"
     });
 });
 
@@ -89,7 +120,6 @@ export const testSubscription = async (req, res, next) => {
             //     default:
             //         break;
             // }
-           
         }
     } catch (error) {
         console.log(error.message)

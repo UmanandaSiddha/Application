@@ -80,6 +80,13 @@ export const deleteCard = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`VCard does not exist with Id: ${req.params.id}`, 404));
     }
 
+    // reduce created cards no. from user
+    // await Model.findByIdAndUpdate(req.params.id, , {
+    //     new: true,
+    //     runValidators: true,
+    //     useFindAndModify: false,
+    // });
+
     await Model.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
