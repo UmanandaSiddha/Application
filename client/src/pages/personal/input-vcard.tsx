@@ -52,7 +52,6 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { creatorInput } from "@/types/form-inputs";
-import { createPersonal, updatePersonal } from "@/redux/api/personalApi";
 import { personalNotTemp, personalTemp } from "@/redux/reducer/personalReducer";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -88,7 +87,7 @@ const InputVCard = () => {
         if (id) {
             try {
                 const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/personal/detailed/${id!}`, { withCredentials: true });
-                dispatch(personalTemp(data.personal));
+                dispatch(personalTemp(data.vCard));
                 setIsPersonal(true);
             } catch (error: any) {
                 toast.error(error.response.data.message);
@@ -279,20 +278,20 @@ const InputVCard = () => {
         console.log(personalData)
         try {
             if (isPersonal) {
-                await updatePersonal(personalData, id!);
+                await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=personal`, personalData, { withCredentials: true });
                 toast.success("Personal VCards updated!");
             } else {
-                await createPersonal(personalData);
+                await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=personal`, personalData, { withCredentials: true });
                 toast.success("Personal VCards created!");
             }
-            if (isPaid) {
+            if (isPaid || user?.role === "admin") {
                 navigate(-1);
             } else {
                 navigate("/plans");
             }
         } catch (error: any) {
             toast.error(error.response.data.message);
-            if (!isPaid) {
+            if (!isPaid && user?.role !== "admin") {
                 navigate("/plans");
             }
         }
@@ -360,6 +359,21 @@ const InputVCard = () => {
             </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <div className="flex w-[350px] justify-center items-center gap-2">
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Enter Name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </div>
+                            </FormItem>
+                        )}
+                    />
                     {inputFields.map((input, index) => (
                         <div key={index}>
                             {input.section !== currentSection && (

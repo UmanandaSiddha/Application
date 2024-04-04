@@ -43,7 +43,7 @@ const CreateAnimal = () => {
         if (id) {
             try {
                 const { data }: { data: SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/animal/detailed/${id!}`, { withCredentials: true });
-                dispatch(animalTemp(data.animal));
+                dispatch(animalTemp(data.vCard));
                 setIsAnimal(true);
             } catch (error: any) {
                 toast.error(error.response.data.message);
@@ -84,22 +84,20 @@ const CreateAnimal = () => {
         }
         try {
             if (isAnimal) {
-                await axios.put(`${import.meta.env.VITE_BASE_URL}/animal/delete/${id}`, animalData, { withCredentials: true });
-                // await updateTree(animalData, id!);
+                await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=animal`, animalData, { withCredentials: true });
                 toast.success("Animal VCard Updated");
             } else {
-                // await createTree(animalData);
-                await axios.post(`${import.meta.env.VITE_BASE_URL}/animal/new`, animalData, { withCredentials: true });
+                await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=animal`, animalData, { withCredentials: true });
                 toast.success("Animal VCard Created");
             }
-            if (isPaid) {
+            if (isPaid || user?.role === "admin") {
                 navigate(-1);
             } else {
                 navigate("/plans");
             }
         } catch (error: any) {
             toast.error(error.response.data.message);
-            if (!isPaid) {
+            if (!isPaid && user?.role !== "admin") {
                 navigate("/plans");
             }
         }

@@ -23,7 +23,6 @@ import { Label } from "@/components/ui/label";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { creatorInput } from "@/types/form-inputs";
-import { createCreator, updateCreator } from "@/redux/api/creatorApi";
 import { creatorNotTemp, creatorTemp } from "@/redux/reducer/creatorreducer";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { SingleCreatorResponse } from "@/types/api-types";
@@ -48,7 +47,7 @@ const CreatorInput = () => {
         if (id) {
             try {
                 const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/creator/detailed/${id!}`, { withCredentials: true });
-                dispatch(creatorTemp(data.creator));
+                dispatch(creatorTemp(data.vCard));
                 setIsCreator(true);
             } catch (error: any) {
                 toast.error(error.response.data.message);
@@ -118,22 +117,20 @@ const CreatorInput = () => {
         }
         try {
             if (isCreator) {
-                const data = await updateCreator(creatorData, id!);
-                dispatch(creatorTemp(data.creator));
+                await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=creator`, creatorData, { withCredentials: true });
                 toast.success("Creator VCard Updated");
             } else {
-                const data = await createCreator(creatorData);
-                dispatch(creatorTemp(data.creator));
+                await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=creator`, creatorData, { withCredentials: true });
                 toast.success("Creator VCard Created");
             }
-            if (isPaid) {
+            if (isPaid || user?.role === "admin") {
                 navigate(-1);
             } else {
                 navigate("/plans");
             }
         } catch (error: any) {
             toast.error(error.response.data.message);
-            if (!isPaid) {
+            if (!isPaid && user?.role !== "admin") {
                 navigate("/plans");
             }
         }

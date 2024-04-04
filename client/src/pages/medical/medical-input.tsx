@@ -19,7 +19,6 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { perInfo, emCon, medAdd, healthHistory, healthhabits, inSur } from "@/redux/inputs/medical-input";
-import { createMedical, updateMedical } from "@/redux/api/medicalApi";
 import { toast } from "react-toastify";
 import { medicalNotTemp, medicalTemp } from "@/redux/reducer/medicalReducer";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -50,7 +49,7 @@ const MedicalInput = () => {
         if (id) {
             try {
                 const { data }: { data: SingleMedicalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/medical/detailed/${id!}`, { withCredentials: true });
-                dispatch(medicalTemp(data.medical));
+                dispatch(medicalTemp(data.vCard));
                 setIsMedical(true);
             } catch (error: any) {
                 toast.error(error.response.data.message);
@@ -137,20 +136,20 @@ const MedicalInput = () => {
         }
         try {
             if (isMedical) {
-                await updateMedical(medicalData, id!);
+                await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=medical`, medicalData, { withCredentials: true });
                 toast.success("Medical VCards updated!");
             } else {
-                await createMedical(medicalData);
+                await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=medical`, medicalData, { withCredentials: true });
                 toast.success("Medical VCards created!");
             }
-            if (isPaid) {
+            if (isPaid || user?.role === "admin") {
                 navigate(-1);
             } else {
                 navigate("/plans");
             }
         } catch (error: any) {
             toast.error(error.response.data.message);
-            if (!isPaid) {
+            if (!isPaid && user?.role !== "admin") {
                 navigate("/plans");
             }
         }

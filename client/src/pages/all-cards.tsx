@@ -159,11 +159,28 @@ const AllCards = () => {
         setCurrentPage(pageNumber);
     };
 
+    const setLink = (type: String) => {
+        switch (type) {
+            case "tree":
+                return `/dashboard/tree/create`
+            case "personal":
+                return `/dashboard/personal/create`;
+            case "medical":
+                return `/dashboard/medical/create`;
+            case "creator":
+                return `/dashboard/creator/create`;
+            case "animal":
+                return `/dashboard/animal/create`;
+            default:
+                return `/dashboard/tree/create`;
+        }
+    }
+
     return (
         <div className='flex flex-col justify-center gap-4 items-center mt-8'>
             {["tree", "personal", "medical", "creator", "animal"].includes(type!) ? (
                 <>
-                    <Button onClick={() => navigate("/dashboard/tree/create")}>Create New {headSetter(type!)} Card</Button>
+                    <Button onClick={() => navigate(setLink(type!))}>Create New {headSetter(type!)} Card</Button>
                     {(!isPaid && user?.role !== "admin") && <p>You are not Subscribed</p>}
                     <h1 className="text-3xl">Your {headSetter(type!)} Cards</h1>
                     <div className="flex flex-wrap p-4 gap-4 justify-center">

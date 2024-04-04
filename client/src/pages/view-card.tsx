@@ -104,6 +104,23 @@ const ViewCard = () => {
         }
     }
 
+    const setLink = (type: String, id: String) => {
+        switch (type) {
+            case "tree":
+                return `/dashboard/tree/create?treeId=${id}`
+            case "personal":
+                return `/dashboard/personal/create?personalId=${id}`;
+            case "medical":
+                return `/dashboard/medical/create?medicalId=${id}`;
+            case "creator":
+                return `/dashboard/creator/create?creatorId=${id}`;
+            case "animal":
+                return `/dashboard/animal/create?animalId=${id}`;
+            default:
+                return `/dashboard/tree/create?treeId=${id}`;
+        }
+    }
+
     return (
         <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
             <h1 className="text-3xl font-semibold">{headSetter(type!)} Details</h1>
@@ -119,7 +136,7 @@ const ViewCard = () => {
             </div>
             <div className="flex gap-6">
                 <Button disabled={!isPaid && user?.role !== "admin"}><a href={qr} download={`${card?._id}.png`}>Download</a></Button>
-                <Button variant="outline" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(`/dashboard/tree/create?treeId=${card?._id}`)}>Edit</Button>
+                <Button variant="outline" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(setLink(type!, card?._id))}>Edit</Button>
                 <Button onClick={() => deleteCard()} disabled={!isPaid && user?.role !== "admin"} variant="destructive">Delete</Button>
             </div>
         </div>

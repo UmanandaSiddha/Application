@@ -1,4 +1,3 @@
-import { useForm } from "react-hook-form";
 import {
     Form,
     FormControl,
@@ -7,19 +6,18 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { inputs } from "@/types/form-inputs";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { createTree, updateTree } from "@/redux/api/treeApi";
-
-import { toast } from 'react-toastify';
-import { SingleTreeResponse } from "@/types/api-types";
 import axios from "axios";
-import { treeNotTemp, treeTemp } from "@/redux/reducer/treeReducer";
+import { toast } from 'react-toastify';
+import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
+import { inputs } from "@/types/form-inputs";
+import { RootState } from "../../redux/store";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { SingleTreeResponse } from "@/types/api-types";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { treeNotTemp, treeTemp } from "@/redux/reducer/treeReducer";
 
 const CreateTree = () => {
 
@@ -43,7 +41,7 @@ const CreateTree = () => {
         if (id) {
             try {
                 const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id!}?type=tree`, { withCredentials: true });
-                dispatch(treeTemp(data.tree));
+                dispatch(treeTemp(data.vCard));
                 setIsTree(true);
             } catch (error: any) {
                 toast.error(error.response.data.message);
@@ -86,20 +84,20 @@ const CreateTree = () => {
         }
         try {
             if (isTree) {
-                await updateTree(treeData, id!);
+                await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=tree`, treeData, { withCredentials: true });
                 toast.success("Tree VCard Updated");
             } else {
-                await createTree(treeData);
+                await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=tree`, treeData, { withCredentials: true });
                 toast.success("Tree VCard Created");
             }
-            if (isPaid) {
+            if (isPaid || user?.role === "admin") {
                 navigate(-1);
             } else {
                 navigate("/plans");
             }
         } catch (error: any) {
             toast.error(error.response.data.message);
-            if (!isPaid) {
+            if (!isPaid && user?.role !== "admin") {
                 navigate("/plans");
             }
         }

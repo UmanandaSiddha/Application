@@ -128,9 +128,9 @@ const App = () => {
                                 <Route path="/dashboard/cards/card" element={<ViewCard />} />
 
                                 <Route path="/dashboard/tree/create" element={<CreateTree />} />
-                                <Route path="/dashboard/personal/input" element={<InputVCard />} />
-                                <Route path="/dashboard/medical/input" element={<MedicalInput />} /> 
-                                <Route path="/dashboard/creator/input" element={<CreatorInput />} />
+                                <Route path="/dashboard/personal/create" element={<InputVCard />} />
+                                <Route path="/dashboard/medical/create" element={<MedicalInput />} /> 
+                                <Route path="/dashboard/creator/create" element={<CreatorInput />} />
                                 <Route path="/dashboard/animal/create" element={<CreateAnimal />} />
 
                                 {/* <Route path="/pay" element={<Checkout />} /> */}
