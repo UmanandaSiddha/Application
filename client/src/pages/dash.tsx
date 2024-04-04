@@ -41,11 +41,11 @@ const Dashboard = () => {
                         </div>
                     )}
                     <div className="flex flex-wrap justify-center">
-                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/tree")}>Tree VCard</button>
-                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/personal")}>Personal VCard</button>
-                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/medical")}>Medical VCard</button>
-                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/creator")}>Creator VCard</button>
-                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/animal")}>Animal VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/cards?type=tree")}>Tree VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/cards?type=personal")}>Personal VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/cards?type=medical")}>Medical VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/cards?type=creator")}>Creator VCard</button>
+                        <button className="p-4 hover:underline hover:font-semibold" disabled={!user?.isVerified} onClick={() => navigate("/dashboard/cards?type=animal")}>Animal VCard</button>
                     </div>
                 </>
             )}

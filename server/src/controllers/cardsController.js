@@ -131,7 +131,7 @@ export const getGeneralCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const user = await User.findById(vCard.user);
-    if (user.currentPlan.endDate < Date.now()) {
+    if (user.role !== "admin" && user.currentPlan.endDate < Date.now()) {
         return next(new ErrorHandler("Subscription Expired", 400));
     }
 

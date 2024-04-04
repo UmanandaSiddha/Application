@@ -21,30 +21,15 @@ const Confirm = lazy(() => import("./pages/confirm"));
 const Subscription = lazy(() => import("./pages/subscription"));
 const AdminPlan = lazy(() => import("./pages/admin-plan"));
 
-const Tree = lazy(() => import("./pages/tree/tree"));
-const ViewTree = lazy(() => import("./pages/tree/view-tree"));
-const DisplayTree = lazy(() => import("./pages/tree/display-tree"));
+const AllCards = lazy(() => import ("./pages/all-cards"));
+const ViewCard = lazy(() => import ("./pages/view-card"));
+const DisplayCard = lazy(() => import ("./pages/display-card"));
+
 const CreateTree = lazy(() => import("./pages/tree/create-tree"));
-
-const Personal = lazy(() => import("./pages/personal/personal"));
 const InputVCard = lazy(() => import("./pages/personal/input-vcard"));
-const DisplayPersonal = lazy(() => import("./pages/personal/display-personal"));
-const ViewPersonal = lazy(() => import("./pages/personal/view-personal"));
-
-const Medical = lazy(() => import("./pages/medical/medical"));
 const MedicalInput = lazy(() => import("./pages/medical/medical-input"));
-const DisplayMedical = lazy(() => import("./pages/medical/display-medical"));
-const ViewMedical = lazy(() => import("./pages/medical/view-medical"));
-
-const Creator = lazy(() => import("./pages/creator/creator"));
 const CreatorInput = lazy(() => import("./pages/creator/creator-input"));
-const ViewCreator = lazy(() => import("./pages/creator/view-creator"));
-const DisplayCreator = lazy(() => import("./pages/creator/display-creator"));
-
-const Animal = lazy(() => import("./pages/animal/animal"));
-const ViewAnimal = lazy(() => import("./pages/animal/view-animal"));
 const CreateAnimal = lazy(() => import("./pages/animal/create-animal"));
-const DisplayAnmial = lazy(() => import("./pages/animal/display-animal"));
 
 // const Checkout = lazy(() => import ("./pages/checkout"));
 
@@ -100,11 +85,8 @@ const App = () => {
                         <Routes>
                             <Route path="/" element={<Home user={user} />} />
                             <Route path="/sub" element={<Subscription />} />
-                            <Route path="/display/tree" element={<DisplayTree />} />
-                            <Route path="/display/creator" element={<DisplayCreator />} />
-                            <Route path="/display/personal" element={<DisplayPersonal />} />
-                            <Route path="/display/medical" element={<DisplayMedical />} />
-                            <Route path="/display/animal" element={<DisplayAnmial />} />
+                            <Route path="/display" element={<DisplayCard />} />
+                        
                             {/* Not logged In Route */}
                             <Route
                                 path="/login"
@@ -142,24 +124,13 @@ const App = () => {
                                 <Route path="/confirm" element={<Confirm />} />
                                 <Route path="/admin-plan" element={<AdminPlan />} />
 
-                                <Route path="/dashboard/tree" element={<Tree />} />
-                                <Route path="/dashboard/tree/view" element={<ViewTree />} />
+                                <Route path="/dashboard/cards" element={<AllCards />} />
+                                <Route path="/dashboard/cards/card" element={<ViewCard />} />
+
                                 <Route path="/dashboard/tree/create" element={<CreateTree />} />
-
-                                <Route path="/dashboard/personal" element={<Personal />} />
-                                <Route path="/dashboard/personal/view" element={<ViewPersonal />} />
                                 <Route path="/dashboard/personal/input" element={<InputVCard />} />
-
-                                <Route path="/dashboard/medical" element={<Medical />} />
-                                <Route path="/dashboard/medical/view" element={<ViewMedical />} />
-                                <Route path="/dashboard/medical/input" element={<MedicalInput />} />
-
-                                <Route path="/dashboard/creator" element={<Creator />} />
-                                <Route path="/dashboard/creator/view" element={<ViewCreator />} />
+                                <Route path="/dashboard/medical/input" element={<MedicalInput />} /> 
                                 <Route path="/dashboard/creator/input" element={<CreatorInput />} />
-
-                                <Route path="/dashboard/animal" element={<Animal />} />
-                                <Route path="/dashboard/animal/view" element={<ViewAnimal />} />
                                 <Route path="/dashboard/animal/create" element={<CreateAnimal />} />
 
                                 {/* <Route path="/pay" element={<Checkout />} /> */}

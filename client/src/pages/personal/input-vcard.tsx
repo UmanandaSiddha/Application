@@ -28,7 +28,26 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+
 import { phNum, emailAdd, homeTown, motto, seleInp, seloInp, textAr } from "@/redux/inputs/personal-inputs";
+
+const arr: any = [{
+    name: 'about',
+    text: 'Enter about youself',
+    label: 'About Me'
+}];
+
+const inputFields = [
+    ...phNum.map(input => ({ ...input, type: 'text', section: 'Phone Number' })),
+    ...arr.map((input: any) => ({ ...input, type: 'textarea', section: '' })),
+    ...emailAdd.map(input => ({ ...input, type: 'text', section: 'Email Address' })),
+    ...homeTown.map(input => ({ ...input, type: 'text', section: 'Home Town' })),
+    ...motto.map(input => ({ ...input, type: 'text', section: 'Favorite Quotes/Mottos' })),
+    ...seleInp.map(input => ({ ...input, type: 'select', section: 'Selection Inputs' })),
+    ...seloInp.map(input => ({ ...input, type: 'select', section: 'Selection Inputs' })),
+    ...textAr.map(input => ({ ...input, type: 'text', section: 'Text Areas' }))
+];
+
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -45,6 +64,8 @@ const InputVCard = () => {
     const [search] = useSearchParams();
     const id = search.get("personalId");
 
+    let currentSection: any = null;
+
     const [isPersonal, setIsPersonal] = useState<boolean>(id ? true : false);
     const [personalLoading, setPersonalLoading] = useState<boolean>(false);
 
@@ -58,7 +79,7 @@ const InputVCard = () => {
 
     const dispatch = useDispatch();
 
-    const [arrData, setArrData] = useState<any | null>(personal ? personal?.socialMedia :  creatorInput);
+    const [arrData, setArrData] = useState<any | null>(personal ? personal?.socialMedia : creatorInput);
     const [open, setOpen] = useState(false);
     const [otherName, setOtherName] = useState("");
     const [otherLink, setOtherLink] = useState("");
@@ -213,7 +234,7 @@ const InputVCard = () => {
                     other: values.othermotto,
                 },
             },
-            lifeStyle :{
+            lifeStyle: {
                 travelMode: values.prefmode,
                 petLover: values.petlover,
                 partyEnthusiast: values.party,
@@ -239,7 +260,7 @@ const InputVCard = () => {
             beliefs: {
                 globalIssues: values.global,
                 weirdBelief: values.weirdbelief,
-            },        
+            },
             professional: {
                 currentOcupation: values.occupation,
                 careerAspiation: values.aspiration,
@@ -280,301 +301,110 @@ const InputVCard = () => {
 
     return (
         <div className="flex flex-col justify-center items-center my-8">
+            <div className="flex flex-col space-y-2">
+                <h1 className="font-semibold">Social Media Profiles</h1>
+                {arrData && (
+                    <div className="flex flex-col space-y-2">
+                        {arrData.map((arr: any, idx: number) => (
+                            <div key={idx} className="flex w-[350px] justify-center items-center gap-2">
+                                <Label>{arr.label}</Label>
+                                <Input
+                                    name="name"
+                                    value={arr.name}
+                                    onChange={(e) => handleChange(e, idx)}
+                                    placeholder={arr.text}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                        <Button variant="secondary" className="w-[350px] my-4">Add more</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Add Another Social Profile</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="name" className="text-right">
+                                    Name
+                                </Label>
+                                <Input
+                                    id="name"
+                                    value={otherName}
+                                    onChange={(e) => setOtherName(e.target.value)}
+                                    placeholder="Enter Social Media Platform"
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="link" className="text-right">
+                                    Link
+                                </Label>
+                                <Input
+                                    id="link"
+                                    value={otherLink}
+                                    onChange={(e) => setOtherLink(e.target.value)}
+                                    placeholder="Enter Social Media Link"
+                                    className="col-span-3"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button onClick={handleAdd} type="submit">Add</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
-                    <FormField control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input className="w-[350px]" placeholder="Enter your name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <div className="space-y-8">
-                        <div className="space-y-2">
-                            <h1 className="font-semibold">Phone Number</h1>
-                            {phNum.map((ph, index) => (
-                                <FormField key={index} control={form.control}
-                                    name={ph.name}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex w-[350px] justify-center items-center gap-2">
-                                                <FormLabel>{ph.label}</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder={ph.text} {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </div>
-                                        </FormItem>
-                                    )}
-                                />
-                            ))}
-                        </div>
-
-                        <div className="space-y-2">
-                            <h1 className="font-semibold">Email Address</h1>
-                            {emailAdd.map((emAdd, index) => (
-                                <FormField key={index} control={form.control}
-                                    name={emAdd.name}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex w-[350px] justify-center items-center gap-2">
-                                                <FormLabel>{emAdd.label}</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder={emAdd.text} {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </div>
-                                        </FormItem>
-                                    )}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    <FormField
-                        control={form.control}
-                        name="aboutme"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>About Me</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        placeholder="Tell us a little bit about yourself"
-                                        className="resize-none"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <div className="flex flex-col space-y-2">
-                        <h1 className="font-semibold">Social Media Profiles</h1>
-                        {arrData && (
-                            <div className="flex flex-col space-y-2">
-                                {arrData.map((arr: any, index: number) => (
-                                    <div key={index} className="flex w-[350px] justify-center items-center gap-2">
-                                        <Label>{arr.label}</Label>
-                                        <Input
-                                            name="name"
-                                            value={arr.name}
-                                            onChange={(e) => handleChange(e, index)}
-                                            placeholder={arr.text}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                        <Dialog open={open} onOpenChange={setOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="secondary" className="w-[350px] my-4">Add more</Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-                                <DialogHeader>
-                                    <DialogTitle>Add Another Social Profile</DialogTitle>
-                                </DialogHeader>
-                                <div className="grid gap-4 py-4">
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label htmlFor="name" className="text-right">
-                                            Name
-                                        </Label>
-                                        <Input
-                                            id="name"
-                                            value={otherName}
-                                            onChange={(e) => setOtherName(e.target.value)}
-                                            placeholder="Enter Social Media Platform"
-                                            className="col-span-3"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label htmlFor="link" className="text-right">
-                                            Link
-                                        </Label>
-                                        <Input
-                                            id="link"
-                                            value={otherLink}
-                                            onChange={(e) => setOtherLink(e.target.value)}
-                                            placeholder="Enter Social Media Link"
-                                            className="col-span-3"
-                                        />
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <Button onClick={handleAdd} type="submit">Add</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-
-                    <FormField
-                        control={form.control}
-                        name="dob"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Date Of Birth</FormLabel>
-                                <FormControl>
-                                    <Input className="w-[350px]" placeholder="Enter Your date of birth" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {homeTown.map((hm, index) => (
-                        <FormField key={index} control={form.control}
-                            name={hm.name}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{hm.label}</FormLabel>
-                                    <FormControl>
-                                        <Input className="w-[350px]" placeholder={hm.text} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
+                    {inputFields.map((input, index) => (
+                        <div key={index}>
+                            {input.section !== currentSection && (
+                                <>
+                                    <h1 className="font-semibold">{input.section}</h1>
+                                    <p className="invisible">{currentSection = input.section}</p>
+                                </>
                             )}
-                        />
-                    ))}  
-
-                    <div className="space-y-2">
-                        <h1 className="font-semibold">Favorite Quotes/Mottos</h1>
-                        {motto.map((mot, index) => (
-                            <FormField key={index} control={form.control}
-                                name={mot.name}
+                            <FormField
+                                key={index}
+                                control={form.control}
+                                name={input.name}
                                 render={({ field }) => (
                                     <FormItem>
                                         <div className="flex w-[350px] justify-center items-center gap-2">
-                                            <FormLabel>{mot.label}</FormLabel>
+                                            <FormLabel>{input.label}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder={mot.text} {...field} />
+                                                {input.type === 'select' ? (
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder={input.text} />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {input && 'options' in input && input.options && input.options.map((option: any, index: number) => (
+                                                                <SelectItem key={index} value={option}>{option}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                ) : (
+                                                    <>
+                                                        {input.type === 'textarea' ? (
+                                                            <Textarea placeholder={input.text} className="resize-none" {...field} />
+                                                        ) : (
+                                                            <Input placeholder={input.text} {...field} />
+                                                        )}
+                                                    </>
+                                                )}
                                             </FormControl>
                                             <FormMessage />
                                         </div>
                                     </FormItem>
                                 )}
                             />
-                        ))}
-                    </div>
-
-                    {seleInp.map((sele, index) => (
-                        <FormField
-                            key={index}
-                            control={form.control}
-                            name={sele.name}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{sele.label}</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl className="w-[350px]">
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={sele.text} />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {sele.options.map((option, index: number) => (
-                                                <SelectItem key={index} value={option}>{option}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        </div>
                     ))}
-
-                    <FormField
-                        control={form.control}
-                        name="global"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Opinions on Global Issues</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        placeholder="Opinions on Global Issues"
-                                        className="resize-none"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="weirdbelief"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Weirdest or Uncommon Belief I Hold</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        placeholder="Weirdest or Uncommon Belief I Hold"
-                                        className="resize-none"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <div className="space-y-3">
-                        <h1 className="text-2xl font-semibold pb-1">Professional Details</h1>
-                        {seloInp.map((selo, index) => (
-                            <FormField
-                                key={index}
-                                control={form.control}
-                                name={selo.name}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{selo.label}</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl className="w-[350px]">
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder={selo.text} />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {selo.options.map((option, index: number) => (
-                                                    <SelectItem key={index} value={option}>{option}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        ))}
-                    </div>
-
-                    {textAr.map((teAr, index) => (
-                        <FormField
-                            key={index}
-                            control={form.control}
-                            name={teAr.name}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{teAr.label}</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder={teAr.text}
-                                            className="resize-none"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    ))}
-
                     <Button className="w-[350px]" type="submit" disabled={personalLoading}>{personalLoading ? "Saving..." : "Save"}</Button>
                 </form>
             </Form>

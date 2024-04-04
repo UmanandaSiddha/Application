@@ -21,7 +21,7 @@ export type TreeResponse = {
 
 export type SingleTreeResponse = {
     success: boolean;
-    tree: Tree;
+    vCard: Tree;
 }
 
 export type PaymentResponse = {
@@ -32,43 +32,43 @@ export type PaymentResponse = {
 export type AnimalResponse = {
     success: boolean;
     count: number;
-    animal: Animal[];
+    vCards: Animal[];
 }
 
 export type SingleAnimalResponse = {
     success: boolean;
-    animal: Animal;
+    vCard: Animal;
 }
 
 export type PersonalResponse = {
     success: boolean;
     count: number;
-    personal: Personal[];
+    vCards: Personal[];
 }
 
 export type SinglePersonalResponse = {
     success: boolean;
-    personal: Personal;
+    vCard: Personal;
 }
 
 export type MedicalResponse = {
     success: boolean;
     count: number;
-    medical: MedicalType[];
+    vCards: MedicalType[];
 }
 
 export type SingleMedicalResponse = {
     success: boolean;
-    medical: MedicalType;
+    vCard: MedicalType;
 }
 
 export type CreatorResponse = {
     success: boolean;
     count: number;
-    creator: Creator[];
+    vCards: Creator[];
 }
 
 export type SingleCreatorResponse = {
     success: boolean;
-    creator: Creator;
+    vCard: Creator;
 }

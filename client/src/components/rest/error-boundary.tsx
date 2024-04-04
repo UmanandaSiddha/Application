@@ -30,7 +30,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
         if (hasError) {
             // Render fallback UI when an error occurs
-            return <div>Something went wrong.</div>;
+            return (
+                <div className='flex flex-col justify-center gap-8 items-center mt-8'>
+                    <h1>Something Went Wrong!!</h1>
+                </div>
+            );
         }
 
         // Render children if no error occurred
