@@ -37,7 +37,7 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 
     const plan = await Plan.findOne({ razorPlanId: req.body.id });
 
-    await Subscription.create({
+    const subscription = await Subscription.create({
         planId: plan._id,
         razorSubscriptionId: subscriptions.id,
         start: 0,
@@ -49,6 +49,12 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         shortUrl: subscriptions.short_url,
         status: "created",
         user: req.user.id,
+    });
+
+    await User.findByIdAndUpdate(req.user.id, { activePlan: subscription._id }, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
     });
 
     res.status(200).json({

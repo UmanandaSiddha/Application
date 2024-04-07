@@ -275,7 +275,7 @@ export const setPassword = catchAsyncErrors(async (req, res, next) => {
 // Get User Details
 export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
 
     res.status(200).json({
         success: true,

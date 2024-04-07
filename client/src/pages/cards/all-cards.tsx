@@ -16,13 +16,13 @@ import {
 import QrCode from "qrcode";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import Loader from "@/components/rest/loader";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { PaginationDemo } from "@/components/rest/pagination-demo";
-import { Animal, Creator, MedicalType, Personal, Tree, User } from "../types/types";
+import { Animal, Creator, MedicalType, Personal, Tree, User } from "../../types/types";
 
 interface PropsType {
     card: Tree | Personal | MedicalType | Creator | Animal | null;

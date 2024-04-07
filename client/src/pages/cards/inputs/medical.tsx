@@ -17,7 +17,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../../redux/store";
 import { perInfo, emCon, medAdd, healthHistory, healthhabits, inSur } from "@/redux/inputs/medical-input";
 import { toast } from "react-toastify";
 import { medicalNotTemp, medicalTemp } from "@/redux/reducer/medicalReducer";

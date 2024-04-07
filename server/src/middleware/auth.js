@@ -2,6 +2,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "./catchAsyncErrors.js";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
+import Subscription from "../models/subscriptionModel.js";
 
 export const isAuthenticatedUser = catchAsyncErrors( async (req, res, next) => {
     const {token} = req.cookies;
@@ -23,9 +24,15 @@ export const isUserVerified = catchAsyncErrors( async (req, res, next) => {
 });
 
 export const isUserPaid = catchAsyncErrors( async (req, res, next) => {
-    if ( req.user?.currentPlan?.endDate < Date.now() && req.user?.currentPlan.planStatus === "succeeded" ) {
+    if (!req.user.activePlan) {
         return next(new ErrorHandler("Subscription Expired Recharge", 400));
     }
+
+    const subscription = await Subscription.findById(req.user.activePlan);
+    if (subscription.status !== "active") {
+        return next(new ErrorHandler("Subscription Expired Recharge", 400));
+    }
+    
     next();
 });
 

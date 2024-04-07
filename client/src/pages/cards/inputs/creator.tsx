@@ -18,7 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../../redux/store";
 import { Label } from "@/components/ui/label";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";

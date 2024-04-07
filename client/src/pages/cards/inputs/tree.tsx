@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { inputs } from "@/types/form-inputs";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../../redux/store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SingleTreeResponse } from "@/types/api-types";

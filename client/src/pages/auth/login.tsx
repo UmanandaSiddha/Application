@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { userExist, userNotExist } from "../redux/reducer/userReducer";
+import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import {
     Dialog,
     DialogContent,

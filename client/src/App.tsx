@@ -8,28 +8,29 @@ import Header from "./components/rest/header";
 import Loader from "./components/rest/loader";
 import ProtectedRoute from "./components/rest/protected-route";
 
-const Home = lazy(() => import("./pages/home"));
-const Login = lazy(() => import("./pages/login"));
-const Register = lazy(() => import("./pages/register"));
-const NotFound = lazy(() => import("./pages/not-found"));
-const Dashboard = lazy(() => import("./pages/dash"));
-const Profile = lazy(() => import("./pages/profile"));
+const Home = lazy(() => import("./pages/root/home"));
+const Login = lazy(() => import("./pages/auth/login"));
+const Register = lazy(() => import("./pages/auth/register"));
+const NotFound = lazy(() => import("./pages/root/not-found"));
+const Dashboard = lazy(() => import("./pages/root/dash"));
+const Profile = lazy(() => import("./pages/root/profile"));
 const Plans = lazy(() => import("./pages/plans"));
-const Verify = lazy(() => import("./pages/verify"));
-const ResetPassword = lazy(() => import("./pages/reset-password"));
-const Confirm = lazy(() => import("./pages/confirm"));
-const Subscription = lazy(() => import("./pages/subscription"));
+const Verify = lazy(() => import("./pages/auth/verify"));
+const ResetPassword = lazy(() => import("./pages/auth/reset-password"));
+const Confirm = lazy(() => import("./pages/root/confirm"));
+const Subscription = lazy(() => import("./pages/root/subscription"));
 const AdminPlan = lazy(() => import("./pages/admin-plan"));
+const DonationPage = lazy(() => import ("./pages/root/donation"));
 
-const AllCards = lazy(() => import ("./pages/all-cards"));
-const ViewCard = lazy(() => import ("./pages/view-card"));
-const DisplayCard = lazy(() => import ("./pages/display-card"));
+const AllCards = lazy(() => import ("./pages/cards/all-cards"));
+const ViewCard = lazy(() => import ("./pages/cards/view-card"));
+const DisplayCard = lazy(() => import ("./pages/cards/display-card"));
 
-const CreateTree = lazy(() => import("./pages/tree/create-tree"));
-const InputVCard = lazy(() => import("./pages/personal/input-vcard"));
-const MedicalInput = lazy(() => import("./pages/medical/medical-input"));
-const CreatorInput = lazy(() => import("./pages/creator/creator-input"));
-const CreateAnimal = lazy(() => import("./pages/animal/create-animal"));
+const CreateTree = lazy(() => import("./pages/cards/inputs/tree"));
+const CreatePersonal = lazy(() => import("./pages/cards/inputs/personal"));
+const MedicalInput = lazy(() => import("./pages/cards/inputs/medical"));
+const CreatorInput = lazy(() => import("./pages/cards/inputs/creator"));
+const CreateAnimal = lazy(() => import("./pages/cards/inputs/animal"));
 
 // const Checkout = lazy(() => import ("./pages/checkout"));
 
@@ -86,6 +87,7 @@ const App = () => {
                             <Route path="/" element={<Home user={user} />} />
                             <Route path="/sub" element={<Subscription />} />
                             <Route path="/display" element={<DisplayCard />} />
+                            <Route path="/donate" element={<DonationPage />} />
                         
                             {/* Not logged In Route */}
                             <Route
@@ -128,7 +130,7 @@ const App = () => {
                                 <Route path="/dashboard/cards/card" element={<ViewCard />} />
 
                                 <Route path="/dashboard/tree/create" element={<CreateTree />} />
-                                <Route path="/dashboard/personal/create" element={<InputVCard />} />
+                                <Route path="/dashboard/personal/create" element={<CreatePersonal />} />
                                 <Route path="/dashboard/medical/create" element={<MedicalInput />} /> 
                                 <Route path="/dashboard/creator/create" element={<CreatorInput />} />
                                 <Route path="/dashboard/animal/create" element={<CreateAnimal />} />

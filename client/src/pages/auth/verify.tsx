@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { userExist } from "../redux/reducer/userReducer";
+import { userExist } from "../../redux/reducer/userReducer";
 
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";

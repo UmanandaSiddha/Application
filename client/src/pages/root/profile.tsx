@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 import Loader from "@/components/rest/loader";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useDispatch } from "react-redux";
-import { userExist, userNotExist } from "../redux/reducer/userReducer";
+import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";

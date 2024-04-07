@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { animalInputs } from "@/types/form-inputs";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../../redux/store";
 
 import { toast } from 'react-toastify';
 import { SingleAnimalResponse } from "@/types/api-types";

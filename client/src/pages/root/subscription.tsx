@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 import { useEffect, useState } from 'react';
 
 function loadScript(src: any) {

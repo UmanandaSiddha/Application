@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "@/redux/api/userApi";
 import { useDispatch } from "react-redux";
-import { userExist, userNotExist } from "../redux/reducer/userReducer";
+import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { getGoogleAuthUrl } from "@/lib/google";
@@ -97,9 +97,6 @@ const Register = () => {
             password: userData.password,
             image: avatar
         }
-
-        console.log(registerData)
-
         try {
             const data = await registerUser(registerData);
             dispatch(userExist(data.user));

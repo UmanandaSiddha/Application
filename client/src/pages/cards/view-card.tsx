@@ -9,7 +9,7 @@ import axios from "axios";
 import QrCode from "qrcode";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Tree from "@/components/view-card/tree";

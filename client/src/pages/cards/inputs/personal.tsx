@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../../redux/store";
 import { Textarea } from "@/components/ui/textarea";
 import {
     Dialog,
