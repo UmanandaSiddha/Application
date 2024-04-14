@@ -47,7 +47,7 @@ const Subscription = () => {
 
         try {
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, { id },config);
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, { id }, config);
             if (!data) {
                 toast.error("Failed to Execute Payment");
             }
@@ -59,9 +59,15 @@ const Subscription = () => {
                 description: "just fine",
                 subscription_id: data.subscriptions_id,
                 handler: async function (response: any) {
-                    console.log(response.razorpay_payment_id),
-					console.log(response.razorpay_subscription_id),
-					console.log(response.razorpay_signature);
+                    const { razorpay_payment_id, razorpay_subscription_id, razorpay_signature } = response;
+                    const captureData = {
+                        razorpay_payment_id, 
+                        razorpay_subscription_id, 
+                        razorpay_signature
+                    }
+                    console.log(captureData);
+                    const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, captureData, config);
+                    console.log(data)
                 },
                 prefill: {
                     email: user?.email,
@@ -77,11 +83,7 @@ const Subscription = () => {
             }
             const razor = new (window as any).Razorpay(options);
             razor.on("payment.failed", function (response: any) {
-                console.log(response.error.code);
                 console.log(response.error.description);
-                console.log(response.error.source);
-                console.log(response.error.step);
-                console.log(response.error.reason);
                 console.log(response.error.metadata.order_id);
                 console.log(response.error.metadata.payment_id);
                 toast.info(response.error.description);

@@ -12,13 +12,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import Tree from "@/components/view-card/tree";
 import Loader from "@/components/rest/loader";
-import Animal from "@/components/view-card/animal";
-import Creator from "@/components/view-card/creator";
-import Medical from "@/components/view-card/medical";
-import Personal from "@/components/view-card/personal";
+import TreeComponent from "@/components/view-card/tree";
+import AnimalComponent from "@/components/view-card/animal";
+import CreatorComponent from "@/components/view-card/creator";
+import MedicalComponent from "@/components/view-card/medical";
+import PersonalComponent from "@/components/view-card/personal";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/types";
 
 const ViewCard = () => {
 
@@ -27,7 +28,7 @@ const ViewCard = () => {
     const id = search.get("id");
     const type = search.get("type");
 
-    const [card, setCard] = useState<any | null>(null);
+    const [card, setCard] = useState<Tree | Personal | MedicalType | Creator | Animal | null>(null);
     const [loading, setLoading] = useState(false);
     const [qr, setQr] = useState("");
 
@@ -42,6 +43,7 @@ const ViewCard = () => {
                 try {
                     const { data }: { data: SingleTreeResponse | SinglePersonalResponse | SingleMedicalResponse | SingleCreatorResponse | SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id!}?type=${type}`, { withCredentials: true });
                     setCard(data.vCard);
+                    localStorage.setItem("current_card", JSON.stringify(data.vCard));
                     if (isPaid || user?.role === "admin") {
                         const link = `${window.location.protocol}//${window.location.host}/display?id=${id}&type=${type}`;
                         const qre = await QrCode.toDataURL(link, { width: 200, margin: 2 });
@@ -54,7 +56,15 @@ const ViewCard = () => {
             setLoading(false);
         }
 
-        fetchData();
+        const cardData = localStorage.getItem("current_card");
+        if (cardData) {
+            setCard(JSON.parse(cardData));
+            if (card?._id !== id) {
+                fetchData();
+            }
+        } else {
+            fetchData();
+        }
     }, [type]);
 
     const headSetter = (headType: String) => {
@@ -79,23 +89,23 @@ const ViewCard = () => {
         switch (type) {
             case "tree":
                 return (
-                    <Tree card={card} />
+                    <TreeComponent card={card as Tree} />
                 );
             case "personal":
                 return (
-                    <Personal card={card} />
+                    <PersonalComponent card={card as Personal} />
                 )
             case "medical":
                 return (
-                    <Medical card={card} />
+                    <MedicalComponent card={card as MedicalType} />
                 )
             case "creator":
                 return (
-                    <Creator card={card} />
+                    <CreatorComponent card={card as Creator} />
                 )
             case "animal":
                 return (
-                    <Animal card={card} />
+                    <AnimalComponent card={card as Animal} />
                 )
             default:
                 return (
@@ -136,7 +146,7 @@ const ViewCard = () => {
             </div>
             <div className="flex gap-6">
                 <Button disabled={!isPaid && user?.role !== "admin"}><a href={qr} download={`${card?._id}.png`}>Download</a></Button>
-                <Button variant="outline" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(setLink(type!, card?._id))}>Edit</Button>
+                <Button variant="outline" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(setLink(type!, card?._id!))}>Edit</Button>
                 <Button onClick={() => deleteCard()} disabled={!isPaid && user?.role !== "admin"} variant="destructive">Delete</Button>
             </div>
         </div>

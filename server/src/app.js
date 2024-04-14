@@ -6,8 +6,6 @@ import fileUpload from "express-fileupload";
 import cors from "cors";
 
 import user from "./routes/userRoute.js";
-import payment from "./routes/paymentRoute.js";
-import admin from "./routes/adminRoute.js";
 import googleRoute from "./routes/googleRoute.js";
 import plan from "./routes/planRoute.js";
 import sub from "./routes/subscriptionRoute.js";
@@ -43,8 +41,6 @@ app.use("/api/v1/user", user);
 app.use("/", googleRoute);
 
 app.use("/api/v1/cards", cards);
-app.use("/api/v1/pay", payment);
-app.use("/api/v1/admin", admin);
 app.use("/api/v1/plan", plan);
 app.use("/api/v1/sub", sub);
 

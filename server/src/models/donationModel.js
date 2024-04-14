@@ -1,10 +1,5 @@
 import mongoose from "mongoose";
-
-export const statusEnum = {
-    CREATED: "created",
-    SUCCESS: "success",
-    FAILED: "failed"
-}
+import { methodEnum } from "./transactionModel";
 
 const donationSchema = new mongoose.Schema(
     {
@@ -24,10 +19,17 @@ const donationSchema = new mongoose.Schema(
             type: Number,
             required: [true, "Enter Donator Phone"]
         },
+        address: {
+            type: String,
+            required: true
+        },
+        pan: {
+            type: Number,
+            required: [true, "Enter Pan Number"]
+        },
         status: {
-            required: true,
-            enum: Object.values(statusEnum),
-            default: statusEnum.CREATED,
+            type: String,
+            required: true
         },
         razorpayOrderId: {
             type: String,
@@ -36,8 +38,25 @@ const donationSchema = new mongoose.Schema(
         razorpayPaymentId: {
             type: String,
             required: true,
-            default: "processing"
+            default: "paymentId"
         }, 
+        paymentMethod: {
+            methodType: {
+                type: String,
+                enum: Object.values(methodEnum),
+            },
+            cardInfo: {
+                cardType: String,
+                issuer: String,
+                last4: String,
+                name: String,
+                network: String,
+            },
+            bankInfo: String,
+            walletInfo: String,
+            upiInfo: String,
+            data: Object
+        },
     },
     {
         timestamps: true

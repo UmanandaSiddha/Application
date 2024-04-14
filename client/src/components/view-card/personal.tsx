@@ -4,7 +4,7 @@ interface PropsType {
     card: Personal | null;
 }
 
-const Personal = ({ card }: PropsType) => {
+const PersonalCompoent = ({ card }: PropsType) => {
     return (
         <div className="font-Kanit w-[280px]">
             <div className="flex">
@@ -388,4 +388,4 @@ const Personal = ({ card }: PropsType) => {
     );
 };
 
-export default Personal;
+export default PersonalCompoent;

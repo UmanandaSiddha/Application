@@ -4,7 +4,7 @@ interface PropsType {
     card: Tree | null;
 }
 
-const Tree = ({ card }: PropsType) => {
+const TreeComponent = ({ card }: PropsType) => {
     return (
         <div>
             <p><span className="font-semibold">TreeId:</span> {card?._id}</p>
@@ -21,4 +21,4 @@ const Tree = ({ card }: PropsType) => {
     )
 }
 
-export default Tree
+export default TreeComponent;

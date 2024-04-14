@@ -4,7 +4,7 @@ interface PropsType {
     card: MedicalType | null;
 }
 
-const Medical = ({ card }: PropsType) => {
+const MedicalComponent = ({ card }: PropsType) => {
     return (
         <div className="font-Kanit w-[280px]">
             <div className="flex justify-center items-center py-2">
@@ -182,4 +182,4 @@ const Medical = ({ card }: PropsType) => {
     );
 };
 
-export default Medical;
+export default MedicalComponent;

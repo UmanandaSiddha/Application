@@ -17,7 +17,8 @@ import { Button } from "@/components/ui/button";
 import { SingleTreeResponse } from "@/types/api-types";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { treeNotTemp, treeTemp } from "@/redux/reducer/treeReducer";
+import { treeNotTemp } from "@/redux/reducer/treeReducer";
+import { Tree } from "@/types/types";
 
 const CreateTree = () => {
 
@@ -26,45 +27,49 @@ const CreateTree = () => {
     const id = search.get("treeId");
     const dispatch = useDispatch();
 
+    const [card, setCard] = useState<Tree | null>();
     const [isTree, setIsTree] = useState<boolean>(id ? true : false);
     const [treeLaoding, setTreeLoading] = useState<boolean>(false);
 
     const { user, isPaid } = useSelector(
         (state: RootState) => state.userReducer
     );
-
-    const { trus } = useSelector(
-        (state: RootState) => state.treeReducer
-    );
-
-    const gotTree = async () => {
-        if (id) {
-            try {
-                const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id!}?type=tree`, { withCredentials: true });
-                dispatch(treeTemp(data.vCard));
-                setIsTree(true);
-            } catch (error: any) {
-                toast.error(error.response.data.message);
-                dispatch(treeNotTemp());
+    
+    useEffect(() => {
+        const fetchTree = async () => {
+            if (id) {
+                try {
+                    const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id!}?type=tree`, { withCredentials: true });
+                    setIsTree(true);
+                    setCard(data.vCard);
+                } catch (error: any) {
+                    toast.error(error.response.data.message);
+                    dispatch(treeNotTemp());
+                }
             }
         }
-    }
-
-    useEffect(() => {
-        gotTree();
+        const cardData = localStorage.getItem("current_card");
+        if (cardData) {
+            setCard(JSON.parse(cardData));
+            if (card?._id !== id) {
+                fetchTree();
+            }
+        } else {
+            fetchTree();
+        }
     }, []);
 
     const form = useForm({
         defaultValues: {
-            name: isTree ? trus?.name : "",
-            scientificName: isTree ? trus?.scientificName : "",
-            treeType: isTree ? trus?.treeType : "",
-            location: isTree ?  trus?.location : "",
-            description: isTree ?  trus?.description : "",
-            features: isTree ? trus?.features : "",
-            maintenance: isTree ? trus?.maintenance : "",
-            benefits: isTree ? trus?.benefits : "",
-            funFact: isTree ? trus?.funFact : "",
+            name: card ? card.name : "",
+            scientificName: card?.scientificName || "",
+            treeType: card?.treeType || "",
+            location: card?.location || "",
+            description: card?.description || "",
+            features: card?.features || "",
+            maintenance: card?.maintenance || "",
+            benefits: card?.benefits || "",
+            funFact: card?.funFact || "",
         },
     });
 
@@ -106,6 +111,7 @@ const CreateTree = () => {
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen mb-8">
+            <p>{card?.name!}</p>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     {

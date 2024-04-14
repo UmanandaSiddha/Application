@@ -9,12 +9,13 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import Loader from "@/components/rest/loader";
-import Tree from "@/components/view-card/tree";
 import { useSearchParams } from "react-router-dom";
-import Creator from "@/components/view-card/creator";
-import Animal from "@/components/view-card/animal";
-import Medical from "@/components/view-card/medical";
-import Personal from "@/components/view-card/personal";
+import TreeComponent from "@/components/view-card/tree";
+import CreatorComponent from "@/components/view-card/creator";
+import AnimalComponent from "@/components/view-card/animal";
+import MedicalComponent from "@/components/view-card/medical";
+import PersonalComponent from "@/components/view-card/personal";
+import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/types";
 
 const DisplayCard = () => {
 
@@ -22,7 +23,7 @@ const DisplayCard = () => {
     const id = search.get("id");
     const type = search.get("type");
 
-    const [card, setCard] = useState<any | null>(null);
+    const [card, setCard] = useState<Tree | Personal | MedicalType | Creator | Animal | null>(null);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -32,6 +33,7 @@ const DisplayCard = () => {
                 try {
                     const { data }: { data: SingleTreeResponse | SinglePersonalResponse | SingleMedicalResponse | SingleCreatorResponse | SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/details/${id!}?type=${type}`, { withCredentials: true });
                     setCard(data.vCard);
+                    localStorage.setItem("display_card", JSON.stringify(data.vCard));
                 } catch (error: any) {
                     toast.error(error.response.data.message);
                 }
@@ -39,30 +41,38 @@ const DisplayCard = () => {
             setLoading(false);
         }
 
-        fetchData();
+        const cardData = localStorage.getItem("display_card");
+        if (cardData) {
+            setCard(JSON.parse(cardData));
+            if (card?._id !== id) {
+                fetchData();
+            }
+        } else {
+            fetchData();
+        }
     }, [type]);
 
     const renderCard = () => {
         switch (type) {
             case "tree":
                 return (
-                    <Tree card={card} />
+                    <TreeComponent card={card as Tree} />
                 );
             case "personal":
                 return (
-                    <Personal card={card} />
+                    <PersonalComponent card={card as Personal} />
                 )
             case "medical":
                 return (
-                    <Medical card={card} />
+                    <MedicalComponent card={card as MedicalType} />
                 )
             case "creator":
                 return (
-                    <Creator card={card} />
+                    <CreatorComponent card={card as Creator} />
                 )
             case "animal":
                 return (
-                    <Animal card={card} />
+                    <AnimalComponent card={card as Animal} />
                 )
             default:
                 return (

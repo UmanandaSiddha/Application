@@ -4,7 +4,7 @@ interface PropsType {
     card: Creator | null;
 }
 
-const Creator = ({ card }: PropsType) => {
+const CreatorComponent = ({ card }: PropsType) => {
     return (
         <div className="space-y-4">
             <div className="flex">
@@ -50,4 +50,4 @@ const Creator = ({ card }: PropsType) => {
     )
 }
 
-export default Creator
+export default CreatorComponent;

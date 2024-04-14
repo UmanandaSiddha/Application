@@ -4,7 +4,7 @@ interface PropsType {
     card: Animal | null;
 }
 
-const Animal = ({ card }: PropsType) => {
+const AnimalComponent = ({ card }: PropsType) => {
     return (
         <div>
             <div className="flex">
@@ -47,4 +47,4 @@ const Animal = ({ card }: PropsType) => {
     )
 }
 
-export default Animal
+export default AnimalComponent;

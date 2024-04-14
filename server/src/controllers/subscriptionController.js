@@ -12,7 +12,7 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id);
 
     if (user.role === roleEnum.ADMIN) {
-        return next(new ErrorHandler("Admin don't need to buy Plans", 403))
+        return next(new ErrorHandler("Admin don't need to buy Plans", 403));
     }
 
     if (!user.customerId) {
@@ -51,11 +51,10 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         user: req.user.id,
     });
 
-    await User.findByIdAndUpdate(req.user.id, { activePlan: subscription._id }, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-    });
+    await User.findByIdAndUpdate(req.user.id, 
+        { activePlan: subscription._id, "cards.total": plan.cards }, 
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
 
     res.status(200).json({
         success: true,
@@ -68,13 +67,88 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 export const cancelSubscription = catchAsyncErrors( async (req, res, next) => {
     await instance.subscriptions.cancel(req.body.subscriptionId);
 
+    await User.findByIdAndUpdate(req.user.id, 
+        { activePlan: undefined, "cards.total": 0 },
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
+
     res.status(200).json({
         success: true,
         message: "Subscription Cancelled"
     });
 });
 
-export const testSubscription = async (req, res, next) => {
+const handleTransaction = async (payamentData, subscriptionData, userId) => {
+    const { amount, order_id, status, id, method, card, bank, wallet, vpa, acquirer_data  } = payamentData;
+    const { current_end, current_start } = subscriptionData;
+
+    await Transaction.create({
+        amount: Number(amount / 100),
+        start: current_start * 1000,
+        end: current_end * 1000,
+        status: status,
+        user: userId,
+        razorpayOrderId: order_id,
+        razorpayPaymentId: id,
+        paymentMethod: {
+            methodType: method,
+            cardInfo: {
+                cardType: card?.type,
+                issuer: card?.issuer,
+                last4: card?.last4,
+                name: card?.name,
+                network: card?.network,
+            },
+            bankInfo: bank,
+            walletInfo: wallet,
+            upiInfo: vpa,
+            data: acquirer_data,
+        },
+    });
+};
+
+export const captureSubscription = catchAsyncErrors( async (req, res, next) => {
+    const { razorpay_subscription_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const toBe = razorpay_payment_id + "|" + razorpay_subscription_id;
+
+    const expectedSigntaure = crypto
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+        .update(toBe.toString())
+        .digest("hex")
+
+    const payment = await instance.payments.fetch(razorpay_payment_id);
+    const subscription = await instance.subscriptions.fetch(razorpay_subscription_id);
+    
+    if (expectedSigntaure === razorpay_signature) {
+        if (subscription.status === "active" && payment.status === "captured") {
+            const subscriptionx = await Subscription.findOne({ razorSubscriptionId: subscription.id });
+
+            subscriptionx.start = subscription.start_at * 1000;
+            subscriptionx.end = subscription.end_at * 1000;
+            subscriptionx.nextBilling = subscription.charge_at * 1000;
+            subscriptionx.totalCount = subscription.total_count;
+            subscriptionx.paidCount = subscription.paid_count;
+            subscriptionx.remainingCount = subscription.remaining_count;
+            subscriptionx.status = subscription.status;
+            await subscriptionx.save();
+
+            const checkPayment = await Transaction.findOne({ razorpayPaymentId: payment.id });
+            if (!checkPayment) {
+                await handleTransaction(payment, subscription, subscriptionx.user);
+            }
+        }
+    } else {
+        return next(new ErrorHandler("Payment Not Verified", 403));
+    }
+
+    res.status(200).json({
+        success: true,
+        subscriptionStatus: subscription.status,
+        paymentStatus: payment.status,
+    });
+});
+
+export const verifySubscription = async (req, res) => {
     const secret = "12345678";
 
     const expectedSigntaure = crypto
@@ -82,55 +156,73 @@ export const testSubscription = async (req, res, next) => {
         .update(JSON.stringify(req.body))
         .digest("hex")
 
+    const { event, payload } = req.body;
+
     try { 
         if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-            const { id, start_at, end_at, charge_at, total_count, paid_count, remaining_count, status, current_start, current_end } = req.body.payload.subscription.entity;
+            const { id, start_at, end_at, charge_at, total_count, paid_count, remaining_count, status } = payload.subscription.entity;
+
             const subscription = await Subscription.findOne({ razorSubscriptionId: id });
+
+            if (!subscription) {
+                console.log("Invalid Subscription, Wrong database");
+            }
+
             subscription.start = start_at * 1000;
             subscription.end = end_at * 1000;
             subscription.nextBilling = charge_at * 1000;
             subscription.totalCount = total_count;
             subscription.paidCount = paid_count;
             subscription.remainingCount = remaining_count;
-            subscription.status = status;
+            if (subscription.status !== "completed") {
+                subscription.status = status;
+            }
             await subscription.save();
 
-            if (req.body.event === "subscription.charged") {
-                await Transaction.create({
-                    amount: Number(req.body.payload.payment.entity.amount / 100),
-                    start: current_start * 1000,
-                    end: current_end * 1000,
-                    status,
-                    user: subscription.user,
-                });
+            switch (event) {
+                case "subscription.charged":
+                    const checkPayment = await Transaction.findOne({ razorpayPaymentId: payload.payment.entity.id });
+                    if (!checkPayment) {
+                        await handleTransaction(payload.payment.entity, payload.subscription.entity, subscription.user);
+                    }
+                    break;
+                case "subscription.completed":
+                case "subscription.cancelled":
+                    await User.findOneAndUpdate(
+                        { activePlan: subscription._id },
+                        { activePlan: undefined, "cards.total": 0 }, 
+                        { new: true, runValidators: true, useFindAndModify: false }
+                    );
+                    break;
+                default:
+                    console.log(event)
+                    break;
             }
-            // switch (req.body.event) {
-            //     case "subscription.authenticated":
-            //         break;
-            //     case "subscription.activated":
-            //         break;
-            //     case "subscription.charged":
-            //         break;
-            //     case "subscription.halted":
-            //         break;
-            //     case "subscription.completed":
-            //         break;
-            //     case "subscription.pending":
-            //         break;
-            //     case "subscription.cancelled":
-            //         break;
-            //     case "subscription.paused":
-            //         break;
-            //     case "subscription.resumed":
-            //         break;
-            //     default:
-            //         break;
-            // }
         }
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
     }
 
     res.status(200).send('OK');
 };
+
+export const getLatestSubscription = catchAsyncErrors( async (req, res, next) => {
+
+    const user = await User.findById(req.user.id);
+    const subscription = await Subscription.findById(user.activePlan);
+
+    res.status(200).json({
+        success: true,
+        subscription,
+    });
+});
+
+export const getUserTransactions = catchAsyncErrors( async (req, res, next) => {
+    const transactions = await Transaction.find({ user: req.user.id });
+
+    res.status(200).json({
+        success: true,
+        transactions,
+    });
+});
 

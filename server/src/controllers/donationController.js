@@ -1,11 +1,10 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import crypto from "crypto";
-import User from "../models/userModel.js";
 import Payment from "../models/paymentModel.js";
 import { instance } from "../server.js";
 import short from "short-uuid";
-import Donation, { statusEnum } from "../models/donationModel.js";
+import Donation from "../models/donationModel.js";
 
 export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
@@ -25,7 +24,9 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         name: req.body.name,
         email: req.body.email,
         phone: req.body.phone,
-        status: statusEnum.CREATED,
+        address: req.body.address,
+        pan: req.body.pan,
+        status: "created",
         razorpayOrderId: order.id, 
     });
 
@@ -36,7 +37,7 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const webhookVerify = async (req, res, next) => {
+export const capturePayment = async (req, res, next) => {
 
     const secret = "12345678";
 
@@ -45,17 +46,32 @@ export const webhookVerify = async (req, res, next) => {
         .update(JSON.stringify(req.body))
         .digest("hex")
         
-    const donation = await Donation.findOne({ razorpayOrderId: req.body.payload.payment.entity.order_id });
-
+    const { order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = req.body.payload.payment.entity;
+    
     try { 
         if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-            donation.razorpayPaymentId = req.body.payload.payment.entity.id;
-            donation.status = statusEnum.SUCCESS;
-            await donation.save();
-        } else {
-            donation.razorpayPaymentId = "pending";
-            donation.status = statusEnum.FAILED;
-            await donation.save();
+            await Donation.findOneAndUpdate(
+                { razorpayOrderId: order_id }, 
+                {
+                    status,
+                    razorpayPaymentId: id,
+                    paymentMethod: {
+                        methodType: method,
+                        cardInfo: {
+                            cardType: card?.type,
+                            issuer: card?.issuer,
+                            last4: card?.last4,
+                            name: card?.name,
+                            network: card?.network,
+                        },
+                        bankInfo: bank,
+                        walletInfo: wallet,
+                        upiInfo: vpa,
+                        data: acquirer_data,
+                    }
+                },
+                { new: true, runValidators: true, useFindAndModify: false }
+            );
         }
     } catch (error) {
         console.log(error.message);
@@ -74,21 +90,39 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
         .update(toBe.toString())
         .digest("hex")
 
-    const donation = await Donation.findOne({ razorpayOrderId: razorpay_order_id });
+    const payment = await instance.payments.fetch(razorpay_payment_id);
+    const { order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = payment;
 
     if (expectedSigntaure === razorpay_signature) {
-        donation.razorpayPaymentId = req.body.payload.payment.entity.id;
-        donation.status = statusEnum.SUCCESS;
-        await donation.save();
+        await Donation.findOneAndUpdate(
+            { razorpayOrderId: order_id }, 
+            {
+                status,
+                razorpayPaymentId: id,
+                paymentMethod: {
+                    methodType: method,
+                    cardInfo: {
+                        cardType: card?.type,
+                        issuer: card?.issuer,
+                        last4: card?.last4,
+                        name: card?.name,
+                        network: card?.network,
+                    },
+                    bankInfo: bank,
+                    walletInfo: wallet,
+                    upiInfo: vpa,
+                    data: acquirer_data,
+                }
+            },
+            { new: true, runValidators: true, useFindAndModify: false }
+        );
     } else {
-        donation.razorpayPaymentId = "pending";
-        donation.status = statusEnum.FAILED;
-        await donation.save();
+        return next(new ErrorHandler("Payment Not Verified", 403));
     }
 
     res.status(200).json({
         success: true,
-        paymentStatus: donation.status
+        paymentStatus: payment.status
     });
 });
 

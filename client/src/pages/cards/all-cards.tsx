@@ -145,6 +145,7 @@ const AllCards = () => {
                     const { data }: { data: TreeResponse | PersonalResponse | MedicalResponse | CreatorResponse | AnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/user?page=${currentPage}&type=${type}`, { withCredentials: true });
                     setCards(data.vCards);
                     setCountData(data.count);
+                    // localStorage.setItem("all_card", JSON.stringify(data.vCards));
                 } catch (error: any) {
                     toast.error(error.response.data.message);
                 }
@@ -152,6 +153,12 @@ const AllCards = () => {
             setLoading(false);
         };
 
+        // const cardData = localStorage.getItem("current_card");
+        // if (cardData) {
+        //     setCards(JSON.parse(cardData));
+        // } else {
+        //     fetchData();
+        // }
         fetchData();
     }, [currentPage]);
 

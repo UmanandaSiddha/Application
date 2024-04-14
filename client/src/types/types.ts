@@ -1,13 +1,21 @@
 export type User = {
+    _id: string;
     name: string;
     email: string;
     role: string;
-    _id: string;
-    isVerified: boolean;
-    currentPlan: any;
     image: string;
     gooleId: string;
+    customerId: string;
+    isVerified: boolean;
     accountType: string;
+    cards: {
+        total: number;
+        created: number;
+    }
+    activePlan: {
+        _id: string;
+        status: string;
+    }
 };
 
 export type Tree = {
