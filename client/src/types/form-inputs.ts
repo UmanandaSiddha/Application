@@ -21,7 +21,7 @@ export const inputs = [
     }, 
     {
         name: "description",
-        label: "Description,",
+        label: "Description",
         text : "Enter Tree Description"
     },
     {
