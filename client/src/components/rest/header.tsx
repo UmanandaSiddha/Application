@@ -61,6 +61,9 @@ export default function Header({ user }: PropsType) {
                     <Link to='/plans' className="text-sm font-semibold leading-6 text-gray-900">
                         Subcription
                     </Link>
+                    <Link to='/billing' className="text-sm font-semibold leading-6 text-gray-900">
+                        Billing
+                    </Link>
                     <Link to='/profile' className="text-sm font-semibold leading-6 text-gray-900">
                         Profile
                     </Link>
@@ -119,6 +122,13 @@ export default function Header({ user }: PropsType) {
                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 >
                                     Subscription
+                                </Link>
+                                <Link
+                                    to='/billing'
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                >
+                                    Billing
                                 </Link>
                                 <Link
                                     to='/profile'

@@ -67,10 +67,12 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 export const cancelSubscription = catchAsyncErrors( async (req, res, next) => {
     await instance.subscriptions.cancel(req.body.subscriptionId);
 
-    await User.findByIdAndUpdate(req.user.id, 
-        { activePlan: undefined, "cards.total": 0 },
-        { new: true, runValidators: true, useFindAndModify: false }
-    );
+    // cards  = 0 must
+
+    // await User.findByIdAndUpdate(req.user.id, 
+    //     { activePlan: undefined, "cards.total": 0 },
+    //     { new: true, runValidators: true, useFindAndModify: false }
+    // );
 
     res.status(200).json({
         success: true,
@@ -188,11 +190,11 @@ export const verifySubscription = async (req, res) => {
                     break;
                 case "subscription.completed":
                 case "subscription.cancelled":
-                    await User.findOneAndUpdate(
-                        { activePlan: subscription._id },
-                        { activePlan: undefined, "cards.total": 0 }, 
-                        { new: true, runValidators: true, useFindAndModify: false }
-                    );
+                    // await User.findOneAndUpdate(
+                    //     { activePlan: subscription._id },
+                    //     { activePlan: undefined, "cards.total": 0 }, 
+                    //     { new: true, runValidators: true, useFindAndModify: false }
+                    // );
                     break;
                 default:
                     console.log(event)

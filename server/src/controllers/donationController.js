@@ -1,7 +1,6 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import crypto from "crypto";
-import Payment from "../models/paymentModel.js";
 import { instance } from "../server.js";
 import short from "short-uuid";
 import Donation from "../models/donationModel.js";
@@ -123,13 +122,5 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         paymentStatus: payment.status
-    });
-});
-
-export const getPayments = catchAsyncErrors(async (req, res, next) => {
-    const payments = await Payment.find({ user: req.user.id });
-    res.status(201).json({
-        success: true,
-        payments,
     });
 });

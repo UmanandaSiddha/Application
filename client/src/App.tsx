@@ -78,11 +78,12 @@ const App = () => {
                     pauseOnHover
                     theme="dark"
                 />
-                <Header user={user} />
                 <ErrorBoundary>
+                    <Header user={user} />
                     <Suspense fallback={<Loader />}>
                         <Routes>
                             <Route path="/" element={<Home user={user} />} />
+                            <Route path="/plans" element={<Subscription />} />
                             <Route path="/display" element={<DisplayCard />} />
                             <Route path="/donate" element={<DonationPage />} />
                         
@@ -118,7 +119,6 @@ const App = () => {
                             >
                                 <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/profile" element={<Profile />} />
-                                <Route path="/plans" element={<Subscription />} />
                                 <Route path="/verify" element={<Verify />} />
                                 <Route path="/confirm" element={<Confirm />} />
                                 <Route path="/admin-plan" element={<AdminPlan />} />

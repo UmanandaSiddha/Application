@@ -125,7 +125,7 @@ const AllCards = () => {
     );
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [cards, setCards] = useState<any[]>([]);
+    const [cards, setCards] = useState<Tree[] | Personal[] | MedicalType[] | Creator[] | Animal[] | null>([]);
     const [countData, setCountData] = useState(1);
     const [loading, setLoading] = useState(false);
 
@@ -145,7 +145,9 @@ const AllCards = () => {
                     const { data }: { data: TreeResponse | PersonalResponse | MedicalResponse | CreatorResponse | AnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/user?page=${currentPage}&type=${type}`, { withCredentials: true });
                     setCards(data.vCards);
                     setCountData(data.count);
-                    // localStorage.setItem("all_card", JSON.stringify(data.vCards));
+                    localStorage.setItem("all_card", JSON.stringify(data.vCards));
+                    localStorage.setItem("current_page", JSON.stringify(currentPage));
+                    localStorage.setItem("card_type", JSON.stringify(type));
                 } catch (error: any) {
                     toast.error(error.response.data.message);
                 }
@@ -153,13 +155,14 @@ const AllCards = () => {
             setLoading(false);
         };
 
-        // const cardData = localStorage.getItem("current_card");
-        // if (cardData) {
-        //     setCards(JSON.parse(cardData));
-        // } else {
-        //     fetchData();
-        // }
-        fetchData();
+        const cardData = localStorage.getItem("all_card");
+        const cardType = localStorage.getItem("card_type");
+        const currentCardPage = localStorage.getItem("current_page");
+        if (cardData && (cardType === type) && (Number(currentCardPage ? JSON.parse( currentCardPage) : 1) === currentPage)) {
+            setCards(JSON.parse(cardData));
+        } else {
+            fetchData();
+        }
     }, [currentPage]);
 
     const setCurrentPageNo = (pageNumber: number) => {
@@ -192,7 +195,7 @@ const AllCards = () => {
                     <h1 className="text-3xl">Your {headSetter(type!)} Cards</h1>
                     <div className="flex flex-wrap p-4 gap-4 justify-center">
                         {loading ? <Loader /> : (
-                            cards.map((card) => (
+                            cards!.map((card) => (
                                 <VCard key={card._id} type={type!} card={card} isPaid={isPaid} user={user!} />
                             ))
                         )}

@@ -12,9 +12,7 @@ const ProtectedRoute = ({
 }: Props) => {
 
     let location = useLocation();
-
-    // if (!isAuthenticated) return window.location.href = '/';
-    if (!isAuthenticated) return <Navigate to="/" state={{ from: location }} replace />;
+    if (!isAuthenticated) return <Navigate to="/login" state={{ from: location }} replace />;
 
     return children ? children : <Outlet />;
 }

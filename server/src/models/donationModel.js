@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { methodEnum } from "./transactionModel";
+import { methodEnum } from "./transactionModel.js";
 
 const donationSchema = new mongoose.Schema(
     {

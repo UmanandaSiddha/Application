@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 import { UserResponse } from "./types/api-types";
 import axios from "axios";
@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import Header from "./components/header";
 import Loader from "./components/loader";
 import ProtectedRoute from "./components/protected-route";
+import ErrorBoundary from "./components/error-boundary";
 
 const NotFound = lazy(() => import("./pages/not-found"));
 const Home = lazy(() => import("./pages/home"));
@@ -19,25 +20,24 @@ const Plan = lazy(() => import ("./pages/plan"));
 
 const App = () => {
 
-    let location = useLocation();
     const dispatch = useDispatch();
 
     const { user, loading } = useSelector(
         (state: RootState) => state.userReducer
     );
 
-    const gotUser = async () => {
-        try {
-            const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true });
-            dispatch(userExist(data.user));
-        } catch (error: any) {
-            dispatch(userNotExist());
-        }
-    }
-
     useEffect(() => {
-        gotUser();
-    }, [location.pathname]);
+        const fetchUser = async () => {
+            try {
+                const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true });
+                dispatch(userExist(data.user));
+            } catch (error: any) {
+                dispatch(userNotExist());
+            }
+        }
+
+        fetchUser();
+    }, [user]);
 
     return (
         loading ? (
@@ -56,31 +56,33 @@ const App = () => {
                     pauseOnHover
                     theme="dark"
                 />
-                <Header user={user} />
-                <Suspense fallback={<Loader />}>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        {/* Not logged In Route */}
-                        <Route
-                            path="/login"
-                            element={
-                                <ProtectedRoute isAuthenticated={user ? false : true}>
-                                    <Login />
-                                </ProtectedRoute>
-                            }
-                        />
+                <ErrorBoundary>
+                    <Header user={user} />
+                    <Suspense fallback={<Loader />}>
+                        <Routes>
+                            {/* Not logged In Route */}
+                            <Route
+                                path="/login"
+                                element={
+                                    <ProtectedRoute isAuthenticated={user ? false : true}>
+                                        <Login />
+                                    </ProtectedRoute>
+                                }
+                            />
 
-                        {/* Logged In User Routes */}
-                        <Route
-                            element={<ProtectedRoute isAuthenticated={user?.role === "admin" ? true : false} />}
-                        >
-                            <Route path="/plan" element={<Plan />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                        </Route>
+                            {/* Logged In User Routes */}
+                            <Route
+                                element={<ProtectedRoute isAuthenticated={user?.role === "admin" ? true : false} />}
+                            >
+                                <Route path="/" element={<Home />} />
+                                <Route path="/plan" element={<Plan />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
+                            </Route>
 
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                </Suspense>
+                            <Route path="*" element={<NotFound />} />
+                        </Routes>
+                    </Suspense>
+                </ErrorBoundary>
             </div>
         )
     )

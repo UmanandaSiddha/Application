@@ -22,8 +22,7 @@ const Login = () => {
         setLoginLoading(true);
         try {
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/login`, userData, config);
-            console.log(data)
+            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, userData, config);
             navigate("/dashboard");
             dispatch(userExist(data.user));
             toast.success("Logged In!");

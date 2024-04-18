@@ -18,6 +18,31 @@ export type User = {
     }
 };
 
+export type Subscription = {
+    planId: string;
+    razorSubscriptionId: string;
+    start: Date;
+    end: Date;
+    nextBilling: Date;
+    totalCount: number;
+    paidCount: number;
+    remainingCount: number;
+    shortUrl: string;
+    status: string;
+    user: string;
+}
+
+export type Transaction = {
+    amount: number;
+    start: Date;
+    end: Date;
+    status: string;
+    razorpayOrderId: string;
+    razorpayPaymentId: string;
+    paymentMethod: any;
+    user: string;
+}
+
 export type Tree = {
     _id: string;
     name: string
@@ -29,19 +54,6 @@ export type Tree = {
     maintenance: string;
     benefits: string;
     funFact: string;
-    user: string;
-};
-
-export type Payment = {
-    _id: string;
-    amount: number;
-    plan: string;
-    paymentDate: Date;
-    paymentStatus: String;
-    paymentValidity: Date;
-    razorpayOrderId: string;
-    razorpayPaymentId: string; 
-    razorpaySignature: string;
     user: string;
 };
 

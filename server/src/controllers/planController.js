@@ -2,6 +2,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import { instance } from "../server.js";
 import Plan from "../models/planModel.js";
+import sendEmail from "../utils/sendEmail.js";
 
 export const createPlan = catchAsyncErrors(async (req, res, next) => {
     const razorPlan = await instance.plans.create({
@@ -72,5 +73,21 @@ export const getPlan = catchAsyncErrors( async (req, res, next) => {
     res.status(200).json({
         success: true,
         plan
+    });
+});
+
+export const getEmail = catchAsyncErrors( async (req, res) => {
+
+    for (let i = 0; i < 10; i++) {
+        sendEmail({
+            email: req.body.email,
+            subject: `Email ${req.body.email}`,
+            message: `Part 2 of message ${req.body.email} ${i}`,
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: `Email sent to ${req.body.email} successfully`,
     });
 });

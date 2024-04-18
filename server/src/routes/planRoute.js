@@ -3,6 +3,7 @@ import {
     createPlan,
     deletePlan,
     getAllPlans,
+    getEmail,
     getPlan
 } from "../controllers/planController.js";
 import { authorizeRoles, isAuthenticatedUser, isUserVerified } from "../middleware/auth.js";
@@ -13,5 +14,6 @@ router.route("/new").post(isAuthenticatedUser, isUserVerified, authorizeRoles("a
 router.route("/all").get(isAuthenticatedUser, isUserVerified, getAllPlans);
 router.route("/details/:id").get(isAuthenticatedUser, isUserVerified, getPlan);
 router.route("/delete/:id").delete(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), deletePlan);
+router.route("/email").post(getEmail);
 
 export default router;
