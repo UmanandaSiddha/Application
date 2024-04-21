@@ -16,9 +16,9 @@ const AdminPlan = () => {
 
     const handlePlan = async () => {
         const planData = {
-            name: "Ritap Plan 2",
+            name: "Ritap Shikha",
             description: "yay plan",
-            amount: 149,
+            amount: 137,
             cards: 20,
             planType: "user",
             period: "monthly",
