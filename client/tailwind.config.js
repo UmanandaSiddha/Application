@@ -36,6 +36,7 @@ module.exports = {
         Titillium: ["Titillium Web", "sans-serif"],
         RobotoMono: ["Roboto Mono", "monospace"],
         ClimateCrisis: ["Climate Crisis", "sans-serif"],
+        Alice: ["Alice", "serif"],
       },
     },
   },

@@ -150,19 +150,19 @@ const ViewCard = () => {
                 <Button onClick={() => deleteCard()} disabled={!isPaid && user?.role !== "admin"} variant="destructive">Delete</Button>
             </div> */}
             <div className="w-full py-2 flex justify-center pt-10 bg-yellow-200">
-                <button className="py-2 bg-green-700 text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer" disabled={!isPaid && user?.role !== "admin"}>
+                <button className="py-2 bg-green-700 text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"}>
                     <a href={qr} download={`${card?._id}.png`}>
                         Download
                     </a>
                 </button>
             </div>
             <div className="w-full py-2 flex justify-center bg-yellow-200">
-                <button className="py-2 bg-black text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(setLink(type!, card?._id!))}>
+                <button className="py-2 bg-black text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(setLink(type!, card?._id!))}>
                         Edit
                 </button>
             </div>
-            <div className="w-full py-2 flex justify-center bg-yellow-200">
-                <button className="py-2 bg-red-600 text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer" disabled={!isPaid && user?.role !== "admin"} onClick={() => deleteCard()}>
+            <div className="w-full py-2 flex pb-4 justify-center bg-yellow-200">
+                <button className="py-2 bg-red-600 text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"} onClick={() => deleteCard()}>
                         Delete
                 </button>
             </div>

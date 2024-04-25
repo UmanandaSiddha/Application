@@ -66,7 +66,7 @@ const MedicalInput = () => {
   } = useForm({
     defaultValues: {
       name: medical?.personalInfo?.name || "",
-      birth: medical?.personalInfo.birth || "",
+      birth: medical?.personalInfo.birth || Date.now(),
       gender: medical?.personalInfo.gender || "",
       phone: medical?.personalInfo.phone || 91,
       email: medical?.personalInfo.email || "",
@@ -164,7 +164,7 @@ const MedicalInput = () => {
     }
     setMedicalLoading(false);
   };
-
+    
   return (
     <>
       <div className="flex flex-col justify-center items-center my-8">
@@ -205,7 +205,18 @@ const MedicalInput = () => {
                         />
                       </div> */}
                       <label htmlFor={`${pIn.name}`} className="basis-1/4 flex justify-start font-Kanit text-lg items-center">{pIn.label}:</label>
-                      <input
+                      {(pIn.name === 'birth') ? (
+                        <input
+                        className="basis-3/4 flex items-center py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                        type="date"
+                        id={pIn.name}
+                        required
+                        placeholder={pIn.text}
+                        autoComplete="off"
+                        {...register(pIn.name, { required: true })}
+                      />
+                      ) : (
+                        <input
                           className="basis-3/4 flex items-center py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                           type="text"
                           id={pIn.name}
@@ -214,6 +225,7 @@ const MedicalInput = () => {
                           autoComplete="off"
                           {...register(pIn.name, { required: true })}
                         />
+                      )}
                       {errors[pIn.name] && (
                         <p className="text-red-500">{pIn.label} is required</p>
                       )}

@@ -39,7 +39,7 @@ const CreateTree = () => {
             }
         }
         const cardData = localStorage.getItem("current_card");
-        if (cardData) {
+        if (cardData && id) {
             const { name, scientificName, treeType, location, description, features, maintenance, benefits, funFact } = JSON.parse(cardData);
             form.setValue("name", name);
             form.setValue("scientificName", scientificName);
