@@ -77,7 +77,7 @@ const VCard = ({ card, isPaid, user, type }: PropsType) => {
         </div>
       </div>
       <div className="flex justify-center mt-4">
-        <div className="text-2xl font-semibold font-Alice">
+        <div className="text-3xl font-semibold font-Alice">
           {type === "tree" && (
             <>
               {"scientificName" in card! && (
@@ -115,7 +115,11 @@ const VCard = ({ card, isPaid, user, type }: PropsType) => {
           {type === "creator" && (
             <>
               {"name" in card! && (
-                <>{/* <CardTitle>{card?.name}</CardTitle> */}</>
+                <>{/* <CardTitle>{card?.name}</CardTitle> */}
+                <p className="">
+                  {card?.name}
+                </p>
+                </>
               )}
             </>
           )}
@@ -125,6 +129,9 @@ const VCard = ({ card, isPaid, user, type }: PropsType) => {
                 <>
                   {/* <CardTitle>{card?.species}</CardTitle> */}
                   {/* <CardDescription>{card?.gender}</CardDescription> */}
+                  <p className="">
+                    {card?.name}
+                  </p>
                 </>
               )}
             </>
@@ -242,10 +249,10 @@ const AllCards = () => {
 
   return (
     <>
-      <div className={`font-Kanit h-[32rem] rounded-b-[4rem] z-10 relative ${type === 'tree' && ('bg-green-300')} ${type === 'personal' && ('bg-blue-300')} ${type === 'medical' && ('bg-blue-200')}`}>
+      <div className={`font-Kanit h-[32rem] rounded-b-[4rem] z-10 relative shadow-lg ${type === 'tree' && ('bg-green-300')} ${type === 'personal' && ('bg-blue-300')} ${type === 'medical' && ('bg-blue-200')} ${type === 'creator' && ('bg-cyan-300')} ${type === 'animal' && ('bg-red-200')}`}>
         <div className="py-4 flex flex-row">
           <div className="basis-1/2 flex justify-center">
-            <button className={`px-6 py-4 rounded-2xl hover:cursor-pointer hover:bg-green-400 shadow-lg ${type === 'tree' && ('bg-green-600')} ${type === 'medical' && ('bg-blue-700')}`}>
+            <button className={`px-6 py-4 rounded-2xl hover:cursor-pointer hover:bg-green-400 shadow-lg ${type === 'tree' && ('bg-green-600')} ${type === 'medical' && ('bg-blue-700')} ${type === 'creator' && ('bg-cyan-500')} ${type === 'animal' && ('bg-red-300')}`}>
               <div className="flex flex-row">
                 <div className="flex items-center px-2">
                   <BsQrCodeScan className="w-[1rem] h-[1rem] text-white" />
@@ -269,12 +276,22 @@ const AllCards = () => {
                     Medical Data
                   </div>
                 )}
+                {type === 'creator' && (
+                  <div className="flex items-center font-semibold text-white">
+                    Creator Data
+                  </div>
+                )}
+                {type === 'animal' && (
+                  <div className="flex items-center font-semibold text-white">
+                    Animal Data
+                  </div>
+                )}
               </div>
             </button>
           </div>
           <div className="basis-1/2 flex justify-center">
             <button className="px-4 py-2 rounded-md border-none hover:cursor-pointer text-green-600">
-              <div className={`flex flex-row ${type === 'tree' && ('text-green-700')} ${type === 'medical' && ('text-blue-600')}`}>
+              <div className={`flex flex-row ${type === 'tree' && ('text-green-700')} ${type === 'medical' && ('text-blue-600')} ${type === 'creator' && ('text-cyan-600')} ${type === 'animal' && ('text-red-400')}`}>
                 <div className="flex items-center px-2">
                   <BsQrCodeScan className="w-[1rem] h-[1rem]" />
                 </div>
@@ -296,6 +313,9 @@ const AllCards = () => {
                 )}
           {type === 'medical' && (
                   <p className="">Medical Data</p>
+                )}
+          {type === 'creator' && (
+                  <p className="">Creator Data</p>
                 )}
           </div>
         </div>
@@ -379,7 +399,7 @@ const AllCards = () => {
                 type!
               ) ? (
                 <button
-                  className={`px-[5rem] py-3 text-white rounded-md hover:cursor-pointer text-lg font-Kanit shadow-2xl ${type === 'tree' && ('bg-green-500')} ${type === 'medical' && ('bg-blue-700')}`}
+                  className={`px-[5rem] py-3 text-white rounded-md hover:cursor-pointer text-lg font-Kanit shadow-lg ${type === 'tree' && ('bg-green-500')} ${type === 'medical' && ('bg-blue-700')} ${type === 'creator' && ('bg-cyan-400')} ${type === 'animal' && ('bg-red-300')}`}
                   onClick={() => {
                     navigate(setLink(type!));
                   }}
