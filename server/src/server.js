@@ -3,25 +3,26 @@ import dotenv from "dotenv";
 import connectDatabase from "./config/database.js";
 import Razorpay from "razorpay";
 import Stripe from "stripe";
+import "./utils/emailQueue.js";
+import Redis from "ioredis";
 
 // Handling Uncaught Exception
 process.on("uncaughtException", (err) => {
     console.log(`Error: ${err}`);
     console.log(`Shutting down the server due to Uncaught Exception`);
-
+    
     process.exit(1);
 });
 
 dotenv.config();
 
+export const redis = new Redis();
 const PORT = process.env.PORT || 4000;
 
 connectDatabase();
 
-// export const CLIENT_URL="https://app.umanandasiddha.site";
-// export const SERVER_URL="https://api.umanandasiddha.site";
-export const CLIENT_URL = "http://localhost:5173";
-export const SERVER_URL = "http://localhost:7070";
+export const CLIENT_URL = process.env.NODE_ENV === "production" ? "https://app.umanandasiddha.site" : "http://localhost:5173";
+export const SERVER_URL = process.env.NODE_ENV === "production" ? "https://api.umanandasiddha.site" : "http://localhost:7070";
 
 export const stripe = new Stripe(process.env.STRIPE_KEY || "");
 

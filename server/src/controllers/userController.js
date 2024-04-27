@@ -2,7 +2,6 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import User, { accountEnum, roleEnum } from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
-import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { CLIENT_URL } from "../server.js";
 import Tree from "../models/treeModel.js";
@@ -13,6 +12,8 @@ import fs from "fs";
 import sharp from "sharp";
 import { SERVER_URL } from "../server.js";
 import Animal from "../models/animalModel.js";
+import { emailQueue } from "../utils/emailQueue.js";
+import Donation from "../models/donationModel.js";
 
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -27,6 +28,12 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
 
     if (!user) {
         return next(new ErrorHandler("Error Registering User, Try Again Later", 500));
+    }
+
+    const donator = Donation.find({ email: user.email });
+    if (donator) {
+        user.donator = true;
+        await user.save();
     }
 
     if (req.query.type === roleEnum.ORG) {
@@ -67,11 +74,11 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
     const message = `Email verification OTP ( valid for 15 minutes ) :- \n\n ${otp} \n\n Please ignore if you didn't requested this email.`;
 
     try {
-        await sendEmail({
+        await emailQueue.add("Email Queueing", {
             email: user.email,
             subject: `Email Veification`,
             message,
-        });
+        }); 
     } catch (error) {
         user.oneTimePassword = undefined;
         user.oneTimeExpire = undefined;
@@ -92,11 +99,11 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
     const message = `Email verification OTP ( valid for 15 minutes ) :- \n\n ${otp} \n\n Please ignore if you didn't requested this email.`;
 
     try {
-        await sendEmail({
+        await emailQueue.add("Email Queueing", {
             email: user.email,
             subject: `Email Veification`,
             message,
-        });
+        }); 
 
         res.status(200).json({
             success: true,
@@ -143,11 +150,15 @@ export const verifyUser = catchAsyncErrors(async (req, res, next) => {
         message = "Account Verification Failed, Please try again later."
     }
 
-    await sendEmail({
-        email: user.email,
-        subject: `Account Verification Update`,
-        message,
-    });
+    try {
+        await emailQueue.add("Email Queueing", {
+            email: user.email,
+            subject: `Account Verification Update`,
+            message,
+        }); 
+    } catch (error) {
+        console.log(error.message);
+    }
 
     sendToken(user, 200, res);
 });
@@ -166,11 +177,59 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Invalid Credentials", 401));
     }
 
+    if (user.isBlocked) {
+        user.loginAttempt.count++;
+        user.loginAttempt.time = Date.now();
+        await user.save();
+        return next(new ErrorHandler("Access Denied 2", 500));
+    }
+
+    if (user.loginAttempt?.count >= 5) {
+        user.isBlocked = true;
+        user.loginAttempt.count++;
+        user.loginAttempt.time = Date.now();
+        await user.save();
+        return next(new ErrorHandler("Access Denied", 500));
+    }
+
+    if (user.loginAttempt?.count < 5 && user.loginAttempt?.count !== 0 && (user.loginAttempt?.time + 60*1000) > Date.now()) {
+        user.loginAttempt.count = 0;
+        await user.save();
+    }
+
     const isPasswordMatched = await user.comparePassword(password);
 
     if (!isPasswordMatched) {
+        await User.findOneAndUpdate(
+            { email }, 
+            {
+                loginAttempt: {
+                    count: user.loginAttempt.count + 1,
+                    time: Date.now(),
+                },
+            }, 
+            { new: true, runValidators: true, useFindAndModify: false }
+        );
         return next(new ErrorHandler("Invalid Credentials", 401));
     }
+
+    try {
+        await emailQueue.add("Email Queueing", {
+            email: user.email,
+            subject: `Test Login Email`,
+            message: `Welcome ${user.name}`,
+        }); 
+    } catch (error) {
+        console.log(error.message);
+    }
+
+    sendToken(user, 200, res);
+});
+
+//Unblock User
+export const unBlockUser = catchAsyncErrors(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+
 
     sendToken(user, 200, res);
 });
@@ -205,11 +264,11 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
     const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
 
     try {
-        await sendEmail({
+        await emailQueue.add("Email Queueing", {
             email: user.email,
             subject: `Password Recovery`,
             message,
-        });
+        }); 
 
         res.status(200).json({
             success: true,

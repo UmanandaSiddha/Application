@@ -3,6 +3,7 @@ import validator from "validator";
 import bycrpt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import { type } from "os";
 
 export const accountEnum = {
     EMAIL: "email",
@@ -54,8 +55,24 @@ const userSchema = new mongoose.Schema(
             enum: Object.values(roleEnum),
             default: roleEnum.USER,
         },
+        isBlocked: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+        loginAttempt: {
+            count: {
+                type: Number,
+                default: 0
+            },
+            time: Date,
+        },
         customerId: String,
-        donator: Boolean,
+        donator: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
         isVerified: {
             type: Boolean,
             required: true,

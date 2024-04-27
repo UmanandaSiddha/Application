@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
 import cors from "cors";
 import helmet from "helmet";
+import limiter from "./config/rateLimiter.js";
 
 import user from "./routes/userRoute.js";
 import googleRoute from "./routes/googleRoute.js";
@@ -33,6 +34,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(helmet());
+app.use(limiter);
 app.use(cookieParser());
 app.use(fileUpload());
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));

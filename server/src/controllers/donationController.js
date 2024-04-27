@@ -4,6 +4,8 @@ import crypto from "crypto";
 import { instance } from "../server.js";
 import short from "short-uuid";
 import Donation from "../models/donationModel.js";
+import User from "../models/userModel.js";
+import logger from "../config/logger.js";
 
 export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
@@ -18,7 +20,7 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Order Failed", 400));
     }
 
-    await Donation.create({
+    const donator = await Donation.create({
         amount: req.body.amount,
         name: req.body.name,
         email: req.body.email,
@@ -28,6 +30,12 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         status: "created",
         razorpayOrderId: order.id, 
     });
+
+    const user = User.findOne({ email: donator.email});
+    if (user) {
+        user.donator = true;
+        await user.save();
+    }
 
     res.status(200).json({
         success: true,
@@ -74,6 +82,7 @@ export const capturePayment = async (req, res, next) => {
         }
     } catch (error) {
         console.log(error.message);
+        logger.error(error.message);
     }
 
     res.status(200).send('OK');

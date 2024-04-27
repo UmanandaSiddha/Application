@@ -6,6 +6,7 @@ import crypto from "crypto";
 import Subscription from "../models/subscriptionModel.js";
 import Transaction from "../models/transactionModel.js";
 import User, { roleEnum } from "../models/userModel.js";
+import logger from "../config/logger.js";
 
 export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     
@@ -67,12 +68,10 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 export const cancelSubscription = catchAsyncErrors( async (req, res, next) => {
     await instance.subscriptions.cancel(req.body.subscriptionId);
 
-    // cards  = 0 must
-
-    // await User.findByIdAndUpdate(req.user.id, 
-    //     { activePlan: undefined, "cards.total": 0 },
-    //     { new: true, runValidators: true, useFindAndModify: false }
-    // );
+    await User.findByIdAndUpdate(req.user.id, 
+        { "cards.total": 0 },
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
 
     res.status(200).json({
         success: true,
@@ -190,11 +189,14 @@ export const verifySubscription = async (req, res) => {
                     break;
                 case "subscription.completed":
                 case "subscription.cancelled":
-                    // await User.findOneAndUpdate(
-                    //     { activePlan: subscription._id },
-                    //     { activePlan: undefined, "cards.total": 0 }, 
-                    //     { new: true, runValidators: true, useFindAndModify: false }
-                    // );
+                    const user = await User.findOne({ activePlan: subscription._id });
+                    if (user.cards.total !== 0 ) {
+                        await User.findOneAndUpdate(
+                            { activePlan: subscription._id },
+                            { "cards.total": 0 }, 
+                            { new: true, runValidators: true, useFindAndModify: false }
+                        );
+                    }
                     break;
                 default:
                     console.log(event)
@@ -203,6 +205,7 @@ export const verifySubscription = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        logger.error(error.message);
     }
 
     res.status(200).send('OK');
