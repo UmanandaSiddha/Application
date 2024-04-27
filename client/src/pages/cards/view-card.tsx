@@ -132,24 +132,37 @@ const ViewCard = () => {
     }
 
     return (
-        <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
-            <h1 className="text-3xl font-semibold">{headSetter(type!)} Details</h1>
-            <div>
+        <>
+        <div className='w-full'>
+            {/* <div>
                 {(isPaid || user?.role === "admin") ? (
                     <img src={qr} alt={card?._id} />
                 ) : (
                     <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
                 )}
-            </div>
+            </div> */}
             <div>
                 {loading ? <Loader /> : <>{renderCard()}</>}
             </div>
-            <div className="flex gap-6">
-                <Button disabled={!isPaid && user?.role !== "admin"}><a href={qr} download={`${card?._id}.png`}>Download</a></Button>
-                <Button variant="outline" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(setLink(type!, card?._id!))}>Edit</Button>
-                <Button onClick={() => deleteCard()} disabled={!isPaid && user?.role !== "admin"} variant="destructive">Delete</Button>
+            <div className={`w-full py-2 flex justify-center pt-10 ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))}`}>
+                <button className="py-2 bg-green-700 text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"}>
+                    <a href={qr} download={`${card?._id}.png`}>
+                        Download
+                    </a>
+                </button>
+            </div>
+            <div className={`w-full py-2 flex justify-center ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))}`}>
+                <button className="py-2 bg-black text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(setLink(type!, card?._id!))}>
+                        Edit
+                </button>
+            </div>
+            <div className={`w-full py-2 flex pb-4 justify-center ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))}`}>
+                <button className="py-2 bg-red-600 text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"} onClick={() => deleteCard()}>
+                        Delete
+                </button>
             </div>
         </div>
+        </>
     )
 }
 

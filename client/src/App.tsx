@@ -32,6 +32,8 @@ const MedicalInput = lazy(() => import("./pages/cards/inputs/medical"));
 const CreatorInput = lazy(() => import("./pages/cards/inputs/creator"));
 const CreateAnimal = lazy(() => import("./pages/cards/inputs/animal"));
 
+
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserResponse } from "./types/api-types";
