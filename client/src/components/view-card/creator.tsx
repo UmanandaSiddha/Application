@@ -1,53 +1,62 @@
 import { Creator } from "@/types/types";
 
 interface PropsType {
-    card: Creator | null;
+  card: Creator | null;
 }
 
 const CreatorComponent = ({ card }: PropsType) => {
-    return (
-        <div className="space-y-4">
-            <div className="flex">
-                <div className="basis-1/2 ">
-                    <p className="font-semibold font-Kanit">CreatorId:</p>
-                </div>
-                <div className="basis-1/2">
-                    <span className="font-Kanit">{card?._id}</span>
-                </div>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2 ">
-                    <p className="font-semibold font-Kanit">Name:</p>
-                </div>
-                <div className="basis-1/2">
-                    <span className="font-Kanit">{card?.name}</span>
-                </div>
-            </div>
-            <div>
-                <div className="flex justify-center items-center py-2">
-                    <h1 className="text-2xl font-semibold font-Kanit underline">
-                        Social Links
-                    </h1>
-                </div>
-                {card?.links?.map((link: any, index: number) => (
-                    <div className="flex">
-                        <div className="basis-1/2">
-                            <p key={index}>
-                                <span className="font-semibold font-Kanit">
-                                    {link.label}:
-                                </span>
-                            </p>
-                        </div>
-                        <div className="basis-1/2">
-                            <p className="font-Kanit">
-                                <a href={link.name} target="blank">{link.name}</a>
-                            </p>
-                        </div>
-                    </div>
-                ))}
-            </div>
+  return (
+    <>
+      <div className="relative flex flex-col w-full bg-blue-400 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
+        <div className="flex justify-start font-Kanit pl-6 py-4">
+          <p className="">Creator's Data</p>
         </div>
-    )
-}
+        <div className="flex justify-start font-Kanit text-5xl font-bold mb-10">
+          <h1 className="font-Alice pl-6">{card?.name}</h1>
+        </div>
+      </div>
+      <div className="relative flex justify-center bg-violet-400 font-Kanit -mt-[4rem]">
+        <div className="flex flex-col w-[90%] mt-[6rem]">
+          <div className="flex flex-col w-full py-2">
+            <div className="flex justify-start">
+              <label htmlFor="name">Name:</label>
+            </div>
+            <div className="w-full flex justify-center pt-2">
+              <input
+                type="text"
+                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                defaultValue={card?.name}
+                readOnly
+              />
+            </div>
+          </div>
+          <div className="flex flex-col w-full py-2">
+            <div className="flex justify-center font-Alice text-2xl py-2">
+              <p>Social Links:</p>
+            </div>
+            <div className="flex justify-center">
+              <div className="w-[90%] bg-white flex flex-col justify-center py-4 rounded-2xl shadow-lg">
+                {card?.links?.map((link: any, index: number) => (
+                  <div
+                    className="flex flex-col justify-center items-center py-2 font-Alice text-white"
+                    key={index}
+                  >
+                    <a href={link.name}>
+                      <div className="w-full">
+                        <button className="w-[16rem] py-2 bg-blue-500 rounded-md hover:cursor-pointer border-2 border-black shadow-xl">
+                          {link.label}
+                        </button>
+                      </div>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default CreatorComponent;
