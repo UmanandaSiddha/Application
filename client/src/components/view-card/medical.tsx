@@ -48,8 +48,8 @@ const MedicalComponent = ({ card }: PropsType) => {
                 </h1>
             </div>
         </div>
-        <div className="relative flex justify-center bg-violet-400 font-Kanit -mt-[4rem] pb-10 shadow-xl">
-            <div className="w-[90%] bg-slate-300 mt-[6rem] rounded-3xl">
+        <div className="relative flex justify-center bg-violet-400 font-Kanit -mt-[4rem] pb-10">
+            <div className="w-[90%] bg-slate-300 mt-[6rem] rounded-3xl shadow-xl">
                 <div className="flex justify-center px-4 pt-8 pb-4">
                     <div className="w-[90%] bg-white p-4 rounded-3xl">
                         <div className="">
