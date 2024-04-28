@@ -44,3 +44,10 @@ export const authorizeRoles = ( ...roles ) => {
         next();
     }
 };
+
+export const checkDeactivated = catchAsyncErrors( async (req, res, next) => {
+    if (req.user.isDeactivated) {
+        return next(new ErrorHandler(`Your account is deactivated, contact the site to reactivate`, 401));
+    }
+    next();
+});

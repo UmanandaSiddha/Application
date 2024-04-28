@@ -55,9 +55,12 @@ const userSchema = new mongoose.Schema(
             enum: Object.values(roleEnum),
             default: roleEnum.USER,
         },
+        isDeactivated : {
+            type: Boolean,
+            default: false
+        },
         isBlocked: {
             type: Boolean,
-            required: true,
             default: false
         },
         loginAttempt: {
@@ -70,12 +73,10 @@ const userSchema = new mongoose.Schema(
         customerId: String,
         donator: {
             type: Boolean,
-            required: true,
             default: false
         },
         isVerified: {
             type: Boolean,
-            required: true,
             default: false,
         },
         activePlan: {

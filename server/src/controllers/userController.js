@@ -177,15 +177,19 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Invalid Credentials", 401));
     }
 
-    if (user.isBlocked) {
-        user.loginAttempt.count++;
-        user.loginAttempt.time = Date.now();
-        await user.save();
-        return next(new ErrorHandler("Access Denied 2", 500));
-    }
-
-    if (user.loginAttempt?.count >= 5) {
-        user.isBlocked = true;
+    if (user.isBlocked || (user.loginAttempt?.count >= 5)) {
+        if (!user.isBlocked) {
+            user.isBlocked = true;
+            try {
+                await emailQueue.add("Email Queueing", {
+                    email: user.email,
+                    subject: `Suspious Activity`,
+                    message: `This email will contain link by which they can unblock themselves`,
+                }); 
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
         user.loginAttempt.count++;
         user.loginAttempt.time = Date.now();
         await user.save();
@@ -194,6 +198,7 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
 
     if (user.loginAttempt?.count < 5 && user.loginAttempt?.count !== 0 && (user.loginAttempt?.time + 60*1000) > Date.now()) {
         user.loginAttempt.count = 0;
+        user.loginAttempt.time = undefined;
         await user.save();
     }
 
@@ -227,10 +232,16 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 //Unblock User
-export const unBlockUser = catchAsyncErrors(async (req, res, next) => {
+export const unblockUser = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
-
+    if (req.body.isMe) {
+        user.isBlocked = false;
+        user.loginAttempt.count = 0;
+        user.loginAttempt.time = undefined;
+        await user.save();
+    }
+    
     sendToken(user, 200, res);
 });
 
@@ -480,7 +491,10 @@ export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
     await Creator.deleteMany({ user: req.user.id });
     await Animal.deleteMany({ user: req.user.id });
 
-    await User.findByIdAndDelete(req.user.id);
+    const user = await User.findById(req.user.id);
+
+    user.isDeactivated = true;
+    await user.save();
 
     res.status(200).json({
         success: true,
@@ -502,7 +516,8 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
     await Creator.deleteMany({ user: req.params.id });
     await Animal.deleteMany({ user: req.params.id });
 
-    await User.findByIdAndDelete(req.params.id);
+    user.isDeactivated = true;
+    await user.save();
 
     res.status(200).json({
         success: true,
