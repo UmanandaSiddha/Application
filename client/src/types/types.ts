@@ -75,11 +75,16 @@ export type Personal = {
     name: string;
     contactInfo: any;
     socialMedia: any;
-    aboutMe: any;
-    preferences: any;
-    lifeStyle: any;
+    lifesty: any;
+    favourites: any;
+    mottos: any;
+    misce: any;
+    interest: any;
+    value: any;
     beliefs: any;       
-    professional: any;
+    profession: any;
+    backg: any;
+    expert: any;
     additional: any;
     user: string;
 }
