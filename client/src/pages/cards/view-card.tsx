@@ -144,19 +144,19 @@ const ViewCard = () => {
             <div>
                 {loading ? <Loader /> : <>{renderCard()}</>}
             </div>
-            <div className={`w-full py-2 flex justify-center pt-10 ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))}`}>
+            <div className={`w-full py-2 flex justify-center pt-10 ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))} ${(type === 'medical' && ('bg-violet-400'))}`}>
                 <button className="py-2 bg-green-700 text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"}>
                     <a href={qr} download={`${card?._id}.png`}>
                         Download
                     </a>
                 </button>
             </div>
-            <div className={`w-full py-2 flex justify-center ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))}`}>
+            <div className={`w-full py-2 flex justify-center ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))} ${(type === 'medical' && ('bg-violet-400'))}`}>
                 <button className="py-2 bg-black text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"} onClick={() => navigate(setLink(type!, card?._id!))}>
                         Edit
                 </button>
             </div>
-            <div className={`w-full py-2 flex pb-4 justify-center ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))}`}>
+            <div className={`w-full py-2 flex pb-4 justify-center ${(type === 'tree' && ('bg-yellow-200'))} ${(type === 'animal' && ('bg-orange-100'))} ${(type === 'creator' && ('bg-violet-400'))} ${(type === 'medical' && ('bg-violet-400'))}`}>
                 <button className="py-2 bg-red-600 text-white font-Kanit w-[90%] rounded-md hover:cursor-pointer shadow-md" disabled={!isPaid && user?.role !== "admin"} onClick={() => deleteCard()}>
                         Delete
                 </button>
