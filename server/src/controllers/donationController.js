@@ -53,32 +53,46 @@ export const capturePayment = async (req, res, next) => {
         .update(JSON.stringify(req.body))
         .digest("hex")
         
-    const { order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = req.body.payload.payment.entity;
+    const { event, payload } = req.body;
+    const { order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = payload.payment.entity;
     
     try { 
         if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-            await Donation.findOneAndUpdate(
-                { razorpayOrderId: order_id }, 
-                {
-                    status,
-                    razorpayPaymentId: id,
-                    paymentMethod: {
-                        methodType: method,
-                        cardInfo: {
-                            cardType: card?.type,
-                            issuer: card?.issuer,
-                            last4: card?.last4,
-                            name: card?.name,
-                            network: card?.network,
+            switch (event) {
+                case "payment.authorized":
+                    console.log(event, ": payment authorised");
+                    break;
+                case "payment.captured":
+                    await Donation.findOneAndUpdate(
+                        { razorpayOrderId: order_id }, 
+                        {
+                            status,
+                            razorpayPaymentId: id,
+                            paymentMethod: {
+                                methodType: method,
+                                cardInfo: {
+                                    cardType: card?.type,
+                                    issuer: card?.issuer,
+                                    last4: card?.last4,
+                                    name: card?.name,
+                                    network: card?.network,
+                                },
+                                bankInfo: bank,
+                                walletInfo: wallet,
+                                upiInfo: vpa,
+                                data: acquirer_data,
+                            }
                         },
-                        bankInfo: bank,
-                        walletInfo: wallet,
-                        upiInfo: vpa,
-                        data: acquirer_data,
-                    }
-                },
-                { new: true, runValidators: true, useFindAndModify: false }
-            );
+                        { new: true, runValidators: true, useFindAndModify: false }
+                    );
+                    break;
+                case "payment.failed":
+                    console.log(event, ": payment failed");
+                    break;
+                default:
+                    console.log(event)
+                    break;
+            }
         }
     } catch (error) {
         console.log(error.message);

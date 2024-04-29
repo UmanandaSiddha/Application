@@ -199,7 +199,7 @@ export const verifySubscription = async (req, res) => {
                     }
                     break;
                 default:
-                    console.log(event)
+                    console.log(event);
                     break;
             }
         }

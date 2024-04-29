@@ -36,8 +36,6 @@ import axios from "axios";
 import { UserResponse } from "@/types/api-types";
 import { Label } from "@/components/ui/label";
 
-// import BackButton from '../components/BackButton'
-
 const Profile = () => {
 
     const [open, setOpen] = useState<boolean>(false);
