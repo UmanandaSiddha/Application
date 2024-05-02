@@ -1,0 +1,21 @@
+@page {
+    size: auto;
+    margin: 0;
+}
+
+@media print {
+    body {
+        Visibility: hidden
+    }
+
+    .printable,
+    .printable * {
+        Visibility: visible
+    }
+
+    /* .printable {
+        position: absolute;
+        left: 0;
+        top: 0;
+    } */
+}

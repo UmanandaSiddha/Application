@@ -69,7 +69,6 @@ const Subscription = () => {
             }
             const options = {
                 key: data.key,
-                // amount: 100,
                 currency: "INR",
                 name: "VCards App",
                 description: "just fine",

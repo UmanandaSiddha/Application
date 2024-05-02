@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\client",
+    "\\server",
+    "\\server\\src",
+    "\\server\\src\\controllers"
+  ],
+  "SelectedNode": "\\server\\src\\controllers\\subscriptionController.js",
+  "PreviewInSolutionExplorer": false
+}

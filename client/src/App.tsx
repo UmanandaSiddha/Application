@@ -21,6 +21,7 @@ const Subscription = lazy(() => import("./pages/root/subscription"));
 const AdminPlan = lazy(() => import("./pages/admin-plan"));
 const DonationPage = lazy(() => import ("./pages/root/donation"));
 const BillingPage = lazy(() => import ("./pages/root/billing"));
+const RecieptPage = lazy(() => import ("./pages/root/reciept"));
 
 const AllCards = lazy(() => import ("./pages/cards/all-cards"));
 const ViewCard = lazy(() => import ("./pages/cards/view-card"));
@@ -120,6 +121,7 @@ const App = () => {
                                 element={<ProtectedRoute isAuthenticated={user ? true : false} />}
                             >
                                 <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/billing/receipt" element={<RecieptPage />} />
                                 <Route path="/profile" element={<Profile />} />
                                 <Route path="/verify" element={<Verify />} />
                                 <Route path="/confirm" element={<Confirm />} />

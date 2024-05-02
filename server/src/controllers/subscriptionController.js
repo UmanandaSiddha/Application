@@ -214,7 +214,7 @@ export const verifySubscription = async (req, res) => {
 export const getLatestSubscription = catchAsyncErrors( async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
-    const subscription = await Subscription.findById(user.activePlan);
+    const subscription = await Subscription.findById(user.activePlan).populate("planId", "name amount");
 
     res.status(200).json({
         success: true,

@@ -19,7 +19,12 @@ export type User = {
 };
 
 export type Subscription = {
-    planId: string;
+    _id: string;
+    planId: {
+        _id: string;
+        name: string;
+        amount: number;
+    }
     razorSubscriptionId: string;
     start: Date;
     end: Date;
@@ -33,6 +38,7 @@ export type Subscription = {
 }
 
 export type Transaction = {
+    _id: string;
     amount: number;
     start: Date;
     end: Date;
