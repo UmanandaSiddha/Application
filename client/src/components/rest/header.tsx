@@ -5,7 +5,7 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 
-import { Link,  useNavigate } from 'react-router-dom'
+import { Link,  NavLink,  useNavigate } from 'react-router-dom'
 import { User } from "../../types/types";
 import { toast } from 'react-toastify'
 import { logoutUser } from "../../redux/api/userApi";
@@ -36,7 +36,7 @@ export default function Header({ user }: PropsType) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     return (
-        <header className="bg-white">
+        <header className="bg-black text-white">
             <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="-m-1.5 p-1.5">
@@ -55,16 +55,16 @@ export default function Header({ user }: PropsType) {
                     </button>
                 </div>
                 <Popover.Group className="hidden lg:flex lg:gap-x-12">
-                    <Link to='/dashboard' className="text-sm font-semibold leading-6 text-gray-900">
+                    <NavLink to='/dashboard' className="text-base font-semibold leading-6 text-white font-Kanit">
                         Dashboard
-                    </Link>
-                    <Link to='/plans' className="text-sm font-semibold leading-6 text-gray-900">
+                    </NavLink>
+                    <Link to='/plans' className="text-base font-semibold leading-6 text-white font-Kanit">
                         Subcription
                     </Link>
-                    <Link to='/billing' className="text-sm font-semibold leading-6 text-gray-900">
+                    <Link to='/billing' className="text-base font-semibold leading-6 text-white font-Kanit">
                         Billing
                     </Link>
-                    <Link to='/profile' className="text-sm font-semibold leading-6 text-gray-900">
+                    <Link to='/profile' className="text-base font-semibold leading-6 text-white font-Kanit">
                         Profile
                     </Link>
 
@@ -74,12 +74,12 @@ export default function Header({ user }: PropsType) {
                     {
                         user ? (
                             <div className="flex items-center gap-5">
-                                <p className="hidden sm:block">{user.name}</p>
-                                <button className='px-4 py-2 bg-black rounded-md text-white text-sm' onClick={logout}>Log Out</button>
+                                <p className="hidden sm:block font-Philosopher text-lg">{user.name}</p>
+                                <button className='px-4 py-2 bg-white rounded-md text-black text-sm font-Kanit' onClick={logout}>Log Out</button>
                             </div>
                         ) : (
                             <div>
-                                <button className='px-4 py-2 bg-black rounded-md text-white text-sm'><Link to="/login">Login</Link></button>
+                                <button className='px-4 py-2 bg-white rounded-md text-black text-sm font-Kanit'><Link to="/login">Login</Link></button>
                             </div>
                         )
                     }
@@ -106,7 +106,7 @@ export default function Header({ user }: PropsType) {
                             <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                         </button>
                     </div>
-                    <div className="mt-6 flow-root">
+                    <div className="mt-6 flow-root ">
                         <div className="-my-6 divide-y divide-gray-500/10">
                             <div className="space-y-2 py-6">
                                 <Link
@@ -142,7 +142,7 @@ export default function Header({ user }: PropsType) {
                                 {
                                     user ? (
                                         <div className="flex items-center gap-5">
-                                            <p>{user.name}</p>
+                                            <p className='font-Kanit'>{user.name}</p>
                                             <button onClick={logout}>Logout</button>
                                         </div>
                                     ) : (

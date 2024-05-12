@@ -202,7 +202,7 @@ const InputVCard = () => {
         workemail: personal?.contactInfo.emailAddress.work || "",
         otheremail: personal?.contactInfo.emailAddress.other || "",
         // aboutme: personal?.aboutMe.aboutme || "",
-        dob: personal?.lifesty.birth || "",
+        dob: personal?.lifesty.birth || Date.now(),
         hometown: personal?.lifesty.homeTown || "",
         currentCity: personal?.lifesty.currentCity || "",
         languages: personal?.lifesty.languages || "",
@@ -602,6 +602,7 @@ const InputVCard = () => {
                 <button
                   className="w-full px-4 border-none flex flex-row"
                   onClick={toggleLifestyle}
+                  type="button"
                 >
                   <div className="basis-1/4 flex justify-center items-center pl-2">
                     Lifestyle
@@ -652,6 +653,7 @@ const InputVCard = () => {
                 <button
                   className="w-full px-4 border-none flex flex-row"
                   onClick={toggleFavs}
+                  type="button"
                 >
                   <div className="basis-1/4 flex justify-center items-center pl-2">
                     Favourites
@@ -703,6 +705,7 @@ const InputVCard = () => {
                 <button
                   className="w-full px-4 border-none flex flex-row"
                   onClick={toggleMisc}
+                  type="button"
                 >
                   <div className="basis-1/4 flex justify-center items-center pl-2">
                     Miscellaneous
@@ -1078,6 +1081,7 @@ const InputVCard = () => {
               <button
                 className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-300"
                 disabled
+                // type="button"
               >
                 Back
               </button>
@@ -1085,6 +1089,7 @@ const InputVCard = () => {
               <button
                 className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
                 onClick={handleProgressBackward}
+                type="button"
               >
                 Back
               </button>
@@ -1103,6 +1108,7 @@ const InputVCard = () => {
               <button
                 className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
                 onClick={handleProgressForward}
+                type="button"
               >
                 Next
               </button>

@@ -24,6 +24,9 @@ const BillingPage = lazy(() => import ("./pages/root/billing"));
 const RecieptPage = lazy(() => import ("./pages/root/reciept"));
 
 const AllCards = lazy(() => import ("./pages/cards/all-cards"));
+// const AllCardsMd = lazy(() => import ("./pages/cards/all-cards-md"));
+
+
 const ViewCard = lazy(() => import ("./pages/cards/view-card"));
 const DisplayCard = lazy(() => import ("./pages/cards/display-card"));
 
@@ -40,8 +43,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { UserResponse } from "./types/api-types";
 import axios from "axios";
 import ErrorBoundary from "./components/rest/error-boundary";
+import { useWindowWidth } from "@react-hook/window-size";
 
 const App = () => {
+    const width = useWindowWidth();
+    const isMobile = width < 768;
 
     let location = useLocation();
 
@@ -122,14 +128,55 @@ const App = () => {
                             >
                                 <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/billing/receipt" element={<RecieptPage />} />
+                                {/* <Route path="/dashboard/cards" element={<AllCards />} /> */}
                                 <Route path="/profile" element={<Profile />} />
                                 <Route path="/verify" element={<Verify />} />
                                 <Route path="/confirm" element={<Confirm />} />
                                 <Route path="/admin-plan" element={<AdminPlan />} />
                                 <Route path="/billing" element={<BillingPage />} />
 
+                                {/* <div className="md:hidden">
                                 <Route path="/dashboard/cards" element={<AllCards />} />
+                                </div>
+                                <div className="md:block">
+                                    <Route path="/dashboard/cards" element={<AllCards />} />
+                                </div> */}
+
+                                
+
+                                {/* {isMobile && (
+                                    <>
+                                    <Route path="/dashboard" element={<Dashboard />} />
+                                    <Route path="/dashboard/cards" element={<AllCards />} />
+                                    </>
+                                )}
+
+                                {!isMobile && (
+                                    <>
+                                    <Routes>
+                                    
+                                    </Routes>
+                                    </>
+                                )} */}
+
+                                
+                                <Route path="/dashboard/cards" element={!isMobile ? (
+                                    <>
+                                    <div className="flex flex-row">
+                                        <div className="basis-1/4">
+                                            <Dashboard />
+                                        </div>
+                                        <div className="basis-3/4">
+                                            <AllCards />
+                                        </div>
+                                    </div>
+                                    </>
+                                ) : (
+                                    <AllCards />
+                                )} />
                                 <Route path="/dashboard/cards/card" element={<ViewCard />} />
+                                
+
 
                                 <Route path="/dashboard/tree/create" element={<CreateTree />} />
                                 <Route path="/dashboard/personal/create" element={<CreatePersonal />} />
