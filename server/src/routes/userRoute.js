@@ -8,17 +8,12 @@ import {
     getUserDetails, 
     updatePassword,
     updateProfile,
-    getAllUsers,
-    getSingleUser,
-    deleteUser,
-    updateRole, 
     verifyUser,
     requestVerification,
     deleteAccount,
     setPassword,
-    updateCard
 } from "../controllers/userController.js";
-import { isAuthenticatedUser, isUserVerified, authorizeRoles } from "../middleware/auth.js";
+import { isAuthenticatedUser, isUserVerified } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -34,11 +29,5 @@ router.route("/me/update").put(isAuthenticatedUser, isUserVerified, updateProfil
 router.route("/password/update").put(isAuthenticatedUser, isUserVerified, updatePassword);
 router.route("/set/password").put(isAuthenticatedUser, isUserVerified, setPassword);
 router.route("/delete/account").delete(isAuthenticatedUser, isUserVerified, deleteAccount);
-router.route("/admin/users").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAllUsers);
-router.route("/admin/card/:id").put(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), updateCard);
-router.route("/admin/user/:id")
-    .get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getSingleUser)
-    .put(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), updateRole)
-    .delete(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), deleteUser);
 
 export default router;

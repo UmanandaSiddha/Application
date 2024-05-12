@@ -68,7 +68,7 @@ const TransactionComponent = () => {
                             </div>
                             <div className="w-full py-3 flex justify-center">
                                 <button
-                                    onClick={() => navigate(`receipt?id=${transaction._id}`)}
+                                    onClick={() => navigate(`/receipt?type=user&id=${transaction._id}`)}
                                     className="w-[90%] py-2 bg-blue-500 text-white rounded-sm font-Kanit hover:cursor-pointer hover:bg-blue-400"
                                 >
                                     Show Receipt

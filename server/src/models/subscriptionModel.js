@@ -19,6 +19,14 @@ const subscriptionSchema = new mongoose.Schema(
             type: Date,
             required: true
         },
+        currentStart: {
+            type: Date,
+            required: true
+        },
+        currentEnd: {
+            type: Date,
+            required: true
+        },
         nextBilling: {
             type: Date,
             required: true
@@ -42,6 +50,20 @@ const subscriptionSchema = new mongoose.Schema(
         status: {
             type: String,
             required: true
+        },
+        paymentMethod: {
+            methodType: String,
+            cardInfo: {
+                cardType: String,
+                issuer: String,
+                last4: String,
+                name: String,
+                network: String,
+            },
+            bankInfo: String,
+            walletInfo: String,
+            upiInfo: String,
+            data: Object
         },
         user: {
             type: mongoose.Schema.ObjectId,

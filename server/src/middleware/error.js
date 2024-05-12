@@ -1,4 +1,3 @@
-import logger from "../config/logger.js";
 import ErrorHandler from "../utils/errorHandler.js";
 
 const ErrorMiddleware =  ( err, req, res, next ) => {
@@ -28,8 +27,6 @@ const ErrorMiddleware =  ( err, req, res, next ) => {
         const message = `Json Web Token is Invalid, Try again later`;
         err = new ErrorHandler(message, 400);
     }
-
-    logger.error(`{${err.status}}: ${err.message}`);
 
     res.status(err.statusCode).json({
         success: false,

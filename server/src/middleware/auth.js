@@ -24,15 +24,31 @@ export const isUserVerified = catchAsyncErrors( async (req, res, next) => {
 });
 
 export const isUserPaid = catchAsyncErrors( async (req, res, next) => {
-    if (!req.user.activePlan) {
-        return next(new ErrorHandler("Subscription Expired Recharge", 400));
-    }
-
-    const subscription = await Subscription.findById(req.user.activePlan);
-    if (subscription.status !== "active") {
-        return next(new ErrorHandler("Subscription Expired Recharge", 400));
+    if (req.user.role !== "admin") {
+        if (!req.user.activePlan) {
+            return next(new ErrorHandler("You don't have any Subscription", 400));
+        }
+    
+        const subscription = await Subscription.findById(req.user.activePlan);
+    
+        if (!["active", "pending"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.currentEnd > Date.now())) {
+            return next(new ErrorHandler("Subscription Expired Recharge", 400));
+        } 
     }
     
+    next();
+});
+
+export const checkCancellation = catchAsyncErrors( async (req, res, next) => {
+    if (req.user.activePlan) {
+        const subscription = await Subscription.findById(req.user.activePlan);
+        if (subscription.status === "cancelled" && (subscription.currentEnd <= Date.now()) && req.user.cards.total !== 0 ) {
+            await User.findByIdAndUpdate(req.user.id, 
+                { "cards.total": 0 },
+                { new: true, runValidators: true, useFindAndModify: false }
+            );
+        }
+    }
     next();
 });
 

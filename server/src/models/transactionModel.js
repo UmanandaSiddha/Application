@@ -1,12 +1,5 @@
 import mongoose from "mongoose";
 
-export const methodEnum = {
-    CARD: "card",
-    UPI: "upi",
-    WALLET: "wallet",
-    NETBANKING: "netbanking"
-}
-
 const transactionSchema = new mongoose.Schema(
     {
         amount: {
@@ -34,10 +27,7 @@ const transactionSchema = new mongoose.Schema(
             required: true
         }, 
         paymentMethod: {
-            methodType: {
-                type: String,
-                enum: Object.values(methodEnum),
-            },
+            methodType: String,
             cardInfo: {
                 cardType: String,
                 issuer: String,

@@ -97,10 +97,10 @@ const Subscription = () => {
                     email: user?.email,
                 },
                 timeout: 120,
-                readonly: {
-                    email: user?.email,
-                    name: user?.name,
-                },
+                // readonly: {
+                //     email: user?.email,
+                //     name: user?.name,
+                // },
                 theme: {
                     color: "#3399cc",
                 },
@@ -113,11 +113,11 @@ const Subscription = () => {
                 toast.info(response.error.description);
             });
             razor.open();
-            console.log("clicked");
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
     };
+
     return (
         <div className="flex flex-col justify-center items-center">
             <h1 className="text-2xl font-semibold">Subscription</h1>

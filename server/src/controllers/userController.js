@@ -12,7 +12,7 @@ import fs from "fs";
 import sharp from "sharp";
 import { SERVER_URL } from "../server.js";
 import Animal from "../models/animalModel.js";
-import { emailQueue } from "../utils/emailQueue.js";
+import { addEmailToQueue } from "../utils/emailQueue.js";
 import Donation from "../models/donationModel.js";
 
 // User Registration
@@ -74,11 +74,11 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
     const message = `Email verification OTP ( valid for 15 minutes ) :- \n\n ${otp} \n\n Please ignore if you didn't requested this email.`;
 
     try {
-        await emailQueue.add("Email Queueing", {
+        await addEmailToQueue({
             email: user.email,
             subject: `Email Veification`,
             message,
-        }); 
+        });
     } catch (error) {
         user.oneTimePassword = undefined;
         user.oneTimeExpire = undefined;
@@ -99,11 +99,11 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
     const message = `Email verification OTP ( valid for 15 minutes ) :- \n\n ${otp} \n\n Please ignore if you didn't requested this email.`;
 
     try {
-        await emailQueue.add("Email Queueing", {
+        await addEmailToQueue({
             email: user.email,
             subject: `Email Veification`,
             message,
-        }); 
+        });
 
         res.status(200).json({
             success: true,
@@ -129,6 +129,7 @@ export const verifyUser = catchAsyncErrors(async (req, res, next) => {
         .digest("hex");
 
     const user = await User.findOne({
+        _id: req.user.id,
         oneTimePassword,
         oneTimeExpire: { $gt: Date.now() },
     });
@@ -151,11 +152,11 @@ export const verifyUser = catchAsyncErrors(async (req, res, next) => {
     }
 
     try {
-        await emailQueue.add("Email Queueing", {
+        await addEmailToQueue({
             email: user.email,
             subject: `Account Verification Update`,
             message,
-        }); 
+        });
     } catch (error) {
         console.log(error.message);
     }
@@ -181,11 +182,11 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
         if (!user.isBlocked) {
             user.isBlocked = true;
             try {
-                await emailQueue.add("Email Queueing", {
+                await addEmailToQueue({
                     email: user.email,
                     subject: `Suspious Activity`,
                     message: `This email will contain link by which they can unblock themselves`,
-                }); 
+                });
             } catch (error) {
                 console.log(error.message);
             }
@@ -219,11 +220,11 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
     }
 
     try {
-        await emailQueue.add("Email Queueing", {
+        await addEmailToQueue({
             email: user.email,
-            subject: `Test Login Email`,
+            subject:  `Test Login Email`,
             message: `Welcome ${user.name}`,
-        }); 
+        });
     } catch (error) {
         console.log(error.message);
     }
@@ -270,16 +271,16 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${CLIENT_URL}/reset?token=${resetToken}`;
+    const resetPasswordUrl = `${CLIENT_URL}/reset?token=${resetToken}&user=${user._id}`;
 
     const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
 
     try {
-        await emailQueue.add("Email Queueing", {
+        await addEmailToQueue({
             email: user.email,
             subject: `Password Recovery`,
             message,
-        }); 
+        });
 
         res.status(200).json({
             success: true,
@@ -303,6 +304,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
         .digest("hex");
 
     const user = await User.findOne({
+        _id: req.body.id,
         resetPasswordToken,
         resetPasswordExpire: { $gt: Date.now() },
     });
@@ -416,72 +418,6 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-// Get all Users - Only Admin
-export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
-    const users = await User.find();
-    const userCount = await User.countDocuments();
-
-    res.status(200).json({
-        success: true,
-        count: userCount,
-        users,
-    });
-});
-
-// Get User Details - Only Admin
-export const getSingleUser = catchAsyncErrors(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
-    }
-
-    res.status(200).json({
-        success: true,
-        user,
-    });
-});
-
-// Update User Role -- Admin
-export const updateRole = catchAsyncErrors(async (req, res, next) => {
-
-    const user = await User.findById(req.params.id);
-    if (!user) {
-        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
-    }
-
-    await User.findByIdAndUpdate(req.params.id, { role: req.body.role }, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-    });
-
-    res.status(200).json({
-        success: true,
-        message: `User Role Updated`,
-    })
-});
-
-// Update User Cards -- Admin
-export const updateCard = catchAsyncErrors(async (req, res, next) => {
-
-    const user = await User.findById(req.params.id);
-    if (!user) {
-        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
-    }
-
-    await User.findByIdAndUpdate(req.params.id, { "cards.total": req.body.total }, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-    });
-
-    res.status(200).json({
-        success: true,
-        message: `User Cards Updated`,
-    })
-});
-
 // Delete Account
 export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
 
@@ -499,28 +435,5 @@ export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: `Account deleted`,
-    });
-});
-
-// Delete User -- Admin
-export const deleteUser = catchAsyncErrors(async (req, res, next) => {
-
-    const user = await User.findById(req.params.id);
-    if (!user) {
-        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
-    }
-
-    await Tree.deleteMany({ user: req.params.id });
-    await Personal.deleteMany({ user: req.params.id });
-    await Medical.deleteMany({ user: req.params.id });
-    await Creator.deleteMany({ user: req.params.id });
-    await Animal.deleteMany({ user: req.params.id });
-
-    user.isDeactivated = true;
-    await user.save();
-
-    res.status(200).json({
-        success: true,
-        message: `User deleted`,
     });
 });

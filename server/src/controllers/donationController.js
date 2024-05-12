@@ -6,12 +6,13 @@ import short from "short-uuid";
 import Donation from "../models/donationModel.js";
 import User from "../models/userModel.js";
 import logger from "../config/logger.js";
+import { handleDonation } from "../common/payment.js";
 
 export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
 
     const options = {
         amount: Number(req.body.amount) * 100,
-        currency: "INR",
+        currency: req.body.currency,
         receipt: `receipt_${short.generate()}`
     };
 
@@ -26,20 +27,25 @@ export const checkoutPayment = catchAsyncErrors(async (req, res, next) => {
         email: req.body.email,
         phone: req.body.phone,
         address: req.body.address,
+        currency: req.body.currency,
         pan: req.body.pan,
         status: "created",
-        razorpayOrderId: order.id, 
+        razorpayOrderId: order.id,
     });
 
-    const user = User.findOne({ email: donator.email});
+    const user = User.findOne({ email: donator.email });
     if (user) {
-        user.donator = true;
-        await user.save();
+        await User.findOneAndUpdate(
+            { email: donator.email },
+            { donator: true },
+            { new: true, runValidators: true, useFindAndModify: false }
+        )
     }
 
     res.status(200).json({
         success: true,
         key: process.env.RAZORPAY_KEY_ID,
+        donator,
         order,
     });
 });
@@ -52,46 +58,12 @@ export const capturePayment = async (req, res, next) => {
         .createHmac("sha256", secret)
         .update(JSON.stringify(req.body))
         .digest("hex")
-        
-    const { event, payload } = req.body;
-    const { order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = payload.payment.entity;
-    
-    try { 
+
+    try {
         if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-            switch (event) {
-                case "payment.authorized":
-                    console.log(event, ": payment authorised");
-                    break;
-                case "payment.captured":
-                    await Donation.findOneAndUpdate(
-                        { razorpayOrderId: order_id }, 
-                        {
-                            status,
-                            razorpayPaymentId: id,
-                            paymentMethod: {
-                                methodType: method,
-                                cardInfo: {
-                                    cardType: card?.type,
-                                    issuer: card?.issuer,
-                                    last4: card?.last4,
-                                    name: card?.name,
-                                    network: card?.network,
-                                },
-                                bankInfo: bank,
-                                walletInfo: wallet,
-                                upiInfo: vpa,
-                                data: acquirer_data,
-                            }
-                        },
-                        { new: true, runValidators: true, useFindAndModify: false }
-                    );
-                    break;
-                case "payment.failed":
-                    console.log(event, ": payment failed");
-                    break;
-                default:
-                    console.log(event)
-                    break;
+            const donation = await Donation.findOne({ razorpayOrderId: req.body.payload.payment.entity.order_id });
+            if (donation) {
+                await handleDonation(req.body.payload.payment.entity);
             }
         }
     } catch (error) {
@@ -113,31 +85,12 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
         .digest("hex")
 
     const payment = await instance.payments.fetch(razorpay_payment_id);
-    const { order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = payment;
 
     if (expectedSigntaure === razorpay_signature) {
-        await Donation.findOneAndUpdate(
-            { razorpayOrderId: order_id }, 
-            {
-                status,
-                razorpayPaymentId: id,
-                paymentMethod: {
-                    methodType: method,
-                    cardInfo: {
-                        cardType: card?.type,
-                        issuer: card?.issuer,
-                        last4: card?.last4,
-                        name: card?.name,
-                        network: card?.network,
-                    },
-                    bankInfo: bank,
-                    walletInfo: wallet,
-                    upiInfo: vpa,
-                    data: acquirer_data,
-                }
-            },
-            { new: true, runValidators: true, useFindAndModify: false }
-        );
+        const donation = await Donation.findOne({ razorpayOrderId: payment.order_id });
+        if (donation) {
+            await handleDonation(payment);
+        }
     } else {
         return next(new ErrorHandler("Payment Not Verified", 403));
     }

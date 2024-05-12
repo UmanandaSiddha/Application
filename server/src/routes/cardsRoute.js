@@ -1,7 +1,7 @@
 import express from "express";
 import { 
     createCard,
-    getCard,
+    getDisplayCard,
     getUserCards,
     deleteCard,
     updateCard,
@@ -12,8 +12,8 @@ import { isAuthenticatedUser, isUserPaid, isUserVerified } from "../middleware/a
 const router = express.Router();
 
 router.route("/new").post(isAuthenticatedUser, isUserVerified, isUserPaid, createCard);
-router.route("/details/:id").get(getGeneralCard);
-router.route("/detailed/:id").get(isAuthenticatedUser,  isUserVerified, getCard);
+router.route("/details/:id").get(getDisplayCard);
+router.route("/detailed/:id").get(isAuthenticatedUser,  isUserVerified, getGeneralCard);
 router.route("/user").get(isAuthenticatedUser, isUserVerified, getUserCards);
 router.route("/edit/:id")
     .delete(isAuthenticatedUser, isUserVerified, isUserPaid, deleteCard)

@@ -121,7 +121,7 @@ const App = () => {
                                 element={<ProtectedRoute isAuthenticated={user ? true : false} />}
                             >
                                 <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/billing/receipt" element={<RecieptPage />} />
+                                <Route path="/receipt" element={<RecieptPage />} />
                                 <Route path="/profile" element={<Profile />} />
                                 <Route path="/verify" element={<Verify />} />
                                 <Route path="/confirm" element={<Confirm />} />

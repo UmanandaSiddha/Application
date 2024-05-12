@@ -7,6 +7,7 @@ import Subscription from "../models/subscriptionModel.js";
 import Transaction from "../models/transactionModel.js";
 import User, { roleEnum } from "../models/userModel.js";
 import logger from "../config/logger.js";
+import { handleSubscription, handleTransaction } from "../common/payment.js";
 
 export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     
@@ -14,6 +15,13 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 
     if (user.role === roleEnum.ADMIN) {
         return next(new ErrorHandler("Admin don't need to buy Plans", 403));
+    }
+
+    if (user.activePlan) {
+        const subscription = await Subscription.findById(user.activePlan);
+        if (!["completed", "cancelled"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.current_end > Date.now())) {
+            return next(new ErrorHandler("You already have active Plan", 403));
+        }
     }
 
     if (!user.customerId) {
@@ -36,6 +44,8 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         customer_notify: 0,
     });
 
+    console.log(subscriptions);
+
     const plan = await Plan.findOne({ razorPlanId: req.body.id });
 
     const subscription = await Subscription.create({
@@ -43,6 +53,8 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         razorSubscriptionId: subscriptions.id,
         start: 0,
         end: 0,
+        currentStart: 0,
+        currentEnd: 0,
         nextBilling: 0,
         totalCount: 0,
         paidCount: 0,
@@ -65,49 +77,6 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const cancelSubscription = catchAsyncErrors( async (req, res, next) => {
-    await instance.subscriptions.cancel(req.body.subscriptionId);
-
-    await User.findByIdAndUpdate(req.user.id, 
-        { "cards.total": 0 },
-        { new: true, runValidators: true, useFindAndModify: false }
-    );
-
-    res.status(200).json({
-        success: true,
-        message: "Subscription Cancelled"
-    });
-});
-
-const handleTransaction = async (payamentData, subscriptionData, userId) => {
-    const { amount, order_id, status, id, method, card, bank, wallet, vpa, acquirer_data  } = payamentData;
-    const { current_end, current_start } = subscriptionData;
-
-    await Transaction.create({
-        amount: Number(amount / 100),
-        start: current_start * 1000,
-        end: current_end * 1000,
-        status: status,
-        user: userId,
-        razorpayOrderId: order_id,
-        razorpayPaymentId: id,
-        paymentMethod: {
-            methodType: method,
-            cardInfo: {
-                cardType: card?.type,
-                issuer: card?.issuer,
-                last4: card?.last4,
-                name: card?.name,
-                network: card?.network,
-            },
-            bankInfo: bank,
-            walletInfo: wallet,
-            upiInfo: vpa,
-            data: acquirer_data,
-        },
-    });
-};
-
 export const captureSubscription = catchAsyncErrors( async (req, res, next) => {
     const { razorpay_subscription_id, razorpay_payment_id, razorpay_signature } = req.body;
     const toBe = razorpay_payment_id + "|" + razorpay_subscription_id;
@@ -124,14 +93,7 @@ export const captureSubscription = catchAsyncErrors( async (req, res, next) => {
         if (subscription.status === "active" && payment.status === "captured") {
             const subscriptionx = await Subscription.findOne({ razorSubscriptionId: subscription.id });
 
-            subscriptionx.start = subscription.start_at * 1000;
-            subscriptionx.end = subscription.end_at * 1000;
-            subscriptionx.nextBilling = subscription.charge_at * 1000;
-            subscriptionx.totalCount = subscription.total_count;
-            subscriptionx.paidCount = subscription.paid_count;
-            subscriptionx.remainingCount = subscription.remaining_count;
-            subscriptionx.status = subscription.status;
-            await subscriptionx.save();
+            await handleSubscription(subscription, payment, subscriptionx);
 
             const checkPayment = await Transaction.findOne({ razorpayPaymentId: payment.id });
             if (!checkPayment) {
@@ -161,25 +123,13 @@ export const verifySubscription = async (req, res) => {
 
     try { 
         if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-            const { id, start_at, end_at, charge_at, total_count, paid_count, remaining_count, status } = payload.subscription.entity;
-
-            const subscription = await Subscription.findOne({ razorSubscriptionId: id });
-
+            const subscription = await Subscription.findOne({ razorSubscriptionId: payload.subscription.entity.id });
             if (!subscription) {
                 console.log("Invalid Subscription, Wrong database");
             }
+            await handleSubscription(payload.subscription.entity, payload.payment.entity, subscription);
 
-            subscription.start = start_at * 1000;
-            subscription.end = end_at * 1000;
-            subscription.nextBilling = charge_at * 1000;
-            subscription.totalCount = total_count;
-            subscription.paidCount = paid_count;
-            subscription.remainingCount = remaining_count;
-            if (subscription.status !== "completed") {
-                subscription.status = status;
-            }
-            await subscription.save();
-
+            const user = await User.findOne({ activePlan: subscription._id });
             switch (event) {
                 case "subscription.charged":
                     const checkPayment = await Transaction.findOne({ razorpayPaymentId: payload.payment.entity.id });
@@ -188,9 +138,16 @@ export const verifySubscription = async (req, res) => {
                     }
                     break;
                 case "subscription.completed":
+                    if (user.cards.total !== 0) {
+                        await User.findOneAndUpdate(
+                            { activePlan: subscription._id },
+                            { "cards.total": 0 }, 
+                            { new: true, runValidators: true, useFindAndModify: false }
+                        );
+                    }
+                    break;
                 case "subscription.cancelled":
-                    const user = await User.findOne({ activePlan: subscription._id });
-                    if (user.cards.total !== 0 ) {
+                    if (user.cards.total !== 0 && subscription.currentEnd <= Date.now() ) {
                         await User.findOneAndUpdate(
                             { activePlan: subscription._id },
                             { "cards.total": 0 }, 
@@ -210,6 +167,24 @@ export const verifySubscription = async (req, res) => {
 
     res.status(200).send('OK');
 };
+
+export const cancelSubscription = catchAsyncErrors( async (req, res, next) => {
+    await instance.subscriptions.cancel(req.body.subscriptionId);
+
+    const subscription = await Subscription.findById(req.body.subscriptionId);
+
+    if (subscription.currentEnd <= Date.now()) {
+        await User.findByIdAndUpdate(req.user.id, 
+            { "cards.total": 0 },
+            { new: true, runValidators: true, useFindAndModify: false }
+        );
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Subscription Cancelled"
+    });
+});
 
 export const getLatestSubscription = catchAsyncErrors( async (req, res, next) => {
 

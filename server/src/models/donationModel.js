@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { methodEnum } from "./transactionModel.js";
 
 const donationSchema = new mongoose.Schema(
     {
@@ -23,6 +22,10 @@ const donationSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        currency: {
+            type: String,
+            required: true
+        },
         pan: {
             type: Number,
             required: [true, "Enter Pan Number"]
@@ -40,11 +43,9 @@ const donationSchema = new mongoose.Schema(
             required: true,
             default: "paymentId"
         }, 
+        error: Object,
         paymentMethod: {
-            methodType: {
-                type: String,
-                enum: Object.values(methodEnum),
-            },
+            methodType: String,
             cardInfo: {
                 cardType: String,
                 issuer: String,
