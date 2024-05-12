@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import Loader from "@/components/rest/loader";
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Animal,
   Creator,
@@ -58,9 +58,9 @@ const VCard = ({ card, isPaid, user, type }: PropsType) => {
 
   return (
     <>
-    <div className=" flex flex-col">
-      <div className="flex">
-        <div className="justify-center">
+    <div className="">
+      <div className="">
+        <div className="flex justify-center">
           {isPaid || user.role === "admin" ? (
             <img
               src={qr}
@@ -69,14 +69,16 @@ const VCard = ({ card, isPaid, user, type }: PropsType) => {
               onClick={() => {
                 navigate(`/dashboard/cards/card?id=${card?._id}&type=${type}`);
               }}
+              width={150}
+              height={150}
             />
           ) : (
-            <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
+            <img src="/error_qr.jpg" alt="Error Qr" width={100} height={100} />
           )}
         </div>
       </div>
-      <div className="flex justify-center mt-4">
-        <div className="text-3xl font-semibold font-Alice">
+      <div className="flex justify-center py-2">
+        <div className="text-xl font-semibold font-Alice">
           {type === "tree" && (
             <>
               {"scientificName" in card! && (
@@ -214,7 +216,7 @@ const AllCards = () => {
     } else {
       fetchData();
     }
-  }, [currentPage, type]);
+  }, [currentPage]);
 
   const setCurrentPageNo = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -251,7 +253,7 @@ const AllCards = () => {
 
   return (
     <>
-      <div className={`font-Kanit h-[34rem] rounded-b-[4rem] md:rounded-none md:shadow-none z-10 relative shadow-lg ${type === 'tree' && ('bg-green-300 md:bg-white')} ${type === 'personal' && ('bg-blue-400')} ${type === 'medical' && ('bg-blue-200')} ${type === 'creator' && ('bg-cyan-300')} ${type === 'animal' && ('bg-red-200')}`}>
+      {/* <div className={`font-Kanit rounded-b-[4rem] z-10 relative shadow-lg ${type === 'tree' && ('bg-green-300')} ${type === 'personal' && ('bg-blue-400')} ${type === 'medical' && ('bg-blue-200')} ${type === 'creator' && ('bg-cyan-300')} ${type === 'animal' && ('bg-red-200')}`}>
         <div className="py-4 flex flex-row">
           <div className="basis-1/2 flex justify-center">
             <button className={`px-4 py-4 rounded-2xl hover:cursor-pointer hover:bg-green-400 shadow-lg ${type === 'tree' && ('bg-green-600')} ${type === 'medical' && ('bg-blue-700')} ${type === 'creator' && ('bg-cyan-500')} ${type === 'animal' && ('bg-red-300')} ${type === 'personal' && ('bg-blue-700')}`}>
@@ -317,8 +319,6 @@ const AllCards = () => {
                 )}
           </div>
         </div>
-
-
         <div className="flex flex-row pt-10 pb-6">
           <div className="basis-1/5 flex items-center justify-center">
             <div className="w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer">
@@ -355,11 +355,9 @@ const AllCards = () => {
             </div>
           </div>
         </div>
+      </div> */}
 
-        
-      </div>
-
-      <div className="py-6 bg-slate-100 -mt-[2rem]">
+      {/* <div className="py-6 bg-slate-100 -mt-[2rem]">
         <div className="mt-[4rem] flex flex-row">
           <div className="basis-1/2 flex justify-center hover:cursor-pointer">
             <button className={`px-12 py-2 rounded-3xl hover:cursor-pointer shadow-lg ${type === 'tree' && ('bg-green-300')} ${type === 'medical' && ('bg-blue-200')}`}>
@@ -386,16 +384,13 @@ const AllCards = () => {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
       {/* // flex flex-col justify-center gap-4 items-center mt-8 */}
-      <div className="w-full">
+      {/* <div className="w-full">
         {["tree", "personal", "medical", "creator", "animal"].includes(
           type!
         ) ? (
           <>
-            {/* <Button onClick={() => navigate(setLink(type!))}>Create New {headSetter(type!)} Card</Button>
-                    {(!isPaid && user?.role !== "admin") && <p>You are not Subscribed</p>}
-                    <h1 className="text-3xl">Your {headSetter(type!)} Cards</h1> */}
             <div className="flex justify-center w-full py-6 bg-slate-100">
               {["tree", "personal", "medical", "creator", "animal"].includes(
                 type!
@@ -416,15 +411,26 @@ const AllCards = () => {
                 <p className="">Error</p>
               )}
             </div>
-            {/* {countData > 0 && (
-                        <div>
-                            <PaginationDemo currentPage={currentPage} total={Math.ceil(countData / 5)} setPage={setCurrentPageNo} />
-                        </div>
-                    )} */}
           </>
         ) : (
           <h1>You have enter a broken link, no cards here</h1>
         )}
+      </div> */}
+
+      <div className="">
+        <div className="grid grid-cols-5 gap-1">
+          {cards!.map((card, index) => (
+            <div className="col-span-1 row-span-1 pb-3 pt-6" key={index}>
+              <VCard
+                key={card._id}
+                type={type!}
+                card={card}
+                isPaid={isPaid}
+                user={user!}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       
     </>

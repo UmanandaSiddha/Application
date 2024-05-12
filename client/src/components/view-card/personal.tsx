@@ -1,391 +1,650 @@
 import { Personal } from "@/types/types";
+import { useState } from "react";
+import { FaInstagram } from "react-icons/fa";
+import { FaYoutube } from "react-icons/fa";
+import { FaSpotify } from "react-icons/fa";
+import { FaDiscord } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { FcAbout, FcBriefcase } from "react-icons/fc";
+import { FcBusinessContact } from "react-icons/fc";
+import { FcCloth } from "react-icons/fc";
+import { FcComboChart } from "react-icons/fc";
+import { FcDataProtection } from "react-icons/fc";
+import { GrLinkNext } from "react-icons/gr";
 
 interface PropsType {
-    card: Personal | null;
+  card: Personal | null;
 }
 
-const PersonalCompoent = ({ card }: PropsType) => {
-    return (
-        <div className="font-Kanit w-[280px]">
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Personal Id:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?._id}</div>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Name:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.name}</div>
-            </div>
-            <div className="flex justify-center items-center py-2">
-                <span className="text-xl underline font-bold">Contact Information:</span>
-            </div>
-            <div className="flex justify-center items-center py-1">
-                <span className="text-lg underline font-bold">Phone Numbers:</span>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Mobile Number:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.contactInfo.phoneNumber.mobile}</div>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Home Number:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.contactInfo.phoneNumber.home}</div>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Work Number:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.contactInfo.phoneNumber.work}</div>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Other Number:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.contactInfo.phoneNumber.other}</div>
-            </div>
-            <div className="flex justify-center items-center py-1">
-                <span className="text-lg underline font-bold">Email Address:</span>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Personal Email:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.contactInfo.emailAddress.card}</div>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Work Email:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.contactInfo.emailAddress.work}</div>
-            </div>
-            <div className="flex">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Other Email:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.contactInfo.emailAddress.other}</div>
-            </div>
-            <div className="flex justify-center items-center py-2">
-                <span className="text-xl underline font-bold">Social Media Links:</span>
-            </div>
-            {card?.socialMedia.map((link: any, index: number) => (
-                <div className="flex" key={index}>
-                    <div className="basis-1/2">
-                        <span className="font-semibold">
-                            {link.label}
-                        </span>
-                    </div>
-                    <div className="basis-1/2">
-                        <a href={link.name} target="blank">
-                            {link.name}
-                        </a>
-                    </div>
-                </div>
-            ))}
-            <div className="flex justify-center items-center py-2">
-                <span className="text-xl underline font-bold">About Me:</span>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Date of Birth:</span>{" "}
-                </div>
-                <div className="basis-1/2">{new Date(card?.aboutMe.birth).toDateString()}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Home Town:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.aboutMe.homeTown}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Current City:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.aboutMe.currentCity}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Languages Spoken:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.languages}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Favourite Music/Artists/Genres:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.favmusic}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Favourite Color(s):</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.favcolor}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Favourite City/Cities:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.favcity}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Dream Travel Destinations:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.dreamtravel}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Favourite Season:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.favseason}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Unique Skills:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.uniqueSkills}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Favourite Cuisine:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.favcuisine}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Preferred beverages:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.prefbeve}</div>
-            </div>
-            <div className="flex justify-center items-center py-2">
-                <span className="text-xl underline font-bold">Favourite Quotes/Mottos:</span>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Inspirational:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.quotes.inspirational}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Funny:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.quotes.funny}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Motivational:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.quotes.motivational}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Other:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.quotes.othermotto}</div>
-            </div>
-            <div className="flex pt-4 pb-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Current City:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.preferences.currentCity}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Preferred Mode of Travel:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.prefmode}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Pet Lover:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.petlover}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Party Enthusiast:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.party}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Smoker:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.smoker}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Marital Status:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.marital}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Relationship Status:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.relation}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Any Health or Dietary Preferences:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.marital}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Sleeping Habits:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.sleeping}</div>
-            </div>
-            <div className="flex justify-center items-center py-2">
-                <span className="text-xl underline font-bold">Interests & Hobbies:</span>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Favourite Movies/TV Shows/Genres:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.genre}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Sports or Outdoor Activites:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.outdoor}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Artistic Pursuits/Hobbies:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.artistic}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Gaming Preferences:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.gamingpref}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Collecting Hobby or Interest:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.collecting}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Coffee or Tea Lover:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.coffee}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Cooking Skills:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.cookingSkills}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Spiritual or Religious Beliefs:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.spiritual}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Core Values:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.core}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Philosophies I believe in:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.philosophy}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Environment/Social Causes I Support:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.lifeStyle.socialCause}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Opinions on Global Issues:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.beliefs.global}</div>
-            </div>
-            <div className="flex py-2">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Weirdest or Uncommon Belief I Hold:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.beliefs.weirdbelief}</div>
-            </div>
-            <div className="flex justify-center items-center py-2">
-                <span className="text-xl underline font-bold">Professional Details:</span>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Current Occupation/Industry:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.professional.occupation}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Career Aspirations/Goals:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.professional.aspiration}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Education Background/Degrees:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.professional.education}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Professional Skills or Expertise:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.professional.skills}</div>
-            </div>
-            <div className="flex justify-center items-center py-2">
-                <span className="text-xl underline font-bold">Additional Information:</span>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Any Other Interests or Specific Details:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.additional.otherInterests}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Future Goals or Bucket List Items:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.additional.futureGoals}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Things I'm currently Learning/Exploring:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.additional.current}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Most Unusual Experience or Event I've Been Part Of:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.additional.unusualExperinece}</div>
-            </div>
-            <div className="flex py-1">
-                <div className="basis-1/2">
-                    <span className="font-semibold">Strangest Habit or Quirk I Have:</span>{" "}
-                </div>
-                <div className="basis-1/2">{card?.additional.strangeHabits}</div>
-            </div>
+const PersonalComponent = ({ card }: PropsType) => {
+  // const [social, setSocial] = useState<boolean>(false);
+  const [lifestyles, setLifestyles] = useState<boolean>(false);
+  const [fav, setFav] = useState<boolean>(false);
+  const [misc, setMisc] = useState<boolean>(false);
+  const [interest, setInterest] = useState<boolean>(false);
+  const [professionals, setProfessionals] = useState<boolean>(false);
+  const [others, setOthers] = useState<boolean>(false);
+
+  // const birthDate = card?.lifesty.birth ? new Date(card.lifesty.birth) : null;
+  // const formattedDate = birthDate ? birthDate.toLocaleDateString(): "";
+
+  const professionalDetails = [
+    {
+      label: "Current Occupation",
+      value: card?.profession?.occupation,
+    },{
+      label: "Career Goals",
+      value: card?.profession?.aspiration,
+    }
+  ];
+
+  const favourites = [
+    {
+      label: "Fav Music",
+      value: card?.favourites?.favmusic,
+    },{
+      label: "Fav Colour",
+      value: card?.favourites?.favcolor
+    },{
+      label: "Fav City",
+      value: card?.favourites?.favcity,
+    },{
+      label: "Fav-Destination",
+      value: card?.favourites?.dreamtravel,
+    },{
+      label: "Fav Season",
+      value: card?.favourites?.favseason,
+    },{
+      label: "Unique Skills",
+      value: card?.favourites?.uniqueskills,
+    },{
+      label: "Fav-Cuisine",
+      value: card?.favourites?.favcuisine,
+    }
+  ];
+
+  const lifestyless = [
+    {
+      label: "Date of Birth",
+      value: card?.lifesty.dob,
+    },{
+      label: "Home Town",
+      value: card?.lifesty?.hometown,
+    },{
+      label: "Current City",
+      value: card?.lifesty?.currentCity,
+    },{
+      label: "Languages",
+      value: card?.lifesty?.languages,
+    },
+  ];
+
+  const miscellaneouss = [
+    {
+      label: "Pet Lover?",
+      value: card?.misce?.petlover,
+    },{
+      label: "Party Enthusiast?",
+      value: card?.misce?.party,
+    },{
+      label: "Smoker?",
+      value: card?.misce?.smoker,
+    },{
+      label: "Marital Status?",
+      value: card?.misce?.marital,
+    },{
+      label: "Relationship?",
+      value: card?.misce?.relation,
+    },{
+      label: "Morning/Night Person?",
+      value: card?.misce?.morning,
+    },{
+      label: "Sleeping Habits?",
+      value: card?.misce?.sleeping,
+    },{
+      label: "Dietary Preferences",
+      value: card?.misce?.diet,
+    },{
+      label: "Do you like reading?",
+      value: card?.misce?.reading
+    }
+  ];
+
+  const interestss = [
+    {
+      label: "Preferred Mode of Travel",
+      value: card?.interest?.prefMode
+    },{
+      label: "Fav Movies/TV Shows",
+      value: card?.interest?.genre
+    },{
+      label: "Sports Activites",
+      value: card?.interest?.outdoor,
+    },{
+      label: "Artistic Hobbies",
+      value: card?.interest?.artistic,
+    },{
+      label: "Gaming Preferences",
+      value: card?.interest?.gamingpref,
+    },{
+      label: "Collecting Hobby/Interest",
+      value: card?.interest?.collecting,
+    },{
+      label: "Coffee or Tea?",
+      value: card?.interest?.coffee,
+    },{
+      label: "Cooking Skills",
+      value: card?.interest?.cooking,
+    }
+  ];
+
+  const additionalData = [
+    {
+      label: "Other Interests",
+      value: card?.additional?.anyother,
+    },{
+      label: "Future Goals",
+      value: card?.additional?.futuregoal,
+    },{
+      label: "Currently Learning",
+      value: card?.additional?.learning,
+    },{
+      label: "Most Unusual Experience",
+      value: card?.additional?.experience,
+    },{
+      label: "Strangest Habit I Have",
+      value: card?.additional?.habit,
+    },
+  ];
+
+  function toggleLifestyle() {
+    if (lifestyles === true) {
+      setLifestyles(false);
+    } else {
+      setLifestyles(true);
+    }
+  }
+
+  function toggleFavs() {
+    if (fav === true) {
+      setFav(false);
+    } else {
+      setFav(true);
+    }
+  }
+
+  function toggleMisc() {
+    if (misc === true) {
+      setMisc(false);
+    } else {
+      setMisc(true);
+    }
+  }
+
+  function toggleInterests() {
+    if (interest == true) {
+      setInterest(false);
+    } else {
+      setInterest(true);
+    }
+  }
+
+  function toggleOthers() {
+    if (others == true) {
+      setOthers(false);
+    } else {
+      setOthers(true);
+    }
+  }
+
+  function toggleProfessional() {
+    if (professionals == true) {
+      setProfessionals(false);
+    } else {
+      setProfessionals(true);
+    }
+  }
+
+  return (
+    <>
+      <div className="relative flex flex-col w-full bg-blue-500 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-xl">
+        <div className="flex justify-start font-Kanit pl-6 py-4">
+          <p className="font-bold text-white">Individual Data</p>
         </div>
-    );
+        <div className="lex justify-start text-5xl font-bold mt-3 mb-10">
+          <h1 className="font-Philosopher pl-10 text-white">{card?.name}</h1>
+        </div>
+      </div>
+
+      <div className="relative flex justify-center bg-blue-200 font-Kanit -mt-[4rem]">
+        <div className="flex flex-col w-[90%] mt-[6rem]">
+          <div className="flex flex-col w-full py-2">
+            <div className="flex flex-col justify-start">
+              <label htmlFor="name" className="text-xl font-Philosopher">
+                Name:
+              </label>
+              <input
+                type="text"
+                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-xl font-bold mt-2"
+                defaultValue={card?.name}
+                readOnly
+              />
+            </div>
+            <div className="flex flex-col w-full py-10">
+              <div className="flex justify-center">
+                <div className="w-[90%] bg-white flex flex-col items-center py-4 rounded-2xl shadow-2xl">
+                  <div className="w-[80%] flex justify-center mt-2">
+                    <div className="flex flex-row w-full gap-2">
+                      <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
+                        <FaInstagram className="p-1 w-[2rem] h-[2rem]" />
+                      </div>
+                      <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
+                        <FaYoutube className="p-1 w-[2rem] h-[2rem]" />
+                      </div>
+                      <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
+                        <FaSpotify className="p-1 w-[2rem] h-[2rem]" />
+                      </div>
+                      <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
+                        <FaDiscord className="p-1 w-[2rem] h-[2rem]" />
+                      </div>
+                      <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
+                        <FaXTwitter className="p-1 w-[2rem] h-[2rem]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
+                    <button
+                      className="w-full px-4 border-none flex flex-row"
+                      onClick={toggleLifestyle}
+                      type="button"
+                    >
+                      <div className="flex flex-row w-full">
+                        <div className="basis-1/5 flex items-center justify-center">
+                          <FcBriefcase className="w-[2rem] h-[2rem]" />
+                        </div>
+                        <div className="basis-3/5 flex justify-start items-center font-Kanit">
+                          <p className="pl-2 text-sm font-bold pt-1">
+                            Lifestyle
+                          </p>
+                        </div>
+                        <div className="basis-1/5 flex justify-end items-center">
+                          <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                  {lifestyles ? (
+                      <div
+                        id="dropdown"
+                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow-lg w-[98%] dark:bg-gray-700 py-2 mt-2 flex justify-center"
+                      >
+                        <ul
+                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          aria-labelledby="dropdownDefaultButton"
+                        >
+                          {lifestyles && (
+                            <div className="flex flex-col space-y-2">
+                              {lifestyless.map((life, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex flex-row justify-center items-center gap-2"
+                                >
+                                  <div className="basis-1/3 flex justify-center items-center text-lg text-white">
+                                    <label htmlFor="" className="">
+                                      {life.label}
+                                    </label>
+                                  </div>
+                                  <div className="basis-2/3 px-4">
+                                    <input
+                                      type="text"
+                                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                      readOnly
+                                      defaultValue={life.value}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                  <div className="w-[80%] border-2 border-slate-200 mt-3 py-2 rounded-3xl shadow-lg">
+                    <div className="relative">
+                      <button
+                        className="w-full px-4 border-none flex flex-row"
+                        onClick={toggleFavs}
+                        type="button"
+                      >
+                        <div className="flex flex-row w-full">
+                          <div className="basis-1/5 flex items-center justify-center">
+                            <FcBusinessContact className="w-[2rem] h-[2rem]" />
+                          </div>
+                          <div className="basis-3/5 flex justify-start items-center font-Kanit">
+                            <p className="pl-2 text-sm font-bold pt-1">
+                              Favourites
+                            </p>
+                          </div>
+                          <div className="basis-1/5 flex justify-end items-center">
+                            <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                  {fav ? (
+                    <div
+                      id="dropdown"
+                      className="relative bg-red-400 divide-gray-100 rounded-lg shadow-lg w-[98%] dark:bg-gray-700 mt-2"
+                    >
+                      <ul
+                        className="text-sm text-gray-700 dark:text-gray-200"
+                        aria-labelledby="dropdownDefaultButton"
+                      >
+                          <div className="flex flex-col space-y-2">
+                            {favourites.map((favourites, idx) => (
+                              <div
+                                key={idx}
+                                className="flex flex-row justify-center items-center gap-2"
+                              >
+                                <div className="basis-1/3 flex justify-center items-center text-lg">
+                                  <label htmlFor="" className="pl-2">
+                                    {favourites.label}
+                                  </label>
+                                </div>
+                                <div className="basis-2/3 px-4">
+                                  <input
+                                    type="text"
+                                    className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                    readOnly
+                                    defaultValue={favourites.value}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                      </ul>
+                    </div>
+                  ) : null}
+
+                  <div className="w-[80%] border-2 border-slate-200 mt-3 py-2 rounded-3xl shadow-lg">
+                    <div className="relative">
+                      <button
+                        className="w-full px-4 border-none flex flex-row"
+                        onClick={toggleMisc}
+                        type="button"
+                      >
+                        <div className="flex flex-row w-full">
+                          <div className="basis-1/5 flex items-center justify-center">
+                            <FcCloth className="w-[2rem] h-[2rem]" />
+                          </div>
+                          <div className="basis-3/5 flex justify-start items-center font-Kanit">
+                            <p className="pl-2 text-sm font-bold pt-1">
+                              Miscellaneous
+                            </p>
+                          </div>
+                          <div className="basis-1/5 flex justify-end items-center">
+                            <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                  {misc ? (
+                      <div
+                        id="dropdown"
+                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
+                      >
+                        <ul
+                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          aria-labelledby="dropdownDefaultButton"
+                        >
+                          {misc && (
+                            <div className="flex flex-col space-y-2">
+                              {miscellaneouss.map((misce, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex flex-row justify-center items-center gap-2"
+                                >
+                                  <div className="basis-1/3 flex justify-start items-center text-lg">
+                                    <label htmlFor="" className="pl-2">
+                                      {misce.label}
+                                    </label>
+                                  </div>
+                                  <div className="basis-2/3 px-4">
+                                    <input
+                                      type="text"
+                                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                      readOnly
+                                      defaultValue={misce.value}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                  <div className="w-[80%] border-2 border-slate-200 mt-3 py-2 rounded-3xl shadow-lg">
+                    <button
+                      className="w-full px-4 border-none flex flex-row"
+                      onClick={toggleInterests}
+                      type="button"
+                    >
+                      <div className="flex flex-row w-full">
+                        <div className="basis-1/5 flex items-center justify-center">
+                          <FcComboChart className="w-[2rem] h-[2rem]" />
+                        </div>
+                        <div className="basis-3/5 flex justify-start items-center font-Kanit">
+                          <p className="pl-2 text-sm font-bold pt-1">
+                            Interests & Activities
+                          </p>
+                        </div>
+                        <div className="basis-1/5 flex justify-end items-center">
+                          <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                  {interest ? (
+                      <div
+                        id="dropdown"
+                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
+                      >
+                        <ul
+                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          aria-labelledby="dropdownDefaultButton"
+                        >
+                          {interest && (
+                            <div className="flex flex-col space-y-2">
+                              {interestss.map((int, idx) => (
+                                <>
+                                <div
+                                  key={idx}
+                                  className="flex flex-row justify-center items-center gap-2 py-1"
+                                >
+                                  <div className="basis-1/3 flex justify-start items-center text-lg">
+                                    <label htmlFor="" className="pl-2">
+                                      {int.label}
+                                    </label>
+                                  </div>
+                                  <div className="basis-2/3 px-4">
+                                    <input
+                                      type="text"
+                                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                      readOnly
+                                      defaultValue={int.value}
+                                    />
+                                  </div>
+                                  
+                                </div>
+                                </>
+                              ))}
+                            </div>
+                          )}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                  <div className="w-[80%] border-2 border-slate-200 mt-3 py-2 rounded-3xl shadow-lg">
+                    <button
+                      className="w-full px-4 border-none flex flex-row"
+                      onClick={toggleProfessional}
+                      type="button"
+                    >
+                      <div className="flex flex-row w-full">
+                        <div className="basis-1/5 flex items-center justify-center">
+                          <FcDataProtection className="w-[2rem] h-[2rem]" />
+                        </div>
+                        <div className="basis-3/5 flex justify-start items-center font-Kanit">
+                          <p className="pl-2 text-sm font-bold pt-1">
+                            Professional Details
+                          </p>
+                        </div>
+                        <div className="basis-1/5 flex justify-end items-center">
+                          <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                  {professionals ? (
+                      <div
+                        id="dropdown"
+                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
+                      >
+                        <ul
+                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          aria-labelledby="dropdownDefaultButton"
+                        >
+                          {professionals && (
+                            <div className="flex flex-col space-y-2">
+                              {professionalDetails.map((prof, idx) => (
+                                <>
+                                <div
+                                  key={idx}
+                                  className="flex flex-row justify-center items-center gap-2 py-1"
+                                >
+                                  <div className="basis-1/3 flex justify-start items-center text-lg">
+                                    <label htmlFor="" className="pl-2">
+                                      {prof.label}
+                                    </label>
+                                  </div>
+                                  <div className="basis-2/3 px-4">
+                                    <input
+                                      type="text"
+                                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                      readOnly
+                                      defaultValue={prof.value}
+                                    />
+                                  </div>
+                                </div>
+                                </>
+                              ))}
+                            </div>
+                          )}
+                          <div className="flex flex-row justify-center items-center gap-2 py-1">
+                                <div className="basis-1/3 flex justify-start items-center text-lg">
+                                    <label htmlFor="" className="pl-2">
+                                      Education Background
+                                    </label>
+                                  </div>
+                                  <div className="basis-2/3 px-4">
+                                    <input
+                                      type="text"
+                                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                      readOnly
+                                      defaultValue={card?.backg.background}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex flex-row justify-center items-center gap-2 py-1">
+                                <div className="basis-1/3 flex justify-start items-center text-lg">
+                                    <label htmlFor="" className="pl-2">
+                                      Professional Skills
+                                    </label>
+                                  </div>
+                                  <div className="basis-2/3 px-4">
+                                    <input
+                                      type="text"
+                                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                      readOnly
+                                      defaultValue={card?.expert.expertise}
+                                    />
+                                  </div>
+                                </div>
+                        </ul>
+                      </div>
+                    ) : null}
+
+                  <div className="w-[80%] border-2 border-slate-200 mt-3 py-2 rounded-3xl shadow-lg">
+                    <button
+                      className="w-full px-4 border-none flex flex-row"
+                      onClick={toggleOthers}
+                      type="button"
+                    >
+                      <div className="flex flex-row w-full">
+                        <div className="basis-1/5 flex items-center justify-center">
+                          <FcAbout className="w-[2rem] h-[2rem]" />
+                        </div>
+                        <div className="basis-3/5 flex justify-start items-center font-Kanit">
+                          <p className="pl-2 text-sm font-bold pt-1">Others</p>
+                        </div>
+                        <div className="basis-1/5 flex justify-end items-center">
+                          <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                  {others ? (
+                      <div
+                        id="dropdown"
+                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
+                      >
+                        <ul
+                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          aria-labelledby="dropdownDefaultButton"
+                        >
+                          {others && (
+                            <div className="flex flex-col space-y-2">
+                              {additionalData.map((add, idx) => (
+                                <>
+                                <div
+                                  key={idx}
+                                  className="flex flex-row justify-center items-center gap-2 py-1"
+                                >
+                                  <div className="basis-1/3 flex justify-start items-center text-lg">
+                                    <label htmlFor="" className="pl-2">
+                                      {add.label}
+                                    </label>
+                                  </div>
+                                  <div className="basis-2/3 px-4">
+                                    <input
+                                      type="text"
+                                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                      readOnly
+                                      defaultValue={add.value}
+                                    />
+                                  </div>
+                                </div>
+                                </>
+                              ))}
+                            </div>
+                          )}
+                        </ul>
+                      </div>
+                    ) : null}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
-export default PersonalCompoent;
+export default PersonalComponent;
