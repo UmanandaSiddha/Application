@@ -12,9 +12,12 @@ module.exports = {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
+      // screens: {
+      //   "2xl": "1400px",
+      //   "xl": "1024px",
+      //   "tablet": "768px",
+      //   "mobile": "425px",
+      // },
     },
     extend: {
       keyframes: {
@@ -37,6 +40,8 @@ module.exports = {
         RobotoMono: ["Roboto Mono", "monospace"],
         ClimateCrisis: ["Climate Crisis", "sans-serif"],
         Alice: ["Alice", "serif"],
+        Philosopher: ["Philosopher", "sans-serif"],
+        SpaceGrotesk: ["SpaceGrotesk", "sans-serif"],
       },
     },
   },

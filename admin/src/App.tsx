@@ -1,91 +1,35 @@
-import { Routes, Route } from "react-router-dom";
-import { Suspense, lazy, useEffect } from "react";
-import { UserResponse } from "./types/api-types";
-import axios from "axios";
-import { userExist, userNotExist } from "./redux/reducer/userReducer";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./redux/store";
-import { ToastContainer } from "react-toastify";
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 
-import Header from "./components/header";
-import Loader from "./components/loader";
-import ProtectedRoute from "./components/protected-route";
-import ErrorBoundary from "./components/error-boundary";
+function App() {
+  const [count, setCount] = useState(0)
 
-const NotFound = lazy(() => import("./pages/not-found"));
-const Home = lazy(() => import("./pages/home"));
-const Login = lazy(() => import("./pages/login"));
-const Dashboard = lazy(() => import("./pages/dashboard"));
-const Plan = lazy(() => import ("./pages/plan"));
-
-const App = () => {
-
-    const dispatch = useDispatch();
-
-    const { user, loading } = useSelector(
-        (state: RootState) => state.userReducer
-    );
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true });
-                dispatch(userExist(data.user));
-            } catch (error: any) {
-                dispatch(userNotExist());
-            }
-        }
-
-        fetchUser();
-    }, [user]);
-
-    return (
-        loading ? (
-            <Loader />
-        ) : (
-            <div>
-                <ToastContainer
-                    position="top-center"
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="dark"
-                />
-                <ErrorBoundary>
-                    <Header user={user} />
-                    <Suspense fallback={<Loader />}>
-                        <Routes>
-                            {/* Not logged In Route */}
-                            <Route
-                                path="/login"
-                                element={
-                                    <ProtectedRoute isAuthenticated={user ? false : true}>
-                                        <Login />
-                                    </ProtectedRoute>
-                                }
-                            />
-
-                            {/* Logged In User Routes */}
-                            <Route
-                                element={<ProtectedRoute isAuthenticated={user?.role === "admin" ? true : false} />}
-                            >
-                                <Route path="/" element={<Home />} />
-                                <Route path="/plan" element={<Plan />} />
-                                <Route path="/dashboard" element={<Dashboard />} />
-                            </Route>
-
-                            <Route path="*" element={<NotFound />} />
-                        </Routes>
-                    </Suspense>
-                </ErrorBoundary>
-            </div>
-        )
-    )
+  return (
+    <>
+      <div>
+        <a href="https://vitejs.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+    </>
+  )
 }
 
-export default App;
+export default App

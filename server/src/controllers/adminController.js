@@ -14,6 +14,23 @@ import sharp from "sharp";
 import { SERVER_URL } from "../server.js";
 import { emailQueue } from "../utils/emailQueue.js";
 
+// Get user account types
+export const getUserAccount = catchAsyncErrors(async (req, res, next) => {
+
+    const emailCount = await User.countDocuments({ accountType: accountEnum.EMAIL });
+    const googlecount = await User.countDocuments({ accountType: accountEnum.GOOGLE });
+    const hybridCount = await User.countDocuments({ accountType: accountEnum.HYBRID });
+
+    res.status(200).json({
+        success: true,
+        count: {
+            emailCount,
+            googlecount,
+            hybridCount
+        },
+    });
+});
+
 // Get all Users - Only Admin
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     const users = await User.find();

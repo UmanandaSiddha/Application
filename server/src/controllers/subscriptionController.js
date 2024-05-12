@@ -189,7 +189,7 @@ export const cancelSubscription = catchAsyncErrors( async (req, res, next) => {
 export const getLatestSubscription = catchAsyncErrors( async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
-    const subscription = await Subscription.findById(user.activePlan).populate("planId", "name amount");
+    const subscription = await Subscription.findById(user.activePlan).populate("planId", "_id name amount");
 
     res.status(200).json({
         success: true,

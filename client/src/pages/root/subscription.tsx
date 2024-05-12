@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
+import { Subscription } from "@/types/types";
 
 import {
     Dialog,
@@ -28,10 +29,11 @@ function loadScript(src: any) {
     });
 }
 
-const Subscription = () => {
+const SubscriptionPage = () => {
 
     const navigate = useNavigate();
 
+    const [subscription, setSubscription] = useState<Subscription | undefined>();
     const [open, setOpen] = useState<boolean>(false);
     const [dialogHeader, setDialogHeader] = useState<string>("Waiting for Confirmation");
     const [dialogData, setDialogData] = useState({
@@ -52,6 +54,16 @@ const Subscription = () => {
             }
         };
         getPlans();
+
+        const fetchSubscription = async () => {
+            try {
+                const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/subscription/user`, { withCredentials: true });
+                setSubscription(data.subscription);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchSubscription();
     }, []);
 
     const handlePayment = async (id: string) => {
@@ -143,6 +155,7 @@ const Subscription = () => {
                                 <div className="basis-1/2 flex justify-end font-Kanit ">
                                     <div className="">
                                         <p className="text-2xl font-bold">{plan?.name}</p>
+                                        <p>{subscription?.planId._id === plan._id ? "yay" : "nah"}</p>
                                         <div className="">
                                             <p className="text-blue-400 bg-blue-200 px-1 py-1 rounded-md">
                                                 Plan Validity: 30 Days
@@ -199,4 +212,4 @@ const Subscription = () => {
     );
 };
 
-export default Subscription;
+export default SubscriptionPage;

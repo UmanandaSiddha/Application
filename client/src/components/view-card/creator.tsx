@@ -15,6 +15,7 @@ const CreatorComponent = ({ card }: PropsType) => {
           <h1 className="font-Alice pl-6">{card?.name}</h1>
         </div>
       </div>
+      
       <div className="relative flex justify-center bg-violet-400 font-Kanit -mt-[4rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
