@@ -5,7 +5,6 @@ export type User = {
     role: string;
     image: string;
     gooleId: string;
-    customerId: string;
     isVerified: boolean;
     accountType: string;
     cards: {

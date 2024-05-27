@@ -6,10 +6,12 @@ import {
     getAllUsers,
     getSingleUser,
     updateCard,
-    updateRole
+    updateRole,
+    adminLogin
 } from "../controllers/adminController.js";
 const router = express.Router();
 
+router.route("/login").post(adminLogin);
 router.route("/usertype").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getUserAccount);
 router.route("/users").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAllUsers);
 router.route("/card/:id").put(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), updateCard);

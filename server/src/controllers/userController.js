@@ -4,16 +4,17 @@ import User, { accountEnum, roleEnum } from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
 import crypto from "crypto";
 import { CLIENT_URL } from "../server.js";
-import Tree from "../models/treeModel.js";
-import Personal from "../models/personalModel.js";
-import Medical from "../models/medicalModel.js";
-import Creator from "../models/creatorModel.js";
+import Tree from "../models/cards/treeModel.js";
+import Personal from "../models/cards/personalModel.js";
+import Medical from "../models/cards/medicalModel.js";
+import Creator from "../models/cards/creatorModel.js";
 import fs from "fs";
 import sharp from "sharp";
 import { SERVER_URL } from "../server.js";
-import Animal from "../models/animalModel.js";
+import Animal from "../models/cards/animalModel.js";
 import { addEmailToQueue } from "../utils/emailQueue.js";
 import Donation from "../models/donationModel.js";
+import logger from "../config/logger.js";
 
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -222,7 +223,7 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
     try {
         await addEmailToQueue({
             email: user.email,
-            subject:  `Test Login Email`,
+            subject:  `User Login Email`,
             message: `Welcome ${user.name}`,
         });
     } catch (error) {
@@ -256,7 +257,7 @@ export const logoutUser = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: "Logged Out",
-    })
+    });
 });
 
 // Forgot Password
@@ -348,7 +349,7 @@ export const setPassword = catchAsyncErrors(async (req, res, next) => {
 // Get User Details
 export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 
-    const user = await User.findById(req.user._id).populate("activePlan", "status");
+    const user = await User.findById(req.user._id).populate("activePlan", "status currentEnd");
 
     res.status(200).json({
         success: true,
@@ -396,13 +397,14 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
                 .jpeg({ quality: 50 })
                 .toBuffer();
         
-            await fs.promises.writeFile(`./public/avatars/${user._id}.jpg`, resizedImageBuffer);
+            await fs.promises.writeFile(`./public/avatars/${userx._id}.jpg`, resizedImageBuffer);
             console.log('Data has been written to the file');
         
-            user.image = `${SERVER_URL}/avatars/${user._id}.jpg`;
-            await user.save();
+            userx.image = `${SERVER_URL}/avatars/${userx._id}.jpg`;
+            await userx.save();
         } catch (err) {
             console.error('Error processing or writing the image:', err.message);
+            logger.error('Error processing or writing the image:', err.message);
         }
     }
 

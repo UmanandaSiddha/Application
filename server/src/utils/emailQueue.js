@@ -2,6 +2,7 @@ import { Queue, Worker } from "bullmq";
 import { emailQueueName, jobOptions, redisConnection } from "../config/queue.js";
 import sendEmail from "./sendEmail.js";
 import { redis } from "../server.js";
+import logger from "../config/logger.js";
 
 export const emailQueue = new Queue(emailQueueName, {
     connection : redisConnection,

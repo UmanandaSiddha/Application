@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
@@ -49,8 +49,6 @@ const App = () => {
     const width = useWindowWidth();
     const isMobile = width < 768;
 
-    let location = useLocation();
-
     const { user, loading } = useSelector(
         (state: RootState) => state.userReducer
     );
@@ -68,7 +66,7 @@ const App = () => {
 
     useEffect(() => {
         gotUser();
-    }, [location.pathname]);
+    }, []);
 
     return (
         loading ? (

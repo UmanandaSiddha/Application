@@ -1,10 +1,10 @@
-import Tree from "../models/treeModel.js";
-import Personal from "../models/personalModel.js";
-import Medical from "../models/medicalModel.js";
-import Creator from "../models/creatorModel.js";
-import Animal from "../models/animalModel.js";
-import User from "../models/userModel.js";
-import Subscription from "../models/subscriptionModel.js";
+import Tree from "../models/cards/treeModel.js";
+import Personal from "../models/cards/personalModel.js";
+import Medical from "../models/cards/medicalModel.js";
+import Creator from "../models/cards/creatorModel.js";
+import Animal from "../models/cards/animalModel.js";
+import User, { freeEnum } from "../models/userModel.js";
+import Subscription from "../models/payment/subscriptionModel.js";
 
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
@@ -33,7 +33,7 @@ export const createCard = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
 
-    if (user.cards.total <= user.cards.created) {
+    if (user.freePlan.type === freeEnum.CUSTOM && user.cards.total <= user.cards.created) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
 
@@ -57,7 +57,7 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
 
-    if (user.cards.total <= user.cards.created) {
+    if (user.freePlan.type === freeEnum.CUSTOM && user.cards.total <= user.cards.created) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
 
@@ -83,7 +83,11 @@ export const deleteCard = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id);
     
     await Model.findByIdAndDelete(req.params.id);
-    user.cards.created--;
+    if (user.freePlan.status && user.freePlan.type !== freeEnum.CUSTOM) {
+        user.cards.created--;
+    } else {
+        user.cards.created--;
+    }
     await user.save();
 
     res.status(200).json({
@@ -117,6 +121,17 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const user = await User.findById(vCard.user);
+
+    if (user.freePlan.status) {
+        const { type, end } = user.freePlan;
+        if (type === freeEnum.CUSTOM || end > Date.now()) {
+            return res.status(200).json({
+                success: true,
+                vCard,
+            });
+        }
+    }
+
     const subscription = await Subscription.findById(user.activePlan);
     if (!["active", "pending"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.currentEnd > Date.now())) {
         return next(new ErrorHandler("VCard Not Found", 404));

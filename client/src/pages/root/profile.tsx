@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { getAllPayments } from "@/redux/api/paymentApi";
+import Compressor from "compressorjs";
 import {
   deleteUser,
   updateUserProfile,
@@ -223,18 +224,66 @@ const Profile = () => {
     [dispatch]
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files![0];
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const file = e.target.files![0];
+    const file: File | null = e.target.files![0];
     if (file instanceof Blob) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setAvatar(reader.result);
-        } else {
-          console.log("Failed to read the file.");
+      // const reader = new FileReader();
+      // reader.onload = () => {
+      //     if (reader.readyState === 2) {
+      //         setAvatar(reader.result);
+      //     } else {
+      //         console.log("Failed to read the file.");
+      //     }
+      // };
+      // reader.readAsDataURL(file);
+
+      const compressImage = async (file: File) => {
+        try {
+          return await new Promise((resolve, reject) => {
+            new Compressor(file, {
+              quality: 0.6,
+              maxWidth: 800,
+              maxHeight: 600,
+              success(result) {
+                resolve(result);
+              },
+              error(err) {
+                reject(err);
+              },
+            });
+          });
+        } catch (error) {
+          console.error("Error compressing image:", error);
+          throw error;
         }
       };
-      reader.readAsDataURL(file);
+
+      try {
+        const compressedFile = await compressImage(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === "string") {
+            setAvatar(reader.result);
+          } else {
+            console.error("Failed to read the compressed file.");
+          }
+        };
+        reader.readAsDataURL(compressedFile as Blob);
+      } catch (error) {
+        console.error("Error compressing image:", error);
+      }
+
+      // const reader = new FileReader();
+      // reader.onload = async () => {
+      //     try {
+      //         const compressedFile = await compressImage(file);
+      //         setAvatar(compressedFile);
+      //     } catch (error) {
+      //         console.error('Failed to compress the image:', error);
+      //     }
+      // };
+      // reader.readAsDataURL(file);
     } else {
       console.error("The selected file is not a Blob.");
     }

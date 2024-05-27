@@ -1,18 +1,84 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
-import User, { accountEnum, roleEnum } from "../models/userModel.js";
+import User, { accountEnum, freeEnum, roleEnum } from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
-import crypto from "crypto";
-import { CLIENT_URL, redis } from "../server.js";
-import Tree from "../models/treeModel.js";
-import Personal from "../models/personalModel.js";
-import Medical from "../models/medicalModel.js";
-import Creator from "../models/creatorModel.js";
-import Animal from "../models/animalModel.js";
-import fs from "fs";
-import sharp from "sharp";
-import { SERVER_URL } from "../server.js";
-import { emailQueue } from "../utils/emailQueue.js";
+import Tree from "../models/cards/treeModel.js";
+import Personal from "../models/cards/personalModel.js";
+import Medical from "../models/cards/medicalModel.js";
+import Creator from "../models/cards/creatorModel.js";
+import Animal from "../models/cards/animalModel.js";
+import { addEmailToQueue } from "../utils/emailQueue.js";
+
+export const adminLogin = catchAsyncErrors(async (req, res, next) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return next(new ErrorHandler("Please enter Email and Password", 400));
+    }
+
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+        return next(new ErrorHandler("Invalid Credentials", 401));
+    }
+
+    if (user.role !== roleEnum.ADMIN) {
+        return next(new ErrorHandler("Only Admins are allowed", 401));
+    }
+
+    if (user.isBlocked || (user.loginAttempt?.count >= 5)) {
+        if (!user.isBlocked) {
+            user.isBlocked = true;
+            try {
+                await addEmailToQueue({
+                    email: user.email,
+                    subject: `Suspious Activity`,
+                    message: `This email will contain link by which they can unblock themselves`,
+                });
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+        user.loginAttempt.count++;
+        user.loginAttempt.time = Date.now();
+        await user.save();
+        return next(new ErrorHandler("Access Denied", 500));
+    }
+
+    if (user.loginAttempt?.count < 5 && user.loginAttempt?.count !== 0 && (user.loginAttempt?.time + 60*1000) > Date.now()) {
+        user.loginAttempt.count = 0;
+        user.loginAttempt.time = undefined;
+        await user.save();
+    }
+
+    const isPasswordMatched = await user.comparePassword(password);
+
+    if (!isPasswordMatched) {
+        await User.findOneAndUpdate(
+            { email }, 
+            {
+                loginAttempt: {
+                    count: user.loginAttempt.count + 1,
+                    time: Date.now(),
+                },
+            }, 
+            { new: true, runValidators: true, useFindAndModify: false }
+        );
+        return next(new ErrorHandler("Invalid Credentials", 401));
+    }
+
+    try {
+        await addEmailToQueue({
+            email: user.email,
+            subject:  `Admin Login Email`,
+            message: `Welcome ${user.name}`,
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+
+    sendToken(user, 200, res);
+});
 
 // Get user account types
 export const getUserAccount = catchAsyncErrors(async (req, res, next) => {
@@ -31,6 +97,35 @@ export const getUserAccount = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+// Give Free Access
+export const freeAccess = catchAsyncErrors(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
+    }
+
+    const updatedUser  = await User.findByIdAndUpdate(
+        req.params.id, 
+        { 
+            freePlan: {
+                status: true,
+                type: freeEnum.CUSTOM
+            }
+        }, 
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
+
+    if (!updatedUser) {
+        return next(new ErrorHandler(`Failed to update user with Id: ${req.params.id}`, 500));
+    }
+
+    res.status(200).json({
+        success: true,
+        user: updatedUser,
+    });
+});
+
 // Get all Users - Only Admin
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     const users = await User.find();
@@ -45,10 +140,10 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
 
 // Get User Details - Only Admin
 export const getSingleUser = catchAsyncErrors(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate("activePlan", "status currentEnd");
 
     if (!user) {
-        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
     res.status(200).json({
@@ -62,7 +157,7 @@ export const updateRole = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.params.id);
     if (!user) {
-        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
     await User.findByIdAndUpdate(req.params.id, { role: req.body.role }, {
@@ -82,7 +177,7 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.params.id);
     if (!user) {
-        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
     await User.findByIdAndUpdate(req.params.id, { "cards.total": req.body.total }, {
@@ -102,7 +197,7 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.params.id);
     if (!user) {
-        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`), 404);
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
     await Tree.deleteMany({ user: req.params.id });

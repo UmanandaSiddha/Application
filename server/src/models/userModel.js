@@ -3,7 +3,6 @@ import validator from "validator";
 import bycrpt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { type } from "os";
 
 export const accountEnum = {
     EMAIL: "email",
@@ -15,6 +14,11 @@ export const roleEnum = {
     USER: "user",
     ADMIN: "admin",
     ORG: "org"
+}
+
+export const freeEnum = {
+    PLAN: "plan",
+    CUSTOM: "custom"
 }
 
 const userSchema = new mongoose.Schema(
@@ -70,14 +74,23 @@ const userSchema = new mongoose.Schema(
             },
             time: Date,
         },
-        customerId: String,
-        donator: {
-            type: Boolean,
-            default: false
-        },
+        donator: Boolean,
         isVerified: {
             type: Boolean,
             default: false,
+        },
+        freePlan: {
+            status: {
+                type: Boolean,
+                required: true,
+                default: false
+            },
+            start: Date,
+            end: Date,
+            type: {
+                type: String,
+                enum: Object.values(freeEnum),
+            }
         },
         activePlan: {
             type: mongoose.Schema.ObjectId,
@@ -95,9 +108,10 @@ const userSchema = new mongoose.Schema(
                 default: 0
             }
         },
+        billingAddress: Object,
         orgDetails: {
             website: String,
-            address: String,
+            address: Object,
             phone: Number,
         },
         oneTimePassword: String,

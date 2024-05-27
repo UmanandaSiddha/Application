@@ -75,7 +75,7 @@ const ViewCard = () => {
     };
 
     const cardData = localStorage.getItem("current_card");
-    if (cardData) {
+    if (cardData && card?._id !== id) {
       setCard(JSON.parse(cardData));
       if (card?._id !== id) {
         fetchData();
