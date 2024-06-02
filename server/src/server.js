@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 import connectDatabase from "./config/database.js";
 import Razorpay from "razorpay";
 import Stripe from "stripe";
-import "./utils/emailQueue.js";
+import "./utils/queue/emailQueue.js";
+import "./utils/queue/donationQueue.js";
+import "./utils/queue/subscriptionQueue.js";
 import Redis from "ioredis";
 
 // Handling Uncaught Exception

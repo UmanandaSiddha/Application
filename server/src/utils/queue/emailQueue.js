@@ -1,8 +1,8 @@
 import { Queue, Worker } from "bullmq";
-import { emailQueueName, jobOptions, redisConnection } from "../config/queue.js";
-import sendEmail from "./sendEmail.js";
-import { redis } from "../server.js";
-import logger from "../config/logger.js";
+import { emailQueueName, jobOptions, redisConnection } from "../../config/queue.js";
+import sendEmail from "../sendEmail.js";
+import { redis } from "../../server.js";
+import logger from "../../config/logger.js";
 
 export const emailQueue = new Queue(emailQueueName, {
     connection : redisConnection,
@@ -39,6 +39,7 @@ const worker = new Worker(emailQueueName, async (job) => {
 
 worker.on('completed', (job) => {
     console.log(`Job ${job.id} has completed!`);
+    logger.info(`Job ${job.id} has completed!`);
 });
 
 worker.on('failed', async (job, err) => {

@@ -19,6 +19,8 @@ const ECommerce = lazy(() => import ("./pages/Dashboard/ECommerce"));
 const Tables = lazy(() => import ("./pages/Tables"));
 const AllUsers = lazy(() => import ("./pages/Users/Users"));
 const UserDetails = lazy(() => import ("./pages/Users/UserDetails"));
+const Cards = lazy(() => import("./pages/Cards/Cards"));
+const CardDetails = lazy(() => import("./pages/Cards/CardDetails"));
 
 const App = () => {
 
@@ -101,6 +103,24 @@ const App = () => {
                     <>
                       <PageTitle title="User Details | VCards App" />
                       <UserDetails />
+                    </>
+                  }
+                />
+                <Route
+                  path='/all-cards'
+                  element={
+                    <>
+                      <PageTitle title="All Cards | VCards App" />
+                      <Cards />
+                    </>
+                  }
+                />
+                 <Route
+                  path='/card-details'
+                  element={
+                    <>
+                      <PageTitle title="Card Details | VCards App" />
+                      <CardDetails />
                     </>
                   }
                 />

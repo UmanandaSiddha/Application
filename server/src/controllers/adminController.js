@@ -1,13 +1,13 @@
 import ErrorHandler from "../utils/errorHandler.js";
-import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
-import User, { accountEnum, freeEnum, roleEnum } from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
 import Tree from "../models/cards/treeModel.js";
-import Personal from "../models/cards/personalModel.js";
 import Medical from "../models/cards/medicalModel.js";
 import Creator from "../models/cards/creatorModel.js";
 import Animal from "../models/cards/animalModel.js";
-import { addEmailToQueue } from "../utils/emailQueue.js";
+import Personal from "../models/cards/personalModel.js";
+import { addEmailToQueue } from "../utils/queue/emailQueue.js";
+import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
+import User, { accountEnum, freeEnum, roleEnum } from "../models/userModel.js";
 
 export const adminLogin = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
@@ -189,7 +189,33 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: `User Cards Updated`,
-    })
+    });
+});
+
+export const getTreeCards = catchAsyncErrors(async (req, res, next) => {
+    const trees = await Tree.find().populate("user", "email");
+    const count = await Tree.countDocuments();
+    // if (!trees) {
+    //     return next(new ErrorHandler("Cards Not Found", 404));
+    // }
+
+    res.status(200).json({
+        success: true,
+        count,
+        trees
+    });
+});
+
+export const getSingleTreeCard = catchAsyncErrors(async (req, res, next) => {
+    const tree = await Tree.findById(req.params.id)
+    if (!tree) {
+        return next(new ErrorHandler("Card Not Found", 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        tree
+    });
 });
 
 // Delete User -- Admin

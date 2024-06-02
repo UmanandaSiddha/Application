@@ -298,7 +298,7 @@ const Profile = () => {
           {user ? (
             <div className="w-full md:flex md:flex-row md:max-h-screen">
 
-              <div className="bg-blue-400 py-[4rem] md:pt-6 md:mt-12 flex flex-row rounded-b-[5rem] md:rounded-[2rem] md:shadow-2xl md:ml-4 md:basis-1/2 md:bg-[url('../../../public/cosmic.jpg')] md:bg-cover">
+              <div className="bg-blue-400 py-[4rem] md:pt-6 md:mt-12 flex flex-row rounded-b-[5rem] md:rounded-[2rem] md:shadow-2xl md:ml-4 md:basis-1/2 md:bg-[url('../../../cosmic.jpg')] md:bg-cover">
                 <div className="basis-1/4 flex justify-end pb-[8rem] md:items-center">
                   <IoPersonOutline className="w-[6rem] h-[6rem] md:w-[8rem] md:h-[8em] -mt-2 text-white" />
                 </div>

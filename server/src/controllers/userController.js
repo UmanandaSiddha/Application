@@ -12,8 +12,9 @@ import fs from "fs";
 import sharp from "sharp";
 import { SERVER_URL } from "../server.js";
 import Animal from "../models/cards/animalModel.js";
-import { addEmailToQueue } from "../utils/emailQueue.js";
-import Donation from "../models/donationModel.js";
+import { addEmailToQueue } from "../utils/queue/emailQueue.js";
+// import Donation from "../models/donationModel.js";
+import Donator from "../models/donatorModel.js";
 import logger from "../config/logger.js";
 
 // User Registration
@@ -31,7 +32,7 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Error Registering User, Try Again Later", 500));
     }
 
-    const donator = Donation.find({ email: user.email });
+    const donator = Donator.find({ email: user.email });
     if (donator) {
         user.donator = true;
         await user.save();

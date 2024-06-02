@@ -8,6 +8,7 @@ import Transaction, { transactionEnum, transactionForEnum } from "../models/paym
 import sendDonatorToken from "../utils/donatorToken.js";
 import Subscription, { subscriptionEnum } from "../models/payment/subscriptionModel.js";
 import Plan from "../models/payment/planModel.js";
+import { addDonationToQueue } from "../utils/queue/donationQueue.js";
 
 export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
     const donator = await Donator.findOne({ email: req.body.email });
@@ -193,10 +194,7 @@ export const capturePayment = async (req, res, next) => {
 
     try {
         if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-            const donation = await Transaction.findOne({ razorpayOrderId: req.body.payload.payment.entity.order_id });
-            if (donation) {
-                await handleDonation(req.body.payload.payment.entity);
-            }
+            await addDonationToQueue(req.body.payload.payment.entity)
         }
     } catch (error) {
         logger.error(error.message);

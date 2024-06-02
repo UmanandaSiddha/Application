@@ -36,8 +36,8 @@ export const handleDonation = async (paymentData) => {
     );
 }
 
-export const handleTransaction = async (payamentData, subscriptionData, subscription) => {
-    const { amount, order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = payamentData;
+export const handleTransaction = async (paymentData, subscriptionData, subscription) => {
+    const { amount, order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = paymentData;
     const { current_end, current_start } = subscriptionData;
 
     await Transaction.create({
