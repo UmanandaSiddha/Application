@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { MdNavigateNext, MdOutlineNavigateNext } from "react-icons/lg";
+import { MdNavigateNext, MdOutlineNavigateNext } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 
