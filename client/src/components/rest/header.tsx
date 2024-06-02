@@ -51,7 +51,7 @@ export default function Header({ user }: PropsType) {
                         onClick={() => setMobileMenuOpen(true)}
                     >
                         <span className="sr-only">Open main menu</span>
-                        <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                        <Bars3Icon className="h-6 w-6 text-white" aria-hidden="true" />
                     </button>
                 </div>
                 <Popover.Group className="hidden lg:flex lg:gap-x-12">
@@ -59,7 +59,7 @@ export default function Header({ user }: PropsType) {
                         Dashboard
                     </NavLink>
                     <Link to='/plans' className="text-base font-semibold leading-6 text-white font-Kanit">
-                        Subcription
+                        Subscriptions
                     </Link>
                     <Link to='/billing' className="text-base font-semibold leading-6 text-white font-Kanit">
                         Billing
@@ -112,28 +112,28 @@ export default function Header({ user }: PropsType) {
                                 <Link
                                     to='/dashboard'
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    className="-mx-3 rounded-lg px-3 py-2 text-lg font-semibold flex font-Philosopher justify-center leading-7 text-gray-900 hover:bg-gray-50"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link
                                     to='/plans'
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    className="-mx-3 rounded-lg px-3 py-2 text-lg flex font-Philosopher justify-center font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 >
-                                    Subscription
+                                    Subscriptions
                                 </Link>
                                 <Link
                                     to='/billing'
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    className="-mx-3 rounded-lg px-3 py-2 text-lg flex font-Philosopher justify-center font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 >
                                     Billing
                                 </Link>
                                 <Link
                                     to='/profile'
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    className="-mx-3 rounded-lg px-3 py-2 text-lg flex font-Philosopher justify-center font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 >
                                     Profile
                                 </Link>
@@ -141,9 +141,13 @@ export default function Header({ user }: PropsType) {
                             <div className="py-6">
                                 {
                                     user ? (
-                                        <div className="flex items-center gap-5">
-                                            <p className='font-Kanit'>{user.name}</p>
-                                            <button onClick={logout}>Logout</button>
+                                        <div className="flex flxe-row items-center gap-5">
+                                            <div className="basis-1/2 flex justify-center">
+                                                <p className='font-Philosopher text-xl'>{user.name}</p>
+                                            </div>
+                                            <div className="basis-1/2 flex justify-center">
+                                                <button onClick={logout} className='bg-black text-white font-Philosopher px-8 py-2 rounded-lg hover:cursor-pointer'>Logout</button>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div>

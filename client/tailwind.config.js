@@ -12,12 +12,6 @@ module.exports = {
     container: {
       center: true,
       padding: "2rem",
-      // screens: {
-      //   "2xl": "1400px",
-      //   "xl": "1024px",
-      //   "tablet": "768px",
-      //   "mobile": "425px",
-      // },
     },
     extend: {
       keyframes: {
@@ -44,6 +38,10 @@ module.exports = {
         SpaceGrotesk: ["SpaceGrotesk", "sans-serif"],
       },
     },
+    screens: {
+      'lg' : '1030px',
+      'md': '730px'
+    }
   },
   plugins: [require("tailwindcss-animate")],
 }

@@ -139,8 +139,8 @@ const CreatorInput = () => {
 
   return (
     <>
-      <div className="w-full">
-        <h1 className="pl-6 font-Kanit text-4xl font-bold">Creator</h1>
+      <div className="w-full lg:flex lg:justify-center">
+        <h1 className="pl-6 font-Philosopher text-4xl font-bold lg:mt-[2rem]">Creator</h1>
       </div>
       <div className="flex flex-col justify-center items-center my-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -152,7 +152,7 @@ const CreatorInput = () => {
             </div>
             <div className="basis-2/3 ">
               <input
-                className="block py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                className="block py-2.5 px-0 w-full text-lg font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                 type="text"
                 id="name"
                 placeholder="Enter your name"
@@ -163,7 +163,7 @@ const CreatorInput = () => {
           </div>
 
           <div className="flex flex-col space-y-2 font-Kanit">
-            <h1 className="font-semibold text-lg">Social Media Profiles</h1>
+            <div className="lg:flex lg:justify-center"><h1 className="font-semibold text-lg font-Philosopher underline">Social Media Profiles</h1></div>
             {arrData && (
               <div className="flex flex-col space-y-2">
                 {arrData.map((arr: any, index: number) => (
@@ -176,7 +176,7 @@ const CreatorInput = () => {
                     </div>
                     <div className="basis-2/3">
                       <input
-                        className="block py-2.5 px-0 w-full text-sm font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                        className="block py-2.5 px-0 w-full text-sm font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                         type="text"
                         id={`name-${index}`}
                         name="name"
@@ -202,7 +202,7 @@ const CreatorInput = () => {
               {open && (
                 <div className="font-Kanit">
                   <div
-                    className="fixed inset-0 bg-opacity-30 backdrop-blur-md flex justify-center items-center z-10"
+                    className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
                     id="popupform"
                     onClick={handleCloseForm}
                   >

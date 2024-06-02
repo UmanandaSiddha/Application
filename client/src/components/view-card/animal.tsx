@@ -15,7 +15,7 @@ const AnimalComponent = ({ card }: PropsType) => {
           <h1 className="font-Alice pl-6">{card?.name}</h1>
         </div>
       </div>
-      <div className="relative flex justify-center bg-orange-100 font-Kanit -mt-[4rem]">
+      <div className="relative flex justify-center lg:mb-2 lg:rounded-b-xl bg-orange-100 font-Kanit -mt-[4rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
             <div className="flex justify-start">
@@ -24,7 +24,7 @@ const AnimalComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.species}
                 readOnly
               />
@@ -37,7 +37,7 @@ const AnimalComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.name}
                 readOnly
               />
@@ -50,7 +50,7 @@ const AnimalComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.age}
                 readOnly
               />
@@ -63,7 +63,7 @@ const AnimalComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.location}
                 readOnly
               />
@@ -76,7 +76,7 @@ const AnimalComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.gender}
                 readOnly
               />
@@ -89,7 +89,7 @@ const AnimalComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.color}
                 readOnly
               />
@@ -102,7 +102,7 @@ const AnimalComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.owner}
                 readOnly
               />
@@ -115,7 +115,7 @@ const AnimalComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.phone}
                 readOnly
               />

@@ -117,14 +117,15 @@ const Login = () => {
           </div>
         </div>
       ) : null}
-      <div className="flex flex-col justify-center items-center min-h-screen">
-        <form onSubmit={handleSubmit} className="space-y-8 w-[85%]">
+      <div className="flex justify-center items-center md:max-h-screen min-h-screen w-full md:bg-blue-300">
+      <div className="md:w-[30%] w-[80%]">
+        <form onSubmit={handleSubmit} className="space-y-8 md:w-full md:border md:p-10 md:-mt-[2rem] md:rounded-xl md:bg-white">
           <div className="mb-2 mt-2 w-[90%]">
             <label className="block text-black text-lg font-bold mb-2 w-[90%] font-Philosopher">
               Email
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline font-Kanit"
+              className="shadow border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline font-Kanit"
               name="email"
               type="email"
               placeholder="Enter your Email"
@@ -139,7 +140,7 @@ const Login = () => {
               Password
             </label>
             <input
-              className="shadow rounded w-full py-2 px-3 text-black mb-3 leading-tight focus:outline-none font-Kanit focus:shadow-outline"
+              className="shadow rounded border w-full py-2 px-3 text-black mb-3 leading-tight focus:outline-none font-Kanit focus:shadow-outline"
               name="password"
               type="text"
               placeholder="Enter Your Password"
@@ -152,7 +153,7 @@ const Login = () => {
           <div className="flex flex-col justify-center">
             <div className="flex justify-center">
               <button
-                className="bg-green-400 hover:bg-green-500 text-teal-950 font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline font-Philosopher w-[60%]"
+                className="bg-green-400 hover:bg-green-500 text-teal-950 font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline font-Philosopher w-[40%]"
                 type="submit"
                 disabled={loginLoading}
               >
@@ -176,11 +177,12 @@ const Login = () => {
           <div className="flex flex-row justify-center font-Philosopher">
             <p className="basis-2/3 flex justify-end pr-1">Don't have an account?</p>
             <p className="basis-1/3 flex justify-start hover:cursor-pointer hover:underline underline">
-              <Link to="/register">Register</Link>
+              <Link to="/onboarding">Register</Link>
             </p>
           </div>
           </div>
         </form>
+      </div>
       </div>
     </>
   );

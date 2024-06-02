@@ -169,8 +169,8 @@ const MedicalInput = () => {
     <>
       <div className="flex flex-col justify-center items-center my-8">
         {/* progress bar */}
-        <div className="flex justify-center">
-          <div className="w-[90%] h-4 rounded-full">
+        <div className="flex justify-center lg:mt-4 lg:flex lg:justify-center lg:w-full">
+          <div className="w-[90%] h-4 bg-gray-300 rounded-full lg:w-[50%]">
             <div
               className="h-4 bg-blue-500 rounded-full"
               style={{ width: `${(progressBar / 100) * 100}%` }}
@@ -179,35 +179,23 @@ const MedicalInput = () => {
         </div>
 
         {/* heading */}
-        <div className="w-full py-4">
-            <h1 className="font-Kanit text-3xl font-bold pl-4">Medical Card</h1>
+        <div className="w-full py-4 lg:flex lg:justify-center">
+            <h1 className="font-Philosopher text-3xl font-bold pl-4">Medical Card</h1>
         </div>
 
         {/* form */}
-        <div className="flex flex-col justify-center items-center">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="flex flex-col justify-center items-center lg:w-full">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 lg:w-[30rem]">
           <div className="space-y-4">
             {progressBar === 25 && (
               <>
                 <div className="space-y-2">
                   {perInfo.map((pIn, index) => (
-                    <div key={index} className="space-y-2 flex flex-row">
-                      {/* <div className="basis-1/4 flex justify-start font-Kanit text-lg items-center">
-                        <label>{pIn.label}:</label>
-                      </div>
-                      <div className="basis-3/4 flex items-center">
-                        <input
-                          className="block py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                          type="text"
-                          id={pIn.name}
-                          placeholder={pIn.text}
-                          {...register(pIn.name, { required: true })}
-                        />
-                      </div> */}
-                      <label htmlFor={`${pIn.name}`} className="basis-1/4 flex justify-start font-Kanit text-lg items-center">{pIn.label}:</label>
+                    <div key={index} className="space-y-2 flex flex-row gap-10">
+                      <label htmlFor={`${pIn.name}`} className="basis-2/5 flex justify-start lg:justify-start font-Kanit text-lg items-center">{pIn.label}:</label>
                       {(pIn.name === 'birth') ? (
                         <input
-                        className="basis-3/4 flex items-center py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                        className="basis-3/5 flex items-center py-2.5 px-0 w-full text-sm font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                         type="date"
                         id={pIn.name}
                         required
@@ -217,7 +205,7 @@ const MedicalInput = () => {
                       />
                       ) : (
                         <input
-                          className="basis-3/4 flex items-center py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                          className="basis-3/5 flex items-center py-2.5 px-0 w-full text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                           type="text"
                           id={pIn.name}
                           required
@@ -237,13 +225,13 @@ const MedicalInput = () => {
                     Emergency Contact
                   </h1>
                   {emCon.map((em, index) => (
-                    <div key={index} className="space-y-2 flex flex-row">
+                    <div key={index} className="space-y-2 flex flex-row gap-10">
                       {/* <div className="basis-1/4 flex justify-start font-Kanit text-lg items-center"> */}
-                        <label htmlFor={`${em.name}`} className="basis-1/4 flex justify-start font-Kanit text-lg items-center">{em.label}:</label>
+                        <label htmlFor={`${em.name}`} className="basis-2/5 flex justify-start font-Kanit text-lg items-center">{em.label}:</label>
                       {/* </div> */}
                       {/* <div className="basis-3/4 flex items-center"> */}
                         <input
-                          className="basis-3/4 flex items-center py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                          className="basis-3/5 flex items-center py-2.5 px-0 w-full text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                           type="text"
                           id={em.name}
                           required
@@ -264,17 +252,19 @@ const MedicalInput = () => {
             {progressBar === 50 && (
               <>
                 <div className="space-y-1 w-full">
-                  <h1 className="font-semibold mt-4 font-Kanit text-lg underline pl-6">
+                  <div className="lg:flex lg:justify-center">
+                  <h1 className="font-semibold mt-4 font-Philosopher text-lg underline pl-6">
                     Address
                   </h1>
+                  </div>
                   {medAdd.map((em, index) => (
                     <div key={index} className="space-y-2 flex flex-row">
                       {/* <div className="basis-1/4 flex justify-start font-Kanit text-lg items-center"> */}
-                        <label htmlFor={`${em.name}`} className="basis-1/4 flex justify-start font-Kanit text-lg items-center">{em.label}:</label>
+                        <label htmlFor={`${em.name}`} className="basis-1/4 flex justify-start lg:justify-center lg:mt-4 font-Kanit text-lg items-center">{em.label}:</label>
                       {/* </div> */}
                       {/* <div className="basis-3/4 flex items-center"> */}
                         <input
-                          className="basis-3/4 flex items-center py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                          className="basis-3/4 flex items-center py-2.5 px-0 w-full text-lg font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                           type="text"
                           id={em.name}
                           autoComplete="off"
@@ -297,7 +287,7 @@ const MedicalInput = () => {
                     {/* </div> */}
                     {/* <div className="items-center w-full"> */}
                       <input
-                        className="tems-center w-full block py-2.5 px-0  text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                        className="tems-center w-full block py-2.5 px-0  text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                         type="text"
                         id={sele.name}
                         placeholder={sele.text}
@@ -312,14 +302,14 @@ const MedicalInput = () => {
 
                 <div className="space-y-2">
                   {/* <div className="w-full flex justify-start font-Kanit text-lg font-semibold items-center"> */}
-                    <label htmlFor="current" className="w-full flex justify-start font-Kanit text-lg font-semibold items-center pl-6">
+                    <label htmlFor="current" className="w-full flex justify-start font-Kanit text-lg font-semibold items-center pl-6 lg:pl-0">
                       Current Medications:
                     </label>
                   {/* </div> */}
                   {/* <div className="items-center w-full"> */}
-                    <input
-                      className="items-center block py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                      type="text"
+                    <textarea
+                      className="items-center block py-2.5 px-0 w-full text-lg font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                      // type="text"
                       id="current"
                       required
                       autoComplete="off"
@@ -335,13 +325,13 @@ const MedicalInput = () => {
                 </div>
                 <div className="space-y-2">
                   {/* <div className="w-full flex justify-start font-Kanit text-lg font-semibold items-center"> */}
-                    <label htmlFor="surgery" className="w-full flex justify-start font-Kanit text-lg font-semibold items-center pl-6">
+                    <label htmlFor="surgery" className="w-full flex justify-start font-Kanit text-lg font-semibold items-center pl-6 lg:pl-0">
                       Previous Surgeries:
                     </label>
                   {/* </div> */}
                   {/* <div className="items-center w-full"> */}
                     <input
-                      className="items-center block py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                      className="items-center block py-2.5 px-0 w-full text-lg font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                       type="text"
                       id="surgery"
                       required
@@ -363,13 +353,13 @@ const MedicalInput = () => {
                 {healthhabits.map((sele, index) => (
                   <div key={index} className="space-y-2 w-full">
                     {/* <div className="font-Kanit font-semibold text-lg pl-4 flex justify-start"> */}
-                      <label htmlFor={`${sele.name}`} className="font-Kanit font-semibold text-lg pl-4 flex justify-start">
+                      <label htmlFor={`${sele.name}`} className="font-Kanit font-semibold text-lg pl-4 lg:pl-0 flex justify-start">
                         {sele.label}
                       </label>
                     {/* </div> */}
                     {/* <div className=""> */}
                       <select
-                        className="block py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-slate-400 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                        className="block py-2.5 px-0 w-full text-lg font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-slate-400 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                         id={sele.name}
                         required
                         {...register(sele.name, { required: true })}
@@ -395,20 +385,22 @@ const MedicalInput = () => {
           {progressBar === 100 && (
             <>
               <div className="w-full">
-                <h1 className="font-semibold font-Kanit text-xl">
+                <div className="lg:flex lg:justify-center">
+                <h1 className="font-semibold font-Philosopher text-xl underline">
                   Insurance Information
                 </h1>
+                </div>
                 {inSur.map((em, index) => (
                   <div
                     key={index}
                     className="flex flex-row items-center w-full space-y-2 gap-8 my-2"
                   >
                     {/* <div className="basis-1/4 flex justify-start "> */}
-                      <label htmlFor={`${em.name}`} className="basis-1/4 flex justify-start font-Kanit text-lg">{em.label}</label>
+                      <label htmlFor={`${em.name}`} className="basis-1/4 flex justify-start lg:mt-4 font-Kanit text-lg">{em.label}:</label>
                     {/* </div> */}
                     {/* <div className="basis-3/4"> */}
                       <input
-                        className="basis-3/4 block py-2.5 px-0 w-full text-lg font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-slate-400 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                        className="basis-3/4 block py-2.5 px-0 w-full text-lg font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-slate-400 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                         type="text"
                         id={em.name}
                         required
@@ -434,7 +426,7 @@ const MedicalInput = () => {
           <div className="w-full flex flex-row pt-8 pb-5">
             <div className="basis-1/2 flex justify-center">
               <button
-                className="px-4 py-2 bg-blue-500 rounded-md hover:cursor-pointer hover:bg-blue-700 text-white font-Kanit disabled:bg-blue-300"
+                className="px-4 py-2 bg-blue-500 rounded-lg hover:cursor-pointer hover:bg-blue-700 text-white font-Kanit disabled:bg-blue-300"
                 onClick={handleProgressBackward}
                 disabled={progressBar === 25}
               >
@@ -444,7 +436,7 @@ const MedicalInput = () => {
             <div className="basis-1/2 flex justify-center">
             {(progressBar === 100) ? (
               <button
-              className="px-4 py-2 bg-blue-500 rounded-md hover:cursor-pointer hover:bg-blue-700 text-white font-Kanit"
+              className="px-4 py-2 bg-blue-500 rounded-lg hover:cursor-pointer hover:bg-blue-700 text-white font-Kanit"
               type="submit"
               disabled={medicalLoading}
             >
@@ -452,7 +444,7 @@ const MedicalInput = () => {
             </button>
             ) : (
               <button
-                className="px-4 py-2 bg-blue-500 rounded-md hover:cursor-pointer hover:bg-blue-700 text-white font-Kanit"
+                className="px-4 py-2 bg-blue-500 rounded-lg hover:cursor-pointer hover:bg-blue-700 text-white font-Kanit"
                 onClick={handleProgressForward}
               >
                 Next
