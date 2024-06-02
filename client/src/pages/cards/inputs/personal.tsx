@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { MdOutlineNavigateNext } from "react-icons/md";
+import { MdNavigateNext, MdOutlineNavigateNext } from "react-icons/lg";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 
@@ -14,20 +14,20 @@ import { RootState } from "../../../redux/store";
 // } from "@/redux/inputs/personal-inputs";
 
 import {
-    contactInfo,
-    emails,
-    socials,
-    Favourites,
-    miscellaneous,
-    lifestyle,
-    motto,
-    interests,
-    background,
-    expertise,
-    values,
-    professional,
-    additionalInfo,
-  } from "../../../redux/inputs/personal-inputs";
+  contactInfo,
+  emails,
+  socials,
+  Favourites,
+  miscellaneous,
+  lifestyle,
+  motto,
+  interests,
+  background,
+  expertise,
+  values,
+  professional,
+  additionalInfo,
+} from "../../../redux/inputs/personal-inputs";
 
 const arr: any = [
   {
@@ -190,74 +190,74 @@ const InputVCard = () => {
   const {
     register,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: {
-        name: personal?.name || "",
-        mobilephone: personal?.contactInfo.phoneNumber.mobile || 91,
-        homephone: personal?.contactInfo.phoneNumber.home || 91,
-        workphone: personal?.contactInfo.phoneNumber.work || 91,
-        otherphone: personal?.contactInfo.phoneNumber.other || 91,
-        personalemail: personal?.contactInfo.emailAddress.personal || "",
-        workemail: personal?.contactInfo.emailAddress.work || "",
-        otheremail: personal?.contactInfo.emailAddress.other || "",
-        // aboutme: personal?.aboutMe.aboutme || "",
-        dob: personal?.lifesty.birth || Date.now(),
-        hometown: personal?.lifesty.homeTown || "",
-        currentCity: personal?.lifesty.currentCity || "",
-        languages: personal?.lifesty.languages || "",
-  
-        favmusic: personal?.favourites.favmusic || "",
-        favcolor: personal?.favourites.favcolor || "",
-        favcity: personal?.favourites.favcity || "",
-        dreamtravel: personal?.favourites.dreamtravel || "",
-        favseason: personal?.favourites.favseason || "",
-        uniqueskills: personal?.favourites.uniqueSkills || "",
-        favcuisine: personal?.favourites.favcuisine || "",
-        // prefbeve: personal?.favourites.prefbeve || "",
-        petlover: personal?.misce.petlover || "",
-        party: personal?.misce.party || "",
-        smoker: personal?.misce.smoker || "",
-        marital: personal?.misce.marital || "",
-        relation: personal?.misce.relation || "",
-        fitness: personal?.misce.fitness || "",
-        morning: personal?.misce.morning || "",
-        diet: personal?.misce.diet || "",
-        sleeping: personal?.misce.sleeping || "",
-        reading: personal?.misce.reading || "",
-  
-        prefmode: personal?.interest.prefmode || "",
-        genre: personal?.interest.genre || "",
-        outdoor: personal?.interest.outdoor || "",
-        artistic: personal?.interest.artistic || "",
-        gamingpref: personal?.interest.gamingpref || "",
-        collecting: personal?.interest.collecting || "",
-        coffee: personal?.interest.coffee || "",
-        cooking: personal?.interest.cooking || "",
-  
-        spiritual: personal?.value.spiritual || "",
-        corevalue: personal?.value.core || "",
-        philosophy: personal?.value.philosophy || "",
-        environment: personal?.value.socialCause || "",
-  
-        inspirationalmotto: personal?.mottos.quotes.inspirational || "",
-        funnymotto: personal?.mottos.quotes.funny || "",
-        motivationalmotto: personal?.mottos.quotes.motivational || "",
-        othermotto: personal?.mottos.quotes.othermotto || "",
-  
-        global: personal?.beliefs.global || "",
-        weirdbelief: personal?.beliefs.weirdbelief || "",
-  
-        occupation: personal?.profession.occupation || "",
-        aspiration: personal?.profession.aspiration || "",
-        background: personal?.backg.background || "",
-        expertise: personal?.expert.expertise || "",
-  
-        anyother: personal?.additional.anyother || "",
-        futuregoal: personal?.additional.futuregoal || "",
-        learning: personal?.additional.learning || "",
-        experience: personal?.additional.experience || "",
-        habit: personal?.additional.habit || "",
+      name: personal?.name || "",
+      mobilephone: personal?.contactInfo.phoneNumber.mobile || 91,
+      homephone: personal?.contactInfo.phoneNumber.home || 91,
+      workphone: personal?.contactInfo.phoneNumber.work || 91,
+      otherphone: personal?.contactInfo.phoneNumber.other || 91,
+      personalemail: personal?.contactInfo.emailAddress.personal || "",
+      workemail: personal?.contactInfo.emailAddress.work || "",
+      otheremail: personal?.contactInfo.emailAddress.other || "",
+      // aboutme: personal?.aboutMe.aboutme || "",
+      birth: personal?.lifeStyle?.birth || Date.now(),
+      hometown: personal?.lifeStyle?.homeTown || "",
+      currentCity: personal?.lifeStyle?.currentCity || "",
+      languages: personal?.lifeStyle?.languages || "",
+
+      favmusic: personal?.favourites.favmusic || "",
+      favcolor: personal?.favourites.favcolor || "",
+      favcity: personal?.favourites.favcity || "",
+      dreamtravel: personal?.favourites.dreamtravel || "",
+      favseason: personal?.favourites.favseason || "",
+      uniqueskills: personal?.favourites.uniqueSkills || "",
+      favcuisine: personal?.favourites.favcuisine || "",
+      // prefbeve: personal?.favourites.prefbeve || "",
+      petlover: personal?.miscellaneous.petlover || "",
+      party: personal?.miscellaneous.party || "",
+      smoker: personal?.miscellaneous.smoker || "",
+      marital: personal?.miscellaneous.marital || "",
+      relation: personal?.miscellaneous.relation || "",
+      fitnessRoutine: personal?.miscellaneous.fitnessRoutine || "",
+      morning: personal?.miscellaneous.morning || "",
+      diet: personal?.miscellaneous.diet || "",
+      sleeping: personal?.miscellaneous.sleeping || "",
+      reading: personal?.miscellaneous.reading || "",
+
+      prefMode: personal?.interests.prefMode || "",
+      genre: personal?.interests.genre || "",
+      outdoor: personal?.interests.outdoor || "",
+      artistic: personal?.interests.artistic || "",
+      gamingPref: personal?.interests.gamingPref || "",
+      collecting: personal?.interests.collecting || "",
+      coffee: personal?.interests.coffee || "",
+      cooking: personal?.interests.cooking || "",
+
+      spiritual: personal?.value.spiritual || "",
+      corevalue: personal?.value.core || "",
+      philosophy: personal?.value.philosophy || "",
+      environment: personal?.value.socialCause || "",
+
+      inspirational: personal?.mottos.quotes.inspirational || "",
+      funny: personal?.mottos.quotes.funny || "",
+      motivational: personal?.mottos.quotes.motivational || "",
+      other: personal?.mottos.quotes.other || "",
+
+      global: personal?.beliefs.global || "",
+      weirdbelief: personal?.beliefs.weirdbelief || "",
+
+      currentOccupation: personal?.professional.currentOccupation || "",
+      careerAspiration: personal?.professional.careerAspiration || "",
+      background: personal?.backg.background || "",
+      expertise: personal?.expert.expertise || "",
+
+      anyother: personal?.additional.anyother || "",
+      futureGoal: personal?.additional.futureGoal || "",
+      learning: personal?.additional.learning || "",
+      experience: personal?.additional.experience || "",
+      habit: personal?.additional.habit || "",
     },
   });
 
@@ -272,99 +272,101 @@ const InputVCard = () => {
       final.push(element);
     }
     const personalData = {
-        name: values.name,
-        contactInfo: {
-          phoneNumber: {
-            mobile: values.mobilephone,
-            home: values.homephone,
-            work: values.workphone,
-            other: values.otherphone,
-          },
-          emailAddress: {
-            personal: values.personalemail,
-            work: values.workemail,
-            other: values.otheremail,
-          },
+      name: values.name,
+      contactInfo: {
+        phoneNumber: {
+          mobile: values.mobilephone,
+          home: values.homephone,
+          work: values.workphone,
+          other: values.otherphone,
         },
-        socialMedia: final,
-        lifesty: {
-          // aboutme: values.aboutme,
-          birth: values.dob,
-          homeTown: values.hometown,
-          currentCity: values.currentCity,
-          languages: values.languages,
+        emailAddress: {
+          personal: values.personalemail,
+          work: values.workemail,
+          other: values.otheremail,
         },
-        favourites: {
-          music: values.favmusic,
-          color: values.favcolor,
-          city: values.favcity,
-          travelDestination: values.dreamtravel,
-          season: values.favseason,
-          uniqueSkills: values.uniqueskills,
-          cuisine: values.favcuisine,
-          // beverage: values.prefbeve,
+      },
+      socialMedia: final,
+      lifestyle: {
+        // aboutme: values.aboutme,
+        birth: values.birth,
+        homeTown: values.hometown,
+        currentCity: values.currentCity,
+        languages: values.languages,
+      },
+      favourites: {
+        music: values.favmusic,
+        color: values.favcolor,
+        city: values.favcity,
+        travelDestination: values.dreamtravel,
+        season: values.favseason,
+        uniqueSkills: values.uniqueskills,
+        cuisine: values.favcuisine,
+        // beverage: values.prefbeve,
+      },
+      mottos: {
+        quotes: {
+          inspirational: values.inspirationalmotto,
+          funny: values.funnymotto,
+          motivational: values.motivationalmotto,
+          other: values.othermotto,
         },
-        mottos: {
-          quotes: {
-            inspirational: values.inspirationalmotto,
-            funny: values.funnymotto,
-            motivational: values.motivationalmotto,
-            other: values.othermotto,
-          },
-        },
-        misce: {
-          petLover: values.petlover,
-          partyEnthusiast: values.party,
-          smoker: values.smoker,
-          maritalStatus: values.marital,
-          relationshipStatus: values.relation,
-          fitness: values.fitness,
-          morningPerson: values.morning,
-          diet: values.diet,
-          sleepingHabit: values.sleeping,
-          reading: values.reading,
-        },
-        interest: {
-          prefmode: prefMode === "Other" ? prefModeOther : values.outdoor,
-          genre: genre === "Other" ? genreOther : values.outdoor,
-          outdoor: outdoor === "Other" ? outdoorOther : values.outdoor,
-          artistic: artistic === "Other" ? artisticOther : values.artistic,
-          gamingpref:
-            gamingpref === "Other" ? gamingprefOther : values.gamingpref,
-          collecting:
-            collecting === "Other" ? collectingOther : values.collecting,
-          coffee: values.coffee,
-          cooking: values.cooking,
-        },
-        value: {
-          spiritual: values.spiritual,
-          core: values.corevalue,
-          philosophy: values.philosophy,
-          socialCause: values.environment,
-        },
-        beliefs: {
-          globalIssues: values.global,
-          weirdBelief: values.weirdbelief,
-        },
-        profession: {
-          occupation: occupation === "Other" ? occupationOther : values.occupation,
-          aspiration: aspiration === "Other" ? aspirationOther : values.aspiration,
-        },
-        backg: {
-          background: back === "Other" ? backgroundOther : values.aspiration,
-        },
-        expert: {
-          expertise: expert === "Other" ? expertiseOther : values.expertise,
-        },
-        additional: {
-          anyother: values.anyother,
-          futuregoal: values.futuregoal,
-          learning: values.learning,
-          experience: values.experience,
-          habit: values.habit,
-        },
-        user: user?._id,
-      };
+      },
+      miscellaneous: {
+        petLover: values.petlover,
+        partyEnthusiast: values.party,
+        smoker: values.smoker,
+        marital: values.marital,
+        relationshipStatus: values.relation,
+        fitnessRoutine: values.fitnessRoutine,
+        morningPerson: values.morning,
+        diet: values.diet,
+        sleepingHabit: values.sleeping,
+        reading: values.reading,
+      },
+      interests: {
+        prefMode: prefMode === "Other" ? prefModeOther : values.outdoor,
+        genre: genre === "Other" ? genreOther : values.outdoor,
+        outdoor: outdoor === "Other" ? outdoorOther : values.outdoor,
+        artistic: artistic === "Other" ? artisticOther : values.artistic,
+        gamingPref:
+          gamingpref === "Other" ? gamingprefOther : values.gamingpref,
+        collecting:
+          collecting === "Other" ? collectingOther : values.collecting,
+        coffee: values.coffee,
+        cooking: values.cooking,
+      },
+      value: {
+        spiritual: values.spiritual,
+        core: values.corevalue,
+        philosophy: values.philosophy,
+        socialCause: values.environment,
+      },
+      beliefs: {
+        globalIssues: values.global,
+        weirdBelief: values.weirdbelief,
+      },
+      professional: {
+        currentOccupation:
+          occupation === "Other" ? occupationOther : values.currentOccupation,
+        careerAspiration:
+          aspiration === "Other" ? aspirationOther : values.careerAspiration,
+      },
+      backg: {
+        background: back === "Other" ? backgroundOther : values.aspiration,
+      },
+      expert: {
+        expertise: expert === "Other" ? expertiseOther : values.expertise,
+      },
+      additional: {
+        anyother: values.anyother,
+        futureGoal: values.futureGoal,
+        learning: values.learning,
+        experience: values.experience,
+        habit: values.habit,
+      },
+      user: user?._id,
+    };
     console.log(personalData);
     try {
       if (isPersonal) {
@@ -445,8 +447,8 @@ const InputVCard = () => {
   return (
     <>
       {/* progress bar */}
-      <div className="flex justify-center">
-        <div className="w-[90%] h-4 bg-gray-300 rounded-full">
+      <div className="flex justify-center lg:mt-4 lg:flex lg:justify-center">
+        <div className="w-[90%] h-4 bg-gray-300 rounded-full lg:w-[50%]">
           <div
             className="h-4 bg-blue-500 rounded-full"
             style={{ width: `${(progress / 100) * 100}%` }}
@@ -458,7 +460,7 @@ const InputVCard = () => {
       {open && (
         <div className="font-Kanit">
           <div
-            className="fixed inset-0 bg-opacity-30 backdrop-blur-md flex justify-center items-center z-10"
+            className="fixed inset-0 bg-opacity-30 backdrop-blur-lg flex justify-center items-center z-10"
             id="popupform"
             onClick={handleCloseForm}
           >
@@ -521,13 +523,13 @@ const InputVCard = () => {
         </div>
       )}
 
-<form onSubmit={handleSubmit(onSubmit)} className="space-y-8 font-Kanit">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 font-Kanit">
         {progress === 25 && (
           <div className="flex flex-col justify-center items-center my-8">
-            <div className="w-full">
-              <h1 className="text-3xl font-bold pl-6">Personal Preferences</h1>
+            <div className="w-full lg:w-[50%] lg:flex lg:justify-center">
+              <h1 className="text-3xl font-bold pl-6 font-Philosopher">Personal Preferences</h1>
             </div>
-            <div className="w-[90%] flex flex-row">
+            <div className="w-[90%] lg:w-[45%] flex flex-row lg:mt-10">
               <div className="basis-1/3 flex justify-center items-center">
                 <label htmlFor="" className="text-xl">
                   Name:
@@ -536,13 +538,13 @@ const InputVCard = () => {
               <div className="basis-2/3 flex justify-center items-center">
                 <input
                   type="text"
-                  className="block py-2.5 px-0 w-full text-xl font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                  className="block py-2.5 px-0 w-full text-xl font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                   placeholder="Enter your name"
                   {...register("name", { required: true })}
                 />
               </div>
             </div>
-            <div className="w-full font-semibold text-2xl py-4">
+            <div className="w-full lg:w-[50%] font-semibold text-2xl py-4">
               {/* socials */}
               <div className="pl-6">
                 <button
@@ -554,14 +556,20 @@ const InputVCard = () => {
                     Socials
                   </div>
                   <div className="basis-3/4 flex justify-start items-center">
-                    <MdOutlineNavigateNext className="w-[3rem] h-[3rem] pl-4 pb-4" />
+                    <MdNavigateNext
+                      className={`w-[2rem] h-[2rem] ${
+                        social
+                          ? "transition ease-in-out rotate-90"
+                          : "transition ease-in-out"
+                      }`}
+                    />
                   </div>
                 </button>
                 {/* socials button clicked */}
                 {social ? (
                   <div
                     id="dropdown"
-                    className="absolute bg-red-400 divide-gray-100 rounded-lg shadow w-[90%] dark:bg-gray-700"
+                    className="absolute bg-black text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[50%] dark:bg-gray-700"
                   >
                     <ul
                       className="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -574,13 +582,13 @@ const InputVCard = () => {
                               key={idx}
                               className="flex flex-row justify-center items-center gap-2"
                             >
-                              <div className="basis-1/3 flex justify-center items-center text-lg">
+                              <div className="basis-1/3 flex justify-center items-center text-lg text-white">
                                 <label className="">{arr.label}</label>
                               </div>
                               <div className="basis-2/3 px-4">
                                 <input
                                   type="text"
-                                  className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                                  className="block py-2.5 px-0 w-full text-base font-Philosopher text-slate-300 bg-transparent border-0 border-b-2 border-slate-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600"
                                   // onChange={(e) => handleSocialChange(e, idx)}
                                   placeholder={arr.text}
                                   {...register(`${arr.name}`, {
@@ -608,7 +616,7 @@ const InputVCard = () => {
                     Lifestyle
                   </div>
                   <div className="basis-3/4 flex justify-start items-center">
-                    <MdOutlineNavigateNext className="w-[3rem] h-[3rem] pl-4 pb-4" />
+                    <MdNavigateNext className={`w-[2rem] h-[2rem] ${lifestyles ? "transition ease-in-out rotate-90" : "transition ease-in-out"}`} />
                   </div>
                 </button>
 
@@ -616,29 +624,40 @@ const InputVCard = () => {
                 {lifestyles ? (
                   <div
                     id="dropdown"
-                    className="absolute bg-red-400 divide-gray-100 rounded-lg shadow w-[90%] dark:bg-gray-700"
+                    className="absolute bg-black text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[50%] dark:bg-gray-700"
                   >
                     <ul
                       className="py-2 text-sm text-gray-700 dark:text-gray-200"
                       aria-labelledby="dropdownDefaultButton"
                     >
                       {lifestyle.map((life, index) => (
-                        <li>
+                        <li key={index}>
                           <div className="flex flex-row" key={index}>
                             <div className="basis-1/3 flex justify-center items-center text-lg">
-                              <label htmlFor="" className="">
+                              <label htmlFor="" className="text-white">
                                 {life.label}
                               </label>
                             </div>
                             <div className="basis-2/3 px-4">
-                              <input
-                                type="text"
-                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                                placeholder={life.text}
-                                {...register(`${life.name}`, {
-                                  required: true,
-                                })}
-                              />
+                              {life.name === "birth" ? (
+                                <input
+                                  type="date"
+                                  className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                  placeholder={life.text}
+                                  {...register(`${life.name}`, {
+                                    required: true,
+                                  })}
+                                />
+                              ) : (
+                                <input
+                                  type="text"
+                                  className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                  placeholder={life.text}
+                                  {...register(`${life.name}`, {
+                                    required: true,
+                                  })}
+                                />
+                              )}
                             </div>
                           </div>
                         </li>
@@ -659,7 +678,7 @@ const InputVCard = () => {
                     Favourites
                   </div>
                   <div className="basis-3/4 flex justify-start items-center">
-                    <MdOutlineNavigateNext className="w-[3rem] h-[3rem] pl-4 pb-4" />
+                    <MdNavigateNext className={`w-[2rem] h-[2rem] ${fav ? "transition ease-in-out rotate-90" : "transition ease-in-out"}`} />
                   </div>
                 </button>
 
@@ -667,17 +686,17 @@ const InputVCard = () => {
                 {fav ? (
                   <div
                     id="dropdown"
-                    className="absolute bg-red-400 divide-gray-100 rounded-lg shadow w-[90%] dark:bg-gray-700"
+                    className="absolute bg-black text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[50%] dark:bg-gray-700"
                   >
                     <ul
                       className="py-2 text-sm text-gray-700 dark:text-gray-200"
                       aria-labelledby="dropdownDefaultButton"
                     >
                       {Favourites.map((favs, index) => (
-                        <li>
+                        <li key={index}>
                           <div className="flex flex-row" key={index}>
                             <div className="basis-1/3 flex justify-start items-center text-lg">
-                              <label htmlFor="" className="pl-2">
+                              <label htmlFor="" className="pl-2 text-white">
                                 {favs.label}
                               </label>
                             </div>
@@ -685,7 +704,7 @@ const InputVCard = () => {
                               <input
                                 type="text"
                                 // name={favs.name}
-                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                                 placeholder={favs.text}
                                 {...register(`${favs.name}`, {
                                   required: true,
@@ -711,7 +730,7 @@ const InputVCard = () => {
                     Miscellaneous
                   </div>
                   <div className="basis-3/4 flex justify-start items-center">
-                    <MdOutlineNavigateNext className="w-[3rem] h-[3rem] pl-4 pb-4" />
+                    <MdNavigateNext className={`w-[2rem] h-[2rem] ${misc ? "transition ease-in-out rotate-90" : "transition ease-in-out"}` } />
                   </div>
                 </button>
 
@@ -719,18 +738,18 @@ const InputVCard = () => {
                 {misc ? (
                   <div
                     id="dropdown"
-                    className="absolute bg-red-400 divide-gray-100 rounded-lg shadow w-[90%] dark:bg-gray-700"
+                    className="absolute bg-black text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[50%] dark:bg-gray-700"
                   >
                     <ul
                       className="py-2 text-sm text-gray-700 dark:text-gray-200"
                       aria-labelledby="dropdownDefaultButton"
                     >
                       {miscellaneous.map((miscs, index) => (
-                        <li className="py-1">
+                        <li className="py-1" key={index}>
                           {miscs.name === "reading" ? (
                             <div className="flex flex-row" key={index}>
                               <div className="basis-1/3 flex justify-start items-center text-lg">
-                                <label htmlFor="" className="pl-2">
+                                <label htmlFor="" className="pl-2 text-white">
                                   {miscs.label}
                                 </label>
                               </div>
@@ -738,7 +757,7 @@ const InputVCard = () => {
                                 <input
                                   type="text"
                                   // name={miscs.name}
-                                  className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                  className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                                   placeholder={miscs.text}
                                   {...register(`${miscs.name}`, {
                                     required: true,
@@ -749,14 +768,14 @@ const InputVCard = () => {
                           ) : (
                             <div className="flex flex-row" key={index}>
                               <div className="basis-1/3 flex justify-start items-center text-lg">
-                                <label htmlFor="" className="pl-2">
+                                <label htmlFor="" className="pl-2 text-white">
                                   {miscs.label}
                                 </label>
                               </div>
                               <div className="basis-2/3 px-4 flex items-center">
                                 <select
                                   // name={miscs.name}
-                                  className="w-[75%] rounded-md text-black"
+                                  className="w-[75%] rounded-lg text-black"
                                   {...register(`${miscs.name}`, {
                                     required: true,
                                   })}
@@ -781,23 +800,23 @@ const InputVCard = () => {
         {/* interests & hobbies */}
         {progress === 50 && (
           <div className="flex flex-col justify-center items-center my-8">
-            <div className="w-full">
-              <h1 className="text-3xl font-bold pl-6">
+            <div className="w-full lg:w-[50%] lg:flex lg:justify-center">
+              <h1 className="text-3xl font-bold pl-6 font-Philosopher">
                 Interests & Activities
               </h1>
             </div>
-            <div className="pt-6">
+            <div className="pt-6 lg:w-[40%] lg::justify-start">
               {interests.map((int, index) => (
                 <>
-                  <div className="flex flex-row py-2" key={index}>
-                    <div className="basis-2/5 flex justify-start items-center text-lg">
+                  <div className="flex flex-row py-2 lg:gap-10" key={index}>
+                    <div className="basis-2/5 flex justify-start lg:justify-end items-center text-lg">
                       <label htmlFor="" className="pl-2 font-semibold">
                         {int.label}
                       </label>
                     </div>
                     <div className="basis-3/5 px-4 flex items-center">
                       <select
-                        className="w-full rounded-md text-black items-center text-lg"
+                        className="w-full rounded-lg text-black flex items-center text-lg border-2 border-black"
                         {...register(`${int.name}`, { required: true })}
                         onChange={(e) => {
                           if (int.name === "collecting") {
@@ -824,10 +843,10 @@ const InputVCard = () => {
                     </div>
                   </div>
                   {int.name === "collecting" && collecting === "Other" && (
-                    <div className="">
+                    <div className="lg:flex lg:justify-end">
                       <input
                         type="text"
-                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                        className="block py-2.5 px-0 w-full  lg:w-[50%] lg:mr-4 text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
                         placeholder="Enter custom interest"
                         value={collectingOther}
                         {...register(`${int.customInput.name}`)}
@@ -836,10 +855,10 @@ const InputVCard = () => {
                     </div>
                   )}
                   {int.name === "prefmode" && prefMode === "Other" && (
-                    <div className="w-full">
+                    <div className="w-full lg:flex lg:justify-end">
                       <input
                         type="text"
-                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 lg:mr-4 focus:border-blue-600"
                         placeholder="Enter custom preference"
                         value={prefModeOther}
                         {...register(`${int.customInput.name}`)}
@@ -848,10 +867,10 @@ const InputVCard = () => {
                     </div>
                   )}
                   {int.name === "genre" && genre === "Other" && (
-                    <div className="">
+                    <div className="lg:flex lg:justify-end">
                       <input
                         type="text"
-                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
                         placeholder="Enter custom genre"
                         value={genreOther}
                         {...register(`${int.customInput.name}`)}
@@ -860,10 +879,10 @@ const InputVCard = () => {
                     </div>
                   )}
                   {int.name === "outdoor" && outdoor === "Other" && (
-                    <div className="">
+                    <div className="lg:flex lg:justify-end">
                       <input
                         type="text"
-                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
                         placeholder="Enter custom activity"
                         value={outdoorOther}
                         {...register(`${int.customInput.name}`)}
@@ -872,10 +891,10 @@ const InputVCard = () => {
                     </div>
                   )}
                   {int.name === "artistic" && artistic === "Other" && (
-                    <div className="">
+                    <div className="lg:flex lg:justify-end">
                       <input
                         type="text"
-                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
                         placeholder="Enter custom hobby"
                         value={artisticOther}
                         {...register(`${int.customInput.name}`)}
@@ -884,10 +903,10 @@ const InputVCard = () => {
                     </div>
                   )}
                   {int.name === "gamingpref" && gamingpref === "Other" && (
-                    <div className="">
+                    <div className="lg:flex lg:justify-end">
                       <input
                         type="text"
-                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
                         placeholder="Enter custom option"
                         value={gamingprefOther}
                         {...register(`${int.customInput.name}`)}
@@ -903,25 +922,28 @@ const InputVCard = () => {
 
         {progress === 75 && (
           <div className="flex flex-col justify-center items-center my-8">
-            <div className="w-full">
-              <h1 className="text-3xl font-bold pl-6">Professional Details:</h1>
+            <div className="w-full lg:flex lg:justify-center">
+              <h1 className="text-3xl font-bold pl-6 font-Philosopher">Professional Details:</h1>
             </div>
             <div className="w-full pt-6">
-              <h3 className="text-2xl font-semibold pl-6 underline">
+              <div className="lg:w-[40%] lg:flex lg:justify-end">
+              <h3 className="text-2xl font-semibold pl-6 underline lg:mr-[2.5rem] font-Philosopher">
                 Career :
               </h3>
-              <div className="pt-2">
+              </div>
+              <div className="lg:flex lg:justify-center">
+              <div className="pt-2 lg:w-[40%]">
                 {professional.map((prof, index) => (
                   <>
-                    <div className="flex flex-row py-2" key={index}>
-                      <div className="basis-1/3 flex justify-start items-center text-lg">
+                    <div className="flex flex-row py-2 lg:gap-10" key={index}>
+                      <div className="basis-1/3 flex justify-start lg:justify-end lg:w-[50%] items-center text-lg">
                         <label htmlFor="" className="pl-4 font-semibold">
                           {prof.label}
                         </label>
                       </div>
-                      <div className="basis-2/3 px-4 flex items-center">
+                      <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[50%]">
                         <select
-                          className="w-full rounded-md text-black items-center text-lg"
+                          className="w-full rounded-lg text-black items-center text-lg lg:w-[70%] border-2 border-black"
                           {...register(`${prof.name}`, { required: true })}
                           onChange={(e) => {
                             if (prof.name === "occupation") {
@@ -940,10 +962,10 @@ const InputVCard = () => {
                       </div>
                     </div>
                     {prof.name === "occupation" && occupation === "Other" && (
-                      <div className="">
+                      <div className="lg:flex lg:justify-end lg:mr-[5rem] lg:mb-2">
                         <input
                           type="text"
-                          className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                          className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
                           placeholder="Enter custom occupation"
                           value={occupationOther}
                           {...register(`${prof.customInput.name}`)}
@@ -952,10 +974,10 @@ const InputVCard = () => {
                       </div>
                     )}
                     {prof.name === "aspiration" && aspiration === "Other" && (
-                      <div className="">
+                      <div className="lg:flex lg:justify-end lg:mr-[5rem]">
                         <input
                           type="text"
-                          className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                          className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
                           placeholder="Enter custom aspiration"
                           value={aspirationOther}
                           {...register(`${prof.customInput.name}`)}
@@ -966,22 +988,26 @@ const InputVCard = () => {
                   </>
                 ))}
               </div>
+              </div>
             </div>
 
             <div className="w-full pt-6">
-              <h3 className="text-2xl font-semibold pl-6 underline">
+              <div className="lg:flex lg:justify-center lg:w-[70%] lg:mr-1">
+              <h3 className="text-2xl font-semibold pl-6 underline font-Philosopher">
                 Education :
               </h3>
-              <div className="pt-2">
-                <div className="flex flex-row py-2">
-                  <div className="basis-1/3 flex justify-start items-center text-lg">
+              </div>
+              <div className="lg:flex lg:justify-center">
+              <div className="pt-2 lg:w-[50%]">
+                <div className="flex flex-row py-2 lg:gap-10">
+                  <div className="basis-1/3 flex justify-start items-center lg:justify-end lg:w-[50%] text-lg">
                     <label htmlFor="" className="pl-6 font-semibold">
                       {background.label}
                     </label>
                   </div>
-                  <div className="basis-2/3 px-4 flex items-center">
+                  <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[60%]">
                     <select
-                      className="w-full rounded-md text-black items-center text-lg"
+                      className="w-full rounded-lg text-black items-center text-lg lg:w-[55%] border-2 border-black lg:ml-6"
                       {...register("background", { required: true })}
                       onChange={(e) => setBack(e.target.value)}
                     >
@@ -992,10 +1018,10 @@ const InputVCard = () => {
                   </div>
                 </div>
                 {back === "Other" && (
-                  <div className="">
+                  <div className="lg:flex lg:justify-end lg:mr-[5rem] lg:mb-2">
                     <input
                       type="text"
-                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                      className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
                       placeholder="Enter custom background"
                       {...register(`${background.customInput.name}`)}
                       onChange={(e) => setBackgroundOther(e.target.value)}
@@ -1003,36 +1029,40 @@ const InputVCard = () => {
                   </div>
                 )}
               </div>
+              </div>
             </div>
 
             <div className="w-full pt-6">
-              <h3 className="text-2xl font-semibold pl-6 underline">
+              <h3 className="text-2xl lg:flex lg:justify-center lg:w-[70%] lg:ml-[2rem] font-semibold pl-6 underline">
                 Skills & Expertise :
               </h3>
-              <div className="pt-2">
+              <div className="lg:flex lg:justify-center">
+              <div className="pt-2 lg:w-[50%]">
                 <div className="flex flex-row py-2">
-                  <div className="basis-1/3 flex justify-start items-center text-lg">
+                  <div className="basis-1/3 flex justify-start items-center text-lg lg:gap-10 lg:justify-end lg:w-[50%]">
                     <label htmlFor="" className="pl-6 font-semibold">
                       {expertise.label}
                     </label>
                   </div>
-                  <div className="basis-2/3 px-4 flex items-center">
+                  <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[60%]">
                     <select
-                      className="w-full rounded-md text-black items-center text-lg"
+                      className="w-full rounded-lg text-black items-center text-lg lg:w-[55%] border-black border-2 lg:ml-[3.5rem]"
                       {...register("expertise", { required: true })}
                       onChange={(e) => setExpert(e.target.value)}
                     >
                       {expertise.options.map((option, index) => (
-                        <option key={index} value={option}>{option}</option>
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
                       ))}
                     </select>
                   </div>
                 </div>
                 {expert === "Other" && (
-                  <div className="">
+                  <div className="lg:flex lg:justify-end lg:mr-[5rem] lg:mb-2">
                     <input
                       type="text"
-                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
+                      className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
                       placeholder="Enter custom expertise"
                       value={expertiseOther}
                       {...register(`${expertise.customInput.name}`)}
@@ -1041,27 +1071,28 @@ const InputVCard = () => {
                   </div>
                 )}
               </div>
+              </div>
             </div>
           </div>
         )}
 
         {progress === 100 && (
           <div className="flex flex-col justify-center items-center my-8">
-            <div className="w-full">
-              <h1 className="text-3xl font-bold pl-6">Others</h1>
+            <div className="w-full lg:flex lg:justify-center">
+              <h1 className="text-3xl font-bold pl-6 font-Philosopher">Others</h1>
             </div>
             <div className="py-8">
               {additionalInfo.map((info, index) => (
                 <div className="flex flex-row" key={index}>
                   <div className="basis-1/3 flex justify-start items-center text-lg">
-                    <label htmlFor="" className="pl-3">
+                    <label htmlFor="" className="">
                       {info.label}
                     </label>
                   </div>
                   <div className="basis-2/3 px-4">
                     <input
                       type="text"
-                      className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                      className="block py-2.5 px-0 w-full text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                       placeholder={info.text}
                       {...register(`${info.name}`, { required: true })}
                     />
@@ -1075,8 +1106,8 @@ const InputVCard = () => {
         {/* <button className="w-[350px]" type="submit" disabled={personalLoading}>
           {personalLoading ? "Saving..." : "Save"}
         </button> */}
-        <div className="w-full flex flex-row">
-          <div className="basis-1/2 flex justify-center">
+        <div className="w-full flex flex-row lg:gap-[4rem]">
+          <div className="basis-1/2 flex justify-center lg:w-[50%] lg:justify-end">
             {progress === 25 ? (
               <button
                 className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-300"
@@ -1095,7 +1126,7 @@ const InputVCard = () => {
               </button>
             )}
           </div>
-          <div className="basis-1/2 flex justify-center">
+          <div className="basis-1/2 flex justify-center lg:w-[50%] lg:justify-start">
             {progress === 100 ? (
               <button
                 className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"

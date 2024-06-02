@@ -69,7 +69,7 @@ export const contactInfo = [
   
   export const lifestyle = [
     {
-      name: "dob",
+      name: "birth",
       label: "Date of Birth",
       text: "Enter your Date of Birth",
     },

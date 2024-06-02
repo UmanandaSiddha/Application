@@ -100,14 +100,16 @@ const CreateAnimal = () => {
     return (
         <>
         <div className="w-full">
-        <h1 className="pl-6 font-Kanit text-4xl font-bold">Animal</h1>
+        <div className="lg:flex lg:justify-center">
+        <h1 className="pl-6 font-Philosopher text-4xl font-bold lg:mt-[2rem] lg:mb-[2rem] underline">Animal Card</h1>
+        </div>
       </div>
       <div className="flex flex-col justify-center items-center min-h-screen -mt-20 mb-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {animalInputs.map((input) => (
             <div
               key={input.name}
-              className="flex w-full justify-center items-center gap-2"
+              className="flex w-full justify-center items-center gap-5"
             >
               <div className="basis-1/3 flex font-semibold justify-start items-center">
                 <label htmlFor={input.name} className="font-Kanit text-base">
@@ -116,7 +118,7 @@ const CreateAnimal = () => {
               </div>
               <div className="basis-2/3">
                 <input
-                  className="block py-2.5 px-0 w-full text-sm font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                  className="block py-2.5 px-0 w-full text-sm font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                   type="text"
                   id={input.name}
                   placeholder={input.text}
@@ -130,11 +132,11 @@ const CreateAnimal = () => {
           ))}
           <div className="pt-8">
             <button
-              className="w-[350px] bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:cursor-pointer"
+              className="w-[350px] bg-blue-500 hover:bg-blue-600 font-Philosopher text-white font-bold py-2 px-4 rounded-lg hover:cursor-pointer"
               type="submit"
               disabled={animalLoading}
             >
-              {animalLoading ? "Saving..." : "SAVE"}
+              {animalLoading ? "Saving..." : "Save"}
             </button>
           </div>
         </form>

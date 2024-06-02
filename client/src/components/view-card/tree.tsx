@@ -15,7 +15,7 @@ const TreeComponent = ({ card }: PropsType) => {
           <h1 className="font-Alice pl-6">{card?.name}</h1>
         </div>
       </div>
-      <div className="relative flex justify-center bg-yellow-100 font-Kanit -mt-[4rem]">
+      <div className="relative flex justify-center lg:mb-2 lg:rounded-b-xl bg-yellow-100 font-Kanit -mt-[4rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
             <div className="flex justify-start">
@@ -24,7 +24,7 @@ const TreeComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.name}
                 readOnly
               />
@@ -37,7 +37,7 @@ const TreeComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.scientificName}
                 readOnly
               />
@@ -50,7 +50,7 @@ const TreeComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.treeType}
                 readOnly
               />
@@ -63,7 +63,7 @@ const TreeComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.location}
                 readOnly
               />
@@ -76,7 +76,7 @@ const TreeComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.description}
                 readOnly
               />
@@ -89,7 +89,7 @@ const TreeComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.features}
                 readOnly
               />
@@ -102,7 +102,7 @@ const TreeComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.maintenance}
                 readOnly
               />
@@ -115,20 +115,20 @@ const TreeComponent = ({ card }: PropsType) => {
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.benefits}
                 readOnly
               />
             </div>
           </div>
-          <div className="flex flex-col w-full py-2">
+          <div className="flex flex-col w-full pt-2 pb-2 lg:mb-[12rem]">
             <div className="flex justify-start">
               <label htmlFor="">Fun Facts:</label>
             </div>
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.funFact}
                 readOnly
               />

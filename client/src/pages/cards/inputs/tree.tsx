@@ -113,13 +113,14 @@ const CreateTree = () => {
 
     return (
         <>
-            <div className="my-2">
-                <h1 className="font-Kanit font-bold text-3xl pl-8">Tree</h1>
+        <div className="lg:bg-red-400">
+            <div className="my-2 lg:flex lg:justify-center lg:mt-4 lg:mb-[4rem]">
+                <h1 className="font-Philosopher underline font-bold text-3xl pl-8">Tree Card</h1>
             </div>
-            <div className="flex flex-col justify-center items-center min-h-screen mb-8 -mt-8">
+            <div className="flex flex-col justify-center items-center min-h-screen mb-8 -mt-8 lg:w-full">
                 <p>{card?.name!}</p>
                 <div className="flex flex-col justify-center max-h-screen pb-10">
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 lg:w-full">
                         {inputs.map((input, index) => (
                             <div className="flex flex-row gap-6" key={index}>
                                 <div className="basis-1/3 flex justify-start items-center">
@@ -130,11 +131,11 @@ const CreateTree = () => {
                                         {input.label}
                                     </label>
                                 </div>
-                                <div className="basis-2/3 w-[90%] mr-2">
+                                <div className="basis-2/3 w-[90%] lg:w-full mr-2">
                                     <input
                                         type="text"
                                         id="floating_email"
-                                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                        className="block py-2.5 px-0 w-full text-sm font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                                         placeholder={input.text}
                                         required
                                         {...register(input.name, { required: true })}
@@ -144,7 +145,7 @@ const CreateTree = () => {
                         ))}
                         <div className="flex justify-center">
                             <button
-                                className="px-4 py-2 rounded-md hover:cursor-pointer w-[90%] bg-red-400 font-Kanit text-lg"
+                                className="px-4 py-2 lg:mt-4 rounded-lg hover:cursor-pointer w-[90%] bg-red-400 font-Kanit text-lg"
                                 type="submit"
                                 disabled={treeLoading}
                             >
@@ -154,6 +155,7 @@ const CreateTree = () => {
                     </form>
                 </div>
             </div>
+        </div>
         </>
     )
 }
