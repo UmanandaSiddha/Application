@@ -25,116 +25,119 @@ const PersonalComponent = ({ card }: PropsType) => {
   const [professionals, setProfessionals] = useState<boolean>(false);
   const [others, setOthers] = useState<boolean>(false);
 
-  // const birthDate = card?.lifesty.birth ? new Date(card.lifesty.birth) : null;
-  // const formattedDate = birthDate ? birthDate.toLocaleDateString(): "";
+  const birthDate = card?.lifeStyle?.birth ? new Date(card?.lifeStyle.birth) : null;
+  const formattedDate = birthDate ? birthDate.toLocaleDateString() : null;
 
   const professionalDetails = [
     {
       label: "Current Occupation",
-      value: card?.profession?.occupation,
+      value: card?.professional?.occupation,
     },{
       label: "Career Goals",
-      value: card?.profession?.aspiration,
+      value: card?.professional?.aspiration,
     }
   ];
 
   const favourites = [
     {
       label: "Fav Music",
-      value: card?.favourites?.favmusic,
+      value: card?.favourites?.music,
     },{
       label: "Fav Colour",
-      value: card?.favourites?.favcolor
+      value: card?.favourites?.color
     },{
       label: "Fav City",
-      value: card?.favourites?.favcity,
+      value: card?.favourites?.city,
     },{
       label: "Fav-Destination",
-      value: card?.favourites?.dreamtravel,
+      value: card?.favourites?.travelDestination,
     },{
       label: "Fav Season",
-      value: card?.favourites?.favseason,
+      value: card?.favourites?.season,
     },{
       label: "Unique Skills",
-      value: card?.favourites?.uniqueskills,
+      value: card?.favourites?.uniqueSkills,
     },{
       label: "Fav-Cuisine",
-      value: card?.favourites?.favcuisine,
+      value: card?.favourites?.cuisine,
     }
   ];
 
   const lifestyless = [
     {
       label: "Date of Birth",
-      value: card?.lifesty.dob,
+      value: formattedDate,
     },{
       label: "Home Town",
-      value: card?.lifesty?.hometown,
+      value: card?.lifeStyle?.homeTown,
     },{
       label: "Current City",
-      value: card?.lifesty?.currentCity,
+      value: card?.lifeStyle?.currentCity,
     },{
       label: "Languages",
-      value: card?.lifesty?.languages,
+      value: card?.lifeStyle?.languages,
     },
   ];
 
   const miscellaneouss = [
     {
       label: "Pet Lover?",
-      value: card?.misce?.petlover,
+      value: card?.miscellaneous?.petLover,
     },{
       label: "Party Enthusiast?",
-      value: card?.misce?.party,
+      value: card?.miscellaneous?.partyEnthusiast,
     },{
       label: "Smoker?",
-      value: card?.misce?.smoker,
+      value: card?.miscellaneous?.smoker,
     },{
       label: "Marital Status?",
-      value: card?.misce?.marital,
+      value: card?.miscellaneous?.marital,
     },{
       label: "Relationship?",
-      value: card?.misce?.relation,
+      value: card?.miscellaneous?.relationshipStatus,
     },{
       label: "Morning/Night Person?",
-      value: card?.misce?.morning,
+      value: card?.miscellaneous?.morningPerson,
     },{
       label: "Sleeping Habits?",
-      value: card?.misce?.sleeping,
+      value: card?.miscellaneous?.sleepingHabit,
     },{
       label: "Dietary Preferences",
-      value: card?.misce?.diet,
+      value: card?.miscellaneous?.diet,
+    },{
+      label: "Fitness Routine",
+      value: card?.miscellaneous?.fitnessRoutine,
     },{
       label: "Do you like reading?",
-      value: card?.misce?.reading
+      value: card?.miscellaneous?.reading
     }
   ];
 
   const interestss = [
     {
       label: "Preferred Mode of Travel",
-      value: card?.interest?.prefMode
+      value: card?.interests?.prefMode
     },{
       label: "Fav Movies/TV Shows",
-      value: card?.interest?.genre
+      value: card?.interests?.genre
     },{
       label: "Sports Activites",
-      value: card?.interest?.outdoor,
+      value: card?.interests?.outdoor,
     },{
       label: "Artistic Hobbies",
-      value: card?.interest?.artistic,
+      value: card?.interests?.artistic,
     },{
       label: "Gaming Preferences",
-      value: card?.interest?.gamingpref,
+      value: card?.interests?.gamingPref,
     },{
       label: "Collecting Hobby/Interest",
-      value: card?.interest?.collecting,
+      value: card?.interests?.collecting,
     },{
       label: "Coffee or Tea?",
-      value: card?.interest?.coffee,
+      value: card?.interests?.coffee,
     },{
       label: "Cooking Skills",
-      value: card?.interest?.cooking,
+      value: card?.interests?.cooking,
     }
   ];
 
@@ -144,7 +147,7 @@ const PersonalComponent = ({ card }: PropsType) => {
       value: card?.additional?.anyother,
     },{
       label: "Future Goals",
-      value: card?.additional?.futuregoal,
+      value: card?.additional?.futureGoal,
     },{
       label: "Currently Learning",
       value: card?.additional?.learning,
@@ -216,7 +219,7 @@ const PersonalComponent = ({ card }: PropsType) => {
         </div>
       </div>
 
-      <div className="relative flex justify-center bg-blue-200 font-Kanit -mt-[4rem]">
+      <div className="relative flex justify-center lg:mb-2 lg:rounded-b-xl bg-blue-200 font-Kanit -mt-[4rem] lg:pb-[7rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
             <div className="flex flex-col justify-start">
@@ -225,7 +228,7 @@ const PersonalComponent = ({ card }: PropsType) => {
               </label>
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-xl font-bold mt-2"
+                className="border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-xl font-bold mt-2"
                 defaultValue={card?.name}
                 readOnly
               />

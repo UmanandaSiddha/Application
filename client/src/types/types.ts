@@ -5,6 +5,7 @@ export type User = {
     role: string;
     image: string;
     gooleId: string;
+    customerId: string;
     isVerified: boolean;
     accountType: string;
     cards: {
@@ -80,14 +81,14 @@ export type Personal = {
     name: string;
     contactInfo: any;
     socialMedia: any;
-    lifesty: any;
+    lifeStyle: any;
     favourites: any;
     mottos: any;
-    misce: any;
-    interest: any;
+    miscellaneous: any;
+    interests: any;
     value: any;
     beliefs: any;       
-    profession: any;
+    professional: any;
     backg: any;
     expert: any;
     additional: any;

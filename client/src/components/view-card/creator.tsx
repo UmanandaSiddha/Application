@@ -16,16 +16,18 @@ const CreatorComponent = ({ card }: PropsType) => {
         </div>
       </div>
       
-      <div className="relative flex justify-center bg-violet-400 font-Kanit -mt-[4rem]">
+      <div className="relative flex justify-center bg-violet-400 lg:mb-2 lg:rounded-b-xl font-Kanit -mt-[4rem] lg:pb-[8rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
-            <div className="flex justify-start">
-              <label htmlFor="name">Name:</label>
+            <div className="lg:flex lg:justify-center">
+            <div className="lg:w-1/2">
+              <label htmlFor="name" className="flex justify-start lg:text-xl">Name:</label>
+            </div>
             </div>
             <div className="w-full flex justify-center pt-2">
               <input
                 type="text"
-                className="border-2 border-slate-200 w-full rounded-md pl-3 py-1 text-lg shadow-md"
+                className="border-2 border-slate-200 w-full lg:w-1/2 rounded-lg font-Philosopher pl-3 py-1 text-lg shadow-lg"
                 defaultValue={card?.name}
                 readOnly
               />
@@ -36,7 +38,7 @@ const CreatorComponent = ({ card }: PropsType) => {
               <p>Social Links:</p>
             </div>
             <div className="flex justify-center">
-              <div className="w-[90%] bg-white flex flex-col justify-center py-4 rounded-2xl shadow-lg">
+              <div className="w-[90%] lg:w-[50%] bg-white flex flex-col justify-center py-4 rounded-2xl shadow-lg">
                 {card?.links?.map((link: any, index: number) => (
                   <div
                     className="flex flex-col justify-center items-center py-2 font-Alice text-white"
@@ -44,7 +46,7 @@ const CreatorComponent = ({ card }: PropsType) => {
                   >
                     <a href={link.name}>
                       <div className="w-full">
-                        <button className="w-[16rem] py-2 bg-blue-500 rounded-md hover:cursor-pointer border-2 border-black shadow-xl">
+                        <button className="w-[16rem] py-2 bg-blue-500 rounded-lg hover:cursor-pointer border-2 border-black shadow-xl">
                           {link.label}
                         </button>
                       </div>
