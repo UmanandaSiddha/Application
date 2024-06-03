@@ -27,7 +27,7 @@ const Home = ({ user }: PropsType) => {
                             Data to enrich your online business
                         </h1>
                         <p className="mt-6 text-lg leading-8 text-gray-600">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
                             Officia excepturi dolores corporis mollitia perferendis accusamus magni eligendi modi a maxime.
                         </p>
                         <div className="mt-10 flex items-center justify-center gap-x-6">

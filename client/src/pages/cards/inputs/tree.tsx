@@ -2,112 +2,110 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { inputs } from "@/types/form-inputs";
 import { RootState } from "../../../redux/store";
 import { SingleTreeResponse } from "@/types/api-types";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { treeNotTemp } from "@/redux/reducer/treeReducer";
-import { Tree } from "@/types/types";
+
+const inputs = [
+    { name: "name", label: "Name", text: "Enter name", type: "text" },
+    { name: "scientificName", label: "Scientific Name", text: "Enter scientific name", type: "text" },
+    { name: "treeType", label: "Tree Type", text: "Enter tree type", type: "text" },
+    { name: "location", label: "Location", text: "Enter location", type: "text" },
+    { name: "description", label: "Description", text: "Enter description", type: "text" },
+    { name: "features", label: "Features", text: "Enter features", type: "text" },
+    { name: "maintenance", label: "Maintenance", text: "Enter maintenance", type: "text" },
+    { name: "benefits", label: "Benefits", text: "Enter benefits", type: "text" },
+    { name: "funFact", label: "Fun Fact", text: "Enter fun fact", type: "text" },
+    // { name: "phoneNumber", label: "Phone Number", text: "Enter phone number", type: "tel" },
+    // { name: "age", label: "Age", text: "Enter age", type: "number" },
+];
+
+const generateDefaultValues = (fields: { name: string }[]) => {
+    return fields.reduce((acc, field) => {
+        acc[field.name] = "";
+        return acc;
+    }, {} as Record<string, string>);
+};
 
 const CreateTree = () => {
 
     const navigate = useNavigate();
     const [search] = useSearchParams();
     const id = search.get("treeId");
-    const dispatch = useDispatch();
-
-    const [card, setCard] = useState<Tree | null>();
     const [isTree, setIsTree] = useState<boolean>(id ? true : false);
     const [treeLoading, setTreeLoading] = useState<boolean>(false);
-
+    
     const { user, isPaid } = useSelector(
         (state: RootState) => state.userReducer
     );
 
+    const form = useForm({
+        defaultValues: generateDefaultValues(inputs),
+    });
+
+    const { handleSubmit, register, reset } = form;
+    
     useEffect(() => {
         const fetchTree = async () => {
             if (id) {
                 try {
-                    const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id!}?type=tree`, { withCredentials: true });
+                    const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=tree`, { withCredentials: true });
                     setIsTree(true);
-                    setCard(data.vCard);
+                    reset(data.vCard);
                 } catch (error: any) {
                     toast.error(error.response.data.message);
-                    dispatch(treeNotTemp());
                 }
             }
         }
+
         const cardData = localStorage.getItem("current_card");
         if (cardData && id) {
-            const { name, scientificName, treeType, location, description, features, maintenance, benefits, funFact } = JSON.parse(cardData);
-            form.setValue("name", name);
-            form.setValue("scientificName", scientificName);
-            form.setValue("treeType", treeType);
-            form.setValue("location", location);
-            form.setValue("description", description);
-            form.setValue("features", features);
-            form.setValue("maintenance", maintenance);
-            form.setValue("benefits", benefits);
-            form.setValue("funFact", funFact);
-            if (card?._id !== id) {
+            const cardDataParsed = JSON.parse(cardData);
+            if (cardDataParsed?._id !== id) {
                 fetchTree();
+            } else {
+                setIsTree(true);
+                reset(cardDataParsed);
             }
         } else {
             fetchTree();
         }
-    }, [card]);
-
-    const form = useForm({
-        defaultValues: {
-            name: "",
-            scientificName: "",
-            treeType: "",
-            location: "",
-            description: "",
-            features: "",
-            maintenance: "",
-            benefits: "",
-            funFact: "",
-        },
-    });
-
-    const { handleSubmit, register } = form;
+    }, [id]);
 
     const onSubmit = async (values: any) => {
         setTreeLoading(true);
+
+        const convertedValues = inputs.reduce((acc, input) => {
+            if (input.type === "number") {
+                acc[input.name] = Number(values[input.name]);
+            } else {
+                acc[input.name] = values[input.name];
+            }
+            return acc;
+        }, {} as Record<string, any>);
+
         const treeData = {
-            name: values.name,
-            scientificName: values.scientificName,
-            treeType: values.treeType,
-            location: values.location,
-            description: values.description,
-            features: values.features,
-            maintenance: values.maintenance,
-            benefits: values.benefits,
-            funFact: values.funFact,
-            user: user?._id
-        }
-        try {
-            if (isTree) {
-                await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=tree`, treeData, { withCredentials: true });
-                toast.success("Tree VCard Updated");
-            } else {
-                await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=tree`, treeData, { withCredentials: true });
-                toast.success("Tree VCard Created");
-            }
-            if (isPaid || user?.role === "admin") {
+            ...convertedValues,
+            user: user?._id,
+        };
+
+        if (!isPaid && user?.role !== "admin") {
+            navigate("/plans");
+        } else {
+            try {
+                if (isTree) {
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=tree`, treeData, { withCredentials: true });
+                    toast.success("Tree VCard Updated");
+                } else {
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=tree`, treeData, { withCredentials: true });
+                    toast.success("Tree VCard Created");
+                }
                 navigate(-1);
-            } else {
-                navigate("/plans");
-            }
-        } catch (error: any) {
-            toast.error(error.response.data.message);
-            if (!isPaid && user?.role !== "admin") {
-                navigate("/plans");
+            } catch (error: any) {
+                toast.error(error.response.data.message);
             }
         }
-        console.log(treeData);
         setTreeLoading(false);
     }
 
@@ -118,14 +116,13 @@ const CreateTree = () => {
                 <h1 className="font-Philosopher underline font-bold text-3xl pl-8">Tree Card</h1>
             </div>
             <div className="flex flex-col justify-center items-center min-h-screen mb-8 -mt-8 lg:w-full">
-                <p>{card?.name!}</p>
                 <div className="flex flex-col justify-center max-h-screen pb-10">
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 lg:w-full">
                         {inputs.map((input, index) => (
                             <div className="flex flex-row gap-6" key={index}>
                                 <div className="basis-1/3 flex justify-start items-center">
                                     <label
-                                        htmlFor=""
+                                        htmlFor={input.name}
                                         className="flex justify-start items-center font-Kanit pl-3"
                                     >
                                         {input.label}
@@ -133,11 +130,11 @@ const CreateTree = () => {
                                 </div>
                                 <div className="basis-2/3 w-[90%] lg:w-full mr-2">
                                     <input
-                                        type="text"
-                                        id="floating_email"
+                                        type={input.type}
+                                        id={input.name}
                                         className="block py-2.5 px-0 w-full text-sm font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                                         placeholder={input.text}
-                                        required
+                                        // required
                                         {...register(input.name, { required: true })}
                                     />
                                 </div>
