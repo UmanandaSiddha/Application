@@ -417,6 +417,9 @@ const InputVCard = () => {
       setSocial(false);
     } else {
       setSocial(true);
+      setLifestyles(false);
+      setFav(false);
+      setMisc(false);
     }
   }
 
@@ -425,6 +428,9 @@ const InputVCard = () => {
       setLifestyles(false);
     } else {
       setLifestyles(true);
+      setFav(false);
+      setMisc(false);
+      setSocial(false);
     }
   }
 
@@ -433,6 +439,9 @@ const InputVCard = () => {
       setFav(false);
     } else {
       setFav(true);
+      setMisc(false);
+      setSocial(false);
+      setLifestyles(false);
     }
   }
 
@@ -441,6 +450,9 @@ const InputVCard = () => {
       setMisc(false);
     } else {
       setMisc(true);
+      setSocial(false);
+      setLifestyles(false);
+      setFav(false);
     }
   }
 
@@ -544,7 +556,7 @@ const InputVCard = () => {
                 />
               </div>
             </div>
-            <div className="w-full lg:w-[50%] font-semibold text-2xl py-4">
+            <div className="w-full lg:w-[50%] font-semibold text-2xl py-4 mt-2">
               {/* socials */}
               <div className="pl-6">
                 <button
@@ -569,7 +581,7 @@ const InputVCard = () => {
                 {social ? (
                   <div
                     id="dropdown"
-                    className="absolute bg-black text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[50%] dark:bg-gray-700"
+                    className="absolute bg-slate-900 text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[40%] dark:bg-gray-700 my-2 py-4"
                   >
                     <ul
                       className="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -608,7 +620,7 @@ const InputVCard = () => {
               {/* lifestyle */}
               <div className="pl-6">
                 <button
-                  className="w-full px-4 border-none flex flex-row"
+                  className="w-full px-4 border-none flex flex-row mt-2"
                   onClick={toggleLifestyle}
                   type="button"
                 >
@@ -624,7 +636,7 @@ const InputVCard = () => {
                 {lifestyles ? (
                   <div
                     id="dropdown"
-                    className="absolute bg-black text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[50%] dark:bg-gray-700"
+                    className="absolute bg-slate-900 text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[40%] dark:bg-gray-700 my-2 py-4"
                   >
                     <ul
                       className="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -668,7 +680,7 @@ const InputVCard = () => {
               </div>
 
               {/* Favourites section */}
-              <div className="pl-6">
+              <div className="pl-6 mt-2 ">
                 <button
                   className="w-full px-4 border-none flex flex-row"
                   onClick={toggleFavs}
@@ -686,7 +698,7 @@ const InputVCard = () => {
                 {fav ? (
                   <div
                     id="dropdown"
-                    className="absolute bg-black text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[50%] dark:bg-gray-700"
+                    className="absolute bg-slate-900 text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[40%] dark:bg-gray-700 my-2 py-4"
                   >
                     <ul
                       className="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -720,7 +732,7 @@ const InputVCard = () => {
               </div>
 
               {/* misc section */}
-              <div className="pl-6">
+              <div className="pl-6 mt-2 ">
                 <button
                   className="w-full px-4 border-none flex flex-row"
                   onClick={toggleMisc}
@@ -738,7 +750,7 @@ const InputVCard = () => {
                 {misc ? (
                   <div
                     id="dropdown"
-                    className="absolute bg-black text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[50%] dark:bg-gray-700"
+                    className="absolute bg-slate-900 text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[40%] dark:bg-gray-700 my-2 py-4"
                   >
                     <ul
                       className="py-2 text-sm text-gray-700 dark:text-gray-200"

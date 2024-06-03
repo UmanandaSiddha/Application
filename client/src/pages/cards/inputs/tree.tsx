@@ -113,7 +113,7 @@ const CreateTree = () => {
 
     return (
         <>
-        <div className="lg:bg-red-400">
+        <div className="">
             <div className="my-2 lg:flex lg:justify-center lg:mt-4 lg:mb-[4rem]">
                 <h1 className="font-Philosopher underline font-bold text-3xl pl-8">Tree Card</h1>
             </div>
