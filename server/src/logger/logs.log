@@ -7,4 +7,6 @@
 2024-05-21T10:56:21.098Z [right meow!] error: 13 has failed with connect ETIMEDOUT 173.194.174.109:465
 2024-05-21T10:56:43.205Z [right meow!] error: 13 has failed with connect ETIMEDOUT 173.194.174.109:465
 2024-05-29T20:00:02.052Z [right meow!] info: Job 15 has completed!
-2024-06-02T15:04:57.779Z [right meow!] info: Job 16 has completed!
+2024-06-02T14:59:20.294Z [right meow!] error: 2 has failed with connect ECONNREFUSED ::1:465
+2024-06-02T14:59:21.358Z [right meow!] error: 2 has failed with connect ECONNREFUSED ::1:465
+2024-06-02T18:44:54.820Z [right meow!] error: Error processing or writing the image:

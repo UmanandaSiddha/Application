@@ -17,8 +17,6 @@ const inputs = [
     { name: "maintenance", label: "Maintenance", text: "Enter maintenance", type: "text" },
     { name: "benefits", label: "Benefits", text: "Enter benefits", type: "text" },
     { name: "funFact", label: "Fun Fact", text: "Enter fun fact", type: "text" },
-    // { name: "phoneNumber", label: "Phone Number", text: "Enter phone number", type: "tel" },
-    // { name: "age", label: "Age", text: "Enter age", type: "number" },
 ];
 
 const generateDefaultValues = (fields: { name: string }[]) => {
@@ -111,7 +109,7 @@ const CreateTree = () => {
 
     return (
         <>
-        <div className="lg:bg-red-400">
+        <div className="">
             <div className="my-2 lg:flex lg:justify-center lg:mt-4 lg:mb-[4rem]">
                 <h1 className="font-Philosopher underline font-bold text-3xl pl-8">Tree Card</h1>
             </div>

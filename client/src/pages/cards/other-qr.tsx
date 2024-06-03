@@ -251,44 +251,47 @@ const OtherQR = () => {
 
   return (
     <>
-    {(!isPaid && user?.role !== "admin") ? (
-      <>
-      <div className="w-full">
-        <div className="flex justify-center pt-[2rem]">
-          <p className="font-Philosopher text-lg text-red-400">
-            You are not subscribed!
-          </p>
-        </div>
-      </div>
-      </>
-    ) : (
-      <>
-      <div className="lg:w-full">
-        <div className="lg:flex lg:justify-center lg:pt-[2rem]">
-          <p className="font-Philosopher text-lg">
-            Here are all your {type} cards!
-          </p>
-        </div>
-        <div className="lg:flex lg:justify-center">
-          <div className="lg:grid-cols-1 lg:w-[80%] lg:gap-y-[1rem] lg:h-full lg:my-[2rem] lg:gap-0 lg:pt-2 grid grid-cols-2 gap-2 -ml-2">
-            {cards?.map((card, index) => (
-              <div className="flex justify-center" key={index}>
-                <VCard
-                  key={card._id}
-                  type={type!}
-                  card={card}
-                  isPaid={isPaid}
-                  user={user!}
-                />
-              </div>
-            ))}
+      {(!isPaid && user?.role !== "admin") ? (
+        <>
+          <div className="w-full">
+            <div className="flex justify-center pt-[2rem]">
+              <p className="font-Philosopher text-lg text-red-400">
+                You are not subscribed!
+              </p>
+            </div>
           </div>
-        </div>
-      </div>
-      </>
-    )} 
+        </>
+      ) : (
+        <>
+          <div className="lg:w-full">
+            <div className="lg:flex lg:justify-center lg:pt-[2rem]">
+              <p className="font-Philosopher text-lg">
+                Here are all your {type} cards!
+              </p>
+            </div>
+            <div className="lg:flex lg:justify-center">
+              <div className="lg:grid-cols-1 lg:w-[90%] lg:gap-y-[1rem] lg:h-full lg:my-[2rem] lg:gap-0 lg:pt-2 grid grid-cols-2 gap-2 -ml-2 overflow-y-auto max-h-[80vh]">
+                {cards?.map((card, index) => (
+                  <div className="flex justify-center border py-6 m-2 rounded-lg shadow-lg bg-slate-200" key={index}>
+                    <VCard
+                      key={card._id}
+                      type={type!}
+                      card={card}
+                      isPaid={isPaid}
+                      user={user!}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };
+
+
+
 
 export default OtherQR;

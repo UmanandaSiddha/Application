@@ -280,7 +280,7 @@ const PersonalComponent = ({ card }: PropsType) => {
                   {lifestyles ? (
                       <div
                         id="dropdown"
-                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow-lg w-[98%] dark:bg-gray-700 py-2 mt-2 flex justify-center"
+                        className="relative bg-slate-400 divide-gray-100 rounded-lg shadow-lg w-[98%] dark:bg-gray-700 py-2 mt-2 flex justify-center"
                       >
                         <ul
                           className=" text-sm text-gray-700 dark:text-gray-200"
@@ -340,10 +340,10 @@ const PersonalComponent = ({ card }: PropsType) => {
                   {fav ? (
                     <div
                       id="dropdown"
-                      className="relative bg-red-400 divide-gray-100 rounded-lg shadow-lg w-[98%] dark:bg-gray-700 mt-2"
+                      className="relative bg-slate-400 divide-gray-100 rounded-lg shadow-lg w-[98%] dark:bg-gray-700 mt-2"
                     >
                       <ul
-                        className="text-sm text-gray-700 dark:text-gray-200"
+                        className="text-sm text-gray-200 dark:text-gray-200"
                         aria-labelledby="dropdownDefaultButton"
                       >
                           <div className="flex flex-col space-y-2">
@@ -398,10 +398,10 @@ const PersonalComponent = ({ card }: PropsType) => {
                   {misc ? (
                       <div
                         id="dropdown"
-                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
+                        className="relative bg-slate-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
                       >
                         <ul
-                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          className=" text-sm text-gray-200 dark:text-gray-200"
                           aria-labelledby="dropdownDefaultButton"
                         >
                           {misc && (
@@ -456,10 +456,10 @@ const PersonalComponent = ({ card }: PropsType) => {
                   {interest ? (
                       <div
                         id="dropdown"
-                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
+                        className="relative bg-slate-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
                       >
                         <ul
-                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          className=" text-sm text-gray-200 dark:text-gray-200"
                           aria-labelledby="dropdownDefaultButton"
                         >
                           {interest && (
@@ -517,10 +517,10 @@ const PersonalComponent = ({ card }: PropsType) => {
                   {professionals ? (
                       <div
                         id="dropdown"
-                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
+                        className="relative bg-slate-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
                       >
                         <ul
-                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          className=" text-sm text-gray-200 dark:text-gray-200"
                           aria-labelledby="dropdownDefaultButton"
                         >
                           {professionals && (
@@ -605,10 +605,10 @@ const PersonalComponent = ({ card }: PropsType) => {
                   {others ? (
                       <div
                         id="dropdown"
-                        className="relative bg-red-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
+                        className="relative bg-slate-400 divide-gray-100 rounded-lg shadow w-[98%] dark:bg-gray-700 mt-2"
                       >
                         <ul
-                          className=" text-sm text-gray-700 dark:text-gray-200"
+                          className=" text-sm text-gray-200 dark:text-gray-200"
                           aria-labelledby="dropdownDefaultButton"
                         >
                           {others && (
