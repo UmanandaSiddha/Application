@@ -178,7 +178,7 @@ const Profile = () => {
   const handleDeleteAccount = useCallback(async () => {
     setDeleteLoading(true);
     try {
-      await axios.put(`${import.meta.env.VITE_BASE_URL}/user/delete/account`, { withCredentials: true });
+      await axios.delete(`${import.meta.env.VITE_BASE_URL}/user/delete/account`, { withCredentials: true });
       dispatch(userNotExist());
       toast.success("Account Deleted Successfully");
     } catch (error: any) {
@@ -208,7 +208,7 @@ const Profile = () => {
           );
           dispatch(userExist(data.user));
         } else {
-          const { data }: { data: UserResponse } = await axios.delete(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, resetDate, { withCredentials: true });
+          const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, resetDate, { withCredentials: true });
           // const data = await updatePassword(resetDate);
           dispatch(userExist(data.user));
         }
