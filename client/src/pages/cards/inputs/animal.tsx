@@ -75,7 +75,7 @@ const CreateAnimal = () => {
         } else {
             fetchAnimal();
         }
-    }, [id]);
+    }, [id, reset]);
 
     const onSubmit = async (values: any) => {
         setAnimalLoading(true);

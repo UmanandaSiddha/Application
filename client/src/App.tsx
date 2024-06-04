@@ -123,11 +123,11 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            <Route path="/verify" element={
+            {/* <Route path="/verify" element={
               <ProtectedRoute isAuthenticated={user ? false : true}>
                 <VerificationEmail />
               </ProtectedRoute>
-            } />
+            } /> */}
             <Route
               path="/organization/register"
               element={

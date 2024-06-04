@@ -2,43 +2,31 @@ import mongoose from "mongoose";
 
 const medicalSchema = new mongoose.Schema(
     {
-        personalInfo: {
-            name: String,
-            birth: Date,
-            gender: String,
-            address: {
-                street: String,
-                city: String,
-                state: String,
-                postalCode: Number,
-            },
-            phone: Number,
-            email: String,
-            emergency: {
-                name: String,
-                relation: String,
-                phone: Number,
-            }
-        },
-        healthHistory: {
-            allergy: String,
-            chronic: String,
-        },
+        name: String,
+        dateOfBirth: Date,
+        gender: String,
+        street: String,
+        city: String,
+        state: String,
+        postalCode: Number,
+        phone: String,
+        email: String,
+        emergencyName: String,
+        emergencyRelation: String,
+        emergencyPhone: String,
+        allergyHistory: String,
+        chronicHistory: String,
         currentMedication: String,
         previousSurgeries: String,
-        healthHabits: {
-            smoker: String,
-            alcohol: String,
-            exercise: String,
-            diet: String,
-            mentalCondition: String,
-            vaccinationHistory: String,
-        },
-        insuranceInfo: {
-            provider: String,
-            policyNumber: Number,
-            grpNumber: Number
-        },
+        smoker: String,
+        alcohol: String,
+        exercise: String,
+        diet: String,
+        mentalCondition: String,
+        vaccinationHistory: String,
+        insuranceProvider: String,
+        insurancePolicyNumber: Number,
+        insuranceGrpNumber: Number,
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",

@@ -1,17 +1,7 @@
 import { useForm } from "react-hook-form";
-import { MdNavigateNext, MdOutlineNavigateNext } from "react-icons/md";
+import { MdNavigateNext } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-
-// import {
-//   phNum,
-//   emailAdd,
-//   homeTown,
-//   motto,
-//   seleInp,
-//   seloInp,
-//   textAr,
-// } from "@/redux/inputs/personal-inputs";
 
 import {
   contactInfo,
@@ -37,130 +27,172 @@ const arr: any = [
   },
 ];
 
-// const inputFields = [
-//   ...contactInfo.map((input) => ({
-//     ...input,
-//     type: "text",
-//     section: "Phone Number",
-//   })),
-//   ...arr.map((input: any) => ({ ...input, type: "textarea", section: "" })),
-//   ...emails.map((input) => ({
-//     ...input,
-//     type: "text",
-//     section: "Email Address",
-//   })),
-//   ...lifestyle.map((input) => ({
-//     ...input,
-//     type: "text",
-//     section: "Home Town",
-//   })),
-//   ...Favourites.map((input) => ({
-//     ...input,
-//     type: "text",
-//     section: "Favourites",
-//   })),
-//   ...motto.map((input) => ({
-//     ...input,
-//     type: "text",
-//     section: "Favorite Quotes/Mottos",
-//   })),
-//   ...miscellaneous.map((input) => ({
-//     ...input,
-//     type: "select",
-//     section: "Miscellaneous",
-//   })),
-//   ...professional.map((input) => ({
-//     ...input,
-//     type: "select",
-//     section: "Selection Inputs",
-//   })),
-//   ...interests.map((input) => ({
-//     ...input,
-//     type: "select",
-//     section: "Selection Inputs",
-//   })),
-//   ...additionalInfo.map((input) => ({ ...input, type: "text", section: "Text Areas" })),
-// ];
-
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { creatorInput } from "@/types/form-inputs";
 import { personalNotTemp, personalTemp } from "@/redux/reducer/personalReducer";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { SinglePersonalResponse } from "@/types/api-types";
+
+const inputs = [
+  { name: "", label: "Instagram", text : "Enter Your Instagram Profile" },
+  { name: "", label: "Youtube", text : "Enter Your Youtube Profile" },
+  { name: "", label: "Spotify", text : "Enter Your Spotify Profile" },
+  { name: "", label: "Discord", text : "Enter Your Discord Profile" },
+  { name: "", label: "X", text : "Enter Your X Profile" },
+]
+
+// name: string,
+//     mobileNumer: string,
+//     homeNumber: string,
+//     workNumber: string,
+//     otherNumber: string,
+//     personalEmail: string,
+//     workEmail: string,
+//     otherEmail: string,
+//     aboutMe: string,
+//     dateOfBirth: Date,
+//     homeTown: string,
+//     currentCity: string,
+//     languages: string,
+//     music: string,
+//     color: string,
+//     city: string,
+//     travelDestination: string,
+//     season: string,
+//     uniqueSkills: string,
+//     cuisine: string,
+//     beverage: string,
+//     inspirationalQuotes: string,
+//     funnyQuotes: string,
+//     motivationalQuotes: string,
+//     otherQuotes: string,
+//     travelMode: string,
+//     petLover: string,
+//     partyEnthusiast: string,
+//     smoker: string,
+//     maritalStatus: string,
+//     relationshipStatus: string,
+//     fitnessRoutine: string,
+//     morningPerson: string,
+//     diet: string,
+//     sleepingHabit: string,
+//     genre: string,
+//     sports: string,
+//     artistisPursuits: string,
+//     gaming: string,
+//     collectignHobby: string, 
+//     coffee: string,
+//     cookingSkills: string,
+//     spiritual: string,
+//     core: string,
+//     philosophy: string,
+//     socialCause: string,
+//     globalIssues: string,
+//     weirdBelief: string,
+//     currentOcupation: string,
+//     careerAspiation: string,
+//     education: string,
+//     skills: string,
+//     otherInterests: string,
+//     futureGoals: string,
+//     current: string,
+//     unusualExperinece: string,
+//     strangeHabits: string,
+//     socialMedia: any,
+//     user: string;
+
+const generateDefaultValues = (arrays: { name: string }[][]) => {
+  return arrays.reduce((acc, array) => {
+      array.forEach(field => {
+          acc[field.name] = "";
+      });
+      return acc;
+  }, {} as Record<string, string>);
+};
+
+const convertToStrings = (data: any) => {
+  return Object.keys(data).reduce((acc, key) => {
+      acc[key] = data[key] !== undefined && data[key] !== null ? String(data[key]) : "";
+      return acc;
+  }, {} as Record<string, string>);
+};
 
 const InputVCard = () => {
   const navigate = useNavigate();
   const [search] = useSearchParams();
   const id = search.get("personalId");
   const [progress, setProgress] = useState<number>(25);
-
-  let currentSection: any = null;
-
   const [isPersonal, setIsPersonal] = useState<boolean>(id ? true : false);
   const [personalLoading, setPersonalLoading] = useState<boolean>(false);
-
-  const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
-
-  const { personal } = useSelector((state: RootState) => state.personalReducer);
-
-  const dispatch = useDispatch();
-
-  const [socialData, setSocialData] = useState<any | null>(
-    personal ? personal?.socialMedia : creatorInput
-  );
-  const [open, setOpen] = useState(false);
-  const [otherName, setOtherName] = useState("");
   const [otherLink, setOtherLink] = useState("");
+    const [otherName, setOtherName] = useState("");
+    const [open, setOpen] = useState<boolean>(false);
+    const [socialData, setSocialData] = useState<any | null>(inputs);
 
-  const [social, setSocial] = useState<boolean>(false);
-  const [lifestyles, setLifestyles] = useState<boolean>(false);
-  const [fav, setFav] = useState<boolean>(false);
-  const [misc, setMisc] = useState<boolean>(false);
+  const { user, isPaid } = useSelector(
+    (state: RootState) => state.userReducer
+);
 
-  const [collecting, setCollecting] = useState("");
-  const [prefMode, setPrefMode] = useState("");
-  const [genre, setGenre] = useState("");
-  const [outdoor, setOutdoor] = useState("");
-  const [artistic, setArtistic] = useState("");
-  const [gamingpref, setGamingPref] = useState("");
-  const [occupation, setOccupation] = useState("");
-  const [aspiration, setAspiration] = useState("");
-  const [back, setBack] = useState("");
-  const [expert, setExpert] = useState("");
+const form = useForm({
+  defaultValues: generateDefaultValues([perInfo, emCon, medAdd, healthHistory, healthhabits, inSur, medicalCondition]),
+});
 
-  const [collectingOther, setCollectingOther] = useState("");
-  const [prefModeOther, setPrefModeOther] = useState("");
-  const [genreOther, setGenreOther] = useState("");
-  const [outdoorOther, setOutdoorOther] = useState("");
-  const [artisticOther, setArtisticOther] = useState("");
-  const [gamingprefOther, setGamingPrefOther] = useState("");
-  const [occupationOther, setOccupationOther] = useState("");
-  const [aspirationOther, setAspirationOther] = useState("");
-  const [backgroundOther, setBackgroundOther] = useState("");
-  const [expertiseOther, setExpertiseOther] = useState("");
+const { handleSubmit, register, reset, formState: { errors } } = form;
 
-  const gotPersonal = async () => {
-    if (id) {
-      try {
-        const { data }: { data: SinglePersonalResponse } = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/personal/detailed/${id!}`,
-          { withCredentials: true }
-        );
-        dispatch(personalTemp(data.vCard));
-        setIsPersonal(true);
-      } catch (error: any) {
-        toast.error(error.response.data.message);
-        dispatch(personalNotTemp());
+useEffect(() => {
+  const fetchPersonal = async () => {
+      if (id) {
+          try {
+              const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=personal`, { withCredentials: true });
+              setIsPersonal(true);
+              reset(convertToStrings(data.vCard));
+          } catch (error: any) {
+              toast.error(error.response.data.message);
+          }
       }
-    }
-  };
+  }
 
-  useEffect(() => {
-    gotPersonal();
-  }, []);
+  const cardData = localStorage.getItem("current_card");
+  if (cardData && id) {
+      const cardDataParsed = JSON.parse(cardData);
+      if (cardDataParsed?._id !== id) {
+          fetchPersonal();
+      } else {
+          setIsPersonal(true);
+          reset(convertToStrings(cardDataParsed));
+      }
+  } else {
+      fetchPersonal();
+  }
+}, [id, reset]);
+
+  // const [social, setSocial] = useState<boolean>(false);
+  // const [lifestyles, setLifestyles] = useState<boolean>(false);
+  // const [fav, setFav] = useState<boolean>(false);
+  // const [misc, setMisc] = useState<boolean>(false);
+
+  // const [collecting, setCollecting] = useState("");
+  // const [prefMode, setPrefMode] = useState("");
+  // const [genre, setGenre] = useState("");
+  // const [outdoor, setOutdoor] = useState("");
+  // const [artistic, setArtistic] = useState("");
+  // const [gamingpref, setGamingPref] = useState("");
+  // const [occupation, setOccupation] = useState("");
+  // const [aspiration, setAspiration] = useState("");
+  // const [back, setBack] = useState("");
+  // const [expert, setExpert] = useState("");
+
+  // const [collectingOther, setCollectingOther] = useState("");
+  // const [prefModeOther, setPrefModeOther] = useState("");
+  // const [genreOther, setGenreOther] = useState("");
+  // const [outdoorOther, setOutdoorOther] = useState("");
+  // const [artisticOther, setArtisticOther] = useState("");
+  // const [gamingprefOther, setGamingPrefOther] = useState("");
+  // const [occupationOther, setOccupationOther] = useState("");
+  // const [aspirationOther, setAspirationOther] = useState("");
+  // const [backgroundOther, setBackgroundOther] = useState("");
+  // const [expertiseOther, setExpertiseOther] = useState("");
 
   const handleAdd = () => {
     setSocialData([
@@ -187,80 +219,6 @@ const InputVCard = () => {
     ]);
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: personal?.name || "",
-      mobilephone: personal?.contactInfo.phoneNumber.mobile || 91,
-      homephone: personal?.contactInfo.phoneNumber.home || 91,
-      workphone: personal?.contactInfo.phoneNumber.work || 91,
-      otherphone: personal?.contactInfo.phoneNumber.other || 91,
-      personalemail: personal?.contactInfo.emailAddress.personal || "",
-      workemail: personal?.contactInfo.emailAddress.work || "",
-      otheremail: personal?.contactInfo.emailAddress.other || "",
-      // aboutme: personal?.aboutMe.aboutme || "",
-      birth: personal?.lifeStyle?.birth || Date.now(),
-      hometown: personal?.lifeStyle?.homeTown || "",
-      currentCity: personal?.lifeStyle?.currentCity || "",
-      languages: personal?.lifeStyle?.languages || "",
-
-      favmusic: personal?.favourites.favmusic || "",
-      favcolor: personal?.favourites.favcolor || "",
-      favcity: personal?.favourites.favcity || "",
-      dreamtravel: personal?.favourites.dreamtravel || "",
-      favseason: personal?.favourites.favseason || "",
-      uniqueskills: personal?.favourites.uniqueSkills || "",
-      favcuisine: personal?.favourites.favcuisine || "",
-      // prefbeve: personal?.favourites.prefbeve || "",
-      petlover: personal?.miscellaneous.petlover || "",
-      party: personal?.miscellaneous.party || "",
-      smoker: personal?.miscellaneous.smoker || "",
-      marital: personal?.miscellaneous.marital || "",
-      relation: personal?.miscellaneous.relation || "",
-      fitnessRoutine: personal?.miscellaneous.fitnessRoutine || "",
-      morning: personal?.miscellaneous.morning || "",
-      diet: personal?.miscellaneous.diet || "",
-      sleeping: personal?.miscellaneous.sleeping || "",
-      reading: personal?.miscellaneous.reading || "",
-
-      prefMode: personal?.interests.prefMode || "",
-      genre: personal?.interests.genre || "",
-      outdoor: personal?.interests.outdoor || "",
-      artistic: personal?.interests.artistic || "",
-      gamingPref: personal?.interests.gamingPref || "",
-      collecting: personal?.interests.collecting || "",
-      coffee: personal?.interests.coffee || "",
-      cooking: personal?.interests.cooking || "",
-
-      spiritual: personal?.value.spiritual || "",
-      corevalue: personal?.value.core || "",
-      philosophy: personal?.value.philosophy || "",
-      environment: personal?.value.socialCause || "",
-
-      inspirational: personal?.mottos.quotes.inspirational || "",
-      funny: personal?.mottos.quotes.funny || "",
-      motivational: personal?.mottos.quotes.motivational || "",
-      other: personal?.mottos.quotes.other || "",
-
-      global: personal?.beliefs.global || "",
-      weirdbelief: personal?.beliefs.weirdbelief || "",
-
-      currentOccupation: personal?.professional.currentOccupation || "",
-      careerAspiration: personal?.professional.careerAspiration || "",
-      background: personal?.backg.background || "",
-      expertise: personal?.expert.expertise || "",
-
-      anyother: personal?.additional.anyother || "",
-      futureGoal: personal?.additional.futureGoal || "",
-      learning: personal?.additional.learning || "",
-      experience: personal?.additional.experience || "",
-      habit: personal?.additional.habit || "",
-    },
-  });
-
   const onSubmit = async (values: any) => {
     setPersonalLoading(true);
     let final = [];
@@ -269,130 +227,120 @@ const InputVCard = () => {
         label: socialData[i].label,
         name: socialData[i].name,
       };
-      final.push(element);
+      if (element.name) {
+        final.push(element);
+    }
     }
     const personalData = {
-      name: values.name,
-      contactInfo: {
-        phoneNumber: {
-          mobile: values.mobilephone,
-          home: values.homephone,
-          work: values.workphone,
-          other: values.otherphone,
-        },
-        emailAddress: {
-          personal: values.personalemail,
-          work: values.workemail,
-          other: values.otheremail,
-        },
-      },
+      // name: values.name,
+      // contactInfo: {
+      //   phoneNumber: {
+      //     mobile: values.mobilephone,
+      //     home: values.homephone,
+      //     work: values.workphone,
+      //     other: values.otherphone,
+      //   },
+      //   emailAddress: {
+      //     personal: values.personalemail,
+      //     work: values.workemail,
+      //     other: values.otheremail,
+      //   },
+      // },
+      // socialMedia: final,
+      // lifestyle: {
+      //   birth: values.birth,
+      //   homeTown: values.hometown,
+      //   currentCity: values.currentCity,
+      //   languages: values.languages,
+      // },
+      // favourites: {
+      //   music: values.favmusic,
+      //   color: values.favcolor,
+      //   city: values.favcity,
+      //   travelDestination: values.dreamtravel,
+      //   season: values.favseason,
+      //   uniqueSkills: values.uniqueskills,
+      //   cuisine: values.favcuisine,
+      // },
+      // mottos: {
+      //   quotes: {
+      //     inspirational: values.inspirationalmotto,
+      //     funny: values.funnymotto,
+      //     motivational: values.motivationalmotto,
+      //     other: values.othermotto,
+      //   },
+      // },
+      // miscellaneous: {
+      //   petLover: values.petlover,
+      //   partyEnthusiast: values.party,
+      //   smoker: values.smoker,
+      //   marital: values.marital,
+      //   relationshipStatus: values.relation,
+      //   fitnessRoutine: values.fitnessRoutine,
+      //   morningPerson: values.morning,
+      //   diet: values.diet,
+      //   sleepingHabit: values.sleeping,
+      //   reading: values.reading,
+      // },
+      // interests: {
+      //   prefMode: prefMode === "Other" ? prefModeOther : values.outdoor,
+      //   genre: genre === "Other" ? genreOther : values.outdoor,
+      //   outdoor: outdoor === "Other" ? outdoorOther : values.outdoor,
+      //   artistic: artistic === "Other" ? artisticOther : values.artistic,
+      //   gamingPref:
+      //     gamingpref === "Other" ? gamingprefOther : values.gamingpref,
+      //   collecting:
+      //     collecting === "Other" ? collectingOther : values.collecting,
+      //   coffee: values.coffee,
+      //   cooking: values.cooking,
+      // },
+      // value: {
+      //   spiritual: values.spiritual,
+      //   core: values.corevalue,
+      //   philosophy: values.philosophy,
+      //   socialCause: values.environment,
+      // },
+      // beliefs: {
+      //   globalIssues: values.global,
+      //   weirdBelief: values.weirdbelief,
+      // },
+      // professional: {
+      //   currentOccupation:
+      //     occupation === "Other" ? occupationOther : values.currentOccupation,
+      //   careerAspiration:
+      //     aspiration === "Other" ? aspirationOther : values.careerAspiration,
+      // },
+      // backg: {
+      //   background: back === "Other" ? backgroundOther : values.aspiration,
+      // },
+      // expert: {
+      //   expertise: expert === "Other" ? expertiseOther : values.expertise,
+      // },
+      // additional: {
+      //   anyother: values.anyother,
+      //   futureGoal: values.futureGoal,
+      //   learning: values.learning,
+      //   experience: values.experience,
+      //   habit: values.habit,
+      // },
+      ...values,
       socialMedia: final,
-      lifestyle: {
-        // aboutme: values.aboutme,
-        birth: values.birth,
-        homeTown: values.hometown,
-        currentCity: values.currentCity,
-        languages: values.languages,
-      },
-      favourites: {
-        music: values.favmusic,
-        color: values.favcolor,
-        city: values.favcity,
-        travelDestination: values.dreamtravel,
-        season: values.favseason,
-        uniqueSkills: values.uniqueskills,
-        cuisine: values.favcuisine,
-        // beverage: values.prefbeve,
-      },
-      mottos: {
-        quotes: {
-          inspirational: values.inspirationalmotto,
-          funny: values.funnymotto,
-          motivational: values.motivationalmotto,
-          other: values.othermotto,
-        },
-      },
-      miscellaneous: {
-        petLover: values.petlover,
-        partyEnthusiast: values.party,
-        smoker: values.smoker,
-        marital: values.marital,
-        relationshipStatus: values.relation,
-        fitnessRoutine: values.fitnessRoutine,
-        morningPerson: values.morning,
-        diet: values.diet,
-        sleepingHabit: values.sleeping,
-        reading: values.reading,
-      },
-      interests: {
-        prefMode: prefMode === "Other" ? prefModeOther : values.outdoor,
-        genre: genre === "Other" ? genreOther : values.outdoor,
-        outdoor: outdoor === "Other" ? outdoorOther : values.outdoor,
-        artistic: artistic === "Other" ? artisticOther : values.artistic,
-        gamingPref:
-          gamingpref === "Other" ? gamingprefOther : values.gamingpref,
-        collecting:
-          collecting === "Other" ? collectingOther : values.collecting,
-        coffee: values.coffee,
-        cooking: values.cooking,
-      },
-      value: {
-        spiritual: values.spiritual,
-        core: values.corevalue,
-        philosophy: values.philosophy,
-        socialCause: values.environment,
-      },
-      beliefs: {
-        globalIssues: values.global,
-        weirdBelief: values.weirdbelief,
-      },
-      professional: {
-        currentOccupation:
-          occupation === "Other" ? occupationOther : values.currentOccupation,
-        careerAspiration:
-          aspiration === "Other" ? aspirationOther : values.careerAspiration,
-      },
-      backg: {
-        background: back === "Other" ? backgroundOther : values.aspiration,
-      },
-      expert: {
-        expertise: expert === "Other" ? expertiseOther : values.expertise,
-      },
-      additional: {
-        anyother: values.anyother,
-        futureGoal: values.futureGoal,
-        learning: values.learning,
-        experience: values.experience,
-        habit: values.habit,
-      },
       user: user?._id,
     };
-    console.log(personalData);
-    try {
-      if (isPersonal) {
-        await axios.put(
-          `${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=personal`,
-          personalData,
-          { withCredentials: true }
-        );
-        toast.success("Personal VCards updated!");
-      } else {
-        await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/cards/new?type=personal`,
-          personalData,
-          { withCredentials: true }
-        );
-        toast.success("Personal VCards created!");
-      }
-      if (isPaid || user?.role === "admin") {
+    if (!isPaid && user?.role !== "admin") {
+      navigate("/plans");
+    } else {
+      try {
+        if (isPersonal) {
+          await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=personal`, personalData, { withCredentials: true });
+          toast.success("Personal VCards updated!");
+        } else {
+          await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=personal`, personalData, { withCredentials: true });
+          toast.success("Personal VCards created!");
+        }
         navigate(-1);
-      } else {
-        navigate("/plans");
-      }
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-      if (!isPaid && user?.role !== "admin") {
-        navigate("/plans");
+      } catch (error: any) {
+        toast.error(error.response.data.message);
       }
     }
     setPersonalLoading(false);
@@ -412,49 +360,49 @@ const InputVCard = () => {
     }
   }
 
-  function toggleSocials() {
-    if (social === true) {
-      setSocial(false);
-    } else {
-      setSocial(true);
-      setLifestyles(false);
-      setFav(false);
-      setMisc(false);
-    }
-  }
+  // function toggleSocials() {
+  //   if (social === true) {
+  //     setSocial(false);
+  //   } else {
+  //     setSocial(true);
+  //     setLifestyles(false);
+  //     setFav(false);
+  //     setMisc(false);
+  //   }
+  // }
 
-  function toggleLifestyle() {
-    if (lifestyles === true) {
-      setLifestyles(false);
-    } else {
-      setLifestyles(true);
-      setFav(false);
-      setMisc(false);
-      setSocial(false);
-    }
-  }
+  // function toggleLifestyle() {
+  //   if (lifestyles === true) {
+  //     setLifestyles(false);
+  //   } else {
+  //     setLifestyles(true);
+  //     setFav(false);
+  //     setMisc(false);
+  //     setSocial(false);
+  //   }
+  // }
 
-  function toggleFavs() {
-    if (fav === true) {
-      setFav(false);
-    } else {
-      setFav(true);
-      setMisc(false);
-      setSocial(false);
-      setLifestyles(false);
-    }
-  }
+  // function toggleFavs() {
+  //   if (fav === true) {
+  //     setFav(false);
+  //   } else {
+  //     setFav(true);
+  //     setMisc(false);
+  //     setSocial(false);
+  //     setLifestyles(false);
+  //   }
+  // }
 
-  function toggleMisc() {
-    if (misc === true) {
-      setMisc(false);
-    } else {
-      setMisc(true);
-      setSocial(false);
-      setLifestyles(false);
-      setFav(false);
-    }
-  }
+  // function toggleMisc() {
+  //   if (misc === true) {
+  //     setMisc(false);
+  //   } else {
+  //     setMisc(true);
+  //     setSocial(false);
+  //     setLifestyles(false);
+  //     setFav(false);
+  //   }
+  // }
 
   return (
     <>

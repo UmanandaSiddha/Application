@@ -8,10 +8,13 @@ import {
 import axios from "axios";
 import QrCode from "qrcode";
 import { toast } from "react-toastify";
+import { MdEdit } from "react-icons/md";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { MdDelete } from "react-icons/md";
 import { useEffect, useState } from "react";
+import { RootState } from "../../redux/store";
 import Loader from "@/components/rest/loader";
+import { IoIosDownload } from "react-icons/io";
 import TreeComponent from "@/components/view-card/tree";
 import AnimalComponent from "@/components/view-card/animal";
 import CreatorComponent from "@/components/view-card/creator";
@@ -19,9 +22,6 @@ import MedicalComponent from "@/components/view-card/medical";
 import PersonalComponent from "@/components/view-card/personal";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/types";
-import { IoIosDownload } from "react-icons/io";
-import { MdEdit } from "react-icons/md";
-import { MdDelete } from "react-icons/md";
 
 const ViewCard = () => {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const ViewCard = () => {
             data,
           }: {
             data:
-              | SingleTreeResponse
+              SingleTreeResponse
               | SinglePersonalResponse
               | SingleMedicalResponse
               | SingleCreatorResponse

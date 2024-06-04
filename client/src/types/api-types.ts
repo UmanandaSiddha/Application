@@ -1,7 +1,6 @@
 import {
     User,
     Tree,
-    Payment,
     Personal,
     MedicalType,
     Creator,
@@ -22,11 +21,6 @@ export type TreeResponse = {
 export type SingleTreeResponse = {
     success: boolean;
     vCard: Tree;
-}
-
-export type PaymentResponse = {
-    success: boolean;
-    payments: Payment[];
 }
 
 export type AnimalResponse = {

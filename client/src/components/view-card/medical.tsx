@@ -7,34 +7,34 @@ interface PropsType {
 }
 
 const MedicalComponent = ({ card }: PropsType) => {
-  const birthDate = card?.personalInfo.birth
-    ? new Date(card.personalInfo.birth)
+  const birthDate = card?.dateOfBirth
+    ? new Date(card.dateOfBirth)
     : null;
   const formattedDate = birthDate ? birthDate.toLocaleDateString() : "";
   const healthHabits = [
     {
       name: "Smoker",
-      value: card?.healthHabits?.smoker,
+      value: card?.smoker,
     },
     {
       name: "Alcohol Consumption",
-      value: card?.healthHabits?.alcohol,
+      value: card?.alcohol,
     },
     {
       name: "Exercise Routine",
-      value: card?.healthHabits?.exercise,
+      value: card?.exercise,
     },
     {
       name: "Dietary Preferences",
-      value: card?.healthHabits?.diet,
+      value: card?.diet,
     },
     {
       name: "Mental Condition",
-      value: card?.healthHabits?.mentalCondition,
+      value: card?.mentalCondition,
     },
     {
       name: "Vaccination History",
-      value: card?.healthHabits?.vaccinationHistory,
+      value: card?.vaccinationHistory,
     },
   ];
   return (
@@ -45,7 +45,7 @@ const MedicalComponent = ({ card }: PropsType) => {
         </div>
         <div className="lex justify-start font-Kanit text-5xl font-bold mb-10">
           <h1 className="font-Alice pl-6 text-white">
-            {card?.personalInfo.name}
+            {card?.name}
           </h1>
         </div>
       </div>
@@ -57,12 +57,12 @@ const MedicalComponent = ({ card }: PropsType) => {
             <div className="w-[90%] bg-white p-4 rounded-3xl">
               <div className="">
                 <p className="font-Kanit text-2xl font-bold">
-                  {card?.personalInfo.name}
+                  {card?.name}
                 </p>
               </div>
               <div className="">
                 <p className="font-Alice text-slate-400">
-                  {card?.personalInfo.gender}
+                  {card?.gender}
                 </p>
               </div>
               <hr className="text-slate-400 my-3" />
@@ -79,7 +79,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                   Phone Number:
                 </div>
                 <div className="basis-1/2 flex justify-start">
-                  {card?.personalInfo.phone}
+                  {card?.phone}
                 </div>
               </div>
               <div className="flex">
@@ -87,7 +87,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                   Email Address:
                 </div>
                 <div className="basis-1/2 flex justify-start">
-                  {card?.personalInfo.email}
+                  {card?.email}
                 </div>
               </div>
             </div>
@@ -101,10 +101,10 @@ const MedicalComponent = ({ card }: PropsType) => {
                 <div className="w-[40%] bg-white rounded-xl shadow-xl">
                   <div className="py-2 flex flex-col justify-center items-center">
                     <p className="text-lg">
-                      {card?.personalInfo.emergency.name}
+                      {card?.emergencyName}
                     </p>
                     <p className="text-slate-400 text-sm">
-                      {card?.personalInfo.emergency.relation}
+                      {card?.emergencyRelation}
                     </p>
                   </div>
                   <div className="flex justify-center pb-3">
@@ -129,18 +129,18 @@ const MedicalComponent = ({ card }: PropsType) => {
               </div>
               <hr className="text-slate-400 my-2" />
               <div className="text-slate-500">
-                <p className="pl-2">{card?.personalInfo?.address?.street}</p>
+                <p className="pl-2">{card?.street}</p>
               </div>
               <div className="flex flex-row text-slate-500">
                 <div className="basis-1/2 flex justify-center">City:</div>
                 <div className="basis-1/2">
-                  {card?.personalInfo?.address?.city}
+                  {card?.city}
                 </div>
               </div>
               <div className="flex flex-row text-slate-500">
                 <div className="basis-1/2 flex justify-center">State:</div>
                 <div className="basis-1/2">
-                  {card?.personalInfo?.address?.state}
+                  {card?.state}
                 </div>
               </div>
               <div className="flex flex-row text-slate-500">
@@ -148,7 +148,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                   Postal Code:
                 </div>
                 <div className="basis-1/2">
-                  {card?.personalInfo?.address?.postalCode}
+                  {card?.postalCode}
                 </div>
               </div>
             </div>
@@ -164,7 +164,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                   // type="text"
                   className="w-full flex justify-center px-4 spin-button-none py-2 rounded-lg text-white font-Kanit bg-blue-400 shadow-xl"
                   readOnly
-                  defaultValue={card?.healthHistory.allergy}
+                  defaultValue={card?.allergyHistory}
                 />
               </div>
             </div>
@@ -182,7 +182,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                   // type="text"
                   className="w-full flex justify-center px-4 spin-button-none py-2 rounded-lg text-white font-Kanit bg-blue-400 shadow-xl"
                   readOnly
-                  defaultValue={card?.healthHistory.chronic}
+                  defaultValue={card?.chronicHistory}
                 />
               </div>
             </div>
@@ -210,7 +210,6 @@ const MedicalComponent = ({ card }: PropsType) => {
           <div className="flex justify-center pb-4 -mt-1">
             <div className="w-[90%] pl-4">
               {healthHabits.map((health, idx) => (
-                <>
                   <div className="" key={idx}>
                     <div className="">
                       <p className="text-xl font-bold pl-2">{health.name}:</p>
@@ -224,7 +223,6 @@ const MedicalComponent = ({ card }: PropsType) => {
                       />
                     </div>
                   </div>
-                </>
               ))}
             </div>
           </div>
@@ -242,14 +240,14 @@ const MedicalComponent = ({ card }: PropsType) => {
               <hr className="text-slate-400 my-2" />
               <div className="flex flex-row text-black">
                 <div className="basis-1/2 flex justify-center">Provider:</div>
-                <div className="basis-1/2">{card?.insuranceInfo?.provider}</div>
+                <div className="basis-1/2">{card?.insuranceProvider}</div>
               </div>
               <div className="flex flex-row text-black">
                 <div className="basis-1/2 flex justify-center">
                   Policy Number:
                 </div>
                 <div className="basis-1/2">
-                  {card?.insuranceInfo?.policyNumber}
+                  {card?.insurancePolicyNumber}
                 </div>
               </div>
               <div className="flex flex-row text-black">
@@ -257,7 +255,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                   Group Number:
                 </div>
                 <div className="basis-1/2">
-                  {card?.insuranceInfo?.grpNumber}
+                  {card?.insuranceGrpNumber}
                 </div>
               </div>
             </div>
@@ -270,12 +268,12 @@ const MedicalComponent = ({ card }: PropsType) => {
               <div className="bg-white w-[95%] p-4 rounded-3xl">
                 <div className="flex justify-center">
                   <p className="font-Philosopher text-2xl font-bold">
-                    {card?.personalInfo.name}
+                    {card?.name}
                   </p>
                 </div>
                 <div className="flex justify-center">
                   <p className="font-Alice text-slate-400">
-                    {card?.personalInfo.gender}
+                    {card?.gender}
                   </p>
                 </div>
                 <hr className="text-slate-400 my-3" />
@@ -292,7 +290,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                     Phone Number:
                   </div>
                   <div className="basis-1/2 flex justify-start">
-                    {card?.personalInfo.phone}
+                    {card?.phone}
                   </div>
                 </div>
                 <div className="flex">
@@ -300,7 +298,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                     Email Address:
                   </div>
                   <div className="basis-1/2 flex justify-start">
-                    {card?.personalInfo.email}
+                    {card?.email}
                   </div>
                 </div>
               </div>
@@ -319,20 +317,20 @@ const MedicalComponent = ({ card }: PropsType) => {
                 <div className="flex flex-row text-slate-500">
                   <div className="basis-1/2 flex justify-center">Street:</div>
                   <div className="basis-1/2">
-                    <textarea readOnly className="w-full" defaultValue={card?.personalInfo?.address?.street} />
-                    
+                    <textarea readOnly className="w-full" defaultValue={card?.street} />
+
                   </div>
                 </div>
                 <div className="flex flex-row text-slate-500">
                   <div className="basis-1/2 flex justify-center">City:</div>
                   <div className="basis-1/2">
-                  <textarea readOnly className="w-full" defaultValue={card?.personalInfo?.address?.city} />
+                    <textarea readOnly className="w-full" defaultValue={card?.city} />
                   </div>
                 </div>
                 <div className="flex flex-row text-slate-500">
                   <div className="basis-1/2 flex justify-center">State:</div>
                   <div className="basis-1/2">
-                    {card?.personalInfo?.address?.state}
+                    {card?.state}
                   </div>
                 </div>
                 <div className="flex flex-row text-slate-500">
@@ -340,7 +338,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                     Postal Code:
                   </div>
                   <div className="basis-1/2">
-                    {card?.personalInfo?.address?.postalCode}
+                    {card?.postalCode}
                   </div>
                 </div>
               </div>
@@ -356,10 +354,10 @@ const MedicalComponent = ({ card }: PropsType) => {
                   <div className="w-[40%] bg-white rounded-xl shadow-xl">
                     <div className="py-2 flex flex-col justify-center items-center">
                       <p className="text-lg">
-                        {card?.personalInfo.emergency.name}
+                        {card?.emergencyName}
                       </p>
                       <p className="text-slate-400 text-sm">
-                        {card?.personalInfo.emergency.relation}
+                        {card?.emergencyRelation}
                       </p>
                     </div>
                     <div className="flex justify-center pb-3">
@@ -386,7 +384,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                       // type="text"
                       className="w-full flex justify-center pl-4 py-2 rounded-lg text-white font-Kanit bg-blue-400 shadow-xl"
                       readOnly
-                      defaultValue={card?.healthHistory.allergy}
+                      defaultValue={card?.allergyHistory}
                     />
                   </div>
                 </div>
@@ -406,7 +404,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                       // type="text"
                       className="w-full flex justify-center pl-4 py-2 rounded-lg text-white font-Kanit bg-blue-400 shadow-xl"
                       readOnly
-                      defaultValue={card?.healthHistory.chronic}
+                      defaultValue={card?.chronicHistory}
                     />
                   </div>
                 </div>
@@ -478,7 +476,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                       Provider:
                     </div>
                     <div className="basis-1/2 ml-4">
-                      {card?.insuranceInfo?.provider}
+                      {card?.insuranceProvider}
                     </div>
                   </div>
                   <div className="flex flex-row text-black">
@@ -486,7 +484,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                       Policy Number:
                     </div>
                     <div className="basis-1/2 ml-4">
-                      {card?.insuranceInfo?.policyNumber}
+                      {card?.insurancePolicyNumber}
                     </div>
                   </div>
                   <div className="flex flex-row text-black">
@@ -494,7 +492,7 @@ const MedicalComponent = ({ card }: PropsType) => {
                       Group Number:
                     </div>
                     <div className="basis-1/2 ml-4">
-                      {card?.insuranceInfo?.grpNumber}
+                      {card?.insuranceGrpNumber}
                     </div>
                   </div>
                 </div>

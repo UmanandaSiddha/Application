@@ -33,7 +33,7 @@ const CreateTree = () => {
     const id = search.get("treeId");
     const [isTree, setIsTree] = useState<boolean>(id ? true : false);
     const [treeLoading, setTreeLoading] = useState<boolean>(false);
-    
+
     const { user, isPaid } = useSelector(
         (state: RootState) => state.userReducer
     );
@@ -43,7 +43,7 @@ const CreateTree = () => {
     });
 
     const { handleSubmit, register, reset } = form;
-    
+
     useEffect(() => {
         const fetchTree = async () => {
             if (id) {
@@ -108,7 +108,6 @@ const CreateTree = () => {
     }
 
     return (
-        <>
         <div className="">
             <div className="my-2 lg:flex lg:justify-center lg:mt-4 lg:mb-[4rem]">
                 <h1 className="font-Philosopher underline font-bold text-3xl pl-8">Tree Card</h1>
@@ -132,7 +131,6 @@ const CreateTree = () => {
                                         id={input.name}
                                         className="block py-2.5 px-0 w-full text-sm font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                                         placeholder={input.text}
-                                        // required
                                         {...register(input.name, { required: true })}
                                     />
                                 </div>
@@ -151,7 +149,6 @@ const CreateTree = () => {
                 </div>
             </div>
         </div>
-        </>
     )
 }
 

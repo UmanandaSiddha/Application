@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const animalSchema = new mongoose.Schema(
     {
-        species: String,
         name: String,
+        species: String,
         age: Number,
         gender: String,
         color: String,

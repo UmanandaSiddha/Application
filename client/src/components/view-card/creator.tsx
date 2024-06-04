@@ -1,10 +1,22 @@
 import { Creator } from "@/types/types";
+import * as icons from 'simple-icons';
 
 interface PropsType {
   card: Creator | null;
 }
 
 const CreatorComponent = ({ card }: PropsType) => {
+
+  const setSvg = (input: string) => {
+    const platformKey = `si${input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()}`;
+    const icon = icons[platformKey as keyof typeof icons];
+    if (icon) {
+      return icon.path;
+    } else {
+      return "";
+    }
+  }
+
   return (
     <>
       <div className="relative flex flex-col w-full bg-blue-400 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
@@ -15,14 +27,14 @@ const CreatorComponent = ({ card }: PropsType) => {
           <h1 className="font-Alice pl-6">{card?.name}</h1>
         </div>
       </div>
-      
+
       <div className="relative flex justify-center bg-violet-400 lg:mb-2 lg:rounded-b-xl font-Kanit -mt-[4rem] lg:pb-[8rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
             <div className="lg:flex lg:justify-center">
-            <div className="lg:w-1/2">
-              <label htmlFor="name" className="flex justify-start lg:text-xl">Name:</label>
-            </div>
+              <div className="lg:w-1/2">
+                <label htmlFor="name" className="flex justify-start lg:text-xl">Name:</label>
+              </div>
             </div>
             <div className="w-full flex justify-center pt-2">
               <input
@@ -44,9 +56,26 @@ const CreatorComponent = ({ card }: PropsType) => {
                     className="flex flex-col justify-center items-center py-2 font-Alice text-white"
                     key={index}
                   >
-                    <a href={link.name}>
+                    <a href={link.name} target="blank">
                       <div className="w-full">
-                        <button className="w-[16rem] py-2 bg-blue-500 rounded-lg hover:cursor-pointer border-2 border-black shadow-xl">
+                        <button className="flex items-center justify-center gap-4 w-[16rem] py-2 bg-blue-500 rounded-lg hover:cursor-pointer border-2 border-black shadow-xl">
+                          { 
+                            <svg
+                              className="fill-current"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d={setSvg(link.label)}
+                                fill="black"
+                              />
+                            </svg>
+                          }
                           {link.label}
                         </button>
                       </div>
