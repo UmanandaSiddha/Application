@@ -126,7 +126,7 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
 // Verify User
 export const verifyUser = catchAsyncErrors(async (req, res, next) => {
     const {otp} = req.body;
-
+    
     const oneTimePassword = crypto
         .createHash("sha256")
         .update(otp.toString())

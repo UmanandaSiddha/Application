@@ -5,15 +5,8 @@ import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import { Subscription } from "@/types/types";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+// import { Loader2 } from "lucide-react";
 
 function loadScript(src: any) {
   return new Promise((resolve) => {
@@ -33,14 +26,14 @@ const SubscriptionPage = () => {
   const navigate = useNavigate();
   const [subscription, setSubscription] = useState<Subscription | undefined>();
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [dialogHeader, setDialogHeader] = useState<string>(
-    "Waiting for Confirmation"
-  );
-  const [dialogData, setDialogData] = useState({
-    subscriptionStatus: "hold on",
-    paymentStatus: "hold on",
-  });
+  // const [open, setOpen] = useState<boolean>(false);
+  // const [dialogHeader, setDialogHeader] = useState<string>(
+  //   "Waiting for Confirmation"
+  // );
+  // const [dialogData, setDialogData] = useState({
+  //   subscriptionStatus: "hold on",
+  //   paymentStatus: "hold on",
+  // });
   const { user } = useSelector((state: RootState) => state.userReducer);
 
   const [plans, setPlans] = useState<any>([]);
@@ -101,37 +94,37 @@ const SubscriptionPage = () => {
         description: "just fine",
         subscription_id: data.subscriptions_id,
         handler: async function (response: any) {
-          setOpen(true);
-          const { data }: { data: any } = await axios.post(
-            `${import.meta.env.VITE_BASE_URL}/sub/capture`,
-            response,
-            config
-          );
-          if (
-            data.subscriptionStatus === "active" &&
-            data.paymentStatus === "captured"
-          ) {
-            setDialogHeader("Redirecting to Dashboard...");
-            setDialogData({
-              subscriptionStatus: "active",
-              paymentStatus: "captured",
-            });
-            toast.success("All set");
-            setTimeout(() => {
-              setOpen(false);
-              navigate("/dashboard");
-            }, 3000);
-          } else {
-            setDialogHeader("An Error Occured");
-            setDialogData({
-              subscriptionStatus: "pending",
-              paymentStatus: "pending",
-            });
-            toast.error("Error hain bhai, tu baith hum dekh lenge");
-            setTimeout(() => {
-              setOpen(false);
-            }, 3000);
-          }
+          // setOpen(true);
+          // const { data }: { data: any } = await axios.post(
+          //   `${import.meta.env.VITE_BASE_URL}/sub/capture`,
+          //   response,
+          //   config
+          // );
+          // if (
+          //   data.subscriptionStatus === "active" &&
+          //   data.paymentStatus === "captured"
+          // ) {
+          //   setDialogHeader("Redirecting to Dashboard...");
+          //   setDialogData({
+          //     subscriptionStatus: "active",
+          //     paymentStatus: "captured",
+          //   });
+          //   toast.success("All set");
+          //   setTimeout(() => {
+          //     setOpen(false);
+          //     navigate("/dashboard");
+          //   }, 3000);
+          // } else {
+          //   setDialogHeader("An Error Occured");
+          //   setDialogData({
+          //     subscriptionStatus: "pending",
+          //     paymentStatus: "pending",
+          //   });
+          //   toast.error("Error hain bhai, tu baith hum dekh lenge");
+          //   setTimeout(() => {
+          //     setOpen(false);
+          //   }, 3000);
+          // }
         },
         prefill: {
           email: user?.email,
@@ -181,7 +174,7 @@ const SubscriptionPage = () => {
         <div className="flex flex-col justify-center md:justify-center items-center md:w-[60%] lg:w-[100%]">
           <div className="w-full flex justify-center">
             <div className="pt-4 w-full flex flex-col md:flex-col lg:flex-row justify-center items-center lg:w-[60%] lg:gap-6">
-              <Dialog open={open} onOpenChange={setOpen}>
+              {/* <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
                     <DialogTitle>
@@ -194,7 +187,7 @@ const SubscriptionPage = () => {
                     <p>Subscription Status: {dialogData.subscriptionStatus}</p>
                   </DialogFooter>
                 </DialogContent>
-              </Dialog>
+              </Dialog> */}
               {plans.map((plan: any, index: number) => (
                 <div
                   className="border-2 border-blue-500 shadow-xl p-2 py-4 rounded-xl w-[90%] my-2"

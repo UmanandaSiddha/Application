@@ -11,14 +11,14 @@ import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import {
-  deleteUser,
-  updateUserProfile,
-  requestVerifyUser,
-  updatePassword,
-} from "@/redux/api/userApi";
+// import {
+//   deleteUser,
+//   updateUserProfile,
+//   requestVerifyUser,
+//   updatePassword,
+// } from "@/redux/api/userApi";
 import { toast } from "react-toastify";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
 import { UserResponse } from "@/types/api-types";
 
@@ -41,8 +41,6 @@ const Profile = () => {
   const { user, loading } = useSelector(
     (state: RootState) => state.userReducer
   );
-
-  const { payments } = useSelector((state: RootState) => state.paymentReducer);
 
   const togglePwdVisible = () => {
     if (pwdVisible) {
@@ -154,7 +152,8 @@ const Profile = () => {
     };
     console.log(updateData);
     try {
-      const data = await updateUserProfile(updateData);
+      const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/me/update`, updateData, { withCredentials: true });
+      // const data = await updateUserProfile(updateData);
       dispatch(userExist(data.user));
       setOpen(false);
       toast.success("Profile Updated Successfully");
@@ -167,7 +166,8 @@ const Profile = () => {
   const handleRequestVerify = useCallback(async () => {
     setVerifyLoading(true);
     try {
-      await requestVerifyUser();
+      // await requestVerifyUser();
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/user/request/verification`, { withCredentials: true });
       toast.success("Email Sent  Successfully");
     } catch (error: any) {
       toast.error(error.response.data.message);
@@ -178,7 +178,7 @@ const Profile = () => {
   const handleDeleteAccount = useCallback(async () => {
     setDeleteLoading(true);
     try {
-      await deleteUser();
+      await axios.put(`${import.meta.env.VITE_BASE_URL}/user/delete/account`, { withCredentials: true });
       dispatch(userNotExist());
       toast.success("Account Deleted Successfully");
     } catch (error: any) {
@@ -208,7 +208,8 @@ const Profile = () => {
           );
           dispatch(userExist(data.user));
         } else {
-          const data = await updatePassword(resetDate);
+          const { data }: { data: UserResponse } = await axios.delete(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, resetDate, { withCredentials: true });
+          // const data = await updatePassword(resetDate);
           dispatch(userExist(data.user));
         }
         setOpenSep(false);
@@ -269,10 +270,19 @@ const Profile = () => {
                   <div className="py-4">
                     <div className="flex flex-row">
                       <div className="basis-1/4 flex justify-end">
-                        <Avatar className="w-14 h-14 border-2 border-blue-400">
+                        {/* <Avatar className="w-14 h-14 border-2 border-blue-400">
                           <AvatarImage src={user.image} alt={user._id} />
                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
+                        </Avatar> */}
+                        <div>
+                          {user.image ? (
+                            <img src={user.image} alt={user._id} />
+                          ) : (
+                            <>
+                            {user.name.charAt(0)}
+                            </>
+                          )}
+                        </div>
                       </div>
                       <div className="basis-3/4 flex flex-col justify-start items-center">
                         <p className="w-full flex justify-start pl-[2.7rem] font-Philosopher">

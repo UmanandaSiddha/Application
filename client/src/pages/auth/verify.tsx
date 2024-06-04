@@ -43,7 +43,7 @@ const Verify = () => {
         setVerifyLoading(true);
         const otpString = Number(otp.join(''));
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/verify`, {otpString}, {withCredentials: true});
+            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/verify`, {otp: otpString}, {withCredentials: true});
             dispatch(userExist(data.user));
             toast.success("User Verified!");
             navigate("/dashboard");
