@@ -34,7 +34,6 @@ const Login = () => {
         userData,
         config
       );
-      console.log(data);
       navigate("/dashboard");
       dispatch(userExist(data.user));
       toast.success("Logged In!");
