@@ -381,7 +381,7 @@ const MedicalInput = () => {
                         <div className="w-full flex flex-row pt-8 pb-5">
                             <div className="basis-1/2 flex justify-center">
                                 <button
-                                    // type="button"
+                                    type="button"
                                     className="px-4 py-2 bg-blue-500 rounded-lg hover:cursor-pointer hover:bg-blue-700 text-white font-Kanit disabled:bg-blue-300"
                                     onClick={handleProgressBackward}
                                     disabled={progressBar === 25}
@@ -400,7 +400,7 @@ const MedicalInput = () => {
                                     </button>
                                 ) : (
                                     <button
-                                        // type="button"
+                                        type="button"
                                         className="px-4 py-2 bg-blue-500 rounded-lg hover:cursor-pointer hover:bg-blue-700 text-white font-Kanit"
                                         onClick={handleProgressForward}
                                     >

@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "@/redux/api/userApi";
 import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
-import { number } from "zod";
-import { getGoogleAuthUrl } from "@/lib/google";
 import { UserResponse } from "@/types/api-types";
 import axios from "axios";
 
@@ -18,10 +15,10 @@ function OrgRegister() {
     name: "",
     email: "",
     password: "",
+    phone: "",
     cfmPassword: "",
     orgWebsite: "",
     orgAddress: "",
-    phone: number,
   });
 
 
@@ -94,7 +91,7 @@ function OrgRegister() {
       );
       dispatch(userExist(data.user));
       toast.success("User Registered!");
-      navigate("/dashboard");
+      navigate("/verify");
     } catch (error: any) {
       dispatch(userNotExist());
       toast.error(error.response.data.message);
@@ -118,7 +115,7 @@ function OrgRegister() {
       <div className="relative flex flex-col justify-center items-center max-h-screen lg:mt-4 ">
         <div className="w-full max-w-4xl p-4 absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] bg-white mt-[27.5rem] lg:mt-[20rem]">
           <form
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
             className="shadow-lg rounded-xl px-8 pb-8 mb-4 font-Kanit border bg-white"
           >
             <div className="block lg:hidden">

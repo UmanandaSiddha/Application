@@ -1,1114 +1,744 @@
 import { useForm } from "react-hook-form";
-import { MdNavigateNext } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-
-import {
-  contactInfo,
-  emails,
-  socials,
-  Favourites,
-  miscellaneous,
-  lifestyle,
-  motto,
-  interests,
-  background,
-  expertise,
-  values,
-  professional,
-  additionalInfo,
-} from "../../../redux/inputs/personal-inputs";
-
-const arr: any = [
-  {
-    name: "about",
-    text: "Enter about youself",
-    label: "About Me",
-  },
-];
-
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { personalNotTemp, personalTemp } from "@/redux/reducer/personalReducer";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { SinglePersonalResponse } from "@/types/api-types";
 
-const inputs = [
-  { name: "", label: "Instagram", text : "Enter Your Instagram Profile" },
-  { name: "", label: "Youtube", text : "Enter Your Youtube Profile" },
-  { name: "", label: "Spotify", text : "Enter Your Spotify Profile" },
-  { name: "", label: "Discord", text : "Enter Your Discord Profile" },
-  { name: "", label: "X", text : "Enter Your X Profile" },
-]
+const perosnalName = [
+    { name: "name" },
+];
 
-// name: string,
-//     mobileNumer: string,
-//     homeNumber: string,
-//     workNumber: string,
-//     otherNumber: string,
-//     personalEmail: string,
-//     workEmail: string,
-//     otherEmail: string,
-//     aboutMe: string,
-//     dateOfBirth: Date,
-//     homeTown: string,
-//     currentCity: string,
-//     languages: string,
-//     music: string,
-//     color: string,
-//     city: string,
-//     travelDestination: string,
-//     season: string,
-//     uniqueSkills: string,
-//     cuisine: string,
-//     beverage: string,
-//     inspirationalQuotes: string,
-//     funnyQuotes: string,
-//     motivationalQuotes: string,
-//     otherQuotes: string,
-//     travelMode: string,
-//     petLover: string,
-//     partyEnthusiast: string,
-//     smoker: string,
-//     maritalStatus: string,
-//     relationshipStatus: string,
-//     fitnessRoutine: string,
-//     morningPerson: string,
-//     diet: string,
-//     sleepingHabit: string,
-//     genre: string,
-//     sports: string,
-//     artistisPursuits: string,
-//     gaming: string,
-//     collectignHobby: string, 
-//     coffee: string,
-//     cookingSkills: string,
-//     spiritual: string,
-//     core: string,
-//     philosophy: string,
-//     socialCause: string,
-//     globalIssues: string,
-//     weirdBelief: string,
-//     currentOcupation: string,
-//     careerAspiation: string,
-//     education: string,
-//     skills: string,
-//     otherInterests: string,
-//     futureGoals: string,
-//     current: string,
-//     unusualExperinece: string,
-//     strangeHabits: string,
-//     socialMedia: any,
-//     user: string;
+const aboutPersonal = [
+    { name: "aboutMe" },
+];
+
+const contactInfo = [
+    { name: "mobileNumber", label: "Mobile", text: "Enter mobile phone number", type: "tel" },
+    { name: "homeNumber", label: "Home", text: "Enter home phone number", type: "tel" },
+    { name: "workNumber", label: "Work", text: "Enter work phone number", type: "tel" },
+    { name: "otherNumber", label: "Other", text: "Enter any other phone number", type: "tel" },
+];
+
+const emailInfo = [
+    { name: "personalEmail", label: "Personal", text: "Enter Personal Email Address", type: "text" },
+    { name: "workEmail", label: "Work", text: "Enter Work Email Address", type: "text" },
+    { name: "otherEmail", label: "Other", text: "Enter any other email address", type: "text" },
+];
+
+const socials = [
+    { name: "", label: "Instagram", text: "Enter Your Instagram Profile" },
+    { name: "", label: "Youtube", text: "Enter Your Youtube Profile" },
+    { name: "", label: "Spotify", text: "Enter Your Spotify Profile" },
+    { name: "", label: "Discord", text: "Enter Your Discord Profile" },
+    { name: "", label: "X", text: "Enter Your X Profile" },
+];
+
+const lifestyle = [
+    { name: "dateOfBirth", label: "Date of Birth", text: "Enter your Date of Birth", type: "date" },
+    { name: "homeTown", label: "Hometown", text: "Enter your Hometown", type: "text" },
+    { name: "currentCity", label: "Current City", text: "Enter your Current City", type: "text" },
+    { name: "languages", label: "Languages", text: "Enter languages spoken", type: "text" },
+];
+
+const Favourites = [
+    { name: "music", label: "Fav Music", text: "Enter Fav Music/Artists" },
+    { name: "color", label: "Fav Color(s)", text: "Enter Fav Color(s)" },
+    { name: "city", label: "Fav City", text: "Enter Fav City" },
+    { name: "travelDestination", label: "Fav-Destination", text: "Enter Fav Destinations" },
+    { name: "season", label: "Fav Season", text: "Enter Fav Season" },
+    { name: "uniqueskills", label: "Unique Skills", text: "Enter Unique Skills" },
+    { name: "cuisine", label: "Fav Cuisine", text: "Enter Fav Cuisine/Food" },
+    { name: "beverage", label: "Fav Beverage", text: "Enter Beverage" },
+];
+
+const miscellaneous = [
+    { name: "petLover", label: "Pet Lover?", text: "Enter Yes/No", options: ["Yes", "No"] },
+    { name: "partyEnthusiast", label: "Party Enthusiast?", text: "Enter Yes/No", options: ["Yes", "No"] },
+    { name: "smoker", label: "Smoker?", text: "Enter Yes/No", options: ["Yes", "No"] },
+    { name: "maritalStatus", label: "Marital Status?", text: "Enter Yes/No", options: ["Single", "In a relationship", "Engaged", "Married"] },
+    { name: "relationshipStatus", label: "Relationship?", text: "Enter Yes/No", options: ["Just Exploring", "Committed", "It's complicated", "Single and Happy"] },
+    { name: "morningPerson", label: "Morning/Night Person?", text: "Enter Yes/No", options: ["Morning person", "Night Owl", "Somewhere in between", "Depends on the day"] },
+    { name: "sleepingHabit", label: "Sleeping Habits?", text: "Enter Sleeping Habits", options: ["Early Riser", "Night Owl", "Somewhere in between", "Depends on the day"] },
+    { name: "fitnessRoutine", label: "Fitness Routine", options: ["Daily fitness regime", "A few times a week", "Sometimes when I can", "Not much into fitness"] },
+    { name: "diet", label: "Dietary Preferences", options: ["Vegetarian", "Vegan", "Omnivore", "Other"] },
+];
+
+const motto = [
+    { name: "inspirationalQuotes", label: "Inspirational", text: "Enter any Inspirational Quote" },
+    { name: "funnyQuotes", label: "Funny", text: "Enter any Funny Quote" },
+    { name: "motivationalQuotes", label: "Motivational", text: "Enter any Motivational Quote" },
+    { name: "otherQuotes", label: "Other", text: "Enter any Other Quote" }
+];
+
+const interests = [
+    { name: "travelMode", label: "Preferred Mode of Travel", text: "Enter your Preferred Mode of Travel", options: ["Airplane", "Train", "Cars", "Cruise", "Other"], customInput: { name: "prefOther", text: "Enter custom preference mode" } },
+    { name: "genre", label: "Fav Movies/TV Shows", text: "Favorite Movies/TV Shows/Genres", options: ["Action", "Comedy", "Drama", "Sci-Fi/Fantasy", "Documentary", "Other"], customInput: { name: "genreOther", text: "Enter custom genre" } },
+    { name: "sports", label: "Sports Activites", text: "Sports or Outdoor Activities", options: ["Basketball", "Tennis", "Hiking", "Cycling", "Swimming", "Other"], customInput: { name: "sportOther", text: "Enter custom activities" } },
+    { name: "artistisPursuits", label: "Artistic Hobbies", text: "Artistic Pursuits/Hobbies", options: ["Drawing/Painting", "Photography", "Writing", "Crafts", "Music", "Other"], customInput: { name: "artOther", text: "Enter custom hobbies" } },
+    { name: "gaming", label: "Gaming Preferences", text: "Gaming Preferences", options: ["Action", "Adventure", "Puzzle", "Role-playing", "Simulation", "Other"], customInput: { name: "gamingOther", text: "Enter custom preference" } },
+    { name: "collectignHobby", label: "Collecting Hobby/Interest", text: "Collecting Hobby or Interest", options: ["Coins/Stamps", "Comics/Figurines", "Antiques", "Trading cards", "Memorabilia", "Other"], customInput: { name: "collectingOther", text: "Enter custom interest" } },
+    { name: "coffee", label: "Coffee or Tea?", text: "Coffee or Tea Lover", options: ["Coffee addict", "Tea enthusiast", "Both!", "None, prefer other beverages"], customInput: { name: "coffeeOther", text: "Enter custom coffee" } },
+    { name: "cookingSkills", label: "Cooking Skills", text: "Cooking Skills", options: ["Novice", "Intermediate", "Expert"], customInput: { name: "cookOther", text: "Enter custom skill" } }
+];
+
+const personalValues = [
+    { name: "spiritual", label: "Spiritual or Religious Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic"] },
+    { name: "core", label: "Core Values", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity"] },
+    { name: "philosophy", label: "Philosophies I Believe In", text: "Philosophies I Believe In", options: ["Stoicism", "Existentialism", "Humanism", "Nihilism"] },
+    { name: "socialCause", label: "Environmental/Social Causes I Support", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education"] }
+];
+
+const professional = [
+    { name: "currentOcupation", label: "Current Occupation", text: "Enter Current Occupation/Industry", options: ["Technology", "Healthcare", "Education", "Finance", "Arts/Entertainment", "Other"], customInput: { name: "occupationOther", text: "Enter custom occupation" } },
+    { name: " careerAspiation", label: "Career Aspiation", text: "Enter Career Aspirations/Goals", options: ["Leadership", "Entrepreneurship", "Creativity", "Advancement", "Other"], customInput: { name: "aspirationOther", text: "Enter custom aspiration" } },
+    { name: "education", label: "Education Background", text: "Enter Education Background/Degrees", options: ["High School", "Bachelor's Degree", "Master's Degree", "Doctorate", "Other"], customInput: { name: "backgroundOther", text: "Enter custom background" } },
+    { name: "skills", label: "Professional Skills", text: "Enter Professional Skills or Expertise", options: ["Communication", "Problem-solving", "Teamwork", "Leadership", "Other"], customInput: { name: "expertiseOther", text: "Enter custom expertise" } }
+];
+
+const additionalInfo = [
+    { name: "globalIssues", label: "globalIssues", text: "globalIssues" },
+    { name: "weirdBelief", label: "weirdBelief", text: "weirdBelief" },
+    { name: "otherInterests", label: "Other Interests", text: "Any Other Interests" },
+    { name: "futureGoals", label: "Future Goals", text: "Future Goals" },
+    { name: "current", label: "Currently Learning", text: "Things I'm Learning" },
+    { name: "unusualExperinece", label: "Most Unusual Experience", text: "Unusual Experience" },
+    { name: "strangeHabits", label: "Strangest Habit I Have", text: "Strangest Habit I Have" }
+];
 
 const generateDefaultValues = (arrays: { name: string }[][]) => {
-  return arrays.reduce((acc, array) => {
-      array.forEach(field => {
-          acc[field.name] = "";
-      });
-      return acc;
-  }, {} as Record<string, string>);
+    return arrays.reduce((acc, array) => {
+        array.forEach(field => {
+            acc[field.name] = "";
+        });
+        return acc;
+    }, {} as Record<string, string>);
 };
 
 const convertToStrings = (data: any) => {
-  return Object.keys(data).reduce((acc, key) => {
-      acc[key] = data[key] !== undefined && data[key] !== null ? String(data[key]) : "";
-      return acc;
-  }, {} as Record<string, string>);
+    return Object.keys(data).reduce((acc, key) => {
+        acc[key] = data[key] !== undefined && data[key] !== null ? String(data[key]) : "";
+        return acc;
+    }, {} as Record<string, string>);
 };
 
 const InputVCard = () => {
-  const navigate = useNavigate();
-  const [search] = useSearchParams();
-  const id = search.get("personalId");
-  const [progress, setProgress] = useState<number>(25);
-  const [isPersonal, setIsPersonal] = useState<boolean>(id ? true : false);
-  const [personalLoading, setPersonalLoading] = useState<boolean>(false);
-  const [otherLink, setOtherLink] = useState("");
+    const navigate = useNavigate();
+    const [search] = useSearchParams();
+    const id = search.get("personalId");
+    const [progress, setProgress] = useState<number>(25);
+    const [isPersonal, setIsPersonal] = useState<boolean>(id ? true : false);
+    const [personalLoading, setPersonalLoading] = useState<boolean>(false);
+    const [otherLink, setOtherLink] = useState("");
     const [otherName, setOtherName] = useState("");
     const [open, setOpen] = useState<boolean>(false);
-    const [socialData, setSocialData] = useState<any | null>(inputs);
+    const [socialData, setSocialData] = useState<any | null>(socials);
 
-  const { user, isPaid } = useSelector(
-    (state: RootState) => state.userReducer
-);
+    const { user, isPaid } = useSelector(
+        (state: RootState) => state.userReducer
+    );
 
-const form = useForm({
-  defaultValues: generateDefaultValues([perInfo, emCon, medAdd, healthHistory, healthhabits, inSur, medicalCondition]),
-});
+    const form = useForm({
+        defaultValues: generateDefaultValues([perosnalName, aboutPersonal, contactInfo, emailInfo, miscellaneous, lifestyle, Favourites, motto, interests, personalValues, professional, additionalInfo]),
+    });
 
-const { handleSubmit, register, reset, formState: { errors } } = form;
+    const { handleSubmit, register, reset } = form;
 
-useEffect(() => {
-  const fetchPersonal = async () => {
-      if (id) {
-          try {
-              const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=personal`, { withCredentials: true });
-              setIsPersonal(true);
-              reset(convertToStrings(data.vCard));
-          } catch (error: any) {
-              toast.error(error.response.data.message);
-          }
-      }
-  }
-
-  const cardData = localStorage.getItem("current_card");
-  if (cardData && id) {
-      const cardDataParsed = JSON.parse(cardData);
-      if (cardDataParsed?._id !== id) {
-          fetchPersonal();
-      } else {
-          setIsPersonal(true);
-          reset(convertToStrings(cardDataParsed));
-      }
-  } else {
-      fetchPersonal();
-  }
-}, [id, reset]);
-
-  // const [social, setSocial] = useState<boolean>(false);
-  // const [lifestyles, setLifestyles] = useState<boolean>(false);
-  // const [fav, setFav] = useState<boolean>(false);
-  // const [misc, setMisc] = useState<boolean>(false);
-
-  // const [collecting, setCollecting] = useState("");
-  // const [prefMode, setPrefMode] = useState("");
-  // const [genre, setGenre] = useState("");
-  // const [outdoor, setOutdoor] = useState("");
-  // const [artistic, setArtistic] = useState("");
-  // const [gamingpref, setGamingPref] = useState("");
-  // const [occupation, setOccupation] = useState("");
-  // const [aspiration, setAspiration] = useState("");
-  // const [back, setBack] = useState("");
-  // const [expert, setExpert] = useState("");
-
-  // const [collectingOther, setCollectingOther] = useState("");
-  // const [prefModeOther, setPrefModeOther] = useState("");
-  // const [genreOther, setGenreOther] = useState("");
-  // const [outdoorOther, setOutdoorOther] = useState("");
-  // const [artisticOther, setArtisticOther] = useState("");
-  // const [gamingprefOther, setGamingPrefOther] = useState("");
-  // const [occupationOther, setOccupationOther] = useState("");
-  // const [aspirationOther, setAspirationOther] = useState("");
-  // const [backgroundOther, setBackgroundOther] = useState("");
-  // const [expertiseOther, setExpertiseOther] = useState("");
-
-  const handleAdd = () => {
-    setSocialData([
-      ...socialData,
-      {
-        name: otherLink,
-        label: otherName,
-        text: "",
-      },
-    ]);
-    setOpen(false);
-    setOtherLink("");
-    setOtherName("");
-  };
-
-  const handleChange = (event: any, index: number) => {
-    setSocialData((prevData: any) => [
-      ...prevData.slice(0, index),
-      {
-        ...prevData[index],
-        [event.target.name]: event.target.value,
-      },
-      ...prevData.slice(index + 1),
-    ]);
-  };
-
-  const onSubmit = async (values: any) => {
-    setPersonalLoading(true);
-    let final = [];
-    for (let i = 0; i < socialData.length; i++) {
-      const element = {
-        label: socialData[i].label,
-        name: socialData[i].name,
-      };
-      if (element.name) {
-        final.push(element);
-    }
-    }
-    const personalData = {
-      // name: values.name,
-      // contactInfo: {
-      //   phoneNumber: {
-      //     mobile: values.mobilephone,
-      //     home: values.homephone,
-      //     work: values.workphone,
-      //     other: values.otherphone,
-      //   },
-      //   emailAddress: {
-      //     personal: values.personalemail,
-      //     work: values.workemail,
-      //     other: values.otheremail,
-      //   },
-      // },
-      // socialMedia: final,
-      // lifestyle: {
-      //   birth: values.birth,
-      //   homeTown: values.hometown,
-      //   currentCity: values.currentCity,
-      //   languages: values.languages,
-      // },
-      // favourites: {
-      //   music: values.favmusic,
-      //   color: values.favcolor,
-      //   city: values.favcity,
-      //   travelDestination: values.dreamtravel,
-      //   season: values.favseason,
-      //   uniqueSkills: values.uniqueskills,
-      //   cuisine: values.favcuisine,
-      // },
-      // mottos: {
-      //   quotes: {
-      //     inspirational: values.inspirationalmotto,
-      //     funny: values.funnymotto,
-      //     motivational: values.motivationalmotto,
-      //     other: values.othermotto,
-      //   },
-      // },
-      // miscellaneous: {
-      //   petLover: values.petlover,
-      //   partyEnthusiast: values.party,
-      //   smoker: values.smoker,
-      //   marital: values.marital,
-      //   relationshipStatus: values.relation,
-      //   fitnessRoutine: values.fitnessRoutine,
-      //   morningPerson: values.morning,
-      //   diet: values.diet,
-      //   sleepingHabit: values.sleeping,
-      //   reading: values.reading,
-      // },
-      // interests: {
-      //   prefMode: prefMode === "Other" ? prefModeOther : values.outdoor,
-      //   genre: genre === "Other" ? genreOther : values.outdoor,
-      //   outdoor: outdoor === "Other" ? outdoorOther : values.outdoor,
-      //   artistic: artistic === "Other" ? artisticOther : values.artistic,
-      //   gamingPref:
-      //     gamingpref === "Other" ? gamingprefOther : values.gamingpref,
-      //   collecting:
-      //     collecting === "Other" ? collectingOther : values.collecting,
-      //   coffee: values.coffee,
-      //   cooking: values.cooking,
-      // },
-      // value: {
-      //   spiritual: values.spiritual,
-      //   core: values.corevalue,
-      //   philosophy: values.philosophy,
-      //   socialCause: values.environment,
-      // },
-      // beliefs: {
-      //   globalIssues: values.global,
-      //   weirdBelief: values.weirdbelief,
-      // },
-      // professional: {
-      //   currentOccupation:
-      //     occupation === "Other" ? occupationOther : values.currentOccupation,
-      //   careerAspiration:
-      //     aspiration === "Other" ? aspirationOther : values.careerAspiration,
-      // },
-      // backg: {
-      //   background: back === "Other" ? backgroundOther : values.aspiration,
-      // },
-      // expert: {
-      //   expertise: expert === "Other" ? expertiseOther : values.expertise,
-      // },
-      // additional: {
-      //   anyother: values.anyother,
-      //   futureGoal: values.futureGoal,
-      //   learning: values.learning,
-      //   experience: values.experience,
-      //   habit: values.habit,
-      // },
-      ...values,
-      socialMedia: final,
-      user: user?._id,
-    };
-    if (!isPaid && user?.role !== "admin") {
-      navigate("/plans");
-    } else {
-      try {
-        if (isPersonal) {
-          await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=personal`, personalData, { withCredentials: true });
-          toast.success("Personal VCards updated!");
-        } else {
-          await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=personal`, personalData, { withCredentials: true });
-          toast.success("Personal VCards created!");
+    useEffect(() => {
+        const fetchPersonal = async () => {
+            if (id) {
+                try {
+                    const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=personal`, { withCredentials: true });
+                    setIsPersonal(true);
+                    reset(convertToStrings(data.vCard));
+                    setSocialData(data.vCard.socialMedia);
+                } catch (error: any) {
+                    toast.error(error.response.data.message);
+                }
+            }
         }
-        navigate(-1);
-      } catch (error: any) {
-        toast.error(error.response.data.message);
-      }
+
+        const cardData = localStorage.getItem("current_card");
+        if (cardData && id) {
+            const cardDataParsed = JSON.parse(cardData);
+            if (cardDataParsed?._id !== id) {
+                fetchPersonal();
+            } else {
+                setIsPersonal(true);
+                setSocialData(cardDataParsed.socialMedia);
+                reset(convertToStrings(cardDataParsed));
+            }
+        } else {
+            fetchPersonal();
+        }
+    }, [id, reset]);
+
+    const handleAdd = () => {
+        setSocialData([
+            ...socialData,
+            {
+                name: otherLink,
+                label: otherName,
+                text: "",
+            },
+        ]);
+        setOpen(false);
+        setOtherLink("");
+        setOtherName("");
+    };
+
+    const handleChange = (event: any, index: number) => {
+        setSocialData((prevData: any) => [
+            ...prevData.slice(0, index),
+            {
+                ...prevData[index],
+                [event.target.name]: event.target.value,
+            },
+            ...prevData.slice(index + 1),
+        ]);
+    };
+
+    const onSubmit = async (values: any) => {
+        setPersonalLoading(true);
+        let final = [];
+        for (let i = 0; i < socialData.length; i++) {
+            const element = {
+                label: socialData[i].label,
+                name: socialData[i].name,
+            };
+            if (element.name) {
+                final.push(element);
+            }
+        }
+        const personalData = {
+            ...values,
+            socialMedia: final,
+            user: user?._id,
+        };
+        if (!isPaid && user?.role !== "admin") {
+            navigate("/plans");
+        } else {
+            try {
+                if (isPersonal) {
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=personal`, personalData, { withCredentials: true });
+                    toast.success("Personal VCards updated!");
+                } else {
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=personal`, personalData, { withCredentials: true });
+                    toast.success("Personal VCards created!");
+                }
+                navigate(-1);
+            } catch (error: any) {
+                toast.error(error.response.data.message);
+            }
+        }
+        setPersonalLoading(false);
+    };
+
+    const handleProgressForward = () => {
+        setProgress(progress + 25);
+    };
+
+    const handleProgressBackward = () => {
+        setProgress(progress - 25);
+    };
+
+    function handleCloseForm(e: React.MouseEvent<HTMLInputElement>) {
+        if ((e.target as Element).id === "popupform") {
+            setOpen(false);
+        }
     }
-    setPersonalLoading(false);
-  };
 
-  const handleProgressForward = () => {
-    setProgress(progress + 25);
-  };
-
-  const handleProgressBackward = () => {
-    setProgress(progress - 25);
-  };
-
-  function handleCloseForm(e: React.MouseEvent<HTMLInputElement>) {
-    if ((e.target as Element).id === "popupform") {
-      setOpen(false);
-    }
-  }
-
-  // function toggleSocials() {
-  //   if (social === true) {
-  //     setSocial(false);
-  //   } else {
-  //     setSocial(true);
-  //     setLifestyles(false);
-  //     setFav(false);
-  //     setMisc(false);
-  //   }
-  // }
-
-  // function toggleLifestyle() {
-  //   if (lifestyles === true) {
-  //     setLifestyles(false);
-  //   } else {
-  //     setLifestyles(true);
-  //     setFav(false);
-  //     setMisc(false);
-  //     setSocial(false);
-  //   }
-  // }
-
-  // function toggleFavs() {
-  //   if (fav === true) {
-  //     setFav(false);
-  //   } else {
-  //     setFav(true);
-  //     setMisc(false);
-  //     setSocial(false);
-  //     setLifestyles(false);
-  //   }
-  // }
-
-  // function toggleMisc() {
-  //   if (misc === true) {
-  //     setMisc(false);
-  //   } else {
-  //     setMisc(true);
-  //     setSocial(false);
-  //     setLifestyles(false);
-  //     setFav(false);
-  //   }
-  // }
-
-  return (
-    <>
-      {/* progress bar */}
-      <div className="flex justify-center lg:mt-4 lg:flex lg:justify-center">
-        <div className="w-[90%] h-4 bg-gray-300 rounded-full lg:w-[50%]">
-          <div
-            className="h-4 bg-blue-500 rounded-full"
-            style={{ width: `${(progress / 100) * 100}%` }}
-          ></div>
-        </div>
-      </div>
-
-      {/* pop up form */}
-      {open && (
-        <div className="font-Kanit">
-          <div
-            className="fixed inset-0 bg-opacity-30 backdrop-blur-lg flex justify-center items-center z-10"
-            id="popupform"
-            onClick={handleCloseForm}
-          >
-            <div className="bg-white p-8 rounded shadow-lg w-[425px]">
-              <h2 className="text-lg font-bold mb-4 flex justify-center underline">
-                Add Another Social Profile
-              </h2>
-              <div className="grid gap-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label
-                    htmlFor="name"
-                    className="text-right text-lg font-semibold"
-                  >
-                    Name
-                  </label>
-                  <input
-                    className="col-span-3 border rounded px-4 py-2 text-sm"
-                    type="text"
-                    id="name"
-                    value={otherName}
-                    onChange={(e) => setOtherName(e.target.value)}
-                    placeholder="Enter Social Media Platform"
-                  />
+    return (
+        <>
+            {/* progress bar */}
+            <div className="flex justify-center lg:mt-4 lg:flex lg:justify-center">
+                <div className="w-[90%] h-4 bg-gray-300 rounded-full lg:w-[50%]">
+                    <div
+                        className="h-4 bg-blue-500 rounded-full"
+                        style={{ width: `${(progress / 100) * 100}%` }}
+                    ></div>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label
-                    htmlFor="link"
-                    className="text-right text-lg font-semibold"
-                  >
-                    Link
-                  </label>
-                  <input
-                    className="col-span-3 border rounded px-4 py-2 text-sm"
-                    type="text"
-                    id="link"
-                    value={otherLink}
-                    onChange={(e) => setOtherLink(e.target.value)}
-                    placeholder="Enter Social Media Link"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end mt-4">
-                <button
-                  className="bg-black text-white font-bold py-2 px-4 rounded"
-                  type="button"
-                  onClick={handleAdd}
-                >
-                  Add
-                </button>
-                <button
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded ml-2"
-                  type="button"
-                  onClick={() => setOpen(false)}
-                >
-                  Cancel
-                </button>
-              </div>
             </div>
-          </div>
-        </div>
-      )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 font-Kanit">
-        {progress === 25 && (
-          <div className="flex flex-col justify-center items-center my-8">
-            <div className="w-full lg:w-[50%] lg:flex lg:justify-center">
-              <h1 className="text-3xl font-bold pl-6 font-Philosopher">Personal Preferences</h1>
-            </div>
-            <div className="w-[90%] lg:w-[45%] flex flex-row lg:mt-10">
-              <div className="basis-1/3 flex justify-center items-center">
-                <label htmlFor="" className="text-xl">
-                  Name:
-                </label>
-              </div>
-              <div className="basis-2/3 flex justify-center items-center">
-                <input
-                  type="text"
-                  className="block py-2.5 px-0 w-full text-xl font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                  placeholder="Enter your name"
-                  {...register("name", { required: true })}
-                />
-              </div>
-            </div>
-            <div className="w-full lg:w-[50%] font-semibold text-2xl py-4 mt-2">
-              {/* socials */}
-              <div className="pl-6">
-                <button
-                  className="w-full px-4 pt-2 border-none flex flex-row"
-                  onClick={toggleSocials}
-                  type="button"
-                >
-                  <div className="basis-1/4 flex justify-center items-center">
-                    Socials
-                  </div>
-                  <div className="basis-3/4 flex justify-start items-center">
-                    <MdNavigateNext
-                      className={`w-[2rem] h-[2rem] ${
-                        social
-                          ? "transition ease-in-out rotate-90"
-                          : "transition ease-in-out"
-                      }`}
-                    />
-                  </div>
-                </button>
-                {/* socials button clicked */}
-                {social ? (
-                  <div
-                    id="dropdown"
-                    className="absolute bg-slate-900 text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[40%] dark:bg-gray-700 my-2 py-4"
-                  >
-                    <ul
-                      className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                      aria-labelledby="dropdownDefaultButton"
-                    >
-                      {social && (
-                        <div className="flex flex-col space-y-2">
-                          {socials.map((arr, idx) => (
-                            <div
-                              key={idx}
-                              className="flex flex-row justify-center items-center gap-2"
-                            >
-                              <div className="basis-1/3 flex justify-center items-center text-lg text-white">
-                                <label className="">{arr.label}</label>
-                              </div>
-                              <div className="basis-2/3 px-4">
-                                <input
-                                  type="text"
-                                  className="block py-2.5 px-0 w-full text-base font-Philosopher text-slate-300 bg-transparent border-0 border-b-2 border-slate-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600"
-                                  // onChange={(e) => handleSocialChange(e, idx)}
-                                  placeholder={arr.text}
-                                  {...register(`${arr.name}`, {
-                                    required: true,
-                                  })}
-                                />
-                              </div>
-                            </div>
-                          ))}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 font-Kanit">
+                {progress === 25 && (
+                    <div className="flex flex-col justify-center items-center my-8">
+                        <div className="w-full lg:w-[50%] lg:flex lg:justify-center">
+                            <h1 className="text-3xl font-bold pl-6 font-Philosopher">Personal Preferences</h1>
                         </div>
-                      )}
-                    </ul>
-                  </div>
-                ) : null}
-              </div>
-
-              {/* lifestyle */}
-              <div className="pl-6">
-                <button
-                  className="w-full px-4 border-none flex flex-row mt-2"
-                  onClick={toggleLifestyle}
-                  type="button"
-                >
-                  <div className="basis-1/4 flex justify-center items-center pl-2">
-                    Lifestyle
-                  </div>
-                  <div className="basis-3/4 flex justify-start items-center">
-                    <MdNavigateNext className={`w-[2rem] h-[2rem] ${lifestyles ? "transition ease-in-out rotate-90" : "transition ease-in-out"}`} />
-                  </div>
-                </button>
-
-                {/* lifestyle button clicked */}
-                {lifestyles ? (
-                  <div
-                    id="dropdown"
-                    className="absolute bg-slate-900 text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[40%] dark:bg-gray-700 my-2 py-4"
-                  >
-                    <ul
-                      className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                      aria-labelledby="dropdownDefaultButton"
-                    >
-                      {lifestyle.map((life, index) => (
-                        <li key={index}>
-                          <div className="flex flex-row" key={index}>
-                            <div className="basis-1/3 flex justify-center items-center text-lg">
-                              <label htmlFor="" className="text-white">
-                                {life.label}
-                              </label>
-                            </div>
-                            <div className="basis-2/3 px-4">
-                              {life.name === "birth" ? (
-                                <input
-                                  type="date"
-                                  className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                                  placeholder={life.text}
-                                  {...register(`${life.name}`, {
-                                    required: true,
-                                  })}
-                                />
-                              ) : (
-                                <input
-                                  type="text"
-                                  className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                                  placeholder={life.text}
-                                  {...register(`${life.name}`, {
-                                    required: true,
-                                  })}
-                                />
-                              )}
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-              </div>
-
-              {/* Favourites section */}
-              <div className="pl-6 mt-2 ">
-                <button
-                  className="w-full px-4 border-none flex flex-row"
-                  onClick={toggleFavs}
-                  type="button"
-                >
-                  <div className="basis-1/4 flex justify-center items-center pl-2">
-                    Favourites
-                  </div>
-                  <div className="basis-3/4 flex justify-start items-center">
-                    <MdNavigateNext className={`w-[2rem] h-[2rem] ${fav ? "transition ease-in-out rotate-90" : "transition ease-in-out"}`} />
-                  </div>
-                </button>
-
-                {/* lifestyle button clicked */}
-                {fav ? (
-                  <div
-                    id="dropdown"
-                    className="absolute bg-slate-900 text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[40%] dark:bg-gray-700 my-2 py-4"
-                  >
-                    <ul
-                      className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                      aria-labelledby="dropdownDefaultButton"
-                    >
-                      {Favourites.map((favs, index) => (
-                        <li key={index}>
-                          <div className="flex flex-row" key={index}>
-                            <div className="basis-1/3 flex justify-start items-center text-lg">
-                              <label htmlFor="" className="pl-2 text-white">
-                                {favs.label}
-                              </label>
-                            </div>
-                            <div className="basis-2/3 px-4">
-                              <input
-                                type="text"
-                                // name={favs.name}
-                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                                placeholder={favs.text}
-                                {...register(`${favs.name}`, {
-                                  required: true,
-                                })}
-                              />
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-              </div>
-
-              {/* misc section */}
-              <div className="pl-6 mt-2 ">
-                <button
-                  className="w-full px-4 border-none flex flex-row"
-                  onClick={toggleMisc}
-                  type="button"
-                >
-                  <div className="basis-1/4 flex justify-center items-center pl-2">
-                    Miscellaneous
-                  </div>
-                  <div className="basis-3/4 flex justify-start items-center">
-                    <MdNavigateNext className={`w-[2rem] h-[2rem] ${misc ? "transition ease-in-out rotate-90" : "transition ease-in-out"}` } />
-                  </div>
-                </button>
-
-                {/* misc button clicked */}
-                {misc ? (
-                  <div
-                    id="dropdown"
-                    className="absolute bg-slate-900 text-white divide-gray-100 rounded-lg shadow w-[90%] lg:w-[40%] dark:bg-gray-700 my-2 py-4"
-                  >
-                    <ul
-                      className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                      aria-labelledby="dropdownDefaultButton"
-                    >
-                      {miscellaneous.map((miscs, index) => (
-                        <li className="py-1" key={index}>
-                          {miscs.name === "reading" ? (
-                            <div className="flex flex-row" key={index}>
-                              <div className="basis-1/3 flex justify-start items-center text-lg">
-                                <label htmlFor="" className="pl-2 text-white">
-                                  {miscs.label}
+                        <div className="w-[90%] lg:w-[45%] flex flex-row lg:mt-10">
+                            <div className="basis-1/3 flex justify-center items-center">
+                                <label htmlFor="" className="text-xl">
+                                    Name:
                                 </label>
-                              </div>
-                              <div className="basis-2/3 px-4">
-                                <input
-                                  type="text"
-                                  // name={miscs.name}
-                                  className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                                  placeholder={miscs.text}
-                                  {...register(`${miscs.name}`, {
-                                    required: true,
-                                  })}
-                                />
-                              </div>
                             </div>
-                          ) : (
-                            <div className="flex flex-row" key={index}>
-                              <div className="basis-1/3 flex justify-start items-center text-lg">
-                                <label htmlFor="" className="pl-2 text-white">
-                                  {miscs.label}
-                                </label>
-                              </div>
-                              <div className="basis-2/3 px-4 flex items-center">
-                                <select
-                                  // name={miscs.name}
-                                  className="w-[75%] rounded-lg text-black"
-                                  {...register(`${miscs.name}`, {
-                                    required: true,
-                                  })}
+                            <div className="basis-2/3 flex justify-center items-center">
+                                <input
+                                    type="text"
+                                    className="block py-2.5 px-0 w-full text-xl font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                    placeholder="Enter your name"
+                                    {...register("name", { required: true })}
+                                />
+                            </div>
+                        </div>
+
+                        {/* socials */}
+                        <div className="flex flex-col space-y-2 font-Kanit">
+                            <div className="lg:flex lg:justify-center"><h1 className="font-semibold text-lg font-Philosopher underline">Social Media Profiles</h1></div>
+                            {socialData && (
+                                <div className="flex flex-col space-y-2">
+                                    {socialData.map((arr: any, index: number) => (
+                                        <div
+                                            key={index}
+                                            className="flex w-full justify-center items-center gap-2"
+                                        >
+                                            <div className="basis-1/3 flex justify-start">
+                                                <label htmlFor={`name-${index}`}>{arr.label}:</label>
+                                            </div>
+                                            <div className="basis-2/3">
+                                                <input
+                                                    className="block py-2.5 px-0 w-full text-sm font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                                    type="text"
+                                                    id={`name-${index}`}
+                                                    name="name"
+                                                    value={arr.name}
+                                                    onChange={(e) => handleChange(e, index)}
+                                                    placeholder={arr.text}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-6 pt-10">
+                            <div className="">
+                                <button
+                                    className="w-[350px] bg-black text-white font-bold py-2 px-4 rounded"
+                                    type="button"
+                                    onClick={() => setOpen(true)}
                                 >
-                                  {miscs.options?.map((option, index) => (
-                                    <option key={index}>{option}</option>
-                                  ))}
-                                </select>
-                              </div>
+                                    Add more
+                                </button>
+                                {open && (
+                                    <div className="font-Kanit">
+                                        <div
+                                            className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
+                                            id="popupform"
+                                            onClick={handleCloseForm}
+                                        >
+                                            <div className="bg-white p-8 rounded shadow-lg w-[425px]">
+                                                <h2 className="text-lg font-bold mb-4 flex justify-center underline">
+                                                    Add Another Social Profile
+                                                </h2>
+                                                <div className="grid gap-4">
+                                                    <div className="grid grid-cols-4 items-center gap-4">
+                                                        <label
+                                                            htmlFor="name"
+                                                            className="text-right text-lg font-semibold"
+                                                        >
+                                                            Name
+                                                        </label>
+                                                        <input
+                                                            className="col-span-3 border rounded px-4 py-2 text-sm"
+                                                            type="text"
+                                                            id="name"
+                                                            value={otherName}
+                                                            onChange={(e) => setOtherName(e.target.value)}
+                                                            placeholder="Enter Social Media Platform"
+                                                        />
+                                                    </div>
+                                                    <div className="grid grid-cols-4 items-center gap-4">
+                                                        <label
+                                                            htmlFor="link"
+                                                            className="text-right text-lg font-semibold"
+                                                        >
+                                                            Link
+                                                        </label>
+                                                        <input
+                                                            className="col-span-3 border rounded px-4 py-2 text-sm"
+                                                            type="text"
+                                                            id="link"
+                                                            value={otherLink}
+                                                            onChange={(e) => setOtherLink(e.target.value)}
+                                                            placeholder="Enter Social Media Link"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-end mt-4">
+                                                    <button
+                                                        className="bg-black text-white font-bold py-2 px-4 rounded"
+                                                        type="button"
+                                                        onClick={handleAdd}
+                                                    >
+                                                        Add
+                                                    </button>
+                                                    <button
+                                                        className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded ml-2"
+                                                        type="button"
+                                                        onClick={() => setOpen(false)}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        )}
+                        </div>
 
-        {/* interests & hobbies */}
-        {progress === 50 && (
-          <div className="flex flex-col justify-center items-center my-8">
-            <div className="w-full lg:w-[50%] lg:flex lg:justify-center">
-              <h1 className="text-3xl font-bold pl-6 font-Philosopher">
-                Interests & Activities
-              </h1>
-            </div>
-            <div className="pt-6 lg:w-[40%] lg::justify-start">
-              {interests.map((int, index) => (
-                <>
-                  <div className="flex flex-row py-2 lg:gap-10" key={index}>
-                    <div className="basis-2/5 flex justify-start lg:justify-end items-center text-lg">
-                      <label htmlFor="" className="pl-2 font-semibold">
-                        {int.label}
-                      </label>
-                    </div>
-                    <div className="basis-3/5 px-4 flex items-center">
-                      <select
-                        className="w-full rounded-lg text-black flex items-center text-lg border-2 border-black"
-                        {...register(`${int.name}`, { required: true })}
-                        onChange={(e) => {
-                          if (int.name === "collecting") {
-                            setCollecting(e.target.value);
-                          } else if (int.name === "prefmode") {
-                            setPrefMode(e.target.value);
-                          } else if (int.name === "genre") {
-                            setGenre(e.target.value);
-                          } else if (int.name === "outdoor") {
-                            setOutdoor(e.target.value);
-                          } else if (int.name === "artistic") {
-                            setArtistic(e.target.value);
-                          } else if (int.name === "gamingpref") {
-                            setGamingPref(e.target.value);
-                          }
-                        }}
-                      >
-                        {int.options.map((option, index) => (
-                          <option key={index} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  {int.name === "collecting" && collecting === "Other" && (
-                    <div className="lg:flex lg:justify-end">
-                      <input
-                        type="text"
-                        className="block py-2.5 px-0 w-full  lg:w-[50%] lg:mr-4 text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                        placeholder="Enter custom interest"
-                        value={collectingOther}
-                        {...register(`${int.customInput.name}`)}
-                        onChange={(e) => setCollectingOther(e.target.value)}
-                      />
-                    </div>
-                  )}
-                  {int.name === "prefmode" && prefMode === "Other" && (
-                    <div className="w-full lg:flex lg:justify-end">
-                      <input
-                        type="text"
-                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 lg:mr-4 focus:border-blue-600"
-                        placeholder="Enter custom preference"
-                        value={prefModeOther}
-                        {...register(`${int.customInput.name}`)}
-                        onChange={(e) => setPrefModeOther(e.target.value)}
-                      />
-                    </div>
-                  )}
-                  {int.name === "genre" && genre === "Other" && (
-                    <div className="lg:flex lg:justify-end">
-                      <input
-                        type="text"
-                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
-                        placeholder="Enter custom genre"
-                        value={genreOther}
-                        {...register(`${int.customInput.name}`)}
-                        onChange={(e) => setGenreOther(e.target.value)}
-                      />
-                    </div>
-                  )}
-                  {int.name === "outdoor" && outdoor === "Other" && (
-                    <div className="lg:flex lg:justify-end">
-                      <input
-                        type="text"
-                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
-                        placeholder="Enter custom activity"
-                        value={outdoorOther}
-                        {...register(`${int.customInput.name}`)}
-                        onChange={(e) => setOutdoorOther(e.target.value)}
-                      />
-                    </div>
-                  )}
-                  {int.name === "artistic" && artistic === "Other" && (
-                    <div className="lg:flex lg:justify-end">
-                      <input
-                        type="text"
-                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
-                        placeholder="Enter custom hobby"
-                        value={artisticOther}
-                        {...register(`${int.customInput.name}`)}
-                        onChange={(e) => setArtisticOther(e.target.value)}
-                      />
-                    </div>
-                  )}
-                  {int.name === "gamingpref" && gamingpref === "Other" && (
-                    <div className="lg:flex lg:justify-end">
-                      <input
-                        type="text"
-                        className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
-                        placeholder="Enter custom option"
-                        value={gamingprefOther}
-                        {...register(`${int.customInput.name}`)}
-                        onChange={(e) => setGamingPrefOther(e.target.value)}
-                      />
-                    </div>
-                  )}
-                </>
-              ))}
-            </div>
-          </div>
-        )}
+                        {/* about me */}
+                        <div className="w-[90%] lg:w-[45%] flex flex-row lg:mt-10">
+                            <div className="basis-1/3 flex justify-center items-center">
+                                <label htmlFor="" className="text-xl">
+                                    About Me:
+                                </label>
+                            </div>
+                            <div className="basis-2/3 flex justify-center items-center">
+                                <textarea
+                                    className="block py-2.5 px-0 w-full text-xl font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                    placeholder="Tell Something About Yourself"
+                                    {...register("aboutMe", { required: true })}
+                                />
+                            </div>
+                        </div>
 
-        {progress === 75 && (
-          <div className="flex flex-col justify-center items-center my-8">
-            <div className="w-full lg:flex lg:justify-center">
-              <h1 className="text-3xl font-bold pl-6 font-Philosopher">Professional Details:</h1>
-            </div>
-            <div className="w-full pt-6">
-              <div className="lg:w-[40%] lg:flex lg:justify-end">
-              <h3 className="text-2xl font-semibold pl-6 underline lg:mr-[2.5rem] font-Philosopher">
-                Career :
-              </h3>
-              </div>
-              <div className="lg:flex lg:justify-center">
-              <div className="pt-2 lg:w-[40%]">
-                {professional.map((prof, index) => (
-                  <>
-                    <div className="flex flex-row py-2 lg:gap-10" key={index}>
-                      <div className="basis-1/3 flex justify-start lg:justify-end lg:w-[50%] items-center text-lg">
-                        <label htmlFor="" className="pl-4 font-semibold">
-                          {prof.label}
-                        </label>
-                      </div>
-                      <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[50%]">
-                        <select
-                          className="w-full rounded-lg text-black items-center text-lg lg:w-[70%] border-2 border-black"
-                          {...register(`${prof.name}`, { required: true })}
-                          onChange={(e) => {
-                            if (prof.name === "occupation") {
-                              setOccupation(e.target.value);
-                            } else if (prof.name === "aspiration") {
-                              setAspiration(e.target.value);
-                            }
-                          }}
-                        >
-                          {prof.options.map((option, index) => (
-                            <option key={index} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    {prof.name === "occupation" && occupation === "Other" && (
-                      <div className="lg:flex lg:justify-end lg:mr-[5rem] lg:mb-2">
-                        <input
-                          type="text"
-                          className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
-                          placeholder="Enter custom occupation"
-                          value={occupationOther}
-                          {...register(`${prof.customInput.name}`)}
-                          onChange={(e) => setOccupationOther(e.target.value)}
-                        />
-                      </div>
-                    )}
-                    {prof.name === "aspiration" && aspiration === "Other" && (
-                      <div className="lg:flex lg:justify-end lg:mr-[5rem]">
-                        <input
-                          type="text"
-                          className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
-                          placeholder="Enter custom aspiration"
-                          value={aspirationOther}
-                          {...register(`${prof.customInput.name}`)}
-                          onChange={(e) => setAspirationOther(e.target.value)}
-                        />
-                      </div>
-                    )}
-                  </>
-                ))}
-              </div>
-              </div>
-            </div>
+                        {/* conatct */}
+                        <div className="pl-6">
+                            {contactInfo.map((contact, index) => (
+                                <div key={index}>
+                                    <div className="flex flex-row" key={index}>
+                                        <div className="basis-1/3 flex justify-center items-center text-lg">
+                                            <label htmlFor="" className="text-black">
+                                                {contact.label}
+                                            </label>
+                                        </div>
+                                        <div className="basis-2/3 px-4">
+                                            <input
+                                                type={contact.type}
+                                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                                placeholder={contact.text}
+                                                {...register(contact.name, {
+                                                    required: true,
+                                                })}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
 
-            <div className="w-full pt-6">
-              <div className="lg:flex lg:justify-center lg:w-[70%] lg:mr-1">
-              <h3 className="text-2xl font-semibold pl-6 underline font-Philosopher">
-                Education :
-              </h3>
-              </div>
-              <div className="lg:flex lg:justify-center">
-              <div className="pt-2 lg:w-[50%]">
-                <div className="flex flex-row py-2 lg:gap-10">
-                  <div className="basis-1/3 flex justify-start items-center lg:justify-end lg:w-[50%] text-lg">
-                    <label htmlFor="" className="pl-6 font-semibold">
-                      {background.label}
-                    </label>
-                  </div>
-                  <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[60%]">
-                    <select
-                      className="w-full rounded-lg text-black items-center text-lg lg:w-[55%] border-2 border-black lg:ml-6"
-                      {...register("background", { required: true })}
-                      onChange={(e) => setBack(e.target.value)}
-                    >
-                      {background.options.map((option, index) => (
-                        <option key={index}>{option}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                {back === "Other" && (
-                  <div className="lg:flex lg:justify-end lg:mr-[5rem] lg:mb-2">
-                    <input
-                      type="text"
-                      className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
-                      placeholder="Enter custom background"
-                      {...register(`${background.customInput.name}`)}
-                      onChange={(e) => setBackgroundOther(e.target.value)}
-                    />
-                  </div>
+                        {/* email */}
+                        <div className="pl-6">
+                            {emailInfo.map((email, index) => (
+                                <div key={index}>
+                                    <div className="flex flex-row" key={index}>
+                                        <div className="basis-1/3 flex justify-center items-center text-lg">
+                                            <label htmlFor="" className="text-black">
+                                                {email.label}
+                                            </label>
+                                        </div>
+                                        <div className="basis-2/3 px-4">
+                                            <input
+                                                type={email.type}
+                                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                                placeholder={email.text}
+                                                {...register(email.name, {
+                                                    required: true,
+                                                })}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* lifestyle */}
+                        <div className="pl-6">
+                            {lifestyle.map((life, index) => (
+                                <div key={index}>
+                                    <div className="flex flex-row" key={index}>
+                                        <div className="basis-1/3 flex justify-center items-center text-lg">
+                                            <label htmlFor="" className="text-black">
+                                                {life.label}
+                                            </label>
+                                        </div>
+                                        <div className="basis-2/3 px-4">
+                                            <input
+                                                type={life.type}
+                                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                                placeholder={life.text}
+                                                {...register(life.name, {
+                                                    required: true,
+                                                })}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Favourites section */}
+                        <div className="pl-6 mt-2 ">
+                            {Favourites.map((favs, index) => (
+                                <div key={index}>
+                                    <div className="flex flex-row" key={index}>
+                                        <div className="basis-1/3 flex justify-start items-center text-lg">
+                                            <label htmlFor="" className="pl-2 text-black">
+                                                {favs.label}
+                                            </label>
+                                        </div>
+                                        <div className="basis-2/3 px-4">
+                                            <input
+                                                type="text"
+                                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                                placeholder={favs.text}
+                                                {...register(`${favs.name}`, {
+                                                    required: true,
+                                                })}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* misc section */}
+                        <div className="pl-6 mt-2 ">
+                            {miscellaneous.map((miscs, index) => (
+                                <div className="py-1" key={index}>
+                                    <div className="flex flex-row" key={index}>
+                                        <div className="basis-1/3 flex justify-start items-center text-lg">
+                                            <label htmlFor="" className="pl-2 text-black">
+                                                {miscs.label}
+                                            </label>
+                                        </div>
+                                        <div className="basis-2/3 px-4 flex items-center">
+                                            <select
+                                                className="w-[75%] rounded-lg text-black"
+                                                {...register(`${miscs.name}`, {
+                                                    required: true,
+                                                })}
+                                            >
+                                                {miscs.options?.map((option, index) => (
+                                                    <option key={index}>{option}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 )}
-              </div>
-              </div>
-            </div>
 
-            <div className="w-full pt-6">
-              <h3 className="text-2xl lg:flex lg:justify-center lg:w-[70%] lg:ml-[2rem] font-semibold pl-6 underline">
-                Skills & Expertise :
-              </h3>
-              <div className="lg:flex lg:justify-center">
-              <div className="pt-2 lg:w-[50%]">
-                <div className="flex flex-row py-2">
-                  <div className="basis-1/3 flex justify-start items-center text-lg lg:gap-10 lg:justify-end lg:w-[50%]">
-                    <label htmlFor="" className="pl-6 font-semibold">
-                      {expertise.label}
-                    </label>
-                  </div>
-                  <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[60%]">
-                    <select
-                      className="w-full rounded-lg text-black items-center text-lg lg:w-[55%] border-black border-2 lg:ml-[3.5rem]"
-                      {...register("expertise", { required: true })}
-                      onChange={(e) => setExpert(e.target.value)}
-                    >
-                      {expertise.options.map((option, index) => (
-                        <option key={index} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                {expert === "Other" && (
-                  <div className="lg:flex lg:justify-end lg:mr-[5rem] lg:mb-2">
-                    <input
-                      type="text"
-                      className="block py-2.5 px-0 w-full lg:w-[50%] text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 lg:mr-4"
-                      placeholder="Enter custom expertise"
-                      value={expertiseOther}
-                      {...register(`${expertise.customInput.name}`)}
-                      onChange={(e) => setExpertiseOther(e.target.value)}
-                    />
-                  </div>
+                {/* interests & hobbies */}
+                {progress === 50 && (
+                    <div className="flex flex-col justify-center items-center my-8">
+
+                        <div>
+                            <h1>Motto</h1>
+                            <div className="pl-6">
+                                {motto.map((life, index) => (
+                                    <div key={index}>
+                                        <div className="flex flex-row" key={index}>
+                                            <div className="basis-1/3 flex justify-center items-center text-lg">
+                                                <label htmlFor="" className="text-black">
+                                                    {life.label}
+                                                </label>
+                                            </div>
+                                            <div className="basis-2/3 px-4">
+                                                <input
+                                                    type="text"
+                                                    className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-slate-300 appearance-none text-slate-300 focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                                    placeholder={life.text}
+                                                    {...register(life.name, {
+                                                        required: true,
+                                                    })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="w-full lg:w-[50%] lg:flex lg:justify-center">
+                            <h1 className="text-3xl font-bold pl-6 font-Philosopher">
+                                Interests & Activities
+                            </h1>
+                        </div>
+                        <div className="pt-6 lg:w-[40%] lg::justify-start">
+                            {interests.map((int, index) => (
+                                <div key={index}>
+                                    <div className="flex flex-row py-2 lg:gap-10">
+                                        <div className="basis-2/5 flex justify-start lg:justify-end items-center text-lg">
+                                            <label htmlFor="" className="pl-2 font-semibold">
+                                                {int.label}
+                                            </label>
+                                        </div>
+                                        <div className="basis-3/5 px-4 flex items-center">
+                                            <select
+                                                className="w-full rounded-lg text-black flex items-center text-lg border-2 border-black"
+                                                {...register(`${int.name}`, { required: true })}
+                                            >
+                                                {int.options.map((option, index) => (
+                                                    <option key={index} value={option}>
+                                                        {option}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 )}
-              </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {progress === 100 && (
-          <div className="flex flex-col justify-center items-center my-8">
-            <div className="w-full lg:flex lg:justify-center">
-              <h1 className="text-3xl font-bold pl-6 font-Philosopher">Others</h1>
-            </div>
-            <div className="py-8">
-              {additionalInfo.map((info, index) => (
-                <div className="flex flex-row" key={index}>
-                  <div className="basis-1/3 flex justify-start items-center text-lg">
-                    <label htmlFor="" className="">
-                      {info.label}
-                    </label>
-                  </div>
-                  <div className="basis-2/3 px-4">
-                    <input
-                      type="text"
-                      className="block py-2.5 px-0 w-full text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
-                      placeholder={info.text}
-                      {...register(`${info.name}`, { required: true })}
-                    />
-                  </div>
+                {progress === 75 && (
+                    <div className="flex flex-col justify-center items-center my-8">
+                        <div className="w-full lg:flex lg:justify-center">
+                            <h1 className="text-3xl font-bold pl-6 font-Philosopher">Professional Details:</h1>
+                        </div>
+                        <div className="w-full pt-6">
+                            <div className="lg:w-[40%] lg:flex lg:justify-end">
+                                <h3 className="text-2xl font-semibold pl-6 underline lg:mr-[2.5rem] font-Philosopher">
+                                    Career :
+                                </h3>
+                            </div>
+                            <div className="lg:flex lg:justify-center">
+                                <div className="pt-2 lg:w-[40%]">
+                                    {professional.map((prof, index) => (
+                                        <div key={index}>
+                                            <div className="flex flex-row py-2 lg:gap-10">
+                                                <div className="basis-1/3 flex justify-start lg:justify-end lg:w-[50%] items-center text-lg">
+                                                    <label htmlFor="" className="pl-4 font-semibold">
+                                                        {prof.label}
+                                                    </label>
+                                                </div>
+                                                <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[50%]">
+                                                    <select
+                                                        className="w-full rounded-lg text-black items-center text-lg lg:w-[70%] border-2 border-black"
+                                                        {...register(`${prof.name}`, { required: true })}
+                                                    >
+                                                        {prof.options.map((option, index) => (
+                                                            <option key={index} value={option}>
+                                                                {option}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h1>Perosnal Values</h1>
+                            <div className="pl-6 mt-2 ">
+                                {personalValues.map((value, index) => (
+                                    <div className="py-1" key={index}>
+                                        <div className="flex flex-row" key={index}>
+                                            <div className="basis-1/3 flex justify-start items-center text-lg">
+                                                <label htmlFor="" className="pl-2 text-black">
+                                                    {value.label}
+                                                </label>
+                                            </div>
+                                            <div className="basis-2/3 px-4 flex items-center">
+                                                <select
+                                                    className="w-[75%] rounded-lg text-black"
+                                                    {...register(`${value.name}`, {
+                                                        required: true,
+                                                    })}
+                                                >
+                                                    {value.options?.map((option, index) => (
+                                                        <option key={index}>{option}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {progress === 100 && (
+                    <div className="flex flex-col justify-center items-center my-8">
+                        <div className="w-full lg:flex lg:justify-center">
+                            <h1 className="text-3xl font-bold pl-6 font-Philosopher">Others</h1>
+                        </div>
+                        <div className="py-8">
+                            {additionalInfo.map((info, index) => (
+                                <div className="flex flex-row" key={index}>
+                                    <div className="basis-1/3 flex justify-start items-center text-lg">
+                                        <label htmlFor="" className="">
+                                            {info.label}
+                                        </label>
+                                    </div>
+                                    <div className="basis-2/3 px-4">
+                                        <input
+                                            type="text"
+                                            className="block py-2.5 px-0 w-full text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                            placeholder={info.text}
+                                            {...register(`${info.name}`, { required: true })}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                <div className="w-full flex flex-row lg:gap-[4rem]">
+                    <div className="basis-1/2 flex justify-center lg:w-[50%] lg:justify-end">
+                        {progress === 25 ? (
+                            <button
+                                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-300"
+                                disabled
+                            >
+                                Back
+                            </button>
+                        ) : (
+                            <button
+                                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
+                                onClick={handleProgressBackward}
+                                type="button"
+                            >
+                                Back
+                            </button>
+                        )}
+                    </div>
+                    <div className="basis-1/2 flex justify-center lg:w-[50%] lg:justify-start">
+                        {progress === 100 ? (
+                            <button
+                                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
+                                type="submit"
+                                disabled={personalLoading}
+                            >
+                                {personalLoading ? "Saving..." : "Save"}
+                            </button>
+                        ) : (
+                            <button
+                                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
+                                onClick={handleProgressForward}
+                                type="button"
+                            >
+                                Next
+                            </button>
+                        )}
+                    </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* <button className="w-[350px]" type="submit" disabled={personalLoading}>
-          {personalLoading ? "Saving..." : "Save"}
-        </button> */}
-        <div className="w-full flex flex-row lg:gap-[4rem]">
-          <div className="basis-1/2 flex justify-center lg:w-[50%] lg:justify-end">
-            {progress === 25 ? (
-              <button
-                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-300"
-                disabled
-                // type="button"
-              >
-                Back
-              </button>
-            ) : (
-              <button
-                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
-                onClick={handleProgressBackward}
-                type="button"
-              >
-                Back
-              </button>
-            )}
-          </div>
-          <div className="basis-1/2 flex justify-center lg:w-[50%] lg:justify-start">
-            {progress === 100 ? (
-              <button
-                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
-                type="submit"
-                disabled={personalLoading}
-              >
-                {personalLoading ? "Saving..." : "Save"}
-              </button>
-            ) : (
-              <button
-                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
-                onClick={handleProgressForward}
-                type="button"
-              >
-                Next
-              </button>
-            )}
-          </div>
-        </div>
-      </form>
-    </>
-  );
+            </form >
+        </>
+    );
 };
 
 export default InputVCard;

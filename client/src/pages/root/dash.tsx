@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Link, Route, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import Loader from "@/components/rest/loader";
-import { requestVerifyUser } from "@/redux/api/userApi";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineSubscriptions } from "react-icons/md";
 import { FaBriefcaseMedical } from "react-icons/fa";
@@ -12,7 +10,8 @@ import { GiPlantsAndAnimals } from "react-icons/gi";
 import { IoIosAdd } from "react-icons/io";
 import { MdQrCodeScanner } from "react-icons/md";
 import { toast } from "react-toastify";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import axios from "axios";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -28,7 +27,7 @@ const Dashboard = () => {
 
   const handleRequestVerify = useCallback(async () => {
     try {
-      await requestVerifyUser();
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/user/request/verification`, { withCredentials: true });
       toast.success("Email Sent!");
       navigate("/dashboard");
     } catch (error: any) {

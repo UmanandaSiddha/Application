@@ -8,9 +8,9 @@ import {
 import { Link,  NavLink,  useNavigate } from 'react-router-dom'
 import { User } from "../../types/types";
 import { toast } from 'react-toastify'
-import { logoutUser } from "../../redux/api/userApi";
 import { userNotExist } from "../../redux/reducer/userReducer";
 import { useDispatch } from "react-redux";
+import axios from 'axios';
 
 interface PropsType {
     user: User | null;
@@ -23,7 +23,7 @@ export default function Header({ user }: PropsType) {
 
     const logout = async () => {
         try {
-            await logoutUser();
+            await axios.get(`${import.meta.env.VITE_BASE_URL}/user/logout`, { withCredentials: true } );
             dispatch(userNotExist());
             toast.success("User Logged Out Successfully");
             navigate("/");

@@ -23,10 +23,9 @@ const DonationPage = lazy(() => import("./pages/root/donation"));
 const BillingPage = lazy(() => import("./pages/root/billing"));
 const RecieptPage = lazy(() => import("./pages/root/reciept"));
 const OtherQR = lazy(() => import("./pages/cards/other-qr"));
-const Onboarding = lazy(() => import("./pages/onboarding"));
+const Onboarding = lazy(() => import("./pages/root/onboarding"));
 const OrgRegister = lazy(() => import("./pages/auth/orgRegister"));
-const VerificationEmail = lazy(() => import("./pages/verificationEmail"));
-const Donation = lazy(() => import("./pages/donation"));
+const Donation = lazy(() => import("./pages/donation/donation"));
 const Checkout = lazy(() => import("./pages/root/checkout"));
 
 const AllCards = lazy(() => import("./pages/cards/all-cards"));
@@ -66,10 +65,7 @@ const App = () => {
 
   const gotUser = async () => {
     try {
-      const { data }: { data: UserResponse } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/user/me`,
-        { withCredentials: true }
-      );
+      const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true });
       dispatch(userExist(data.user));
     } catch (error: any) {
       dispatch(userNotExist());

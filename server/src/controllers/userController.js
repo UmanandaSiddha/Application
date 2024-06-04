@@ -70,6 +70,7 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
     }
 
     const otp = user.getOneTimePassword();
+    console.log("Verification OTP:", otp)
 
     await user.save({ validateBeforeSave: false });
 
@@ -95,6 +96,7 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id);
 
     const otp = user.getOneTimePassword();
+    console.log("Verification OTP:", otp)
 
     await user.save({ validateBeforeSave: false });
 

@@ -1,23 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "@/redux/api/userApi";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { getGoogleAuthUrl } from "@/lib/google";
 import Compressor from "compressorjs";
 import { UserResponse } from "@/types/api-types";
 import axios from "axios";
 
-let currentOTPIndex: number = 0;
+// let currentOTPIndex: number = 0;
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [avatar, setAvatar] = useState<any>();
-  const [openOTP, setOpenOTP] = useState<boolean>(false);
-  const [otp, setOtp] = useState(new Array(6).fill(""));
-  const [activeOTPIndex, setActiveOTPIndex] = useState(0);
+  // const [openOTP, setOpenOTP] = useState<boolean>(false);
+  // const [otp, setOtp] = useState(new Array(6).fill(""));
+  // const [activeOTPIndex, setActiveOTPIndex] = useState(0);
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -90,6 +89,7 @@ const Register = () => {
       //   return data;
       // const data = await registerUser(registerData);
       dispatch(userExist(data.user));
+      navigate("/verify")
       // toast.success("User Registered!");
     } catch (error: any) {
       dispatch(userNotExist());
@@ -98,30 +98,30 @@ const Register = () => {
     setRegisterLoading(false);
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  // const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleOnChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = target;
-    const newOTP: string[] = [...otp];
-    newOTP[currentOTPIndex] = value.substring(value.length - 1);
+  // const handleOnChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { value } = target;
+  //   const newOTP: string[] = [...otp];
+  //   newOTP[currentOTPIndex] = value.substring(value.length - 1);
 
-    if (!value) setActiveOTPIndex(currentOTPIndex - 1);
-    else setActiveOTPIndex(currentOTPIndex + 1);
+  //   if (!value) setActiveOTPIndex(currentOTPIndex - 1);
+  //   else setActiveOTPIndex(currentOTPIndex + 1);
 
-    setOtp(newOTP);
-  };
+  //   setOtp(newOTP);
+  // };
 
-  const handleOnKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    currentOTPIndex = index;
-    if (e.key === "Backspace") setActiveOTPIndex(currentOTPIndex - 1);
-  };
+  // const handleOnKeyDown = (
+  //   e: React.KeyboardEvent<HTMLInputElement>,
+  //   index: number
+  // ) => {
+  //   currentOTPIndex = index;
+  //   if (e.key === "Backspace") setActiveOTPIndex(currentOTPIndex - 1);
+  // };
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, [activeOTPIndex]);
+  // useEffect(() => {
+  //   inputRef.current?.focus();
+  // }, [activeOTPIndex]);
 
   return (
     <>
@@ -228,7 +228,7 @@ const Register = () => {
           </form>
         </div>
       </div>
-      {openOTP && (
+      {/* {openOTP && (
         <>
           <div className="font-Kanit">
             <div
@@ -267,7 +267,7 @@ const Register = () => {
             </div>
           </div>
         </>
-      )}
+      )} */}
     </>
   );
 };
