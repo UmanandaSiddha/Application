@@ -41,6 +41,7 @@ const RequestCustom = lazy(() => import("./pages/plans/request-custom"));
 const ViewCustom = lazy(() => import("./pages/plans/view-custom"));
 
 const DonationLogin = lazy(() => import("./pages/donation/login"));
+const DonationCheckout = lazy(() => import("./pages/donation/checkout"));
 
 const UnBlockPage = lazy(() => import("./pages/auth/unblock"));
 
@@ -107,12 +108,28 @@ const App = () => {
             <Route path="/display" element={<DisplayCard />} />
             <Route path="/donate" element={<DonationPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/donation-login" element={<DonationLogin />} />
 
+
+
+
+
+
+            <Route path="/donation-login" element={<DonationLogin />} />
+            <Route path="/donation-checkout" element={<DonationCheckout />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/report" element={<ReportPage />} />
-
             <Route path="/unblock" element={<UnBlockPage />} />
+            <Route path="/checkout" element={<Checkout />} />
+            {/* only for org  */}
+            <Route path="/request-custom" element={<RequestCustom />} />
+            <Route path="/view-custom" element={<ViewCustom />} />
+
+
+
+
+
+
+
 
             {/* Not logged In Route */}
             <Route
@@ -163,11 +180,11 @@ const App = () => {
               <Route path="/dashboard" element={
                 !isMobile ? (
                   <>
-                  <div className="flex justify-center">
-                    <div className="w-[80%]">
-                      <Dashboard />
+                    <div className="flex justify-center">
+                      <div className="w-[80%]">
+                        <Dashboard />
+                      </div>
                     </div>
-                  </div>
                   </>
                 ) : (
                   <Dashboard />
@@ -178,11 +195,6 @@ const App = () => {
               <Route path="/verify" element={<Verify />} />
               <Route path="/admin-plan" element={<AdminPlan />} />
               <Route path="/billing" element={<BillingPage />} />
-              <Route path="/checkout" element={<Checkout />} />
-
-              {/* only for org  */}
-              <Route path="/request-custom" element={<RequestCustom />} /> 
-              <Route path="/view-custom" element={<ViewCustom />} /> 
 
               <Route
                 path="/dashboard/cards"
@@ -216,14 +228,14 @@ const App = () => {
                   !isMobile ? (
                     <>
                       <div className="flex justify-center">
-                      <div className="flex flex-row w-[80%]">
-                        <div className="basis-1/4">
-                          <Dashboard />
+                        <div className="flex flex-row w-[80%]">
+                          <div className="basis-1/4">
+                            <Dashboard />
+                          </div>
+                          <div className={`basis-3/4 lg:max-h-screen`}>
+                            {type && id && <ViewCard />}
+                          </div>
                         </div>
-                        <div className={`basis-3/4 lg:max-h-screen`}>
-                          {type && id && <ViewCard />}
-                        </div>
-                      </div>
                       </div>
                     </>
                   ) : (
