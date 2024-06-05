@@ -12,6 +12,7 @@ import {
     requestVerification,
     deleteAccount,
     setPassword,
+    unblockUser,
 } from "../controllers/userController.js";
 import { isAuthenticatedUser, isUserVerified } from "../middleware/auth.js";
 
@@ -29,5 +30,7 @@ router.route("/me/update").put(isAuthenticatedUser, isUserVerified, updateProfil
 router.route("/password/update").put(isAuthenticatedUser, isUserVerified, updatePassword);
 router.route("/set/password").put(isAuthenticatedUser, isUserVerified, setPassword);
 router.route("/delete/account").delete(isAuthenticatedUser, isUserVerified, deleteAccount);
+
+router.route("/unblock/:id").put(unblockUser);
 
 export default router;

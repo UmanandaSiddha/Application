@@ -16,3 +16,12 @@
 2024-06-03T13:28:04.016Z [right meow!] info: Job 20 has completed!
 2024-06-04T18:11:57.116Z [right meow!] info: Job 21 has completed!
 2024-06-04T18:16:10.668Z [right meow!] info: Job 22 has completed!
+2024-06-04T18:37:43.393Z [right meow!] info: Job 23 has completed!
+2024-06-05T03:49:55.393Z [right meow!] info: Job 24 has completed!
+2024-06-05T16:34:55.796Z [right meow!] info: Job 25 has completed!
+2024-06-05T19:05:57.600Z [right meow!] error: 1 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:57.623Z [right meow!] error: 2 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:57.631Z [right meow!] error: 3 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:58.615Z [right meow!] error: 1 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:58.627Z [right meow!] error: 2 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:58.633Z [right meow!] error: 3 has failed with Cannot read properties of undefined (reading 'subscription')

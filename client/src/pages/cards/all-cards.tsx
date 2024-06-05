@@ -105,9 +105,9 @@ const VCard = ({ card, isPaid, user, type }: PropsType) => {
             )}
             {type === "medical" && (
               <>
-                {"personalInfo" in card! && (
+                {"name" in card! && (
                   <>
-                    <p className="">{card?.personalInfo.name}</p>
+                    <p className="">{card?.name}</p>
                   </>
                 )}
               </>

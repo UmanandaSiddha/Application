@@ -1,17 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import axios from 'axios';
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 
 const currencyEnum = {
@@ -135,7 +125,7 @@ const DonationPage = () => {
                 <div className="flex flex-col justify-center items-center min-h-screen space-y-8">
                     <h1 className='text-4xl font-bold'>Donation Page</h1>
                     <p className='text-xl'>Your small donation can help many lives</p>
-                    <Dialog open={open} onOpenChange={setOpen}>
+                    {/* <Dialog open={open} onOpenChange={setOpen}>
                         <DialogContent className="sm:max-w-[425px]">
                             <DialogHeader>
                                 <DialogTitle><Loader2 className="mr-2 h-4 w-4 animate-spin" />{dialogHeader}</DialogTitle>
@@ -144,11 +134,11 @@ const DonationPage = () => {
                                 <p>Payment Status: {dialogData}</p>
                             </DialogFooter>
                         </DialogContent>
-                    </Dialog>
+                    </Dialog> */}
                     <div className="space-y-8">
                         <div className="space-y-2">
-                            <Label>Name</Label>
-                            <Input
+                            <label>Name</label>
+                            <input
                                 name="name"
                                 type="text"
                                 value={donateData.name}
@@ -158,8 +148,8 @@ const DonationPage = () => {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Email</Label>
-                            <Input
+                            <label>Email</label>
+                            <input
                                 name="email"
                                 type="email"
                                 value={donateData.email}
@@ -169,8 +159,8 @@ const DonationPage = () => {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Phone</Label>
-                            <Input
+                            <label>Phone</label>
+                            <input
                                 name="phone"
                                 type="number"
                                 value={donateData.phone}
@@ -180,7 +170,7 @@ const DonationPage = () => {
                             />
                         </div>
                         <div className="space-y-2 flex flex-col">
-                            <Label>Amount</Label>
+                            <label>Amount</label>
                             <div className='flex '>
                                 <select
                                     value={currency}
@@ -189,7 +179,7 @@ const DonationPage = () => {
                                     <option value={currencyEnum.INR}>{currencyEnum.INR}</option>
                                     <option value={currencyEnum.USD}>{currencyEnum.USD}</option>
                                 </select>
-                                <Input
+                                <input
                                     name="amount"
                                     type="number"
                                     value={donateData.amount}
@@ -200,8 +190,8 @@ const DonationPage = () => {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label>Address</Label>
-                            <Input
+                            <label>Address</label>
+                            <input
                                 name="address"
                                 type="text"
                                 value={donateData.address}
@@ -211,8 +201,8 @@ const DonationPage = () => {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Pan Details</Label>
-                            <Input
+                            <label>Pan Details</label>
+                            <input
                                 name="pan"
                                 type="number"
                                 value={donateData.pan}
@@ -221,7 +211,7 @@ const DonationPage = () => {
                                 className="w-[350px] gap-2"
                             />
                         </div>
-                        <Button className="w-[350px]" onClick={handlePayment} disabled={donateLoading}>{donateLoading ? "wait..." : "Pay"}</Button>
+                        <button className="w-[350px]" onClick={handlePayment} disabled={donateLoading}>{donateLoading ? "wait..." : "Pay"}</button>
                     </div>
                 </div>
             )}

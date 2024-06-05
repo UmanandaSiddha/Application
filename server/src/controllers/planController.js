@@ -114,6 +114,8 @@ export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
         user: req.user.id,
     });
 
+    // Email send to owner
+
     res.status(200).json({
         success: true,
         newRequest
@@ -221,7 +223,7 @@ export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getCustomPlan = catchAsyncErrors(async (req, res, next) => {
-    const plan = await Plan.findById(req.body.planId);
+    const plan = await Plan.findById(req.params.id);
     if (!plan) {
         return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
     }

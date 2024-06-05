@@ -308,7 +308,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
         .digest("hex");
 
     const user = await User.findOne({
-        _id: req.body.id,
+        _id: req.body.user,
         resetPasswordToken,
         resetPasswordExpire: { $gt: Date.now() },
     });
@@ -317,11 +317,13 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Reset Password Token is Invalid or has Expired", 400));
     }
 
-    if (req.body.password !== req.body.confirmPassword) {
+    console.log(req.body)
+
+    if (req.body.newPassword !== req.body.confirmPassword) {
         return next(new ErrorHandler("Password does not match", 400));
     }
 
-    user.password = req.body.password;
+    user.password = req.body.newPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 

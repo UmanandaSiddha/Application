@@ -9,3 +9,9 @@
 2024-06-02T14:59:20.294Z [right meow!] error: 2 has failed with connect ECONNREFUSED ::1:465
 2024-06-02T14:59:21.358Z [right meow!] error: 2 has failed with connect ECONNREFUSED ::1:465
 2024-06-02T18:44:54.820Z [right meow!] error: Error processing or writing the image:
+2024-06-05T19:05:57.600Z [right meow!] error: 1 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:57.623Z [right meow!] error: 2 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:57.631Z [right meow!] error: 3 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:58.615Z [right meow!] error: 1 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:58.627Z [right meow!] error: 2 has failed with Cannot read properties of undefined (reading 'subscription')
+2024-06-05T19:05:58.633Z [right meow!] error: 3 has failed with Cannot read properties of undefined (reading 'subscription')

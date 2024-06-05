@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import axios from "axios";
 import {
   AnimalResponse,
@@ -13,8 +13,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
-import Loader from "@/components/rest/loader";
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Animal,
   Creator,
@@ -101,9 +100,9 @@ const VCard = ({ card, user, isPaid, type }: PropsType) => {
             )}
             {type === "medical" && (
               <>
-                {"personalInfo" in card! && (
+                {"name" in card! && (
                   <>
-                    <p className="">{card?.personalInfo.name}</p>
+                    <p className="">{card?.name}</p>
                   </>
                 )}
               </>

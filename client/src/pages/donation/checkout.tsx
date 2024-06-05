@@ -1,7 +1,9 @@
 
 const DonationCheckout = () => {
     return (
-        <div>DonationCheckout</div>
+        <div>
+            
+        </div>
     )
 }
 

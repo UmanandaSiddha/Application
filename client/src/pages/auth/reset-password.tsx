@@ -1,22 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../../redux/reducer/userReducer";
-import { resetPassword } from "@/redux/api/userApi";
 
 import { toast } from "react-toastify";
+import { useState } from "react";
+import { UserResponse } from "@/types/api-types";
+import axios from "axios";
 
 const ResetPassword = () => {
 
@@ -24,75 +13,67 @@ const ResetPassword = () => {
     const navigate = useNavigate();
     const [search] = useSearchParams();
     const token = search.get("token");
+    const user = search.get("user");
+    const [resetLoading, setResetLoading] = useState<boolean>(false);
 
-    const formSchema = z.object({
-        newPassword: z.string()
-            .min(8, {
-                message: "Pssword must be at least 8 characters.",
-            }),
-        confirmPassword: z.string()
-            .min(8, {
-                message: "Pssword must be at least 8 characters.",
-            }),
+    const [password, setPassword] = useState({
+        newPassword: "",
+        confirmPassword: ""
     });
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            newPassword: "",
-            confirmPassword: "",
-        },
-    });
-
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        const resetPass = {
-            password: values.newPassword,
-            confirmPassword: values.newPassword,
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setResetLoading(true);
+        const resetData = {
+            ...password,
+            user,
         }
         try {
-            const data = await resetPassword(resetPass, token!);
+            const config = {
+                headers: { "Content-Type": "application/json" },
+                withCredentials: true,
+            };
+            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/${token}`, resetData, config);
             dispatch(userExist(data.user));
-            toast.success("Password Reset Successful")
+            toast.success("Password Reset Successfully");
             navigate("/dashboard");
         } catch (error: any) {
-            dispatch(userNotExist())
+            dispatch(userNotExist());
             toast.error(error.response.data.message);
         }
+        setResetLoading(false);
     }
 
     return (
         <div className="flex flex-col justify-center items-center mt-8">
-             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="newPassword"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input className="w-[350px]" placeholder="Enter your new password" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Confirm Password</FormLabel>
-                                <FormControl>
-                                    <Input className="w-[350px]" placeholder="Enter new password again" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button className="w-[350px]" type="submit">Login</Button>
+           
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    <div>
+                        <label htmlFor="newPassword">Password</label>
+                        <input
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline font-Kanit"
+                            name="newPassword"
+                            type="text"
+                            placeholder="Enter New Password"
+                            value={password.newPassword}
+                            onChange={(e) => setPassword({ ...password, newPassword: e.target.value})}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="confirmPassword">Confirm Password</label>
+                        <input
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline font-Kanit"
+                            name="confirmPassword"
+                            type="text"
+                            placeholder="Enter Password Again"
+                            value={password.confirmPassword}
+                            onChange={(e) => setPassword({ ...password, confirmPassword: e.target.value})}
+                        />
+                    </div>
+                    <button className="w-[350px] bg-red-500 p-2 m-2 text-white rounded-lg" disabled={resetLoading} type="submit">
+                        {resetLoading ? "Hold on" : "Reset"}
+                    </button>
                 </form>
-            </Form>
         </div>
     )
 }

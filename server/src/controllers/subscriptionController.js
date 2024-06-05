@@ -18,14 +18,18 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Admin don't need to buy Plans", 403));
     }
 
-    if (user.freePlan.status) {
-        return next(new ErrorHandler("You already have active Plan", 403));
+    if (user?.freePlan?.status) {
+        return next(new ErrorHandler("You already have active Plan 1", 403));
     }
 
     if (user?.activePlan) {
         const subscription = await Subscription.findById(user?.activePlan);
-        if (!["completed", "cancelled"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.currentEnd > Date.now())) {
-            return next(new ErrorHandler("You already have active Plan", 403));
+        if (subscription) {
+            if (subscription?.status === "created" && subscription.paidCount === 0) {
+                await Subscription.findByIdAndDelete(user?.activePlan);
+            } else if (subscription && (!["completed", "cancelled"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now()))) {
+                return next(new ErrorHandler("You already have active Plan 2", 403));
+            }
         }
     }
 
@@ -108,6 +112,8 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
 
     const payment = await instance.payments.fetch(razorpay_payment_id);
     const subscription = await instance.subscriptions.fetch(razorpay_subscription_id);
+    console.log(subscription);
+    console.log(payment);
 
     if (expectedSigntaure === razorpay_signature) {
         if (["active", "created"].includes(subscription.status) && payment.status === "captured") {

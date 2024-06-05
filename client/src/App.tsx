@@ -16,21 +16,18 @@ const Dashboard = lazy(() => import("./pages/root/dash"));
 const Profile = lazy(() => import("./pages/root/profile"));
 const Verify = lazy(() => import("./pages/auth/verify"));
 const ResetPassword = lazy(() => import("./pages/auth/reset-password"));
-const Confirm = lazy(() => import("./pages/root/confirm"));
-const Subscription = lazy(() => import("./pages/root/subscription"));
+const Subscription = lazy(() => import("./pages/plans/subscription"));
 const AdminPlan = lazy(() => import("./pages/admin-plan"));
-const DonationPage = lazy(() => import("./pages/root/donation"));
-const BillingPage = lazy(() => import("./pages/root/billing"));
-const RecieptPage = lazy(() => import("./pages/root/reciept"));
+const DonationPage = lazy(() => import("./pages/donation/donation-test"));
+const BillingPage = lazy(() => import("./pages/plans/billing"));
+const RecieptPage = lazy(() => import("./pages/plans/reciept"));
 const OtherQR = lazy(() => import("./pages/cards/other-qr"));
-const Onboarding = lazy(() => import("./pages/root/onboarding"));
+const Onboarding = lazy(() => import("./pages/auth/onboarding"));
 const OrgRegister = lazy(() => import("./pages/auth/orgRegister"));
 const Donation = lazy(() => import("./pages/donation/donation"));
-const Checkout = lazy(() => import("./pages/root/checkout"));
+const Checkout = lazy(() => import("./pages/plans/checkout"));
 
 const AllCards = lazy(() => import("./pages/cards/all-cards"));
-// const AllCardsMd = lazy(() => import ("./pages/cards/all-cards-md"));
-
 const ViewCard = lazy(() => import("./pages/cards/view-card"));
 const DisplayCard = lazy(() => import("./pages/cards/display-card"));
 
@@ -40,13 +37,22 @@ const MedicalInput = lazy(() => import("./pages/cards/inputs/medical"));
 const CreatorInput = lazy(() => import("./pages/cards/inputs/creator"));
 const CreateAnimal = lazy(() => import("./pages/cards/inputs/animal"));
 
+const RequestCustom = lazy(() => import("./pages/plans/request-custom"));
+const ViewCustom = lazy(() => import("./pages/plans/view-custom"));
+
+const DonationLogin = lazy(() => import("./pages/donation/login"));
+
+const UnBlockPage = lazy(() => import("./pages/auth/unblock"));
+
+const ContactUs = lazy(() => import("./pages/others/contact"));
+const ReportPage = lazy(() => import("./pages/others/report"));
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { UserResponse } from "./types/api-types";
 import axios from "axios";
 import ErrorBoundary from "./components/rest/error-boundary";
 import { useWindowWidth } from "@react-hook/window-size";
-// import OtherQR from "./pages/cards/other-qr";
 
 const App = () => {
   const width = useWindowWidth();
@@ -101,6 +107,12 @@ const App = () => {
             <Route path="/display" element={<DisplayCard />} />
             <Route path="/donate" element={<DonationPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/donation-login" element={<DonationLogin />} />
+
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/report" element={<ReportPage />} />
+
+            <Route path="/unblock" element={<UnBlockPage />} />
 
             {/* Not logged In Route */}
             <Route
@@ -119,11 +131,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            {/* <Route path="/verify" element={
-              <ProtectedRoute isAuthenticated={user ? false : true}>
-                <VerificationEmail />
-              </ProtectedRoute>
-            } /> */}
             <Route
               path="/organization/register"
               element={
@@ -167,14 +174,16 @@ const App = () => {
                 )
               } />
               <Route path="/receipt" element={<RecieptPage />} />
-              {/* <Route path="/billing/receipt" element={<RecieptPage />} /> */}
-              {/* <Route path="/dashboard/cards" element={<AllCards />} /> */}
               <Route path="/profile" element={<Profile />} />
               <Route path="/verify" element={<Verify />} />
-              <Route path="/confirm" element={<Confirm />} />
               <Route path="/admin-plan" element={<AdminPlan />} />
               <Route path="/billing" element={<BillingPage />} />
               <Route path="/checkout" element={<Checkout />} />
+
+              {/* only for org  */}
+              <Route path="/request-custom" element={<RequestCustom />} /> 
+              <Route path="/view-custom" element={<ViewCustom />} /> 
+
               <Route
                 path="/dashboard/cards"
                 element={
@@ -239,7 +248,6 @@ const App = () => {
                   )
                 }
               />
-              {/* <Route path="/dashboard/cards/card" element={<ViewCard />} /> */}
 
               <Route
                 path="/dashboard/tree/create"
