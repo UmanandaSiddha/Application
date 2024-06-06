@@ -75,11 +75,11 @@ const Checkout = () => {
                     const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
                     console.log(data);
                     console.log(response);
-                    if (["active", "created"].includes(data.subscriptionStatus) && ["authorized", "captured"].includes(data.paymentStatus)) {
+                    if (["active", "created", "authenticated", "activated"].includes(data.subscriptionStatus) && ["authorized", "captured", "created"].includes(data.paymentStatus)) {
                         setDialogHeader("Redirecting to Dashboard...");
                         setDialogData({
-                            subscriptionStatus: "active",
-                            paymentStatus: "captured",
+                            subscriptionStatus: data.subscriptionStatus,
+                            paymentStatus: data.paymentStatus,
                         });
                         toast.success("All set");
                         setTimeout(() => {

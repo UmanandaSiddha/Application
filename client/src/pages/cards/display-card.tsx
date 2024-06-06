@@ -81,17 +81,17 @@ const DisplayCard = () => {
         }
     }
 
-    const headSetter = (headType: String) => {
-        if (["tree", "personal", "medical", "creator", "animal"].includes(type!)) {
-            return headType.charAt(0).toUpperCase() + headType.slice(1).toLowerCase();
-        } else {
-            return;
-        }
-    }
+    // const headSetter = (headType: String) => {
+    //     if (["tree", "personal", "medical", "creator", "animal"].includes(type!)) {
+    //         return headType.charAt(0).toUpperCase() + headType.slice(1).toLowerCase();
+    //     } else {
+    //         return;
+    //     }
+    // }
 
     return (
         <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
-            <h1 className="text-3xl font-semibold">{headSetter(type!)} Details</h1>
+            {/* <h1 className="text-3xl font-semibold">{headSetter(type!)} Details</h1> */}
             {loading ? <Loader /> : <>{renderCard()}</>}
         </div>
     )

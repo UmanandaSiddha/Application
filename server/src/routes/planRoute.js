@@ -12,7 +12,7 @@ import { authorizeRoles, isAuthenticatedUser, isUserVerified } from "../middlewa
 const router = express.Router();
 
 router.route("/new").post(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), createPlan);
-router.route("/all").get(isAuthenticatedUser, isUserVerified, getAllPlans);
+router.route("/all").get(getAllPlans);
 router.route("/request").post(isAuthenticatedUser, isUserVerified, requestCustomPlan)
 router.route("/request/:id").get(isAuthenticatedUser, isUserVerified, getCustomPlan);
 router.route("/details/:id").get(getPlan);

@@ -77,9 +77,9 @@ export const createFreeSubscription = catchAsyncErrors(async (req, res, next) =>
         return next(new ErrorHandler("Plan not available", 404));
     }
 
-    const updatedUser  = await User.findByIdAndUpdate(
-        req.user.id, 
-        { 
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user.id,
+        {
             freePlan: {
                 status: true,
                 type: freeEnum.CUSTOM
@@ -87,7 +87,7 @@ export const createFreeSubscription = catchAsyncErrors(async (req, res, next) =>
             cards: {
                 total: plan.cards
             }
-        }, 
+        },
         { new: true, runValidators: true, useFindAndModify: false }
     );
 
@@ -116,7 +116,7 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
     console.log(payment);
 
     if (expectedSigntaure === razorpay_signature) {
-        if (["active", "created"].includes(subscription.status) && payment.status === "captured") {
+        if (["active", "created", "authenticated", "activated"].includes(subscription.status) && ["authorized", "captured", "created"].includes(payment.status)) {
             const subscriptionx = await Subscription.findOne({ razorSubscriptionId: subscription.id });
 
             await handleSubscription(subscription, subscriptionx);
@@ -149,7 +149,67 @@ export const verifySubscription = async (req, res) => {
 
     try {
         if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-           await addSubscriptionToQueue(event, payload);
+            //    await addSubscriptionToQueue(event, payload);
+            const subscription = await Subscription.findOne({ razorSubscriptionId: payload.subscription?.entity?.id });
+            if (!subscription) {
+                console.log("Invalid Subscription, Wrong database");
+                logger.error("Invalid Subscription, Wrong database");
+            } else {
+                await handleSubscription(payload.subscription?.entity, subscription);
+
+                const user = await User.findOne({ activePlan: subscription._id });
+
+                switch (event) {
+                    case "subscription.charged":
+                        const { method, card, bank, wallet, vpa, acquirer_data } = payload.payment?.entity;
+                        await Subscription.findOneAndUpdate(
+                            { razorSubscriptionId: payload.subscription?.entity?.id },
+                            {
+                                paymentMethod: {
+                                    methodType: method,
+                                    cardInfo: card ? {
+                                        cardType: card?.type,
+                                        issuer: card?.issuer,
+                                        last4: card?.last4,
+                                        name: card?.name,
+                                        network: card?.network,
+                                    } : undefined,
+                                    bankInfo: bank || undefined,
+                                    walletInfo: wallet || undefined,
+                                    upiInfo: vpa || undefined,
+                                    data: acquirer_data || undefined,
+                                },
+                            },
+                            { new: true, runValidators: true, useFindAndModify: false }
+                        )
+                        const checkPayment = await Transaction.findOne({ razorpayPaymentId: payload.payment?.entity?.id });
+                        if (!checkPayment) {
+                            await handleTransaction(payload.payment?.entity, payload.subscription?.entity, subscription);
+                        }
+                        break;
+                    case "subscription.completed":
+                        if (user.cards.total !== 0) {
+                            await User.findOneAndUpdate(
+                                { activePlan: subscription._id },
+                                { "cards.total": 0 },
+                                { new: true, runValidators: true, useFindAndModify: false }
+                            );
+                        }
+                        break;
+                    case "subscription.cancelled":
+                        if (user.cards.total !== 0 && subscription.currentEnd <= Date.now()) {
+                            await User.findOneAndUpdate(
+                                { activePlan: subscription._id },
+                                { "cards.total": 0 },
+                                { new: true, runValidators: true, useFindAndModify: false }
+                            );
+                        }
+                        break;
+                    default:
+                        console.log(event);
+                        break;
+                }
+            }
         }
     } catch (error) {
         logger.error(error.message);

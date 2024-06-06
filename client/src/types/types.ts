@@ -72,7 +72,7 @@ export type Animal = {
     color: string;
     location: string;
     owner: string;
-    phone:  number;
+    phone: number;
     user: string;
 }
 
@@ -112,14 +112,27 @@ export type Personal = {
     fitnessRoutine: string,
     morningPerson: string,
     diet: string,
+    diet_Other: string,
     sleepingHabit: string,
     genre: string,
     sports: string,
     artistisPursuits: string,
     gaming: string,
-    collectignHobby: string, 
+    collectignHobby: string,
     coffee: string,
     cookingSkills: string,
+    travelMode_Other: string,
+    genre_Other: string,
+    sports_Other: string,
+    artistisPursuits_Other: string,
+    gaming_Other: string,
+    collectignHobby_Other: string,
+    coffee_Other: string,
+    cookingSkills_Other: string,
+    currentOcupation_Other: string,
+    careerAspiation_Other: string,
+    education_Other: string,
+    skills_Other: string,
     spiritual: string,
     core: string,
     philosophy: string,

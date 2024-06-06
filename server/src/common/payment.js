@@ -37,7 +37,7 @@ export const handleDonation = async (paymentData) => {
 }
 
 export const handleTransaction = async (paymentData, subscriptionData, subscription) => {
-    const { amount, order_id, status, id, method, card, bank, wallet, vpa, acquirer_data } = paymentData;
+    const { amount, order_id, status, id, method, card, bank, wallet, vpa, acquirer_data, error_code, error_description, error_source, error_step, error_reason } = paymentData;
     const { current_end, current_start } = subscriptionData;
 
     await Transaction.create({
@@ -89,7 +89,7 @@ export const handleSubscription = async (subscriptionData, subscription) => {
             totalCount: total_count,
             paidCount: paid_count,
             remainingCount: remaining_count,
-            status: ["completed", "cancelled"].includes(subscription.status) ? subscription.status : status,
+            status: ["completed", "cancelled"].includes(subscription?.status) ? subscription?.status : status,
         },
         { new: true, runValidators: true, useFindAndModify: false }
     )

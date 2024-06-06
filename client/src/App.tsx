@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation, useSearchParams } from "react-router-dom";
+import { Route, Routes, useSearchParams } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
@@ -62,8 +62,6 @@ const App = () => {
   const type = search.get("type");
   const id = search.get("id");
 
-  let location = useLocation();
-
   const { user, loading } = useSelector(
     (state: RootState) => state.userReducer
   );
@@ -77,11 +75,12 @@ const App = () => {
     } catch (error: any) {
       dispatch(userNotExist());
     }
+
   };
 
   useEffect(() => {
     gotUser();
-  }, [location.pathname]);
+  }, []);
 
   return loading ? (
     <Loader />
@@ -100,10 +99,10 @@ const App = () => {
         theme="dark"
       />
       <ErrorBoundary>
-        <Header user={user} />
+        <Header user={user!} />
         <Suspense fallback={<Loader />}>
           <Routes>
-            <Route path="/" element={<Home user={user} />} />
+            <Route path="/" element={<Home user={user!} />} />
             <Route path="/plans" element={<Subscription />} />
             <Route path="/display" element={<DisplayCard />} />
             <Route path="/donate" element={<DonationPage />} />
@@ -132,50 +131,15 @@ const App = () => {
 
 
             {/* Not logged In Route */}
-            <Route
-              path="/login"
-              element={
-                <ProtectedRoute isAuthenticated={user ? false : true}>
-                  <Login />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                <ProtectedRoute isAuthenticated={user ? false : true}>
-                  <Register />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/organization/register"
-              element={
-                <ProtectedRoute isAuthenticated={user ? false : true}>
-                  <OrgRegister />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/reset"
-              element={
-                <ProtectedRoute isAuthenticated={user ? false : true}>
-                  <ResetPassword />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/donation"
-              element={
-                <ProtectedRoute isAuthenticated={user ? false : true}>
-                  <Donation />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/organization/register" element={<OrgRegister />} />
+            <Route path="/reset" element={<ResetPassword />} />
+            <Route path="/donation" element={<Donation />} />
 
             {/* Logged In User Routes */}
             <Route
-              element={<ProtectedRoute isAuthenticated={user ? true : false} />}
+              element={<ProtectedRoute isAuthenticated={user ? true : false} redirect="/login" />}
             >
               <Route path="/dashboard" element={
                 !isMobile ? (

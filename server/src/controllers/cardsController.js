@@ -74,7 +74,30 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const deleteCard = catchAsyncErrors(async (req, res, next) => {
-    const Model = selectModelByType(req.query.type);
+    // const Model = selectModelByType(req.query.type);
+    let Model;
+    switch (req.query.type) {
+        case 'tree':
+            Model = Tree;
+            break;
+        case 'personal':
+            Model = Personal;
+            break;
+        case 'medical':
+            Model = Medical;
+            break;
+        case 'creator':
+            Model = Creator;
+            break;
+        case 'animal':
+            Model = Animal;
+            break;
+    }
+    
+    if (!Model) {
+        return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
+    }
+
     const vCard = await Model.findById(req.params.id);
     if (!vCard) {
         return next(new ErrorHandler(`VCard does not exist with Id: ${req.params.id}`, 404));
@@ -122,7 +145,7 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(vCard.user);
 
-    if (user.freePlan.status) {
+    if (user?.freePlan?.status) {
         const { type, end } = user.freePlan;
         if (type === freeEnum.CUSTOM || end > Date.now()) {
             return res.status(200).json({
@@ -132,10 +155,10 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
         }
     }
 
-    const subscription = await Subscription.findById(user.activePlan);
-    if (!["active", "pending"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.currentEnd > Date.now())) {
-        return next(new ErrorHandler("VCard Not Found", 404));
-    }
+    const subscription = await Subscription.findById(user?.activePlan);
+    // if (!["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now())) {
+    //     return next(new ErrorHandler("VCard Not Found", 404));
+    // }
 
     res.status(200).json({
         success: true,

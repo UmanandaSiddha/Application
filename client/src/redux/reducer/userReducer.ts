@@ -13,11 +13,12 @@ export const userReducer = createSlice({
     initialState,
     reducers: {
         userExist: (state, action: PayloadAction<User>) => {
-            state.loading = false;
+            state.loading = true;
             state.user = action.payload;
             if (action.payload.activePlan?.status === "active") {
                 state.isPaid = true
             }
+            state.loading = false;
         },
         userNotExist: (state) => {
             state.loading = false;

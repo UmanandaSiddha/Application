@@ -15,7 +15,6 @@ const ProtectedRoute = ({
 
     let location = useLocation();
 
-    // if (!isAuthenticated) return window.location.href = '/';
     if (!isAuthenticated) return <Navigate to={redirect} state={{ from: location }} replace />;
 
     return children ? children : <Outlet />;

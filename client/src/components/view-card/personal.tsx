@@ -25,138 +25,135 @@ const PersonalComponent = ({ card }: PropsType) => {
   const [professionals, setProfessionals] = useState<boolean>(false);
   const [others, setOthers] = useState<boolean>(false);
 
-  const birthDate = card?.lifeStyle?.birth ? new Date(card?.lifeStyle.birth) : null;
+  const birthDate = card?.dateOfBirth ? new Date(card?.dateOfBirth) : null;
   const formattedDate = birthDate ? birthDate.toLocaleDateString() : null;
 
   const professionalDetails = [
     {
       label: "Current Occupation",
-      value: card?.professional?.occupation,
+      value: card?.currentOcupation,
     },{
       label: "Career Goals",
-      value: card?.professional?.aspiration,
+      value: card?.careerAspiation,
     }
   ];
 
   const favourites = [
     {
       label: "Fav Music",
-      value: card?.favourites?.music,
+      value: card?.music,
     },{
       label: "Fav Colour",
-      value: card?.favourites?.color
+      value: card?.color
     },{
       label: "Fav City",
-      value: card?.favourites?.city,
+      value: card?.city,
     },{
       label: "Fav-Destination",
-      value: card?.favourites?.travelDestination,
+      value: card?.travelDestination,
     },{
       label: "Fav Season",
-      value: card?.favourites?.season,
+      value: card?.season,
     },{
       label: "Unique Skills",
-      value: card?.favourites?.uniqueSkills,
+      value: card?.uniqueSkills,
     },{
       label: "Fav-Cuisine",
-      value: card?.favourites?.cuisine,
+      value: card?.cuisine,
     }
   ];
 
   const lifestyless = [
     {
       label: "Date of Birth",
-      value: formattedDate,
+      value: formattedDate ?? "",
     },{
       label: "Home Town",
-      value: card?.lifeStyle?.homeTown,
+      value: card?.homeTown,
     },{
       label: "Current City",
-      value: card?.lifeStyle?.currentCity,
+      value: card?.currentCity,
     },{
       label: "Languages",
-      value: card?.lifeStyle?.languages,
+      value: card?.languages,
     },
   ];
 
   const miscellaneouss = [
     {
       label: "Pet Lover?",
-      value: card?.miscellaneous?.petLover,
+      value: card?.petLover,
     },{
       label: "Party Enthusiast?",
-      value: card?.miscellaneous?.partyEnthusiast,
+      value: card?.partyEnthusiast,
     },{
       label: "Smoker?",
-      value: card?.miscellaneous?.smoker,
+      value: card?.smoker,
     },{
       label: "Marital Status?",
-      value: card?.miscellaneous?.marital,
+      value: card?.maritalStatus,
     },{
       label: "Relationship?",
-      value: card?.miscellaneous?.relationshipStatus,
+      value: card?.relationshipStatus,
     },{
       label: "Morning/Night Person?",
-      value: card?.miscellaneous?.morningPerson,
+      value: card?.morningPerson,
     },{
       label: "Sleeping Habits?",
-      value: card?.miscellaneous?.sleepingHabit,
+      value: card?.sleepingHabit,
     },{
       label: "Dietary Preferences",
-      value: card?.miscellaneous?.diet,
+      value: card?.diet,
     },{
       label: "Fitness Routine",
-      value: card?.miscellaneous?.fitnessRoutine,
-    },{
-      label: "Do you like reading?",
-      value: card?.miscellaneous?.reading
+      value: card?.fitnessRoutine,
     }
   ];
 
   const interestss = [
     {
       label: "Preferred Mode of Travel",
-      value: card?.interests?.prefMode
+      value: card?.travelMode
     },{
       label: "Fav Movies/TV Shows",
-      value: card?.interests?.genre
+      value: card?.genre
     },{
       label: "Sports Activites",
-      value: card?.interests?.outdoor,
+      value: card?.sports,
     },{
       label: "Artistic Hobbies",
-      value: card?.interests?.artistic,
+      value: card?.artistisPursuits,
     },{
       label: "Gaming Preferences",
-      value: card?.interests?.gamingPref,
+      value: card?.gaming,
     },{
       label: "Collecting Hobby/Interest",
-      value: card?.interests?.collecting,
+      value: card?.collectignHobby,
     },{
       label: "Coffee or Tea?",
-      value: card?.interests?.coffee,
+      value: card?.coffee,
     },{
       label: "Cooking Skills",
-      value: card?.interests?.cooking,
+      value: card?.cookingSkills,
     }
   ];
 
   const additionalData = [
     {
       label: "Other Interests",
-      value: card?.additional?.anyother,
+      value: card?.otherInterests,
     },{
       label: "Future Goals",
-      value: card?.additional?.futureGoal,
+      value: card?.futureGoals,
     },{
       label: "Currently Learning",
-      value: card?.additional?.learning,
+      value: card?.current,
     },{
       label: "Most Unusual Experience",
-      value: card?.additional?.experience,
+      value: card?.unusualExperinece,
     },{
       label: "Strangest Habit I Have",
-      value: card?.additional?.habit,
+      value: card?.strangeHabits,
     },
   ];
 
@@ -302,8 +299,9 @@ const PersonalComponent = ({ card }: PropsType) => {
                                     <input
                                       type="text"
                                       className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                      readOnly
-                                      defaultValue={life.value}
+                                      // readOnly
+                                      disabled
+                                      value={life?.value}
                                     />
                                   </div>
                                 </div>
@@ -560,7 +558,7 @@ const PersonalComponent = ({ card }: PropsType) => {
                                       type="text"
                                       className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
                                       readOnly
-                                      defaultValue={card?.backg.background}
+                                      defaultValue={card?.education}
                                     />
                                   </div>
                                 </div>
@@ -575,7 +573,7 @@ const PersonalComponent = ({ card }: PropsType) => {
                                       type="text"
                                       className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
                                       readOnly
-                                      defaultValue={card?.expert.expertise}
+                                      defaultValue={card?.skills}
                                     />
                                   </div>
                                 </div>

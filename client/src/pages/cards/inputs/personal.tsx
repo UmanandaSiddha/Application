@@ -62,8 +62,8 @@ const miscellaneous = [
     { name: "relationshipStatus", label: "Relationship?", text: "Enter Yes/No", options: ["Just Exploring", "Committed", "It's complicated", "Single and Happy"] },
     { name: "morningPerson", label: "Morning/Night Person?", text: "Enter Yes/No", options: ["Morning person", "Night Owl", "Somewhere in between", "Depends on the day"] },
     { name: "sleepingHabit", label: "Sleeping Habits?", text: "Enter Sleeping Habits", options: ["Early Riser", "Night Owl", "Somewhere in between", "Depends on the day"] },
-    { name: "fitnessRoutine", label: "Fitness Routine", options: ["Daily fitness regime", "A few times a week", "Sometimes when I can", "Not much into fitness"] },
-    { name: "diet", label: "Dietary Preferences", options: ["Vegetarian", "Vegan", "Omnivore", "Other"] },
+    { name: "fitnessRoutine", label: "Fitness Routine", text: "Enter Fitness Routine", options: ["Daily fitness regime", "A few times a week", "Sometimes when I can", "Not much into fitness"] },
+    { name: "diet", label: "Dietary Preferences", text: "Enter Dietary Preferences", options: ["Vegetarian", "Vegan", "Omnivore", "Other"] },
 ];
 
 const motto = [
@@ -93,7 +93,7 @@ const personalValues = [
 
 const professional = [
     { name: "currentOcupation", label: "Current Occupation", text: "Enter Current Occupation/Industry", options: ["Technology", "Healthcare", "Education", "Finance", "Arts/Entertainment", "Other"], customInput: { name: "occupationOther", text: "Enter custom occupation" } },
-    { name: " careerAspiation", label: "Career Aspiation", text: "Enter Career Aspirations/Goals", options: ["Leadership", "Entrepreneurship", "Creativity", "Advancement", "Other"], customInput: { name: "aspirationOther", text: "Enter custom aspiration" } },
+    { name: "careerAspiation", label: "Career Aspiation", text: "Enter Career Aspirations/Goals", options: ["Leadership", "Entrepreneurship", "Creativity", "Advancement", "Other"], customInput: { name: "aspirationOther", text: "Enter custom aspiration" } },
     { name: "education", label: "Education Background", text: "Enter Education Background/Degrees", options: ["High School", "Bachelor's Degree", "Master's Degree", "Doctorate", "Other"], customInput: { name: "backgroundOther", text: "Enter custom background" } },
     { name: "skills", label: "Professional Skills", text: "Enter Professional Skills or Expertise", options: ["Communication", "Problem-solving", "Teamwork", "Leadership", "Other"], customInput: { name: "expertiseOther", text: "Enter custom expertise" } }
 ];
@@ -107,6 +107,22 @@ const additionalInfo = [
     { name: "unusualExperinece", label: "Most Unusual Experience", text: "Unusual Experience" },
     { name: "strangeHabits", label: "Strangest Habit I Have", text: "Strangest Habit I Have" }
 ];
+
+const otherInputs = [
+    { name: "travelMode_Other" },
+    { name: "genre_Other" },
+    { name: "sports_Other" },
+    { name: "artistisPursuits_Other" },
+    { name: "gaming_Other" },
+    { name: "collectignHobby_Other" },
+    { name: "coffee_Other" },
+    { name: "cookingSkills_Other" },
+    { name: "currentOcupation_Other" },
+    { name: "careerAspiation_Other" },
+    { name: "education_Other" },
+    { name: "skills_Other" },
+    { name: "diet_Other" }
+]
 
 const generateDefaultValues = (arrays: { name: string }[][]) => {
     return arrays.reduce((acc, array) => {
@@ -128,7 +144,7 @@ const InputVCard = () => {
     const navigate = useNavigate();
     const [search] = useSearchParams();
     const id = search.get("personalId");
-    const [progress, setProgress] = useState<number>(25);
+    const [progressBar, setProgressBar] = useState<number>(1);
     const [isPersonal, setIsPersonal] = useState<boolean>(id ? true : false);
     const [personalLoading, setPersonalLoading] = useState<boolean>(false);
     const [otherLink, setOtherLink] = useState("");
@@ -141,10 +157,10 @@ const InputVCard = () => {
     );
 
     const form = useForm({
-        defaultValues: generateDefaultValues([perosnalName, aboutPersonal, contactInfo, emailInfo, miscellaneous, lifestyle, Favourites, motto, interests, personalValues, professional, additionalInfo]),
+        defaultValues: generateDefaultValues([perosnalName, aboutPersonal, contactInfo, emailInfo, miscellaneous, lifestyle, Favourites, motto, interests, personalValues, professional, additionalInfo, otherInputs]),
     });
 
-    const { handleSubmit, register, reset } = form;
+    const { handleSubmit, register, reset, watch, setValue } = form;
 
     useEffect(() => {
         const fetchPersonal = async () => {
@@ -236,34 +252,16 @@ const InputVCard = () => {
         setPersonalLoading(false);
     };
 
-    const handleProgressForward = () => {
-        setProgress(progress + 25);
-    };
-
-    const handleProgressBackward = () => {
-        setProgress(progress - 25);
-    };
-
     function handleCloseForm(e: React.MouseEvent<HTMLInputElement>) {
         if ((e.target as Element).id === "popupform") {
             setOpen(false);
         }
     }
 
-    return (
-        <>
-            {/* progress bar */}
-            <div className="flex justify-center lg:mt-4 lg:flex lg:justify-center">
-                <div className="w-[90%] h-4 bg-gray-300 rounded-full lg:w-[50%]">
-                    <div
-                        className="h-4 bg-blue-500 rounded-full"
-                        style={{ width: `${(progress / 100) * 100}%` }}
-                    ></div>
-                </div>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 font-Kanit">
-                {progress === 25 && (
+    const formParts = () => {
+        switch (progressBar) {
+            case 1:
+                return (
                     <div className="flex flex-col justify-center items-center my-8">
                         <div className="w-full lg:w-[50%] lg:flex lg:justify-center">
                             <h1 className="text-3xl font-bold pl-6 font-Philosopher">Personal Preferences</h1>
@@ -456,8 +454,11 @@ const InputVCard = () => {
                                 </div>
                             ))}
                         </div>
-
-                        {/* lifestyle */}
+                    </div>
+                )
+            case 2:
+                return (
+                    <div className="flex flex-col justify-center items-center my-8">
                         <div className="pl-6">
                             {lifestyle.map((life, index) => (
                                 <div key={index}>
@@ -509,35 +510,56 @@ const InputVCard = () => {
 
                         {/* misc section */}
                         <div className="pl-6 mt-2 ">
-                            {miscellaneous.map((miscs, index) => (
-                                <div className="py-1" key={index}>
-                                    <div className="flex flex-row" key={index}>
-                                        <div className="basis-1/3 flex justify-start items-center text-lg">
-                                            <label htmlFor="" className="pl-2 text-black">
-                                                {miscs.label}
-                                            </label>
+                            {miscellaneous.map((miscs, index) => {
+                                const selectedValue = watch(miscs.name);
+                                return (
+                                    <div className="py-1" key={index}>
+                                        <div className="flex flex-row" key={index}>
+                                            <div className="basis-1/3 flex justify-start items-center text-lg">
+                                                <label htmlFor="" className="pl-2 text-black">
+                                                    {miscs.label}
+                                                </label>
+                                            </div>
+                                            <div className="basis-2/3 px-4 flex items-center">
+                                                <select
+                                                    className="w-[75%] rounded-lg text-black"
+                                                    {...register(miscs.name, {
+                                                        required: true,
+                                                        onChange: (e) => {
+                                                            if (e.target.value !== 'Other') {
+                                                                setValue(`${miscs.name}_Other`, '');
+                                                            }
+                                                        },
+                                                    })}
+                                                >
+                                                    <option value="">{miscs.text}</option>
+                                                    {miscs.options?.map((option, index) => (
+                                                        <option key={index}>{option}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div className="basis-2/3 px-4 flex items-center">
-                                            <select
-                                                className="w-[75%] rounded-lg text-black"
-                                                {...register(`${miscs.name}`, {
-                                                    required: true,
-                                                })}
-                                            >
-                                                {miscs.options?.map((option, index) => (
-                                                    <option key={index}>{option}</option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                        {selectedValue === 'Other' && (
+                                            <div className="flex flex-row py-1">
+                                                <div className="basis-1/3">{miscs.label}</div>
+                                                <div className="basis-2/3 px-4">
+                                                    <input
+                                                        type="text"
+                                                        className="w-[75%] rounded-lg text-black"
+                                                        placeholder={`Enter your ${miscs.label.toLowerCase()}`}
+                                                        {...register(`${miscs.name}_Other`, { required: true })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     </div>
-                )}
-
-                {/* interests & hobbies */}
-                {progress === 50 && (
+                )
+            case 3:
+                return (
                     <div className="flex flex-col justify-center items-center my-8">
 
                         <div>
@@ -571,64 +593,140 @@ const InputVCard = () => {
                                 Interests & Activities
                             </h1>
                         </div>
-                        <div className="pt-6 lg:w-[40%] lg::justify-start">
-                            {interests.map((int, index) => (
-                                <div key={index}>
-                                    <div className="flex flex-row py-2 lg:gap-10">
-                                        <div className="basis-2/5 flex justify-start lg:justify-end items-center text-lg">
-                                            <label htmlFor="" className="pl-2 font-semibold">
-                                                {int.label}
-                                            </label>
+                        <div className="pt-6 lg::justify-start">
+                            {interests.map((int, index) => {
+                                const selectedValue = watch(int.name);
+                                return (
+                                    <div key={index}>
+                                        <div className="flex flex-row py-2 lg:gap-10">
+                                            <div className="basis-2/5 flex justify-start lg:justify-end items-center text-lg">
+                                                <label htmlFor={int.name} className="pl-2 font-semibold">
+                                                    {int.label}
+                                                </label>
+                                            </div>
+                                            <div className="basis-3/5 px-4 flex items-center">
+                                                <select
+                                                    className="w-full rounded-lg text-black flex items-center text-lg border-2 border-black"
+                                                    {...register(int.name, {
+                                                        required: true,
+                                                        onChange: (e) => {
+                                                            if (e.target.value !== 'Other') {
+                                                                setValue(`${int.name}_Other`, '');
+                                                            }
+                                                        },
+                                                    })}
+                                                >
+                                                    <option value="" selected>{int.text}</option>
+                                                    {int.options.map((option, index) => (
+                                                        <option key={index} value={option}>{option}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div className="basis-3/5 px-4 flex items-center">
-                                            <select
-                                                className="w-full rounded-lg text-black flex items-center text-lg border-2 border-black"
-                                                {...register(`${int.name}`, { required: true })}
-                                            >
-                                                {int.options.map((option, index) => (
-                                                    <option key={index} value={option}>
-                                                        {option}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                        {selectedValue === 'Other' && (
+                                            <div className="flex flex-row py-1">
+                                                <div className="basis-1/3">{int.label}</div>
+                                                <div className="basis-2/3 px-4">
+                                                    <input
+                                                        type="text"
+                                                        className="w-[75%] rounded-lg text-black"
+                                                        placeholder={`Enter your ${int.label.toLowerCase()}`}
+                                                        {...register(`${int.name}_Other`, { required: true })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     </div>
-                )}
-
-                {progress === 75 && (
-                    <div className="flex flex-col justify-center items-center my-8">
-                        <div className="w-full lg:flex lg:justify-center">
-                            <h1 className="text-3xl font-bold pl-6 font-Philosopher">Professional Details:</h1>
-                        </div>
-                        <div className="w-full pt-6">
-                            <div className="lg:w-[40%] lg:flex lg:justify-end">
-                                <h3 className="text-2xl font-semibold pl-6 underline lg:mr-[2.5rem] font-Philosopher">
-                                    Career :
-                                </h3>
+                )
+            case 4:
+                return (
+                    <div>
+                        <div className="flex flex-col justify-center items-center my-8">
+                            <div className="w-full lg:flex lg:justify-center">
+                                <h1 className="text-3xl font-bold pl-6 font-Philosopher">Professional Details:</h1>
                             </div>
-                            <div className="lg:flex lg:justify-center">
-                                <div className="pt-2 lg:w-[40%]">
-                                    {professional.map((prof, index) => (
-                                        <div key={index}>
-                                            <div className="flex flex-row py-2 lg:gap-10">
-                                                <div className="basis-1/3 flex justify-start lg:justify-end lg:w-[50%] items-center text-lg">
-                                                    <label htmlFor="" className="pl-4 font-semibold">
-                                                        {prof.label}
+                            <div className="w-full pt-6">
+                                <div className="lg:w-[40%] lg:flex lg:justify-end">
+                                    <h3 className="text-2xl font-semibold pl-6 underline lg:mr-[2.5rem] font-Philosopher">
+                                        Career :
+                                    </h3>
+                                </div>
+                                <div className="lg:flex lg:justify-center">
+                                    <div className="pt-2">
+                                        {professional.map((prof, index) => {
+                                            const selectedValue = watch(prof.name);
+                                            return (
+                                                <div key={index}>
+                                                    <div className="flex flex-row py-2 lg:gap-10">
+                                                        <div className="basis-1/3 flex justify-start lg:justify-end lg:w-[50%] items-center text-lg">
+                                                            <label htmlFor={prof.name} className="pl-4 font-semibold">
+                                                                {prof.label}
+                                                            </label>
+                                                        </div>
+                                                        <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[50%]">
+                                                            <select
+                                                                className="w-full rounded-lg text-black items-center text-lg lg:w-[70%] border-2 border-black"
+                                                                {...register(prof.name, {
+                                                                    required: true,
+                                                                    onChange: (e) => {
+                                                                        if (e.target.value !== 'Other') {
+                                                                            setValue(`${prof.name}_Other`, '');
+                                                                        }
+                                                                    },
+                                                                })}
+                                                            >
+                                                                <option value="">{prof.text}</option>
+                                                                {prof.options.map((option, index) => (
+                                                                    <option key={index} value={option}>
+                                                                        {option}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    {selectedValue === 'Other' && (
+                                                        <div className="flex flex-row py-1">
+                                                            <div className="basis-1/3">{prof.label}</div>
+                                                            <div className="basis-2/3 px-4">
+                                                                <input
+                                                                    type="text"
+                                                                    className="w-[75%] rounded-lg text-black"
+                                                                    placeholder={`Enter your ${prof.label.toLowerCase()}`}
+                                                                    {...register(`${prof.name}_Other`, { required: true })}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h1>Perosnal Values</h1>
+                                <div className="pl-6 mt-2 ">
+                                    {personalValues.map((value, index) => (
+                                        <div className="py-1" key={index}>
+                                            <div className="flex flex-row" key={index}>
+                                                <div className="basis-1/3 flex justify-start items-center text-lg">
+                                                    <label htmlFor="" className="pl-2 text-black">
+                                                        {value.label}
                                                     </label>
                                                 </div>
-                                                <div className="basis-2/3 px-4 flex items-center lg:justify-start lg:w-[50%]">
+                                                <div className="basis-2/3 px-4 flex items-center">
                                                     <select
-                                                        className="w-full rounded-lg text-black items-center text-lg lg:w-[70%] border-2 border-black"
-                                                        {...register(`${prof.name}`, { required: true })}
+                                                        className="w-[75%] rounded-lg text-black"
+                                                        {...register(value.name, { required: true })}
                                                     >
-                                                        {prof.options.map((option, index) => (
-                                                            <option key={index} value={option}>
-                                                                {option}
-                                                            </option>
+                                                        <option value="">{value.text}</option>
+                                                        {value.options?.map((option, index) => (
+                                                            <option key={index}>{option}</option>
                                                         ))}
                                                     </select>
                                                 </div>
@@ -638,39 +736,10 @@ const InputVCard = () => {
                                 </div>
                             </div>
                         </div>
-
-                        <div>
-                            <h1>Perosnal Values</h1>
-                            <div className="pl-6 mt-2 ">
-                                {personalValues.map((value, index) => (
-                                    <div className="py-1" key={index}>
-                                        <div className="flex flex-row" key={index}>
-                                            <div className="basis-1/3 flex justify-start items-center text-lg">
-                                                <label htmlFor="" className="pl-2 text-black">
-                                                    {value.label}
-                                                </label>
-                                            </div>
-                                            <div className="basis-2/3 px-4 flex items-center">
-                                                <select
-                                                    className="w-[75%] rounded-lg text-black"
-                                                    {...register(`${value.name}`, {
-                                                        required: true,
-                                                    })}
-                                                >
-                                                    {value.options?.map((option, index) => (
-                                                        <option key={index}>{option}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
                     </div>
-                )}
-
-                {progress === 100 && (
+                )
+            case 5:
+                return (
                     <div className="flex flex-col justify-center items-center my-8">
                         <div className="w-full lg:flex lg:justify-center">
                             <h1 className="text-3xl font-bold pl-6 font-Philosopher">Others</h1>
@@ -688,56 +757,58 @@ const InputVCard = () => {
                                             type="text"
                                             className="block py-2.5 px-0 w-full text-base font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
                                             placeholder={info.text}
-                                            {...register(`${info.name}`, { required: true })}
+                                            {...register(info.name, { required: true })}
                                         />
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
-                )}
+                )
+        }
+    }
 
-                <div className="w-full flex flex-row lg:gap-[4rem]">
-                    <div className="basis-1/2 flex justify-center lg:w-[50%] lg:justify-end">
-                        {progress === 25 ? (
-                            <button
-                                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-300"
-                                disabled
-                            >
-                                Back
-                            </button>
-                        ) : (
-                            <button
-                                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
-                                onClick={handleProgressBackward}
-                                type="button"
-                            >
-                                Back
-                            </button>
-                        )}
-                    </div>
-                    <div className="basis-1/2 flex justify-center lg:w-[50%] lg:justify-start">
-                        {progress === 100 ? (
-                            <button
-                                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
-                                type="submit"
-                                disabled={personalLoading}
-                            >
-                                {personalLoading ? "Saving..." : "Save"}
-                            </button>
-                        ) : (
-                            <button
-                                className="px-6 py-2 rounded-lg hover:cursor-pointer bg-blue-400"
-                                onClick={handleProgressForward}
-                                type="button"
-                            >
-                                Next
-                            </button>
-                        )}
-                    </div>
+    return (
+        <div className="flex flex-col justify-center items-center my-8">
+            <div className="flex justify-center lg:mt-4 lg:flex lg:justify-center">
+                <div className="w-[90%] h-4 bg-gray-300 rounded-full lg:w-[50%]">
+                    <div
+                        className="h-4 bg-blue-500 rounded-full"
+                        style={{ width: `${(progressBar / 5) * 100}%` }}
+                    ></div>
+                </div>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 font-Kanit">
+                <div className="space-y-4">
+                    {formParts()}
+                </div>
+
+                <div className="footer">
+                    <button
+                        type="button"
+                        disabled={progressBar === 0}
+                        onClick={() => {
+                            setProgressBar((currPage) => currPage - 1);
+                        }}
+                    >
+                        Prev
+                    </button>
+                    <button
+                        type="button"
+                        disabled={progressBar === 5}
+                        onClick={() => {
+                            setProgressBar((currPage) => currPage + 1);
+                        }}
+                    >
+                        Next
+                    </button>
+                    {progressBar === 5 && (
+                        <button type="submit" disabled={personalLoading}>{personalLoading ? "Hold On" : "Submit"}</button>
+                    )}
                 </div>
             </form >
-        </>
+        </div>
     );
 };
 
