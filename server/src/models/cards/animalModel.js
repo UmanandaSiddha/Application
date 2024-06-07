@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const animalSchema = new mongoose.Schema(
     {
-        name: String,
+        name: {
+            type: String,
+            required: [true, "Please Enter Animal Name"],
+        },
         species: String,
         age: Number,
         gender: String,

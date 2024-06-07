@@ -4,7 +4,7 @@ const creatorSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: [true, "Please Enter your Name"],
+            required: [true, "Please Enter Creator Name"],
         },
         links: [Object],
         user: {

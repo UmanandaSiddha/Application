@@ -73,8 +73,6 @@ const Checkout = () => {
                 handler: async function (response: any) {
                     setOpen(true);
                     const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
-                    console.log(data);
-                    console.log(response);
                     if (["active", "created", "authenticated", "activated"].includes(data.subscriptionStatus) && ["authorized", "captured", "created"].includes(data.paymentStatus)) {
                         setDialogHeader("Redirecting to Dashboard...");
                         setDialogData({
@@ -99,6 +97,7 @@ const Checkout = () => {
                     }
                 },
                 prefill: {
+                    name: user?.name,
                     email: user?.email,
                 },
                 timeout: 120,
@@ -106,6 +105,8 @@ const Checkout = () => {
                     email: user?.email,
                     name: user?.name,
                 },
+                remember_customer: true,
+                // customer_id: "",
                 theme: {
                     color: "#3399cc",
                 },
@@ -117,8 +118,8 @@ const Checkout = () => {
                 console.log(response.error.metadata.payment_id);
                 toast.info(response.error.description);
             });
+            console.log(razor);
             razor.open();
-            console.log("clicked");
         } catch (error: any) {
             toast.error(error.response.data.message);
         }

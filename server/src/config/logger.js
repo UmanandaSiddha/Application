@@ -19,7 +19,4 @@ const logger = winston.createLogger({
     ],
 });
 
-// logger.info("i m testing info");
-// logger.error("i m testing error");
-
 export default logger;

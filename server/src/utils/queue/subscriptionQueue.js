@@ -2,7 +2,7 @@ import { jobOptions, redisConnection, subscriptionQueueName } from "../../config
 import { Queue, Worker } from "bullmq";
 import { redis } from "../../server.js";
 import logger from "../../config/logger.js";
-import subscriptionwebhook from "../subscriptionWebhook.js";
+import subscriptionwebhook from "../webhook/subscriptionWebhook.js";
 
 export const subscriptionQueue = new Queue(subscriptionQueueName, {
     connection : redisConnection,
@@ -24,13 +24,13 @@ export const addSubscriptionToQueue = async (data) => {
 };
 
 const worker = new Worker(subscriptionQueueName, async (job) => {
-    const { event, payload } = job.data;
-    await subscriptionwebhook(event, payload);
+    await subscriptionwebhook(job.data);
 }, { connection: redisConnection });
 
 worker.on('completed', (job) => {
     console.log(`Job ${job.id} has completed!`);
     logger.info(`Job ${job.id} has completed!`);
+    console.log("Completeing", new Date(Date.now()).toLocaleString());
 });
 
 worker.on('failed', async (job, err) => {

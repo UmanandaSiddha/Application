@@ -1,7 +1,7 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import User, { accountEnum, roleEnum } from "../models/userModel.js";
-import sendToken from "../utils/jwtToken.js";
+import sendToken from "../utils/tokens/jwtToken.js";
 import crypto from "crypto";
 import { CLIENT_URL } from "../server.js";
 import Tree from "../models/cards/treeModel.js";
@@ -13,7 +13,6 @@ import sharp from "sharp";
 import { SERVER_URL } from "../server.js";
 import Animal from "../models/cards/animalModel.js";
 import { addEmailToQueue } from "../utils/queue/emailQueue.js";
-// import Donation from "../models/donationModel.js";
 import Donator from "../models/donatorModel.js";
 import logger from "../config/logger.js";
 
@@ -32,18 +31,19 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Error Registering User, Try Again Later", 500));
     }
 
-    const donator = Donator.find({ email: user.email });
-    if (donator) {
-        user.donator = true;
-        await user.save();
-    }
-
     if (req.query.type === roleEnum.ORG) {
         user.role = roleEnum.ORG;
+        const { street, city, state, postalCode, country, website, phone } = req.body;
         user.orgDetails = {
-            address: req.body.address,
-            website: req.body.website,
-            phone: req.body.phone
+            address: {
+                street,
+                city,
+                state,
+                postalCode,
+                country,
+            },
+            website,
+            phone,
         }
         await user.save();
     }

@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const treeSchema = new mongoose.Schema(
     {
-        name: String,
+        name: {
+            type: String,
+            required: [true, "Please Enter Tree Name"],
+        },
         scientificName: String,
         treeType: String,
         location: String,

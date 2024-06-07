@@ -1,5 +1,5 @@
 import ErrorHandler from "../utils/errorHandler.js";
-import sendToken from "../utils/jwtToken.js";
+import sendToken from "../utils/tokens/jwtToken.js";
 import Tree from "../models/cards/treeModel.js";
 import Medical from "../models/cards/medicalModel.js";
 import Creator from "../models/cards/creatorModel.js";

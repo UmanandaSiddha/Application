@@ -26,8 +26,8 @@ export const isUserVerified = catchAsyncErrors( async (req, res, next) => {
 export const isUserPaid = catchAsyncErrors( async (req, res, next) => {
     if (req.user.role !== "admin") {
 
-        if (req.user.freePlan.status) {
-            const { type, end } = req.user.freePlan;
+        const { type, end, status } = req.user?.freePlan;
+        if (status) {
             if (type === freeEnum.CUSTOM || end > Date.now()) {
                 return next(); 
             }
@@ -38,8 +38,10 @@ export const isUserPaid = catchAsyncErrors( async (req, res, next) => {
         }
     
         const subscription = await Subscription.findById(req.user.activePlan);
+
+        // just created subscription check and delete if necessary
     
-        if (!subscription || !["active", "pending"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.currentEnd <= Date.now())) {
+        if (!subscription || !["active", "pending", "created"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.currentEnd <= Date.now())) {
             return next(new ErrorHandler("Subscription Expired Recharge", 400));
         } 
     }
@@ -59,8 +61,8 @@ export const checkCancellation = catchAsyncErrors( async (req, res, next) => {
         }
     };
 
-    if (req.user.freePlan.status) {
-        const { type, end } = req.user.freePlan;
+    const { type, end, status } = req.user?.freePlan;
+    if (status) {
         if (type === freeEnum.PLAN && end <= Date.now()) {
             await updateUserCards();
         }

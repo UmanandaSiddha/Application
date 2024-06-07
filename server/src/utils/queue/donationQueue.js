@@ -2,7 +2,7 @@ import { donationQueueName, jobOptions, redisConnection } from "../../config/que
 import { Queue, Worker } from "bullmq";
 import { redis } from "../../server.js";
 import logger from "../../config/logger.js";
-import donationWebhook from "../donationWebhook.js";
+import donationWebhook from "../webhook/donationWebhook.js";
 
 export const donationQueue = new Queue(donationQueueName, {
     connection : redisConnection,

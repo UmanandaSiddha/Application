@@ -74,7 +74,6 @@ const userSchema = new mongoose.Schema(
             },
             time: Date,
         },
-        donator: Boolean,
         isVerified: {
             type: Boolean,
             default: false,
@@ -108,11 +107,24 @@ const userSchema = new mongoose.Schema(
                 default: 0
             }
         },
-        billingAddress: Object,
+        billingAddress: {
+            street: String,
+            city: String,
+            state: String,
+            postalCode: String,
+            country: String,
+        },
+        phone: String,
         orgDetails: {
             website: String,
-            address: Object,
-            phone: Number,
+            address: {
+                street: String,
+                city: String,
+                state: String,
+                postalCode: String,
+                country: String,
+            },
+            phone: String,
         },
         oneTimePassword: String,
         oneTimeExpire: Date,

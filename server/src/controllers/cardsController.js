@@ -8,7 +8,7 @@ import Subscription from "../models/payment/subscriptionModel.js";
 
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
-import ApiFeatures from "../utils/apiFeatures.js";
+import ApiFeatures from "../utils/services/apiFeatures.js";
 
 // Function to select model based on type
 const selectModelByType = (type) => {

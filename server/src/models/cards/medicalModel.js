@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const medicalSchema = new mongoose.Schema(
     {
-        name: String,
+        name: {
+            type: String,
+            required: [true, "Please Enter Patient Name"],
+        },
         dateOfBirth: Date,
         gender: String,
         street: String,

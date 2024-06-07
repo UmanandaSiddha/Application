@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const personalSchema = new mongoose.Schema(
     {
-        name: String,
+        name: {
+            type: String,
+            required: [true, "Please Enter Individual Name"],
+        },
         mobileNumer: String,
         homeNumber: String,
         workNumber: String,

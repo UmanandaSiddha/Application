@@ -15,17 +15,14 @@ const donatorSchema = new mongoose.Schema(
             validate: [validator.isEmail, "Please enter a valid Email"],
         },
         phone: {
-            type: Number,
+            type: String,
             required: [true, "Enter Donator Phone"]
         },
         address: {
             type: String,
             required: true
         },
-        pan: {
-            type: Number,
-            required: [true, "Enter Pan Number"]
-        },
+        pan: String,
         activeDonation: {
             type: mongoose.Schema.ObjectId,
             ref: "Subscription",
