@@ -262,12 +262,12 @@ const InputVCard = () => {
         switch (progressBar) {
             case 1:
                 return (
-                    <div className="flex flex-col justify-center items-center my-8">
+                    <div className="flex-col justify-center items-center my-8 w-full">
                         <div className="w-full lg:w-[50%] lg:flex lg:justify-center">
                             <h1 className="text-3xl font-bold pl-6 font-Philosopher">Personal Preferences</h1>
                         </div>
                         <div className="w-[90%] lg:w-[45%] flex flex-row lg:mt-10">
-                            <div className="basis-1/3 flex justify-center items-center">
+                            <div className="basis-1/3 flex justify-center items-center w-full">
                                 <label htmlFor="" className="text-xl">
                                     Name:
                                 </label>
@@ -284,7 +284,7 @@ const InputVCard = () => {
 
                         {/* socials */}
                         <div className="flex flex-col space-y-2 font-Kanit">
-                            <div className="lg:flex lg:justify-center"><h1 className="font-semibold text-lg font-Philosopher underline">Social Media Profiles</h1></div>
+                            <div className="lg:flex lg:justify-center"><h1 className="font-semibold text-lg font-Philosopher  m-4">Social Media Profiles</h1></div>
                             {socialData && (
                                 <div className="flex flex-col space-y-2">
                                     {socialData.map((arr: any, index: number) => (
@@ -314,13 +314,15 @@ const InputVCard = () => {
 
                         <div className="flex flex-col gap-6 pt-10">
                             <div className="">
+                                <div className="flex justify-center">
                                 <button
-                                    className="w-[350px] bg-black text-white font-bold py-2 px-4 rounded"
+                                    className="w-[150px] bg-black text-white font-bold py-2 px-4 rounded"
                                     type="button"
                                     onClick={() => setOpen(true)}
                                 >
                                     Add more
                                 </button>
+                                </div>
                                 {open && (
                                     <div className="font-Kanit">
                                         <div
@@ -784,25 +786,34 @@ const InputVCard = () => {
                     {formParts()}
                 </div>
 
-                <div className="footer">
-                    <button
-                        type="button"
-                        disabled={progressBar === 0}
-                        onClick={() => {
-                            setProgressBar((currPage) => currPage - 1);
-                        }}
-                    >
-                        Prev
-                    </button>
-                    <button
+                <div className="footer flex justify-center">
+                {progressBar !== 5 && (
+                        <button
                         type="button"
                         disabled={progressBar === 5}
                         onClick={() => {
                             setProgressBar((currPage) => currPage + 1);
                         }}
+                        className="bg-black px-4 text-white rounded-lg m-2"
                     >
                         Next
                     </button>
+                    )}
+                    {progressBar !== 1 && (
+                        <button
+                        type="button"
+                        
+                        onClick={() => {
+                            setProgressBar((currPage) => currPage - 1);
+                        }}
+                        className="bg-black px-4 text-white rounded-lg m-2"
+                    >
+                        Prev
+                    </button>
+                    )}
+                   
+                    
+                    
                     {progressBar === 5 && (
                         <button type="submit" disabled={personalLoading}>{personalLoading ? "Hold On" : "Submit"}</button>
                     )}
