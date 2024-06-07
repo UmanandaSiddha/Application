@@ -6,7 +6,7 @@ import {
   PersonalResponse,
   TreeResponse,
 } from "@/types/api-types";
-import { TbQrcodeOff } from "react-icons/tb";
+// import { TbQrcodeOff } from "react-icons/tb";
 import { BsQrCodeScan } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdOutlineNavigateNext } from "react-icons/md";
@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import Loader from "@/components/rest/loader";
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Animal,
   Creator,
@@ -28,13 +28,13 @@ import {
   Tree,
   User,
 } from "../../types/types";
-import OtherQR from "./other-qr";
+// import OtherQR from "./other-qr";
 
 interface PropsType {
   card: Tree | Personal | MedicalType | Creator | Animal | null;
   user: User;
   isPaid: boolean;
-  type: String;
+  type: string;
 }
 
 const VCard = ({ card, isPaid, user, type }: PropsType) => {
@@ -152,13 +152,13 @@ const AllCards = () => {
   const [countData, setCountData] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const headSetter = (headType: String) => {
-    if (["tree", "personal", "medical", "creator", "animal"].includes(type!)) {
-      return headType.charAt(0).toUpperCase() + headType.slice(1).toLowerCase();
-    } else {
-      return;
-    }
-  };
+  // const headSetter = (headType: string) => {
+  //   if (["tree", "personal", "medical", "creator", "animal"].includes(type!)) {
+  //     return headType.charAt(0).toUpperCase() + headType.slice(1).toLowerCase();
+  //   } else {
+  //     return;
+  //   }
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -208,11 +208,11 @@ const AllCards = () => {
     }
   }, [currentPage, type]);
 
-  const setCurrentPageNo = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
+  // const setCurrentPageNo = (pageNumber: number) => {
+  //   setCurrentPage(pageNumber);
+  // };
 
-  const setLink = (type: String) => {
+  const setLink = (type: string) => {
     switch (type) {
       case "tree":
         return `/dashboard/tree/create`;
@@ -562,7 +562,7 @@ const AllCards = () => {
                                     navigate("/plans");
                                   } else {
                                     navigate(setLink(type!));
-                                  };
+                                  }
                                 }}
                               >
                                 {!isPaid && user?.role !== "admin" ? (
@@ -660,7 +660,7 @@ const AllCards = () => {
                       navigate("/plans");
                     } else {
                       navigate(setLink(type!));
-                    };
+                    }
                   }}
                 >
                   {!isPaid && user?.role !== "admin" ? (
