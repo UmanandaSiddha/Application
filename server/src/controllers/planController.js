@@ -4,7 +4,9 @@ import { CLIENT_URL, instance } from "../server.js";
 import Plan, { planEnum } from "../models/payment/planModel.js";
 import CustomRequest from "../models/messages/customRequestModel.js";
 import User from "../models/userModel.js";
+import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 
+// admin
 export const createPlan = catchAsyncErrors(async (req, res, next) => {
     const razorPlan = await instance.plans.create({
         period: req.body.period,
@@ -103,6 +105,7 @@ export const switchFreePlanVisibility = catchAsyncErrors(async (req, res, next) 
     });
 });
 
+// user
 export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
     const newRequest = await CustomRequest.create({
         email: req.body.email,
@@ -114,7 +117,17 @@ export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
         user: req.user.id,
     });
 
-    // Email send to owner
+    const message = `Request for ${newRequest}`;
+
+    try {
+        await addEmailToQueue({
+            email: process.env.ADMIN_EMAIL,
+            subject: `New Custom Plan Request`,
+            message,
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
 
     res.status(200).json({
         success: true,
@@ -186,10 +199,11 @@ export const attendCustomRequests = catchAsyncErrors(async (rqe, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: `Email Sent for Rejection`
+        message: `Request successfully attended`
     });
 });
 
+// admin
 export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.body.user);
 
@@ -222,6 +236,7 @@ export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+// user
 export const getCustomPlan = catchAsyncErrors(async (req, res, next) => {
     const plan = await Plan.findById(req.params.id);
     if (!plan) {
@@ -232,7 +247,7 @@ export const getCustomPlan = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`Plan ${req.params.id} is not a Custom Plan`, 403));
     }
 
-    if (plan.name !== req.body.user) {
+    if (plan.name !== req.params.user) {
         return next(new ErrorHandler(`Plan mismatch`, 403));
     }
     
@@ -256,7 +271,7 @@ export const deletePlan = catchAsyncErrors( async (req, res, next) => {
     });
 });
 
-// may need to edit
+// user
 export const getAllPlans = catchAsyncErrors( async (req, res, next) => {
     const plans = await Plan.find({ visible: true, planType: { $ne: planEnum.CUSTOM }});
     const planCount = await Plan.countDocuments({ visible: true, planType: { $ne: planEnum.CUSTOM }});
@@ -268,12 +283,16 @@ export const getAllPlans = catchAsyncErrors( async (req, res, next) => {
     });
 });
 
-// may need to edit
+// user
 export const getPlan = catchAsyncErrors( async (req, res, next) => {
     const plan = await Plan.findById(req.params.id);
     if (!plan) {
-        return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404))
+        return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
     };
+
+    if (plan.planType === planEnum.CUSTOM) {
+        return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
+    }
 
     res.status(200).json({
         success: true,

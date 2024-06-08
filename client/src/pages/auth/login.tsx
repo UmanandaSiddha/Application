@@ -1,38 +1,27 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
 import { getGoogleAuthUrl } from "@/lib/google";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { UserResponse } from "@/types/api-types";
-import { RootState } from "../../redux/store";
 
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-
-    // const { user, loading } = useSelector(
-    //     (state: RootState) => state.userReducer
-    // );
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/dashboard";
-
+    
     const [userData, setUserData] = useState({
         email: "",
         password: "",
     });
+
+    const [isOpen, setIsOpen] = useState<boolean>(false);
     const [forgotEmail, setForgotEmail] = useState<string>("");
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
     const [forgotLoading, setForgotLoading] = useState<boolean>(false);
-    const [open, setOpen] = useState(false);
-
-    // useEffect(() => {
-    //     if (user) {
-    //         navigate("/dashboard");
-    //     }
-    // }, [user]);
+    const from = location.state?.from?.pathname || "/dashboard";
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -69,10 +58,10 @@ const Login = () => {
                 { email: forgotEmail },
                 config
             );
-            setOpen(false);
+            setIsOpen(false);
             toast.success(data.message);
         } catch (error: any) {
-            setOpen(false);
+            setIsOpen(false);
             toast.error(error.response.data.message);
         }
         setForgotLoading(false);

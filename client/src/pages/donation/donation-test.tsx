@@ -61,7 +61,7 @@ const DonationPage = () => {
 
         try {
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/pay`, donationPayload, config);
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donator/new/pay`, donationPayload, config);
             console.log(data)
             if (!data) {
                 toast.error("Failed to Execute Payment");
@@ -119,99 +119,100 @@ const DonationPage = () => {
 
     return (
         <>
-            {donateLoading ? 
-            <div>Hold On <Loader2 className="mr-2 h-4 w-4 animate-spin" /></div> 
-            : (
-                <div className="flex flex-col justify-center items-center min-h-screen space-y-8">
-                    <h1 className='text-4xl font-bold'>Donation Page</h1>
-                    <p className='text-xl'>Your small donation can help many lives</p>
-                    {/* <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle><Loader2 className="mr-2 h-4 w-4 animate-spin" />{dialogHeader}</DialogTitle>
-                            </DialogHeader>
-                            <DialogFooter>
-                                <p>Payment Status: {dialogData}</p>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog> */}
-                    <div className="space-y-8">
-                        <div className="space-y-2">
-                            <label>Name</label>
-                            <input
-                                name="name"
-                                type="text"
-                                value={donateData.name}
-                                onChange={(e) => setDonateData({ ...donateData, name: e.target.value })}
-                                placeholder="Enter your name"
-                                className="w-[350px] gap-2"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label>Email</label>
-                            <input
-                                name="email"
-                                type="email"
-                                value={donateData.email}
-                                onChange={(e) => setDonateData({ ...donateData, email: e.target.value })}
-                                placeholder="Enter your email"
-                                className="w-[350px] gap-2"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label>Phone</label>
-                            <input
-                                name="phone"
-                                type="number"
-                                value={donateData.phone}
-                                onChange={(e) => setDonateData({ ...donateData, phone: e.target.value })}
-                                placeholder="Enter your phone"
-                                className="w-[350px] gap-2"
-                            />
-                        </div>
-                        <div className="space-y-2 flex flex-col">
-                            <label>Amount</label>
-                            <div className='flex '>
-                                <select
-                                    value={currency}
-                                    onChange={(e) => setCurrency(e.target.value)}
-                                >
-                                    <option value={currencyEnum.INR}>{currencyEnum.INR}</option>
-                                    <option value={currencyEnum.USD}>{currencyEnum.USD}</option>
-                                </select>
+            {donateLoading ? (
+                <div className="flex items-center justify-center min-h-screen">
+                    Hold On <Loader2 className="ml-2 h-6 w-6 animate-spin" />
+                </div>
+            ) : (
+                <div className="flex flex-col items-center min-h-screen py-12 bg-gray-50">
+                    <h1 className='text-4xl font-bold text-gray-900 mb-4'>Donation Page</h1>
+                    <p className='text-xl text-gray-600 mb-8'>Your small donation can help many lives</p>
+                    <div className="bg-white p-8 shadow-md rounded-md w-full max-w-md">
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Name</label>
                                 <input
-                                    name="amount"
-                                    type="number"
-                                    value={donateData.amount}
-                                    onChange={(e) => setDonateData({ ...donateData, amount: e.target.value })}
-                                    placeholder="Enter amount"
-                                    className="w-[300px] gap-2"
+                                    name="name"
+                                    type="text"
+                                    value={donateData.name}
+                                    onChange={(e) => setDonateData({ ...donateData, name: e.target.value })}
+                                    placeholder="Enter your name"
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 />
                             </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Email</label>
+                                <input
+                                    name="email"
+                                    type="email"
+                                    value={donateData.email}
+                                    onChange={(e) => setDonateData({ ...donateData, email: e.target.value })}
+                                    placeholder="Enter your email"
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Phone</label>
+                                <input
+                                    name="phone"
+                                    type="number"
+                                    value={donateData.phone}
+                                    onChange={(e) => setDonateData({ ...donateData, phone: e.target.value })}
+                                    placeholder="Enter your phone"
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Amount</label>
+                                <div className="flex items-center">
+                                    <select
+                                        value={currency}
+                                        onChange={(e) => setCurrency(e.target.value)}
+                                        className="block w-1/4 px-3 py-2 border border-gray-300 bg-white rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    >
+                                        <option value={currencyEnum.INR}>{currencyEnum.INR}</option>
+                                        <option value={currencyEnum.USD}>{currencyEnum.USD}</option>
+                                    </select>
+                                    <input
+                                        name="amount"
+                                        type="number"
+                                        value={donateData.amount}
+                                        onChange={(e) => setDonateData({ ...donateData, amount: e.target.value })}
+                                        placeholder="Enter amount"
+                                        className="block w-3/4 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Address</label>
+                                <input
+                                    name="address"
+                                    type="text"
+                                    value={donateData.address}
+                                    onChange={(e) => setDonateData({ ...donateData, address: e.target.value })}
+                                    placeholder="Enter address"
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Pan Details</label>
+                                <input
+                                    name="pan"
+                                    type="number"
+                                    value={donateData.pan}
+                                    onChange={(e) => setDonateData({ ...donateData, pan: e.target.value })}
+                                    placeholder="Enter Pan Details"
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                            <button
+                                onClick={handlePayment}
+                                disabled={donateLoading}
+                                className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                            >
+                                {donateLoading ? "Please wait..." : "Donate"}
+                            </button>
                         </div>
-                        <div className="space-y-2">
-                            <label>Address</label>
-                            <input
-                                name="address"
-                                type="text"
-                                value={donateData.address}
-                                onChange={(e) => setDonateData({ ...donateData, address: e.target.value })}
-                                placeholder="Enter address"
-                                className="w-[350px] gap-2"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label>Pan Details</label>
-                            <input
-                                name="pan"
-                                type="number"
-                                value={donateData.pan}
-                                onChange={(e) => setDonateData({ ...donateData, pan: e.target.value })}
-                                placeholder="Enter Pan Details"
-                                className="w-[350px] gap-2"
-                            />
-                        </div>
-                        <button className="w-[350px]" onClick={handlePayment} disabled={donateLoading}>{donateLoading ? "wait..." : "Pay"}</button>
                     </div>
                 </div>
             )}

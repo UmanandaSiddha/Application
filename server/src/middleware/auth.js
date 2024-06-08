@@ -38,8 +38,6 @@ export const isUserPaid = catchAsyncErrors( async (req, res, next) => {
         }
     
         const subscription = await Subscription.findById(req.user.activePlan);
-
-        // just created subscription check and delete if necessary
     
         if (!subscription || !["active", "pending", "created"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.currentEnd <= Date.now())) {
             return next(new ErrorHandler("Subscription Expired Recharge", 400));
@@ -68,9 +66,9 @@ export const checkCancellation = catchAsyncErrors( async (req, res, next) => {
         }
     }
 
-    if (req.user.activePlan) {
-        const subscription = await Subscription.findById(req.user.activePlan);
-        if (subscription.status === "cancelled" && subscription.currentEnd <= Date.now()) {
+    if (req.user?.activePlan) {
+        const subscription = await Subscription.findById(req.user?.activePlan);
+        if (subscription && subscription.status === "cancelled" && subscription.currentEnd <= Date.now()) {
             await updateUserCards();
         }
     }

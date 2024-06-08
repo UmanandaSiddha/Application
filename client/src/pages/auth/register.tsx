@@ -8,15 +8,11 @@ import Compressor from "compressorjs";
 import { UserResponse } from "@/types/api-types";
 import axios from "axios";
 
-// let currentOTPIndex: number = 0;
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [avatar, setAvatar] = useState<any>();
-  // const [openOTP, setOpenOTP] = useState<boolean>(false);
-  // const [otp, setOtp] = useState(new Array(6).fill(""));
-  // const [activeOTPIndex, setActiveOTPIndex] = useState(0);
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -86,42 +82,14 @@ const Register = () => {
         registerData,
         config
       );
-      //   return data;
-      // const data = await registerUser(registerData);
       dispatch(userExist(data.user));
       navigate("/verify")
-      // toast.success("User Registered!");
     } catch (error: any) {
       dispatch(userNotExist());
       toast.error(error.response.data.message);
     }
     setRegisterLoading(false);
   };
-
-  // const inputRef = useRef<HTMLInputElement>(null);
-
-  // const handleOnChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { value } = target;
-  //   const newOTP: string[] = [...otp];
-  //   newOTP[currentOTPIndex] = value.substring(value.length - 1);
-
-  //   if (!value) setActiveOTPIndex(currentOTPIndex - 1);
-  //   else setActiveOTPIndex(currentOTPIndex + 1);
-
-  //   setOtp(newOTP);
-  // };
-
-  // const handleOnKeyDown = (
-  //   e: React.KeyboardEvent<HTMLInputElement>,
-  //   index: number
-  // ) => {
-  //   currentOTPIndex = index;
-  //   if (e.key === "Backspace") setActiveOTPIndex(currentOTPIndex - 1);
-  // };
-
-  // useEffect(() => {
-  //   inputRef.current?.focus();
-  // }, [activeOTPIndex]);
 
   return (
     <>
@@ -190,10 +158,6 @@ const Register = () => {
                 name="avatar"
                 type="file"
                 accept="image/*"
-                // value={userData.profilePicture}
-                // onChange={(e) =>
-                //   setUserData({ ...userData, profilePicture: e.target.value })
-                // }
                 onChange={handleChange}
               />
             </div>
@@ -228,46 +192,6 @@ const Register = () => {
           </form>
         </div>
       </div>
-      {/* {openOTP && (
-        <>
-          <div className="font-Kanit">
-            <div
-              className="fixed inset-0 bg-opacity-30 backdrop-blur-md flex justify-center items-center z-10"
-              id="popupform"
-            >
-              <div className="bg-slate-800 rounded-xl py-2 shadow-md">
-                <h2 className="text-white font-Philosopher my-[2rem] flex justify-center">Check your inbox to enter the OTP</h2>
-                <div className="my-[2rem] px-[2rem]">
-                {otp.map((_, index) => {
-                  return (
-                    <React.Fragment key={index}>
-                      <input
-                        ref={activeOTPIndex === index ? inputRef : null}
-                        type="number"
-                        className={
-                          "w-12 h-12 font-Philosopher border-2 rounded-lg border-white bg-transparent outline-none text-center font-semibold text-xl spin-button-none focus:border-gray-700 focus:text-gray-700 text-gray-400 transition"
-                        }
-                        onChange={handleOnChange}
-                        onKeyDown={(e) => handleOnKeyDown(e, index)}
-                        value={otp[index]}
-                      />
-                      {index === otp.length - 1 ? null : (
-                        <span className={"w-2 py-0.5 px-1"} />
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-                </div>
-                <div className="my-4 flex justify-center">
-                  <button type="button" className="px-8 py-2 font-Philosopher bg-gradient-to-r from-sky-500 to-blue-500 text-white tex-white text-lg rounded-md">
-                    Continue
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )} */}
     </>
   );
 };

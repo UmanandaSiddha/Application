@@ -87,7 +87,7 @@ export type Personal = {
     workEmail: string,
     otherEmail: string,
     aboutMe: string,
-    dateOfBirth: Date,
+    dateOfBirth: string,
     homeTown: string,
     currentCity: string,
     languages: string,
@@ -155,7 +155,7 @@ export type Personal = {
 export type MedicalType = {
     _id: string;
     name: string,
-    dateOfBirth: Date,
+    dateOfBirth: string,
     gender: string,
     street: string,
     city: string,

@@ -14,7 +14,7 @@ const personalSchema = new mongoose.Schema(
         workEmail: String,
         otherEmail: String,
         aboutMe: String,
-        dateOfBirth: Date,
+        dateOfBirth: String,
         homeTown: String,
         currentCity: String,
         languages: String,

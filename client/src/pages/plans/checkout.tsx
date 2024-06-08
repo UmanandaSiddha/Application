@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -35,6 +35,9 @@ const Checkout = () => {
         paymentStatus: "hold on",
     });
     const { user } = useSelector((state: RootState) => state.userReducer);
+
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/dashboard";
 
     useEffect(() => {
         const fetcPlan = async () => {
@@ -82,7 +85,7 @@ const Checkout = () => {
                         toast.success("All set");
                         setTimeout(() => {
                             setOpen(false);
-                            navigate("/dashboard");
+                            navigate(from, { replace: true });
                         }, 3000);
                     } else {
                         setDialogHeader("An Error Occured");
@@ -116,6 +119,7 @@ const Checkout = () => {
                 console.log(response.error.description);
                 console.log(response.error.metadata.order_id);
                 console.log(response.error.metadata.payment_id);
+                console.log(response);
                 toast.info(response.error.description);
             });
             console.log(razor);
@@ -126,54 +130,142 @@ const Checkout = () => {
     };
 
     return (
+        // <>
+        //     {(id && plan._id === id) ? (
+        //         <div className="w-full max-h-screen flex justify-center items-center gap-4">
+        //             <div className="flex flex-col justify-center items-center gap-4">
+        //                 {user ? (
+        //                     <div>
+        //                         <p>Name: {user?.name}</p>
+        //                         <p>Email: {user?.email}</p>
+        //                     </div>
+        //                 ) : (
+        //                     <p>Login to proceed</p>
+        //                 )}
+        //                 { plan ? (
+        //                     <div className="flex flex-col justify-center items-center gap-4">
+        //                         <p>Plan Name: {plan?.name}</p>
+        //                         <p>Plan Description: {plan?.description}</p>
+        //                         <p>Plan Cards: {plan?.cards}</p>
+        //                         <p>Plan Price: {plan?.amount}</p>
+        //                     </div>
+        //                 ) : (
+        //                     <p>Plan not found</p>
+        //                 )}
+        //             </div>
+        //             <div className="flex justify-center items-center gap-4">
+        //                 {open && (
+        //                     <div className="font-Kanit">
+        //                         <div
+        //                             className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
+        //                             id="popupform"
+        //                         >
+        //                             <div className="bg-white p-8 rounded shadow-lg w-[425px]">
+        //                                 <h2 className="text-lg font-bold mb-4 flex justify-center underline">
+        //                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        //                                     {dialogHeader}
+        //                                 </h2>
+        //                                 <div>
+        //                                     <p>Payment Status: {dialogData.paymentStatus}</p>
+        //                                     <p>Subscription Status: {dialogData.subscriptionStatus}</p>
+        //                                 </div>
+        //                             </div>
+        //                         </div>
+        //                     </div>
+        //                 )}
+        //             </div>
+        //             <div>
+        //                 <p>Price: {plan.amount}</p>
+        //                 <button onClick={() => handlePayment(plan?.razorPlanId)}>Buy Plan</button>
+        //             </div>
+        //         </div>
+        //     ) : (
+        //         <p>Broken link</p>
+        //     )}
+        // </>
+
         <>
             {(id && plan._id === id) ? (
-                <div className="w-full max-h-screen flex justify-center items-center gap-4">
-                    <div className="flex flex-col justify-center items-center gap-4">
-                        {user ? (
-                            <div>
-                                <p>Name: {user?.name}</p>
-                                <p>Email: {user?.email}</p>
-                            </div>
-                        ) : (
-                            <p>Login to proceed</p>
-                        )}
-                        { plan ? (
-                            <div className="flex flex-col justify-center items-center gap-4">
-                                <p>Plan Name: {plan?.name}</p>
-                                <p>Plan Description: {plan?.description}</p>
-                                <p>Plan Cards: {plan?.cards}</p>
-                                <p>Plan Price: {plan?.amount}</p>
-                            </div>
-                        ) : (
-                            <p>Plan not found</p>
-                        )}
-                    </div>
-                    <div className="flex justify-center items-center gap-4">
-                        {open && (
-                            <div className="font-Kanit">
-                                <div
-                                    className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
-                                    id="popupform"
-                                >
-                                    <div className="bg-white p-8 rounded shadow-lg w-[425px]">
-                                        <h2 className="text-lg font-bold mb-4 flex justify-center underline">
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            {dialogHeader}
-                                        </h2>
-                                        <div>
-                                            <p>Payment Status: {dialogData.paymentStatus}</p>
-                                            <p>Subscription Status: {dialogData.subscriptionStatus}</p>
-                                        </div>
+                <div className="">
+                    <div className="min-h-screen flex justify-center items-center bg-gray-100 p-4">
+                        <div className="bg-white shadow-lg rounded-lg max-w-4xl w-full flex flex-col md:flex-row">
+                            {/* Left Side */}
+                            <div className="w-full md:w-1/2 p-8 border-b md:border-b-0 md:border-r">
+                                {/* User Details */}
+                                <div className="mb-8">
+                                    <h2 className="text-2xl font-semibold mb-4">User Details</h2>
+                                    <div>
+                                        <label className="block mb-2">Name</label>
+                                        <input type="text" value={user?.name} readOnly className="w-full p-2 border rounded" />
+                                    </div>
+                                    <div className="mt-4">
+                                        <label className="block mb-2">Email</label>
+                                        <input type="email" value={user?.email} readOnly className="w-full p-2 border rounded" />
+                                    </div>
+                                </div>
+                                {/* Plan Details */}
+
+
+                                <div>
+                                    <h2 className="text-2xl font-semibold mb-4">Plan Details</h2>
+                                    <div className="p-4 bg-gray-50 border rounded-lg shadow-md">
+                                        <p className="mb-2"><span className="font-semibold">Plan:</span> {plan?.name}</p>
+                                        <p className="mb-2"><span className="font-semibold">Description:</span> {plan?.description}</p>
+                                        <p className="mb-2"><span className="font-semibold">Cards:</span> {plan?.cards}</p>
+                                        <p className="mb-2"><span className="font-semibold">Price:</span> Rs {plan?.amount}</p>
                                     </div>
                                 </div>
                             </div>
-                        )}
+
+                            <div className="flex justify-center items-center gap-4">
+                                {open && (
+                                    <div className="font-Kanit">
+                                        <div
+                                            className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
+                                            id="popupform"
+                                        >
+                                            <div className="bg-white p-8 rounded shadow-lg w-[425px]">
+                                                <h2 className="text-lg font-bold mb-4 flex justify-center underline">
+                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                    {dialogHeader}
+                                                </h2>
+                                                <div>
+                                                    <p>Payment Status: {dialogData.paymentStatus}</p>
+                                                    <p>Subscription Status: {dialogData.subscriptionStatus}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Right Side */}
+                            <div className="w-full md:w-1/2 p-8">
+                                <h2 className="text-2xl font-semibold mb-4">Billing</h2>
+                                <div className="mb-4">
+                                    <div className="flex justify-between mb-2">
+                                        <span>Billing Amount:</span>
+                                        <span>$120</span>
+                                    </div>
+                                    <div className="flex justify-between mb-2">
+                                        <span>Billing Period:</span>
+                                        <span>1 Year</span>
+                                    </div>
+                                    <div className="flex justify-between mb-2">
+                                        <span>Total Amount:</span>
+                                        <span>$120</span>
+                                    </div>
+                                </div>
+                                <button onClick={() => handlePayment(plan?.razorPlanId)} className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-200">Buy Now</button>
+                                <p className="text-gray-500 text-center mt-4">Powered by Razorpay</p>
+                                <div className="flex justify-center mt-4 space-x-4">
+                                    <img src="./UPI.webp" alt="UPI" className="h-12" />
+                                    <img src="./Visa-Mastercard-Rupay.jpg" alt="CARDS" className="h-12" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p>Price: {plan.amount}</p>
-                        <button onClick={() => handlePayment(plan?.razorPlanId)}>Buy Plan</button>
-                    </div>
+
                 </div>
             ) : (
                 <p>Broken link</p>

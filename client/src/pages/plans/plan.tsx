@@ -3,10 +3,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import { Subscription } from "@/types/types";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const SubscriptionPage = () => {
+const PlanPage = () => {
     const navigate = useNavigate();
     const [subscription, setSubscription] = useState<Subscription | undefined>();
     const { user } = useSelector((state: RootState) => state.userReducer);
@@ -16,10 +15,7 @@ const SubscriptionPage = () => {
     useEffect(() => {
         const getPlans = async () => {
             try {
-                const { data } = await axios.get(
-                    `${import.meta.env.VITE_BASE_URL}/plan/all`,
-                    { withCredentials: true }
-                );
+                const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/all`, { withCredentials: true });
                 setPlans(data.plans);
             } catch (error: any) {
                 console.log(error);
@@ -28,10 +24,7 @@ const SubscriptionPage = () => {
         getPlans();
         const fetchSubscription = async () => {
             try {
-                const { data } = await axios.get(
-                    `${import.meta.env.VITE_BASE_URL}/sub/subscription/user`,
-                    { withCredentials: true }
-                );
+                const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/subscription/user`, { withCredentials: true });
                 setSubscription(data.subscription);
             } catch (error) {
                 console.log(error);
@@ -44,7 +37,7 @@ const SubscriptionPage = () => {
         <>
             <div className="flex justify-center mt-[1rem]">
                 <h1 className="text-3xl font-semibold font-Philosopher">
-                    Subscriptions
+                    Plans
                 </h1>
             </div>
             <div className="md:flex md:justify-center">
@@ -129,4 +122,4 @@ const SubscriptionPage = () => {
     );
 };
 
-export default SubscriptionPage;
+export default PlanPage;

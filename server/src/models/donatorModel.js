@@ -19,10 +19,14 @@ const donatorSchema = new mongoose.Schema(
             required: [true, "Enter Donator Phone"]
         },
         address: {
-            type: String,
-            required: true
+            street: String,
+            city: String,
+            state: String,
+            postalCode: String,
+            country: String,
         },
         pan: String,
+        customerId: String,
         activeDonation: {
             type: mongoose.Schema.ObjectId,
             ref: "Subscription",

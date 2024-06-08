@@ -126,6 +126,8 @@ export const freeAccess = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+
+
 // Get all Users - Only Admin
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     const users = await User.find();

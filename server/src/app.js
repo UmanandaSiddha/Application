@@ -12,8 +12,9 @@ import googleRoute from "./routes/googleRoute.js";
 import plan from "./routes/planRoute.js";
 import sub from "./routes/subscriptionRoute.js";
 import cards from "./routes/cardsRoute.js";
-// import donate from "./routes/donationRoutes.js";
+import donator from "./routes/donatorRoute.js";
 import admin from "./routes/adminRoutes.js";
+import contact from "./routes/contactRoute.js";
 
 const app = express();
 
@@ -48,7 +49,8 @@ app.use("/", googleRoute);
 app.use("/api/v1/cards", cards);
 app.use("/api/v1/plan", plan);
 app.use("/api/v1/sub", sub);
-// app.use("/api/v1/donate", donate);
+app.use("/api/v1/donate", donator);
+app.use("/api/v1/contact", contact);
 app.use("/api/v1/admin", admin);
 
 app.use(ErrorMiddleware);

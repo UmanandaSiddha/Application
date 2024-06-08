@@ -1,9 +1,9 @@
-import { 
-    SingleAnimalResponse, 
-    SingleCreatorResponse, 
-    SingleMedicalResponse, 
-    SinglePersonalResponse, 
-    SingleTreeResponse 
+import {
+    SingleAnimalResponse,
+    SingleCreatorResponse,
+    SingleMedicalResponse,
+    SinglePersonalResponse,
+    SingleTreeResponse
 } from "@/types/api-types";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -55,44 +55,23 @@ const DisplayCard = () => {
     const renderCard = () => {
         switch (type) {
             case "tree":
-                return (
-                    <TreeComponent card={card as Tree} />
-                );
+                return <TreeComponent card={card as Tree} />;
             case "personal":
-                return (
-                    <PersonalComponent card={card as Personal} />
-                )
+                return <PersonalComponent card={card as Personal} />;
             case "medical":
-                return (
-                    <MedicalComponent card={card as MedicalType} />
-                )
+                return <MedicalComponent card={card as MedicalType} />;
             case "creator":
-                return (
-                    <CreatorComponent card={card as Creator} />
-                )
+                return <CreatorComponent card={card as Creator} />;
             case "animal":
-                return (
-                    <AnimalComponent card={card as Animal} />
-                )
+                return <AnimalComponent card={card as Animal} />;
             default:
-                return (
-                    <h1>You have enter a broken link, no cards here</h1>
-                );
+                return <h1 className="text-center">You have entered a broken link, no cards here</h1>;
         }
     }
 
-    // const headSetter = (headType: String) => {
-    //     if (["tree", "personal", "medical", "creator", "animal"].includes(type!)) {
-    //         return headType.charAt(0).toUpperCase() + headType.slice(1).toLowerCase();
-    //     } else {
-    //         return;
-    //     }
-    // }
-
     return (
-        <div className='flex flex-col justify-center border border-primary p-6 gap-4 items-center mx-4 my-8'>
-            {/* <h1 className="text-3xl font-semibold">{headSetter(type!)} Details</h1> */}
-            {loading ? <Loader /> : <>{renderCard()}</>}
+        <div className=" border border-primary p-6 gap-4 items-center mx-4 my-8 md:mx-8 lg:mx-16 xl:mx-32">
+            {loading ? <Loader /> : renderCard()}
         </div>
     )
 }

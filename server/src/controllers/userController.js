@@ -13,11 +13,16 @@ import sharp from "sharp";
 import { SERVER_URL } from "../server.js";
 import Animal from "../models/cards/animalModel.js";
 import { addEmailToQueue } from "../utils/queue/emailQueue.js";
-import Donator from "../models/donatorModel.js";
 import logger from "../config/logger.js";
 
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
+
+    const { name, email, password } = req.body
+
+    if (!name || !email || !password) {
+        return next(new ErrorHandler("Please enter Name, Email and Password", 400));
+    }
 
     const user = await User.create({
         name: req.body.name,
@@ -34,6 +39,11 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
     if (req.query.type === roleEnum.ORG) {
         user.role = roleEnum.ORG;
         const { street, city, state, postalCode, country, website, phone } = req.body;
+
+        if (!street || !city || !state || !postalCode || !country || !website || !phone) {
+            return next(new ErrorHandler("All fields are required", 400));
+        }
+
         user.orgDetails = {
             address: {
                 street,
@@ -58,14 +68,15 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
                 .resize({ width: 300 })
                 .jpeg({ quality: 50 })
                 .toBuffer();
-        
+
             await fs.promises.writeFile(`./public/avatars/${user._id}.jpg`, resizedImageBuffer);
             console.log('Data has been written to the file');
-        
+
             user.image = `${SERVER_URL}/avatars/${user._id}.jpg`;
             await user.save();
         } catch (err) {
             console.error('Error processing or writing the image:', err.message);
+            logger.error('Error processing or writing the image:', err.message);
         }
     }
 
@@ -125,8 +136,8 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
 
 // Verify User
 export const verifyUser = catchAsyncErrors(async (req, res, next) => {
-    const {otp} = req.body;
-    
+    const { otp } = req.body;
+
     const oneTimePassword = crypto
         .createHash("sha256")
         .update(otp.toString())
@@ -182,6 +193,10 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Invalid Credentials", 401));
     }
 
+    if (user.isDeactivated) {
+        return next(new ErrorHandler(`Your account is deactivated, contact the site to reactivate`, 401));
+    }
+
     if (user.isBlocked || (user.loginAttempt?.count >= 5)) {
         if (!user.isBlocked) {
             user.isBlocked = true;
@@ -201,7 +216,7 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Access Denied", 500));
     }
 
-    if (user.loginAttempt?.count < 5 && user.loginAttempt?.count !== 0 && (user.loginAttempt?.time + 60*1000) > Date.now()) {
+    if (user.loginAttempt?.count < 5 && user.loginAttempt?.count !== 0 && (user.loginAttempt?.time + 60 * 1000) > Date.now()) {
         user.loginAttempt.count = 0;
         user.loginAttempt.time = undefined;
         await user.save();
@@ -211,29 +226,32 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
 
     if (!isPasswordMatched) {
         await User.findOneAndUpdate(
-            { email }, 
+            { email },
             {
                 loginAttempt: {
                     count: user.loginAttempt.count + 1,
                     time: Date.now(),
                 },
-            }, 
+            },
             { new: true, runValidators: true, useFindAndModify: false }
         );
         return next(new ErrorHandler("Invalid Credentials", 401));
     }
 
-    try {
-        await addEmailToQueue({
-            email: user.email,
-            subject:  `User Login Email`,
-            message: `Welcome ${user.name}`,
-        });
-    } catch (error) {
-        console.log(error.message);
+    sendToken(user, 200, res);
+});
+
+export const fetchBlocked = catchAsyncErrors(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+
+    if (!user.isBlocked) {
+        return next(new ErrorHandler("User is not Blocked", 401));
     }
 
-    sendToken(user, 200, res);
+    res.status(200).json({
+        success: true,
+        data: user.loginAttempt,
+    });
 });
 
 //Unblock User
@@ -246,7 +264,7 @@ export const unblockUser = catchAsyncErrors(async (req, res, next) => {
         user.loginAttempt.time = undefined;
         await user.save();
     }
-    
+
     sendToken(user, 200, res);
 });
 
@@ -401,10 +419,10 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
                 .resize({ width: 300 })
                 .jpeg({ quality: 50 })
                 .toBuffer();
-        
+
             await fs.promises.writeFile(`./public/avatars/${userx._id}.jpg`, resizedImageBuffer);
             console.log('Data has been written to the file');
-        
+
             userx.image = `${SERVER_URL}/avatars/${userx._id}.jpg`;
             await userx.save();
         } catch (err) {
@@ -439,8 +457,13 @@ export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
     user.isDeactivated = true;
     await user.save();
 
+    res.cookie("token", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+    });
+
     res.status(200).json({
         success: true,
-        message: `Account deleted`,
+        message: "Account Deleted",
     });
 });

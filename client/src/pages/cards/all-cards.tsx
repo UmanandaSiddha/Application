@@ -60,32 +60,31 @@ const VCard = ({ card, isPaid, user, type }: PropsType) => {
   return (
     <>
       <div className=" flex flex-col">
-        <div className="flex">
-          <div className="justify-center">
-            {isPaid || user.role === "admin" ? (
-              <img
-                src={qr}
-                alt={card?._id}
-                className="rounded-lg"
-                onClick={() => {
-                  navigate(
-                    `/dashboard/cards/card?id=${card?._id}&type=${type}`
-                  );
-                }}
-              />
-            ) : (
-              <img
-                src="/error_qr.jpg"
-                alt="Error Qr"
-                width={250}
-                height={250}
-              />
-            )}
-          </div>
+        <div className="flex justify-center">
+          {isPaid || user.role === "admin" ? (
+            <img
+              src={qr}
+              alt={card?._id}
+              className="rounded-lg"
+              onClick={() => {
+                navigate(
+                  `/dashboard/cards/card?id=${card?._id}&type=${type}`
+                );
+              }}
+            />
+          ) : (
+            <img
+              src="/error_qr.jpg"
+              alt="Error Qr"
+              width={250}
+              height={250}
+            />
+          )}
         </div>
         <div className="flex justify-center mt-4">
           <div className="text-3xl font-semibold font-Alice">
-            {type === "tree" && (
+            {card?.name}
+            {/* {type === "tree" && (
               <>
                 {"scientificName" in card! && (
                   <>
@@ -129,7 +128,7 @@ const VCard = ({ card, isPaid, user, type }: PropsType) => {
                   </>
                 )}
               </>
-            )}
+            )} */}
           </div>
         </div>
       </div>
@@ -171,14 +170,13 @@ const AllCards = () => {
             data,
           }: {
             data:
-              | TreeResponse
-              | PersonalResponse
-              | MedicalResponse
-              | CreatorResponse
-              | AnimalResponse;
+            | TreeResponse
+            | PersonalResponse
+            | MedicalResponse
+            | CreatorResponse
+            | AnimalResponse;
           } = await axios.get(
-            `${
-              import.meta.env.VITE_BASE_URL
+            `${import.meta.env.VITE_BASE_URL
             }/cards/user?page=${currentPage}&type=${type}`,
             { withCredentials: true }
           );
@@ -250,24 +248,18 @@ const AllCards = () => {
       <div className="lg:flex lg:flex-row lg:w-full lg:mt-2 lg:max-h-screen">
         <div className="lg:flex lg:flex-col lg:w-full">
           <div
-            className={`font-Kanit h-[34rem] rounded-b-[4rem] lg:rounded-none lg:shadow-xl z-10 relative shadow-lg lg:rounded-t-xl ${
-              type === "tree" && "bg-green-300"
-            } ${type === "personal" && "bg-blue-300"} ${
-              type === "medical" && "bg-blue-200"
-            } ${type === "creator" && "bg-cyan-300"} ${
-              type === "animal" && "bg-red-200"
-            }`}
+            className={`font-Kanit h-[34rem] rounded-b-[4rem] lg:rounded-none lg:shadow-xl z-10 relative shadow-lg lg:rounded-t-xl ${type === "tree" && "bg-green-300"
+              } ${type === "personal" && "bg-blue-300"} ${type === "medical" && "bg-blue-200"
+              } ${type === "creator" && "bg-cyan-300"} ${type === "animal" && "bg-red-200"
+              }`}
           >
-            <div className="py-4 flex flex-row lg:flex lg:justify-center">
-              <div className="flex justify-center basis-1/2 pl-4">
+            <div className="py-4 flex justify-center">
+              <div className="flex justify-center basis-1/2">
                 <button
-                  className={`px-4 py-4 rounded-2xl hover:cursor-pointer shadow-lg ${
-                    type === "tree" && "bg-green-600"
-                  } ${type === "medical" && "bg-blue-500 hover:bg-blue-600"} ${
-                    type === "creator" && "bg-cyan-500 hover:bg-cyan-600"
-                  } ${type === "animal" && "bg-red-500 hover:bg-red-600"} ${
-                    type === "personal" && "bg-blue-500 hover:bg-blue-600"
-                  }`}
+                  className={`px-4 py-4 rounded-2xl hover:cursor-pointer shadow-lg ${type === "tree" && "bg-green-600"
+                    } ${type === "medical" && "bg-blue-500 hover:bg-blue-600"} ${type === "creator" && "bg-cyan-500 hover:bg-cyan-600"
+                    } ${type === "animal" && "bg-red-500 hover:bg-red-600"} ${type === "personal" && "bg-blue-500 hover:bg-blue-600"
+                    }`}
                 >
                   <div className="flex flex-row">
                     <div className="flex items-center px-2">
@@ -301,7 +293,7 @@ const AllCards = () => {
                   </div>
                 </button>
               </div>
-              <div className="basis-1/2 flex justify-center lg:hidden">
+              {/* <div className="basis-1/2 flex justify-center lg:hidden">
                 <button
                   className="px-4 py-2 rounded-lg border-none hover:cursor-pointer"
                   onClick={() => navigate(`/dashboard/cards/all?type=${type}`)}
@@ -321,7 +313,7 @@ const AllCards = () => {
                     <div className={`flex items-center `}>Other QRs</div>
                   </div>
                 </button>
-              </div>
+              </div> */}
             </div>
             <div className="flex flex-col py-6">
               <div className="flex justify-center">
@@ -351,37 +343,36 @@ const AllCards = () => {
                 ) : (
                   <div className="flex flex-row justify-center">
                     {!isPaid && user?.role !== "admin" ? (
-                          <>
-                            <div className="">
-                              <img
-                                src="/error_qr.jpg"
-                                alt="Error Qr"
-                                width={200}
-                                height={200}
-                                className="rounded-lg shadow-xl"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            {cards!.map((card, index) => (
-                              <div
-                                className={`absolute block ml-[calc(-100%*${index})]${
-                                  index === currentIndex ? "" : " hidden"
-                                }`}
-                                key={index}
-                              >
-                                <VCard
-                                  key={card._id}
-                                  type={type!}
-                                  card={card}
-                                  isPaid={isPaid}
-                                  user={user!}
-                                />
-                              </div>
-                            ))}
-                          </>
-                        )}
+                      <>
+                        <div className="">
+                          <img
+                            src="/error_qr.jpg"
+                            alt="Error Qr"
+                            width={200}
+                            height={200}
+                            className="rounded-lg shadow-xl"
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {cards!.map((card, index) => (
+                          <div
+                            className={`absolute block ml-[calc(-100%*${index})]${index === currentIndex ? "" : " hidden"
+                              }`}
+                            key={index}
+                          >
+                            <VCard
+                              key={card._id}
+                              type={type!}
+                              card={card}
+                              isPaid={isPaid}
+                              user={user!}
+                            />
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -396,13 +387,10 @@ const AllCards = () => {
             </div>
 
             <div
-              className={`lg:flex lg:flex-col hidden ${
-                type === "tree" && "bg-green-300"
-              } ${type === "personal" && "bg-blue-300"} ${
-                type === "medical" && "bg-blue-200"
-              } ${type === "creator" && "bg-cyan-300"} ${
-                type === "animal" && "bg-red-200"
-              } lg:rounded-b-xl lg:shadow-xl`}
+              className={`lg:flex lg:flex-col hidden ${type === "tree" && "bg-green-300"
+                } ${type === "personal" && "bg-blue-300"} ${type === "medical" && "bg-blue-200"
+                } ${type === "creator" && "bg-cyan-300"} ${type === "animal" && "bg-red-200"
+                } lg:rounded-b-xl lg:shadow-xl`}
             >
               <div className="">
                 <div className="flex flex-row pt-10 pb-6">
@@ -435,9 +423,8 @@ const AllCards = () => {
                           <>
                             {cards!.map((card, index) => (
                               <div
-                                className={`absolute block ml-[calc(-100%*${index})]${
-                                  index === currentIndex ? "" : " hidden"
-                                }`}
+                                className={`absolute block ml-[calc(-100%*${index})]${index === currentIndex ? "" : " hidden"
+                                  }`}
                                 key={index}
                               >
                                 <VCard
@@ -469,17 +456,12 @@ const AllCards = () => {
                   <div className="mt-[4rem] flex flex-row">
                     <div className="basis-1/2 flex justify-end pr-[2rem]">
                       <button
-                        className={`px-10 pt-2 pb-4 rounded-sm hover:cursor-pointer text-white shadow-lg ${
-                          type === "tree" && "bg-green-500 hover:bg-green-600 disabled:bg-green-500"
-                        } ${
-                          type === "medical" && "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500"
-                        } ${
-                          type === "creator" && "bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-500"
-                        } ${
-                          type === "animal" && "bg-red-500 hover:bg-red-600 disabled:bg-red-500"
-                        } ${
-                          type === "personal" && "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500"
-                        }  disabled:hover:cursor-not-allowed`}
+                        className={`px-10 pt-2 pb-4 rounded-sm hover:cursor-pointer text-white shadow-lg ${type === "tree" && "bg-green-500 hover:bg-green-600 disabled:bg-green-500"
+                          } ${type === "medical" && "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500"
+                          } ${type === "creator" && "bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-500"
+                          } ${type === "animal" && "bg-red-500 hover:bg-red-600 disabled:bg-red-500"
+                          } ${type === "personal" && "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500"
+                          }  disabled:hover:cursor-not-allowed`}
                         disabled={!isPaid && user?.role !== "admin"}
                       >
                         <div className="flex flex-col">
@@ -494,17 +476,12 @@ const AllCards = () => {
                     </div>
                     <div className="basis-1/2 flex justify-start pl-[1rem]">
                       <button
-                        className={`px-8 pt-2 pb-4 mr-8 rounded-sm hover:cursor-pointer text-white shadow-xl ${
-                          type === "tree" && "bg-green-500 hover:bg-green-600 disabled:bg-green-500"
-                        } ${
-                          type === "medical" && "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500"
-                        } ${
-                          type === "creator" && "bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-500"
-                        } ${
-                          type === "animal" && "bg-red-500 hover:bg-red-600 disabled:bg-red-500"
-                        } ${
-                          type === "personal" && "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500"
-                        } disabled:hover:cursor-not-allowed`}
+                        className={`px-8 pt-2 pb-4 mr-8 rounded-sm hover:cursor-pointer text-white shadow-xl ${type === "tree" && "bg-green-500 hover:bg-green-600 disabled:bg-green-500"
+                          } ${type === "medical" && "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500"
+                          } ${type === "creator" && "bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-500"
+                          } ${type === "animal" && "bg-red-500 hover:bg-red-600 disabled:bg-red-500"
+                          } ${type === "personal" && "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500"
+                          } disabled:hover:cursor-not-allowed`}
                         disabled={!isPaid || user?.role !== "admin"}
                       >
                         <div className="flex flex-col">
@@ -541,24 +518,19 @@ const AllCards = () => {
                               "animal",
                             ].includes(type!) ? (
                               <button
-                                className={`px-[6rem] py-2 text-white rounded-sm hover:cursor-pointer text-lg font-Kanit shadow-lg ${
-                                  type === "tree" &&
+                                className={`px-[6rem] py-2 text-white rounded-sm hover:cursor-pointer text-lg font-Kanit shadow-lg ${type === "tree" &&
                                   "bg-green-500 hover:bg-green-600"
-                                } ${
-                                  type === "medical" &&
+                                  } ${type === "medical" &&
                                   "bg-blue-500 hover:bg-blue-600"
-                                } ${
-                                  type === "creator" &&
+                                  } ${type === "creator" &&
                                   "bg-cyan-500 hover:bg-cyan-600"
-                                } ${
-                                  type === "personal" &&
+                                  } ${type === "personal" &&
                                   "bg-blue-500 hover:bg-blue-600"
-                                } ${
-                                  type === "animal" &&
+                                  } ${type === "animal" &&
                                   "bg-red-500 hover:bg-red-600"
-                                }`}
+                                  }`}
                                 onClick={() => {
-                                  if(!isPaid && user?.role !== "admin"){
+                                  if (!isPaid && user?.role !== "admin") {
                                     navigate("/plans");
                                   } else {
                                     navigate(setLink(type!));
@@ -601,9 +573,8 @@ const AllCards = () => {
         <div className="mt-[4rem] flex flex-row">
           <div className="basis-1/2 flex justify-center hover:cursor-pointer">
             <button
-              className={`px-12 py-2 rounded-3xl hover:cursor-pointer shadow-lg ${
-                type === "tree" && "bg-green-300"
-              } ${type === "medical" && "bg-blue-200"}`}
+              className={`px-12 py-2 rounded-3xl hover:cursor-pointer shadow-lg ${type === "tree" && "bg-green-300"
+                } ${type === "medical" && "bg-blue-200"}`}
             >
               <div className="flex flex-col">
                 <div className="flex justify-center items-center">
@@ -617,9 +588,8 @@ const AllCards = () => {
           </div>
           <div className="basis-1/2 flex justify-center">
             <button
-              className={`px-10 py-8 rounded-3xl hover:cursor-pointer shadow-xl ${
-                type === "tree" && "bg-green-300"
-              } ${type === "medical" && "bg-blue-200"}`}
+              className={`px-10 py-8 rounded-3xl hover:cursor-pointer shadow-xl ${type === "tree" && "bg-green-300"
+                } ${type === "medical" && "bg-blue-200"}`}
             >
               <div className="flex flex-col">
                 <div className="flex justify-center items-center">
@@ -648,15 +618,12 @@ const AllCards = () => {
                 type!
               ) ? (
                 <button
-                  className={`px-[5rem] py-3 text-white rounded-lg hover:cursor-pointer text-lg font-Kanit shadow-lg ${
-                    type === "tree" && "bg-green-500"
-                  } ${type === "medical" && "bg-blue-700"} ${
-                    type === "creator" && "bg-cyan-400"
-                  } ${type === "animal" && "bg-red-300"} ${
-                    type === "personal" && "bg-blue-600"
-                  }`}
+                  className={`px-[5rem] py-3 text-white rounded-lg hover:cursor-pointer text-lg font-Kanit shadow-lg ${type === "tree" && "bg-green-500"
+                    } ${type === "medical" && "bg-blue-700"} ${type === "creator" && "bg-cyan-400"
+                    } ${type === "animal" && "bg-red-300"} ${type === "personal" && "bg-blue-600"
+                    }`}
                   onClick={() => {
-                    if(!isPaid && user?.role !== "admin"){
+                    if (!isPaid && user?.role !== "admin") {
                       navigate("/plans");
                     } else {
                       navigate(setLink(type!));

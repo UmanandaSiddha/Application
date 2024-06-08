@@ -1,7 +1,7 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import { instance } from "../server.js";
-import Plan from "../models/payment/planModel.js";
+import Plan, { periodEnum } from "../models/payment/planModel.js";
 import crypto from "crypto";
 import Subscription, { subscriptionEnum } from "../models/payment/subscriptionModel.js";
 import Transaction from "../models/payment/transactionModel.js";
@@ -14,9 +14,9 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
 
-    // if (user.role === roleEnum.ADMIN) {
-    //     return next(new ErrorHandler("Admin don't need to buy Plans", 403));
-    // }
+    if (user.role === roleEnum.ADMIN) {
+        return next(new ErrorHandler("Admin don't need to buy Plans", 403));
+    }
 
     if (user?.freePlan?.status) {
         return next(new ErrorHandler("You already have active Plan 1", 403));
@@ -25,9 +25,9 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     if (user?.activePlan) {
         const subscription = await Subscription.findById(user?.activePlan);
         if (subscription) {
-            if (subscription?.status === "created" && subscription.paidCount === 0) {
+            if (subscription?.status === "just_created") {
                 await Subscription.findByIdAndDelete(user?.activePlan);
-            } else if (subscription && (!["completed", "cancelled"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now()))) {
+            } else if (!["completed", "cancelled"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now())) {
                 return next(new ErrorHandler("You already have active Plan 2", 403));
             }
         }
@@ -54,7 +54,7 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         paidCount: 0,
         remainingCount: 0,
         shortUrl: subscriptions.short_url,
-        status: subscriptions.status,
+        status: "just_created",
         subscriptionType: subscriptionEnum.USER,
         user: req.user.id,
     });
@@ -77,12 +77,33 @@ export const createFreeSubscription = catchAsyncErrors(async (req, res, next) =>
         return next(new ErrorHandler("Plan not available", 404));
     }
 
+    let endDate;
+    switch (periodEnum) {
+        case periodEnum.DAILY:
+            endDate = 1
+            break;
+        case periodEnum.WEEKLY:
+            endDate = 7
+            break;
+        case periodEnum.MONTHLY:
+            endDate = 30
+            break;
+        case periodEnum.YEARLY:
+            endDate = 365
+            break;
+        default:
+            endDate = 1
+            break;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
         req.user.id,
         {
             freePlan: {
                 status: true,
-                type: freeEnum.CUSTOM
+                type: freeEnum.CUSTOM,
+                start: new Date(Date.now()),
+                end: new Date(Date.now() + (plan.interval * endDate * 24 * 60 * 60 * 1000)),
             },
             cards: {
                 total: plan.cards
@@ -138,16 +159,12 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const verifySubscription = async (req, res) => {
-    const secret = "12345678";
 
-    // const expectedSigntaure = crypto
-    //     .createHmac("sha256", secret)
-    //     .update(JSON.stringify(req.body))
-    //     .digest("hex")
-
-    console.log("Starting",  new Date(Date.now()).toLocaleString());
-    await addSubscriptionToQueue(req.body);
-    console.log("Ending",  new Date(Date.now()).toLocaleString());
+    try {
+        await addSubscriptionToQueue(req.body);
+    } catch (error) {
+        logger.error("Failed to put Subscription in Queue");
+    }
 
     res.status(200).send('OK');
 };
@@ -187,6 +204,19 @@ export const getUserTransactions = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         transactions,
+    });
+});
+
+export const getParticularTransaction = catchAsyncErrors(async (req, res, next) => {
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (transaction.transactionFor !== subscriptionEnum.USER) {
+        return next(new ErrorHandler("Transaction not found", 403));
+    }
+
+    res.status(200).json({
+        success: true,
+        transaction,
     });
 });
 

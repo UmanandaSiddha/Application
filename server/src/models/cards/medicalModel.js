@@ -6,7 +6,7 @@ const medicalSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please Enter Patient Name"],
         },
-        dateOfBirth: Date,
+        dateOfBirth: String,
         gender: String,
         street: String,
         city: String,

@@ -4,22 +4,26 @@ import crypto from "crypto";
 import { instance } from "../server.js";
 import short from "short-uuid";
 import Donator from "../models/donatorModel.js";
-import Transaction, { transactionEnum, transactionForEnum } from "../models/payment/transactionModel.js";
-import sendDonatorToken from "../utils/donatorToken.js";
+import Transaction, { transactionEnum } from "../models/payment/transactionModel.js";
+import sendDonatorToken from "../utils/tokens/donatorToken.js";
 import Subscription, { subscriptionEnum } from "../models/payment/subscriptionModel.js";
 import Plan from "../models/payment/planModel.js";
 import { addDonationToQueue } from "../utils/queue/donationQueue.js";
+import logger from "../config/logger.js";
 
 export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
+
+    if (!req.body.email) {
+        return next(new ErrorHandler("Please enter Email", 400));
+    }
+
     const donator = await Donator.findOne({ email: req.body.email });
 
     if (!donator) {
         donator = await Donator.create({
-            name: "donatorname",
+            name: "donatorName",
             email: req.body.email,
-            phone: 0,
-            address: "address",
-            pan: 0,
+            phone: "phoneNumber",
         })
     }
 
@@ -53,13 +57,17 @@ export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
 export const loginDonator = catchAsyncErrors(async (req, res, next) => {
     const { otp, email } = req.body;
 
+    if (!email || !otp) {
+        return next(new ErrorHandler("Please enter Email and And Otp", 400));
+    }
+
     const oneTimePassword = crypto
         .createHash("sha256")
         .update(otp.toString())
         .digest("hex");
 
     const donator = await Donator.findOne({
-        email,
+        _id: req.donator.id,
         oneTimePassword,
         oneTimeExpire: { $gt: Date.now() },
     });
@@ -86,15 +94,31 @@ export const getDonator = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const createDonatorDetails = catchAsyncErrors(async (req, res, next) => {
+    const { name, phone, street, city, state, postalCode, country } = req.body;
+
+    if (!name || !phone || !street || !city || !state || !postalCode || !country) {
+        return next(new ErrorHandler("Please enter all the required fields", 400));
+    }
+
+    const updateData = {
+        name,
+        phone,
+        address: {
+            street,
+            city,
+            state,
+            postalCode,
+            country,
+        },
+    };
+
+    if (req.body.pan !== null) {
+        updateData.pan = req.body.pan;
+    }
 
     const donator = await Donator.findByIdAndUpdate(
         req.donator.id,
-        {
-            name: req.body.name,
-            phone: req.body.phone,
-            address: req.body.address,
-            pan: req.body.pan,
-        },
+        updateData,
         { new: true, runValidators: true, useFindAndModify: false }
     )
 
@@ -104,13 +128,40 @@ export const createDonatorDetails = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+export const updatePanDetail = catchAsyncErrors(async (req, res, next) => {
+    if (!req.body.pan) {
+        return next(new ErrorHandler("Pan is required", 400));
+    }
+
+    const donator = await Donator.findById(req.donator.id);
+
+    if (donator.pan) {
+        return next(new ErrorHandler("Pan is already there", 500));
+    }
+
+    const updatedDonator = await Donator.findByIdAndUpdate(
+        req.donator.id,
+        { pan: req.body.pan },
+        { new: true, runValidators: true, useFindAndModify: false }
+    )
+
+    res.status(200).json({
+        success: true,
+        updatedDonator,
+    });
+});
+
 export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     const donator = await Donator.findById(req.donator.id);
 
     if (donator?.activeDonation) {
         const subscription = await Subscription.findById(donator?.activeDonation);
-        if (!["completed", "cancelled"].includes(subscription.status) || (subscription.status === "cancelled" && subscription.currentEnd > Date.now())) {
-            return next(new ErrorHandler("You already have active Donation", 403));
+        if (subscription) {
+            if (subscription?.status === "just_created") {
+                await Subscription.findByIdAndDelete(donator?.activeDonation);
+            } else if (!["completed", "cancelled"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now())) {
+                return next(new ErrorHandler("You already have active recurring Donation", 403));
+            }
         }
     }
 
@@ -135,13 +186,12 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         paidCount: 0,
         remainingCount: 0,
         shortUrl: subscriptions.short_url,
-        status: subscriptions.status,
+        status: "just_created",
         subscriptionType: subscriptionEnum.DONATOR,
         user: req.user.id,
     });
 
-    await Donator.findByIdAndUpdate(
-        req.user.id,
+    await Donator.findByIdAndUpdate(req.donator.id,
         { activeDonation: subscription._id },
         { new: true, runValidators: true, useFindAndModify: false }
     );
@@ -167,9 +217,9 @@ export const createDonation = catchAsyncErrors(async (req, res, next) => {
 
     const donation = await Transaction.create({
         amount: req.body.amount,
-        status: "created",
+        status: "just_created",
         razorpayOrderId: order.id,
-        transactionFor: transactionForEnum.DONATOR,
+        transactionFor: subscriptionEnum.DONATOR,
         transactionType: transactionEnum.ONETIME,
         currency: req.body.currency,
         donator: req.donator.id,
@@ -184,20 +234,11 @@ export const createDonation = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const capturePayment = async (req, res, next) => {
-
-    const secret = "12345678";
-
-    const expectedSigntaure = crypto
-        .createHmac("sha256", secret)
-        .update(JSON.stringify(req.body))
-        .digest("hex")
-
+    
     try {
-        if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-            await addDonationToQueue(req.body.payload.payment.entity)
-        }
+        await addDonationToQueue(req.body)
     } catch (error) {
-        logger.error(error.message);
+        logger.error("Failed to put Subscription in Queue");
     }
 
     res.status(200).send('OK');
@@ -250,6 +291,19 @@ export const getDonatorTransaction = catchAsyncErrors(async (req, res, next) => 
     res.status(200).json({
         success: true,
         transactions,
+    });
+});
+
+export const getParticularDonatorTransaction = catchAsyncErrors(async (req, res, next) => {
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (transaction.transactionFor !== subscriptionEnum.DONATOR) {
+        return next(new ErrorHandler("Transaction not found", 403));
+    }
+
+    res.status(200).json({
+        success: true,
+        transaction,
     });
 });
 

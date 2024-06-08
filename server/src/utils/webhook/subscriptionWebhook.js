@@ -3,14 +3,21 @@ import logger from "../../config/logger.js";
 import Subscription from "../../models/payment/subscriptionModel.js";
 import Transaction from "../../models/payment/transactionModel.js";
 import User from "../../models/userModel.js";
+import crypto from "crypto";
 
 const subscriptionwebhook = async (webhookData) => {
+
+    // const secret = "12345678";
+
+    const expectedSigntaure = crypto
+        .createHmac("sha256", process.env.SUBSCRIPTION_WEBHOOK)
+        .update(JSON.stringify(webhookData))
+        .digest("hex")
 
     const { event, payload } = webhookData;
 
     try {
-        // if (expectedSigntaure === req.headers['x-razorpay-signature']) {
-        if (true) {
+        if (expectedSigntaure === req.headers['x-razorpay-signature']) {
             const subscription = await Subscription.findOne({ razorSubscriptionId: payload.subscription?.entity?.id });
             if (!subscription) {
                 console.log("Invalid Subscription, Wrong database");

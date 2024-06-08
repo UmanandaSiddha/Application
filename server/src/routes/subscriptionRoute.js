@@ -1,13 +1,25 @@
 import express from "express";
-import { captureSubscription, createSubscription, getLatestSubscription, getUserTransactions, verifySubscription } from "../controllers/subscriptionController.js";
+import { 
+    cancelSubscription, 
+    captureSubscription, 
+    createFreeSubscription, 
+    createSubscription, 
+    getLatestSubscription, 
+    getParticularTransaction, 
+    getUserTransactions, 
+    verifySubscription 
+} from "../controllers/subscriptionController.js";
 import { isAuthenticatedUser, isUserVerified } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.route("/new").post(isAuthenticatedUser, isUserVerified, createSubscription);
-router.route("/webhook/raz").post(verifySubscription);
+router.route("/new/free").post(isAuthenticatedUser, isUserVerified, createFreeSubscription);
 router.route("/capture").post(isAuthenticatedUser, isUserVerified, captureSubscription);
-router.route("/subscription/user").get(isAuthenticatedUser, isUserVerified, getLatestSubscription);
-router.route("/transactions/user").get(isAuthenticatedUser, isUserVerified, getUserTransactions);
+router.route("/webhook/sub").post(verifySubscription);
+router.route("/cancel").put(isAuthenticatedUser, isUserVerified, cancelSubscription);
+router.route("/subscription/latest").get(isAuthenticatedUser, isUserVerified, getLatestSubscription);
+router.route("/transactions/all").get(isAuthenticatedUser, isUserVerified, getUserTransactions);
+router.route("/transaction/:id").get(isAuthenticatedUser, isUserVerified, getParticularTransaction);
 
 export default router;

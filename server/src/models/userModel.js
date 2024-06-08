@@ -115,6 +115,7 @@ const userSchema = new mongoose.Schema(
             country: String,
         },
         phone: String,
+        customerId: String,
         orgDetails: {
             website: String,
             address: {

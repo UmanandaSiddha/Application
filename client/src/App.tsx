@@ -16,7 +16,7 @@ const Dashboard = lazy(() => import("./pages/root/dash"));
 const Profile = lazy(() => import("./pages/root/profile"));
 const Verify = lazy(() => import("./pages/auth/verify"));
 const ResetPassword = lazy(() => import("./pages/auth/reset-password"));
-const Subscription = lazy(() => import("./pages/plans/subscription"));
+const PlanPage = lazy(() => import("./pages/plans/plan"));
 const AdminPlan = lazy(() => import("./pages/admin-plan"));
 const DonationPage = lazy(() => import("./pages/donation/donation-test"));
 const BillingPage = lazy(() => import("./pages/plans/billing"));
@@ -103,7 +103,7 @@ const App = () => {
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<Home user={user!} />} />
-            <Route path="/plans" element={<Subscription />} />
+            <Route path="/plans" element={<PlanPage />} />
             <Route path="/display" element={<DisplayCard />} />
             <Route path="/donate" element={<DonationPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
@@ -207,7 +207,7 @@ const App = () => {
                   )
                 }
               />
-              <Route
+              {/* <Route
                 path="/dashboard/cards/all"
                 element={
                   !isMobile ? (
@@ -223,7 +223,7 @@ const App = () => {
                     <OtherQR />
                   )
                 }
-              />
+              /> */}
 
               <Route
                 path="/dashboard/tree/create"

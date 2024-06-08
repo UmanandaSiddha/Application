@@ -30,7 +30,6 @@ const worker = new Worker(subscriptionQueueName, async (job) => {
 worker.on('completed', (job) => {
     console.log(`Job ${job.id} has completed!`);
     logger.info(`Job ${job.id} has completed!`);
-    console.log("Completeing", new Date(Date.now()).toLocaleString());
 });
 
 worker.on('failed', async (job, err) => {

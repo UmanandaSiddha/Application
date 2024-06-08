@@ -70,44 +70,76 @@ const DonationLogin = () => {
         // }
     }
 
+    const resetForm = () => {
+        setEmail("");
+        setOtp(new Array(6).fill(""));
+        setEmailLoading(false);
+        setActiveOTPIndex(0);
+        inputRef.current?.focus();
+    }
+
     return (
-        <div>
-            <div>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" placeholder="Enter your Email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={emailLoading} />
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 p-4">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                <div className="mb-4">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={emailLoading}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        required
+                    />
                 </div>
-                <button className="bg-red-500 p-2 m-2 text-white rounded-lg" onClick={handleEmail} disabled={emailLoading}>Send Email</button>
-            </div>
-            {emailLoading && (
-                <p className="text-red-500 text-lg">Otp was send to your Email</p>
-            )}
-            <div>
-                <div className={"max-h-screen flex justify-center items-center space-x-2"}>
-                    {otp.map((_, index) => {
-                        return (
-                            <React.Fragment key={index}>
-                                <input
-                                    ref={activeOTPIndex === index ? inputRef : null}
-                                    type="number"
-                                    className={
-                                        "w-12 h-12 border-2 rounded-xl bg-transparent outline-none text-center font-semibold text-xl spin-button-none border-gray-400 focus:border-gray-700 focus:text-gray-700 text-gray-400 transition"
-                                    }
-                                    onChange={handleOnChange}
-                                    onKeyDown={(e) => handleOnKeyDown(e, index)}
-                                    value={otp[index]}
-                                />
-                                {index === otp.length - 1 ? null : (
-                                    <span className={"w-2 py-0.5"} />
-                                )}
-                            </React.Fragment>
-                        );
-                    })}
-                </div>
-                <button className="bg-red-500 p-2 m-2 text-white rounded-lg" onClick={handleVerify} disabled={verifyLoading}>{verifyLoading ? "Verifying..." : "Click here to verify"}</button>
-            </div>
-            <div>
-                <button className="bg-green-500 p-2 m-2 text-white rounded-lg" onClick={() => setEmailLoading(false)} disabled={!emailLoading}>Reset the form</button>
+                <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 w-full mb-4"
+                    onClick={handleEmail}
+                    disabled={emailLoading || !email}
+                >
+                    {emailLoading ? "Email Sent" : "Send Email"}
+                </button>
+
+                {emailLoading && (
+                    <>
+                        <p className="text-red-500 text-lg mb-4 text-center">OTP was sent to your Email</p>
+                        <div className="flex justify-center items-center space-x-2 mb-4">
+                            {otp.map((_, index) => (
+                                <React.Fragment key={index}>
+                                    <input
+                                        ref={activeOTPIndex === index ? inputRef : null}
+                                        type="number"
+                                        className="w-10 h-10 border-2 rounded-xl bg-transparent outline-none text-center font-semibold text-xl spin-button-none border-gray-400 focus:border-gray-700 focus:text-gray-700 text-gray-400 transition sm:w-10 sm:h-10"
+                                        onChange={handleOnChange}
+                                        onKeyDown={(e) => handleOnKeyDown(e, index)}
+                                        value={otp[index]}
+                                    />
+                                    {index === otp.length - 1 ? null : (
+                                        <span className="w-2 py-0.5" />
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                        <button
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 w-full mb-4"
+                            onClick={handleVerify}
+                            disabled={verifyLoading}
+                        >
+                            {verifyLoading ? "Verifying..." : "Click here to verify"}
+                        </button>
+                    </>
+                )}
+
+                {emailLoading && (
+                    <button
+                        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 w-full"
+                        onClick={resetForm}
+                    >
+                        Reset the form
+                    </button>
+                )}
             </div>
         </div>
     )
