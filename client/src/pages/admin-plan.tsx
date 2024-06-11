@@ -1,4 +1,5 @@
 import axios from "axios"
+import { toast } from "react-toastify";
 
 type PlanResponse = {
     success: boolean;
@@ -16,21 +17,22 @@ const AdminPlan = () => {
 
     const handlePlan = async () => {
         const planData = {
-            name: "Fardin",
-            description: "yay plan 2",
-            amount: 299,
-            cards: 50,
+            name: "Special Weakly PLan",
+            description: "description of this plan",
+            amount: 29,
+            cards: 12,
             planType: "user",
-            period: "monthly",
-            interval: 1
+            period: "weekly",
+            interval: 7
         }
         
         try {
             const config = { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true };
             const { data }: { data: PlanResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/plan/new`, planData , config);
             console.log(data);
-        } catch (error) {
-            console.log(error)
+            toast.success("Success");
+        } catch (error: any) {
+            toast.error(error.response.data.message);
         }
     }
     return (

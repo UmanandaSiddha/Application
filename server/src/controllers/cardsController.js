@@ -13,9 +13,9 @@ import ApiFeatures from "../utils/services/apiFeatures.js";
 // Function to select model based on type
 const selectModelByType = (type) => {
     switch (type) {
-        case 'tree':
+        case 'botanical':
             return Tree;
-        case 'personal':
+        case 'individual':
             return Personal;
         case 'medical':
             return Medical;
@@ -77,10 +77,10 @@ export const deleteCard = catchAsyncErrors(async (req, res, next) => {
     // const Model = selectModelByType(req.query.type);
     let Model;
     switch (req.query.type) {
-        case 'tree':
+        case 'botanical':
             Model = Tree;
             break;
-        case 'personal':
+        case 'individual':
             Model = Personal;
             break;
         case 'medical':

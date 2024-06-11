@@ -80,7 +80,7 @@ const Dashboard = () => {
                             className="basis-1/7 bg-slate-100 flex justify-center px-3 py-3"
                             disabled={!user?.isVerified}
                             onClick={() => {
-                              navigate("/dashboard/cards?type=personal");
+                              navigate("/dashboard/cards?type=individual");
                             }}
                           >
                             <IoIosAdd className="w-[2rem] h-[2rem] hover:cursor-pointer text-black" />
@@ -102,7 +102,7 @@ const Dashboard = () => {
                             className="basis-1/7 bg-slate-100 flex justify-center px-3 py-3"
                             disabled={!user?.isVerified}
                             onClick={() => {
-                              navigate("/dashboard/cards?type=tree");
+                              navigate("/dashboard/cards?type=botanical");
                             }}
                           >
                             <IoIosAdd className="w-[2rem] h-[2rem] hover:cursor-pointer text-black" />

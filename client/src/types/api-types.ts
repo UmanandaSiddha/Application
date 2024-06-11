@@ -1,16 +1,41 @@
-import {
-    User,
-    Tree,
-    Personal,
-    MedicalType,
-    Creator,
-    Animal
-} from "./types";
+import { Animal, Creator, MedicalType, Personal, Tree } from "./card_types";
+import { Plan, Subscription, Transaction } from "./plan_types";
+import { Donator, User } from "./types";
 
 export type UserResponse = {
     success: boolean;
     user: User;
 };
+
+export type DonatorResponse = {
+    success: boolean;
+    donator: Donator;
+}
+
+export type PlanResponse = {
+    success: boolean;
+    plans: Plan[];
+}
+
+export type SinglePlanResponse = {
+    success: boolean;
+    plan: Plan;
+}
+
+export type SubscriptionResponse = {
+    success: boolean;
+    subscription: Subscription;
+}
+
+export type TransactionResponse = {
+    success: boolean;
+    transaction: Transaction[];
+}
+
+export type SingleTransactionResponse = {
+    success: boolean;
+    transaction: Transaction;
+}
 
 export type TreeResponse = {
     success: boolean;

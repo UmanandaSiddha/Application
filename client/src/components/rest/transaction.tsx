@@ -1,25 +1,22 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Transaction } from "@/types/types";
+import { Transaction } from "@/types/plan_types";
 import { useNavigate } from "react-router-dom";
 
 const TransactionComponent = () => {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[] | undefined>();
 
+  const fetchTransactions = async () => {
+    try {
+      const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/transactions/all`, { withCredentials: true });
+      setTransactions(data.transactions);
+      localStorage.setItem("transactions", JSON.stringify(data.transactions));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/sub/transactions/user`,
-          { withCredentials: true }
-        );
-        setTransactions(data.transactions);
-        localStorage.setItem("transactions", JSON.stringify(data.transactions));
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchTransactions();
   }, []);
 
@@ -61,7 +58,7 @@ const TransactionComponent = () => {
                     {transaction?.paymentMethod.upiInfo}
                     {transaction.paymentMethod.bankInfo}
                     {transaction.paymentMethod.walletInfo}
-                    {transaction.paymentMethod.card?.last4}
+                    {transaction.paymentMethod.cardInfo?.last4}
                   </div>
                 </div>
                 <div className="flex flex-row font-Kanit pl-3">

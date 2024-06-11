@@ -372,7 +372,7 @@ export const setPassword = catchAsyncErrors(async (req, res, next) => {
 // Get User Details
 export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 
-    const user = await User.findById(req.user._id).populate("activePlan", "status currentEnd");
+    const user = await User.findById(req.user._id).populate("activePlan", "planId status currentEnd");
 
     res.status(200).json({
         success: true,

@@ -1,6 +1,6 @@
 import Loader from "@/components/rest/loader";
 import "@/css/print.css";
-import { Transaction } from "@/types/types";
+import { Transaction } from "@/types/plan_types";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -19,7 +19,7 @@ const RecieptPage = () => {
     }, [id]);
 
     return (
-        <div>
+        <>
             {id ? (
                 <>
                     <h1 className="flex items-center justify-center text-3xl">Receipt - {receiptData?._id}</h1>
@@ -86,11 +86,6 @@ const RecieptPage = () => {
                                 <div className="text-gray-700 mr-2">Total:</div>
                                 <div className="text-gray-700 font-bold text-xl">$450.50</div>
                             </div>
-                            <div className="border-t-2 border-gray-300 pt-8 mb-8">
-                                <div className="text-gray-700 mb-2">Payment is due within 30 days. Late payments are subject to fees.</div>
-                                <div className="text-gray-700 mb-2">Please make checks payable to Your Company Name and mail to:</div>
-                                <div className="text-gray-700">123 Main St., Anytown, USA 12345</div>
-                            </div>
                         </div>
                     </div>
                     <div className="w-full py-3 flex justify-center">
@@ -105,7 +100,7 @@ const RecieptPage = () => {
             ) : (
                 <Loader />
             )}
-        </div>
+        </>
     )
 }
 

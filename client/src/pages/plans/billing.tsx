@@ -1,73 +1,48 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Subscription } from "@/types/types";
+import { Subscription } from "@/types/plan_types";
 import TransactionComponent from "@/components/rest/transaction";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { Link } from "react-router-dom";
+import { SubscriptionResponse } from "@/types/api-types";
+import { toast } from "react-toastify";
 
 const BillingPage = () => {
-    const [subscription, setSubscription] = useState<Subscription | undefined>();
+    const [subscription, setSubscription] = useState<Subscription | null>();
 
     const { user } = useSelector((state: RootState) => state.userReducer);
 
-    useEffect(() => {
-        const fetchSubscription = async () => {
-            try {
-                const { data } = await axios.get(
-                    `${import.meta.env.VITE_BASE_URL}/sub/subscription/user`,
-                    { withCredentials: true }
-                );
-                setSubscription(data.subscription);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        fetchSubscription();
-    }, []);
-
-    const handleSubscription = (id: string) => {
+    const fetchSubscription = async () => {
         try {
-            console.log(id);
+            const { data }: { data: SubscriptionResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/subscription/latest`, { withCredentials: true });
+            setSubscription(data.subscription);
+            window.sessionStorage.setItem("latest_sub", JSON.stringify(data.subscription));
         } catch (error) {
             console.log(error);
         }
     };
 
+    useEffect(() => {
+        const subData = window.sessionStorage.getItem("latest_sub");
+        if (subData) {
+            setSubscription(JSON.parse(subData));
+        } else {
+            fetchSubscription();
+        }
+    }, []);
+
+    const handleSubscription = async (id: string) => {
+        try {
+            await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/cancel/${id}`, { withCredentials: true });
+            toast.success("Subscription Cencelled Successfully");
+        } catch (error: any) {
+            console.log(error);
+            toast.error(error.response.data.message);
+        }
+    };
+
     return (
         <>
-            {(!user?.isVerified) && (
-                <>
-                    <div className="flex justify-center mt-[1rem]">
-                        <h1 className="font-Philosopher font-bold text-3xl">
-                            Transactions
-                        </h1>
-                    </div>
-                    <div className="flex justify-center mt-[2rem]">
-                        <div className="font-Philosopher underline text-red-400">
-                            <Link to="/profile">
-                                Go to your Profile and verify your Email
-                            </Link>
-                        </div>
-                    </div>
-                </>
-            )}
-            {(user?.isVerified && !subscription) && (
-                <>
-                    <div className="flex justify-center mt-[1rem]">
-                        <h1 className="font-Philosopher font-bold text-3xl">
-                            Transactions
-                        </h1>
-                    </div>
-                    <div className="flex justify-center mt-[1rem]">
-                        <div className="font-Philosopher underline">
-                            <Link to="/plans">
-                                Buy a subscription to view your transactions here
-                            </Link>
-                        </div>
-                    </div>
-                </>
-            )}
             {user?.isVerified && subscription && (
                 <>
                     <div className="flex justify-center mb-[2rem] lg:w-full">
@@ -113,11 +88,9 @@ const BillingPage = () => {
                                                         Next Billing Date:
                                                     </div>
                                                     <div className="basis-3/5 flex justify-start pl-2">
-                                                        {String(
-                                                            new Date(
-                                                                subscription?.nextBilling!
-                                                            ).toDateString()
-                                                        )}
+                                                        {["cancellled", "completed"].includes(subscription.status) ? String(
+                                                            new Date(subscription?.nextBilling).toDateString()
+                                                        ) : "no more billing"}
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-row font-Kanit pl-3">
@@ -152,31 +125,43 @@ const BillingPage = () => {
                                                 </div>
                                                 <div className="flex flex-row font-Kanit pl-3">
                                                     <div className="basis-2/5 flex justify-start pl-2">
-                                                        Update Payment Method Here:
+                                                        Payment Method:
                                                     </div>
                                                     <div className="basis-3/5 flex justify-start pl-2">
-                                                        <a
-                                                            href={subscription?.shortUrl}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="no-underline hover:underline"
-                                                        >
-                                                            {subscription?.shortUrl}
-                                                        </a>
+                                                        {subscription?.paymentMethod.methodType}
                                                     </div>
                                                 </div>
-                                                <div className="w-full py-3 flex justify-center">
-                                                    <button
-                                                        className="w-[90%] py-2 bg-blue-500 text-white rounded-sm font-Kanit hover:cursor-pointer hover:bg-blue-400"
-                                                        onClick={() =>
-                                                            handleSubscription(subscription?._id!)
-                                                        }
-                                                    >
-                                                        {subscription?.status === "paused"
-                                                            ? "Resume"
-                                                            : "Cancel"}
-                                                    </button>
-                                                </div>
+                                                {!["cancelled", "completed"].includes(subscription.status) && (
+                                                    <>
+                                                        <div className="flex flex-row font-Kanit pl-3">
+                                                            <div className="basis-2/5 flex justify-start pl-2">
+                                                                Update Payment Method Here:
+                                                            </div>
+                                                            <div className="basis-3/5 flex justify-start pl-2">
+                                                                <a
+                                                                    href={subscription?.shortUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="no-underline hover:underline"
+                                                                >
+                                                                    {subscription?.shortUrl}
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-full py-3 flex justify-center">
+                                                            <button
+                                                                className="w-[90%] py-2 bg-blue-500 text-white rounded-sm font-Kanit hover:cursor-pointer hover:bg-blue-400"
+                                                                onClick={() =>
+                                                                    handleSubscription(subscription?._id!)
+                                                                }
+                                                            >
+                                                                {subscription?.status === "paused"
+                                                                    ? "Resume"
+                                                                    : "Cancel"}
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

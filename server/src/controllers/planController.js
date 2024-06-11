@@ -8,19 +8,24 @@ import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 
 // admin
 export const createPlan = catchAsyncErrors(async (req, res, next) => {
-    const razorPlan = await instance.plans.create({
-        period: req.body.period,
-        interval: req.body.interval,
-        item: {
-            name: req.body.name,
-            amount: Number(req.body.amount) * 100,
-            currency: "INR",
-            description: req.body.description
-        },
-    });
+    let razorPlan;
+    try {
+        razorPlan = await instance.plans.create({
+            period: req.body.period,
+            interval: req.body.interval,
+            item: {
+                name: req.body.name,
+                amount: Number(req.body.amount) * 100,
+                currency: "INR",
+                description: req.body.description
+            },
+        });   
+    } catch (error) {
+        return next(new ErrorHandler(`Error: ${error.error.description}`, error.statusCode));
+    }
 
     if (!razorPlan) {
-        return next(new ErrorHandler("Failed to create plan", 500));
+        return next(new ErrorHandler("Failed to create plan", 404));
     }
 
     const plan = await Plan.create({
@@ -274,11 +279,10 @@ export const deletePlan = catchAsyncErrors( async (req, res, next) => {
 // user
 export const getAllPlans = catchAsyncErrors( async (req, res, next) => {
     const plans = await Plan.find({ visible: true, planType: { $ne: planEnum.CUSTOM }});
-    const planCount = await Plan.countDocuments({ visible: true, planType: { $ne: planEnum.CUSTOM }});
+    // const planCount = await Plan.countDocuments({ visible: true, planType: { $ne: planEnum.CUSTOM }});
 
     res.status(200).json({
         success: true,
-        count: planCount,
         plans
     });
 });

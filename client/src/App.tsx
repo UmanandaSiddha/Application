@@ -21,7 +21,6 @@ const AdminPlan = lazy(() => import("./pages/admin-plan"));
 const DonationPage = lazy(() => import("./pages/donation/donation-test"));
 const BillingPage = lazy(() => import("./pages/plans/billing"));
 const RecieptPage = lazy(() => import("./pages/plans/reciept"));
-const OtherQR = lazy(() => import("./pages/cards/other-qr"));
 const Onboarding = lazy(() => import("./pages/auth/onboarding"));
 const OrgRegister = lazy(() => import("./pages/auth/orgRegister"));
 const Donation = lazy(() => import("./pages/donation/donation"));
@@ -141,6 +140,12 @@ const App = () => {
             <Route
               element={<ProtectedRoute isAuthenticated={user ? true : false} redirect="/login" />}
             >
+              <Route path="/receipt" element={<RecieptPage />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/verify" element={<Verify />} />
+              <Route path="/admin-plan" element={<AdminPlan />} />
+              <Route path="/billing" element={<BillingPage />} />
+
               <Route path="/dashboard" element={
                 !isMobile ? (
                   <>
@@ -154,11 +159,6 @@ const App = () => {
                   <Dashboard />
                 )
               } />
-              <Route path="/receipt" element={<RecieptPage />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/verify" element={<Verify />} />
-              <Route path="/admin-plan" element={<AdminPlan />} />
-              <Route path="/billing" element={<BillingPage />} />
 
               <Route
                 path="/dashboard/cards"
@@ -170,13 +170,8 @@ const App = () => {
                           <div className="basis-1/4">
                             <Dashboard />
                           </div>
-                          <div className="basis-2/4">
+                          <div className="basis-3/4 lg:max-h-screen">
                             {type && <AllCards />}
-
-                            {/* <AllCards /> */}
-                          </div>
-                          <div className="basis-1/4 lg:flex lg:justify-end">
-                            <OtherQR />
                           </div>
                         </div>
                       </div>
@@ -207,26 +202,9 @@ const App = () => {
                   )
                 }
               />
-              {/* <Route
-                path="/dashboard/cards/all"
-                element={
-                  !isMobile ? (
-                    <>
-                      <div className="flex flex-row">
-                        <div className="basis-1/4">
-                          <Dashboard />
-                        </div>
-                        <div className="basis-3/4">{type && <OtherQR />}</div>
-                      </div>
-                    </>
-                  ) : (
-                    <OtherQR />
-                  )
-                }
-              /> */}
 
               <Route
-                path="/dashboard/tree/create"
+                path="/dashboard/botanical/create"
                 element={
                   !isMobile ? (
                     <>
@@ -246,7 +224,7 @@ const App = () => {
               />
 
               <Route
-                path="/dashboard/personal/create"
+                path="/dashboard/individual/create"
                 element={
                   !isMobile ? (
                     <>

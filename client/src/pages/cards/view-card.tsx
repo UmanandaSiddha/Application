@@ -21,7 +21,7 @@ import CreatorComponent from "@/components/view-card/creator";
 import MedicalComponent from "@/components/view-card/medical";
 import PersonalComponent from "@/components/view-card/personal";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/types";
+import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
 
 const ViewCard = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const ViewCard = () => {
     const fetchData = async () => {
       setLoading(true);
       if (
-        ["tree", "personal", "medical", "creator", "animal"].includes(type!) &&
+        ["botanical", "individual", "medical", "creator", "animal"].includes(type!) &&
         id
       ) {
         try {
@@ -85,14 +85,6 @@ const ViewCard = () => {
     }
   }, [type]);
 
-  const headSetter = (headType: String) => {
-    if (["tree", "personal", "medical", "creator", "animal"].includes(type!)) {
-      return headType.charAt(0).toUpperCase() + headType.slice(1).toLowerCase();
-    } else {
-      return;
-    }
-  };
-
   const deleteCard = async () => {
     try {
       await axios.delete(
@@ -108,9 +100,9 @@ const ViewCard = () => {
 
   const renderCard = () => {
     switch (type) {
-      case "tree":
+      case "botanical":
         return <TreeComponent card={card as Tree} />;
-      case "personal":
+      case "individual":
         return <PersonalComponent card={card as Personal} />;
       case "medical":
         return <MedicalComponent card={card as MedicalType} />;
@@ -123,33 +115,9 @@ const ViewCard = () => {
     }
   };
 
-  const setLink = (type: String, id: String) => {
-    switch (type) {
-      case "tree":
-        return `/dashboard/tree/create?treeId=${id}`;
-      case "personal":
-        return `/dashboard/personal/create?personalId=${id}`;
-      case "medical":
-        return `/dashboard/medical/create?medicalId=${id}`;
-      case "creator":
-        return `/dashboard/creator/create?creatorId=${id}`;
-      case "animal":
-        return `/dashboard/animal/create?animalId=${id}`;
-      default:
-        return `/dashboard/tree/create?treeId=${id}`;
-    }
-  };
-
   return (
     <>
       <div className="w-full lg:-ml-[1rem] h-full lg:flex lg:flex-row">
-        {/* <div>
-                {(isPaid || user?.role === "admin") ? (
-                    <img src={qr} alt={card?._id} />
-                ) : (
-                    <img src="/error_qr.jpg" alt="Error Qr" width={250} height={250} />
-                )}
-            </div> */}
         <div className="lg:basis-5/6 lg:overflow-y-auto lg:mt-2 lg:rounded-tl-2xl">
           {loading ? <Loader /> : <>{renderCard()}</>}
         </div>
@@ -191,7 +159,7 @@ const ViewCard = () => {
               <button
                 className="py-4 px-4 bg-slate-300 font-Kanit rounded-full hover:cursor-pointer shadow-xl"
                 disabled={!isPaid && user?.role !== "admin"}
-                onClick={() => navigate(setLink(type!, card?._id!))}
+                onClick={() => navigate(`/dashboard/${type}/create?${type}Id=${card?._id}`)}
               >
                 <div className="flex justify-center">
                   <div className="">
@@ -215,7 +183,6 @@ const ViewCard = () => {
                 </div>
               </button>
             </div>
-            {/* </div> */}
           </div>
           <div className="hidden lg:flex lg:flex-col lg:items-center lg:justify-center">
           <div
@@ -244,7 +211,7 @@ const ViewCard = () => {
               <button
                 className="py-4 px-4 bg-slate-300 font-Kanit rounded-full hover:cursor-pointer shadow-xl"
                 disabled={!isPaid && user?.role !== "admin"}
-                onClick={() => navigate(setLink(type!, card?._id!))}
+                onClick={() => navigate(`/dashboard/${type}/create?${type}Id=${card?._id}`)}
               >
                 <div className="flex justify-center">
                   <div className="">

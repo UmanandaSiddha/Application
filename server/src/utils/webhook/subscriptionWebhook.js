@@ -7,17 +7,17 @@ import crypto from "crypto";
 
 const subscriptionwebhook = async (webhookData) => {
 
-    // const secret = "12345678";
+    const { header, dataSub } = webhookData;
 
     const expectedSigntaure = crypto
         .createHmac("sha256", process.env.SUBSCRIPTION_WEBHOOK)
-        .update(JSON.stringify(webhookData))
+        .update(JSON.stringify(dataSub))
         .digest("hex")
 
-    const { event, payload } = webhookData;
+    const { event, payload } = dataSub;
 
     try {
-        if (expectedSigntaure === req.headers['x-razorpay-signature']) {
+        if (expectedSigntaure === header) {
             const subscription = await Subscription.findOne({ razorSubscriptionId: payload.subscription?.entity?.id });
             if (!subscription) {
                 console.log("Invalid Subscription, Wrong database");
@@ -56,6 +56,7 @@ const subscriptionwebhook = async (webhookData) => {
                         }
                         break;
                     case "subscription.completed":
+                        // disable short url and next billing
                         if (user.cards.total !== 0) {
                             await User.findOneAndUpdate(
                                 { activePlan: subscription._id },
@@ -65,6 +66,7 @@ const subscriptionwebhook = async (webhookData) => {
                         }
                         break;
                     case "subscription.cancelled":
+                        // disable short url and next billing
                         if (user.cards.total !== 0 && subscription.currentEnd <= Date.now()) {
                             await User.findOneAndUpdate(
                                 { activePlan: subscription._id },

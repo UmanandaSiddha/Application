@@ -234,9 +234,14 @@ export const createDonation = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const capturePayment = async (req, res, next) => {
+
+    const webhookPayload = {
+        header: req.headers['x-razorpay-signature'],
+        dataPay: req.body
+    }
     
     try {
-        await addDonationToQueue(req.body)
+        await addDonationToQueue(webhookPayload);
     } catch (error) {
         logger.error("Failed to put Subscription in Queue");
     }

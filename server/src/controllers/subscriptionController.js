@@ -160,8 +160,13 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
 
 export const verifySubscription = async (req, res) => {
 
+    const webhookPayload = {
+        header: req.headers['x-razorpay-signature'],
+        dataSub: req.body
+    }
+
     try {
-        await addSubscriptionToQueue(req.body);
+        await addSubscriptionToQueue(webhookPayload);
     } catch (error) {
         logger.error("Failed to put Subscription in Queue");
     }
@@ -170,15 +175,26 @@ export const verifySubscription = async (req, res) => {
 };
 
 export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
-    await instance.subscriptions.cancel(req.body.subscriptionId);
+    const subscription = await Subscription.findById(req.params.id);
 
-    const subscription = await Subscription.findById(req.body.subscriptionId);
+    if (!subscription) {
+        return next(new ErrorHandler("No Subscription is found", 404));
+    }
 
-    if (subscription.currentEnd <= Date.now()) {
-        await User.findByIdAndUpdate(req.user.id,
-            { "cards.total": 0 },
-            { new: true, runValidators: true, useFindAndModify: false }
-        );
+    if (["completed", "cancelled"].includes(subscription.status)) {
+        return next(new ErrorHandler("This subscription cannot be cancelled", 403));
+    }
+
+    try {
+        await instance.subscriptions.cancel(subscription.razorSubscriptionId);
+        if (subscription.currentEnd <= Date.now()) {
+            await User.findByIdAndUpdate(req.user.id,
+                { "cards.total": 0 },
+                { new: true, runValidators: true, useFindAndModify: false }
+            );
+        }
+    } catch (error) {
+        logger.error("Couldn't cancel Subscription");
     }
 
     res.status(200).json({

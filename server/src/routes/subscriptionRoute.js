@@ -17,7 +17,7 @@ router.route("/new").post(isAuthenticatedUser, isUserVerified, createSubscriptio
 router.route("/new/free").post(isAuthenticatedUser, isUserVerified, createFreeSubscription);
 router.route("/capture").post(isAuthenticatedUser, isUserVerified, captureSubscription);
 router.route("/webhook/sub").post(verifySubscription);
-router.route("/cancel").put(isAuthenticatedUser, isUserVerified, cancelSubscription);
+router.route("/cancel/:id").get(isAuthenticatedUser, isUserVerified, cancelSubscription);
 router.route("/subscription/latest").get(isAuthenticatedUser, isUserVerified, getLatestSubscription);
 router.route("/transactions/all").get(isAuthenticatedUser, isUserVerified, getUserTransactions);
 router.route("/transaction/:id").get(isAuthenticatedUser, isUserVerified, getParticularTransaction);
