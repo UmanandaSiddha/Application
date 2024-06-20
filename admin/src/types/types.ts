@@ -27,6 +27,26 @@ export type User = {
     updatedAt: Date;
 };
 
+export type CustomReuest = {
+    _id: string;
+    email: string;
+    attended: boolean;
+    status: {
+        accepted: boolean;
+        reason: string;
+    }
+    cards: number;
+    amount: number;
+    comment: string;
+    period: string;
+    interval: number;
+    user: {
+        _id: string;
+        email: string;
+        name: string;
+    }
+}
+
 export type Subscription = {
     _id: string;
     planId: {
@@ -60,6 +80,7 @@ export type Transaction = {
 
 export type Tree = {
     _id: string;
+    type: string;
     name: string
     scientificName: string;
     treeType: string;
@@ -73,10 +94,12 @@ export type Tree = {
         _id: string;
         email: string;
     }
+    createdAt: Date;
 };
 
 export type Animal = {
     _id: string;
+    type: string;
     species: string;
     name: string;
     age: number;
@@ -84,46 +107,138 @@ export type Animal = {
     color: string;
     location: string;
     owner: string;
-    phone:  number;
+    phone: number;
     user: {
         _id: string;
         email: string;
     }
+    createdAt: Date;
 }
 
 export type Personal = {
     _id: string;
-    name: string;
-    contactInfo: any;
-    socialMedia: any;
-    lifesty: any;
-    favourites: any;
-    mottos: any;
-    misce: any;
-    interest: any;
-    value: any;
-    beliefs: any;       
-    profession: any;
-    backg: any;
-    expert: any;
-    additional: any;
-    user: string;
+    name: string,
+    type: string;
+    mobileNumer: string,
+    homeNumber: string,
+    workNumber: string,
+    otherNumber: string,
+    personalEmail: string,
+    workEmail: string,
+    otherEmail: string,
+    aboutMe: string,
+    dateOfBirth: string,
+    homeTown: string,
+    currentCity: string,
+    languages: string,
+    music: string,
+    color: string,
+    city: string,
+    travelDestination: string,
+    season: string,
+    uniqueSkills: string,
+    cuisine: string,
+    beverage: string,
+    inspirationalQuotes: string,
+    funnyQuotes: string,
+    motivationalQuotes: string,
+    otherQuotes: string,
+    travelMode: string,
+    petLover: string,
+    partyEnthusiast: string,
+    smoker: string,
+    maritalStatus: string,
+    relationshipStatus: string,
+    fitnessRoutine: string,
+    morningPerson: string,
+    diet: string,
+    diet_Other: string,
+    sleepingHabit: string,
+    genre: string,
+    sports: string,
+    artistisPursuits: string,
+    gaming: string,
+    collectignHobby: string,
+    coffee: string,
+    cookingSkills: string,
+    travelMode_Other: string,
+    genre_Other: string,
+    sports_Other: string,
+    artistisPursuits_Other: string,
+    gaming_Other: string,
+    collectignHobby_Other: string,
+    coffee_Other: string,
+    cookingSkills_Other: string,
+    currentOcupation_Other: string,
+    careerAspiation_Other: string,
+    education_Other: string,
+    skills_Other: string,
+    spiritual: string,
+    core: string,
+    philosophy: string,
+    socialCause: string,
+    globalIssues: string,
+    weirdBelief: string,
+    currentOcupation: string,
+    careerAspiation: string,
+    education: string,
+    skills: string,
+    otherInterests: string,
+    futureGoals: string,
+    current: string,
+    unusualExperinece: string,
+    strangeHabits: string,
+    socialMedia: any,
+    user: {
+        _id: string;
+        email: string;
+    }
+    createdAt: Date;
 }
 
 export type Medical = {
     _id: string;
-    personalInfo: any;
-    healthHistory: any;
-    currentMedication: string;
-    previousSurgeries: string;
-    healthHabits: any;
-    insuranceInfo: any;
-    user: string;
+    type: string;
+    name: string,
+    dateOfBirth: string,
+    gender: string,
+    street: string,
+    city: string,
+    state: string,
+    postalCode: number,
+    phone: string,
+    email: string,
+    emergencyName: string,
+    emergencyRelation: string,
+    emergencyPhone: string,
+    allergyHistory: string,
+    chronicHistory: string,
+    currentMedication: string,
+    previousSurgeries: string,
+    smoker: string,
+    alcohol: string,
+    exercise: string,
+    diet: string,
+    mentalCondition: string,
+    vaccinationHistory: string,
+    insuranceProvider: string,
+    insurancePolicyNumber: number,
+    insuranceGrpNumber: number,
+    user: {
+        _id: string;
+        email: string;
+    }
+    createdAt: Date;
 }
 
 export type Creator = {
     _id: string;
+    type: string;
     name: string;
     links: any;
-    user: string;
+    user: {
+        _id: string;
+        email: string;
+    }
+    createdAt: Date;
 }

@@ -1,10 +1,11 @@
-import { Route, Routes, useSearchParams } from "react-router-dom";
+import { Route, Routes, useLocation, useSearchParams } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import { userExist, userNotExist } from "./redux/reducer/userReducer";
 
 import Header from "./components/rest/header";
+import Footer from "./components/rest/footer";
 import Loader from "./components/rest/loader";
 import ProtectedRoute from "./components/rest/protected-route";
 
@@ -18,7 +19,6 @@ const Verify = lazy(() => import("./pages/auth/verify"));
 const ResetPassword = lazy(() => import("./pages/auth/reset-password"));
 const PlanPage = lazy(() => import("./pages/plans/plan"));
 const AdminPlan = lazy(() => import("./pages/admin-plan"));
-const DonationPage = lazy(() => import("./pages/donation/donation-test"));
 const BillingPage = lazy(() => import("./pages/plans/billing"));
 const RecieptPage = lazy(() => import("./pages/plans/reciept"));
 const Onboarding = lazy(() => import("./pages/auth/onboarding"));
@@ -41,6 +41,7 @@ const ViewCustom = lazy(() => import("./pages/plans/view-custom"));
 
 const DonationLogin = lazy(() => import("./pages/donation/login"));
 const DonationCheckout = lazy(() => import("./pages/donation/checkout"));
+const DonatorDashboard = lazy(() => import("./pages/donation/dash"));
 
 const UnBlockPage = lazy(() => import("./pages/auth/unblock"));
 
@@ -49,10 +50,11 @@ const ReportPage = lazy(() => import("./pages/others/report"));
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { UserResponse } from "./types/api-types";
+import { DonatorResponse, UserResponse } from "./types/api-types";
 import axios from "axios";
 import ErrorBoundary from "./components/rest/error-boundary";
 import { useWindowWidth } from "@react-hook/window-size";
+import { donatorExist, donatorNotExist } from "./redux/reducer/donatorReducer";
 
 const App = () => {
   const width = useWindowWidth();
@@ -60,6 +62,7 @@ const App = () => {
   const [search] = useSearchParams();
   const type = search.get("type");
   const id = search.get("id");
+  const location = useLocation();
 
   const { user, loading } = useSelector(
     (state: RootState) => state.userReducer
@@ -67,18 +70,27 @@ const App = () => {
 
   const dispatch = useDispatch();
 
-  const gotUser = async () => {
+  const fetchUser = async () => {
     try {
       const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/me`, { withCredentials: true });
       dispatch(userExist(data.user));
     } catch (error: any) {
       dispatch(userNotExist());
     }
-
   };
 
+  const fetchDonator = async () => {
+    try {
+        const { data }: { data: DonatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/donate/me`, { withCredentials: true });
+        dispatch(donatorExist(data.donator));
+    } catch (error: any) {
+        dispatch(donatorNotExist());
+    }
+};
+
   useEffect(() => {
-    gotUser();
+    fetchUser();
+    fetchDonator();
   }, []);
 
   return loading ? (
@@ -98,13 +110,12 @@ const App = () => {
         theme="dark"
       />
       <ErrorBoundary>
-        <Header user={user!} />
+      {!["/login", "/register"].includes(location.pathname) && (<Header />)}
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<Home user={user!} />} />
             <Route path="/plans" element={<PlanPage />} />
             <Route path="/display" element={<DisplayCard />} />
-            <Route path="/donate" element={<DonationPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
 
 
@@ -112,8 +123,9 @@ const App = () => {
 
 
 
-            <Route path="/donation-login" element={<DonationLogin />} />
-            <Route path="/donation-checkout" element={<DonationCheckout />} />
+            <Route path="/donation/login" element={<DonationLogin />} />
+            <Route path="/donation/checkout" element={<DonationCheckout />} />
+            <Route path="/donation/dashboard" element={<DonatorDashboard />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/report" element={<ReportPage />} />
             <Route path="/unblock" element={<UnBlockPage />} />
@@ -208,14 +220,24 @@ const App = () => {
                 element={
                   !isMobile ? (
                     <>
-                      <div className="flex flex-row">
+                    <div className="flex justify-center">
+                        <div className="flex flex-row w-[80%]">
+                          <div className="basis-1/4">
+                            <Dashboard />
+                          </div>
+                          <div className={`basis-3/4 lg:max-h-screen`}>
+                          <CreateTree />
+                          </div>
+                        </div>
+                      </div>
+                      {/* <div className="flex flex-row">
                         <div className="basis-1/3">
                           <Dashboard />
                         </div>
                         <div className="basis-2/3">
                           <CreateTree />
                         </div>
-                      </div>
+                      </div> */}
                     </>
                   ) : (
                     <CreateTree />
@@ -228,14 +250,24 @@ const App = () => {
                 element={
                   !isMobile ? (
                     <>
-                      <div className="flex flex-row">
+                    <div className="flex justify-center">
+                        <div className="flex flex-row w-[80%]">
+                          <div className="basis-1/4">
+                            <Dashboard />
+                          </div>
+                          <div className={`basis-3/4 lg:max-h-screen`}>
+                          <CreatePersonal />
+                          </div>
+                        </div>
+                      </div>
+                      {/* <div className="flex flex-row">
                         <div className="basis-1/3">
                           <Dashboard />
                         </div>
                         <div className="basis-2/3">
                           <CreatePersonal />
                         </div>
-                      </div>
+                      </div> */}
                     </>
                   ) : (
                     <CreatePersonal />
@@ -247,14 +279,24 @@ const App = () => {
                 element={
                   !isMobile ? (
                     <>
-                      <div className="flex flex-row">
+                    <div className="flex justify-center">
+                        <div className="flex flex-row w-[80%]">
+                          <div className="basis-1/4">
+                            <Dashboard />
+                          </div>
+                          <div className={`basis-3/4 lg:max-h-screen`}>
+                          <MedicalInput />
+                          </div>
+                        </div>
+                      </div>
+                      {/* <div className="flex flex-row">
                         <div className="basis-1/3">
                           <Dashboard />
                         </div>
                         <div className="basis-2/3">
                           <MedicalInput />
                         </div>
-                      </div>
+                      </div> */}
                     </>
                   ) : (
                     <MedicalInput />
@@ -266,14 +308,24 @@ const App = () => {
                 element={
                   !isMobile ? (
                     <>
-                      <div className="flex flex-row">
+                    <div className="flex justify-center">
+                        <div className="flex flex-row w-[80%]">
+                          <div className="basis-1/4">
+                            <Dashboard />
+                          </div>
+                          <div className={`basis-3/4 lg:max-h-screen`}>
+                          <CreatorInput />
+                          </div>
+                        </div>
+                      </div>
+                      {/* <div className="flex flex-row">
                         <div className="basis-1/3">
                           <Dashboard />
                         </div>
                         <div className="basis-2/3">
                           <CreatorInput />
                         </div>
-                      </div>
+                      </div> */}
                     </>
                   ) : (
                     <CreatorInput />
@@ -285,14 +337,24 @@ const App = () => {
                 element={
                   !isMobile ? (
                     <>
-                      <div className="flex flex-row">
+                    <div className="flex justify-center">
+                        <div className="flex flex-row w-[80%]">
+                          <div className="basis-1/4">
+                            <Dashboard />
+                          </div>
+                          <div className={`basis-3/4 lg:max-h-screen`}>
+                          <CreateAnimal />
+                          </div>
+                        </div>
+                      </div>
+                      {/* <div className="flex flex-row">
                         <div className="basis-1/3">
                           <Dashboard />
                         </div>
                         <div className="basis-2/3">
                           <CreateAnimal />
                         </div>
-                      </div>
+                      </div> */}
                     </>
                   ) : (
                     <CreateAnimal />
@@ -306,6 +368,7 @@ const App = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        {/* <Footer /> */}
       </ErrorBoundary>
     </div>
   );

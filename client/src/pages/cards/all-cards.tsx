@@ -283,10 +283,7 @@ const AllCards = () => {
                             </div>
                         )}
 
-
-
                         <div className={`lg:flex lg:flex-col hidden bg-${color}-200`}>
-
                             <div>
                                 <div className="flex flex-row pt-10 pb-6">
                                     <div className="basis-1/5 flex items-center justify-center">
@@ -373,9 +370,7 @@ const AllCards = () => {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
 

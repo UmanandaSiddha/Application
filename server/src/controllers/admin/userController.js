@@ -1,13 +1,13 @@
-import ErrorHandler from "../utils/errorHandler.js";
-import sendToken from "../utils/tokens/jwtToken.js";
-import Tree from "../models/cards/treeModel.js";
-import Medical from "../models/cards/medicalModel.js";
-import Creator from "../models/cards/creatorModel.js";
-import Animal from "../models/cards/animalModel.js";
-import Personal from "../models/cards/personalModel.js";
-import { addEmailToQueue } from "../utils/queue/emailQueue.js";
-import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
-import User, { accountEnum, freeEnum, roleEnum } from "../models/userModel.js";
+import ErrorHandler from "../../utils/errorHandler.js";
+import sendToken from "../../utils/tokens/jwtToken.js";
+import Tree from "../../models/cards/treeModel.js";
+import Medical from "../../models/cards/medicalModel.js";
+import Creator from "../../models/cards/creatorModel.js";
+import Animal from "../../models/cards/animalModel.js";
+import Personal from "../../models/cards/personalModel.js";
+import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
+import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
+import User, { accountEnum, freeEnum, roleEnum } from "../../models/userModel.js";
 
 export const adminLogin = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
@@ -33,7 +33,7 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
                 await addEmailToQueue({
                     email: user.email,
                     subject: `Suspious Activity`,
-                    message: `This email will contain link by which they can unblock themselves`,
+                    message: `${process.env.CLIENT_URL}/unblock?user=${user._id}`,
                 });
             } catch (error) {
                 console.log(error.message);
@@ -45,7 +45,7 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Access Denied", 500));
     }
 
-    if (user.loginAttempt?.count < 5 && user.loginAttempt?.count !== 0 && (user.loginAttempt?.time + 60*1000) > Date.now()) {
+    if (user.loginAttempt?.count < 5 && user.loginAttempt?.count !== 0 && (user.loginAttempt?.time + 60 * 1000) > Date.now()) {
         user.loginAttempt.count = 0;
         user.loginAttempt.time = undefined;
         await user.save();
@@ -55,13 +55,13 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
 
     if (!isPasswordMatched) {
         await User.findOneAndUpdate(
-            { email }, 
+            { email },
             {
                 loginAttempt: {
                     count: user.loginAttempt.count + 1,
                     time: Date.now(),
                 },
-            }, 
+            },
             { new: true, runValidators: true, useFindAndModify: false }
         );
         return next(new ErrorHandler("Invalid Credentials", 401));
@@ -70,7 +70,7 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
     try {
         await addEmailToQueue({
             email: user.email,
-            subject:  `Admin Login Email`,
+            subject: `Admin Login Email`,
             message: `Welcome ${user.name}`,
         });
     } catch (error) {
@@ -80,24 +80,6 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
     sendToken(user, 200, res);
 });
 
-// Get user account types
-export const getUserAccount = catchAsyncErrors(async (req, res, next) => {
-
-    const emailCount = await User.countDocuments({ accountType: accountEnum.EMAIL });
-    const googlecount = await User.countDocuments({ accountType: accountEnum.GOOGLE });
-    const hybridCount = await User.countDocuments({ accountType: accountEnum.HYBRID });
-
-    res.status(200).json({
-        success: true,
-        count: {
-            emailCount,
-            googlecount,
-            hybridCount
-        },
-    });
-});
-
-// Give Free Access
 export const freeAccess = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
@@ -105,14 +87,18 @@ export const freeAccess = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
-    const updatedUser  = await User.findByIdAndUpdate(
-        req.params.id, 
-        { 
+    if (user.freePlan.status) {
+        return next(new ErrorHandler(`User with Id: ${req.params.id} already has free access`, 400));
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        {
             freePlan: {
                 status: true,
                 type: freeEnum.CUSTOM
             }
-        }, 
+        },
         { new: true, runValidators: true, useFindAndModify: false }
     );
 
@@ -126,9 +112,6 @@ export const freeAccess = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-
-
-// Get all Users - Only Admin
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     const users = await User.find();
     const userCount = await User.countDocuments();
@@ -140,9 +123,8 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-// Get User Details - Only Admin
 export const getSingleUser = catchAsyncErrors(async (req, res, next) => {
-    const user = await User.findById(req.params.id).populate("activePlan", "status currentEnd");
+    const user = await User.findById(req.params.id).populate("activePlan", "planId status currentEnd");
 
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
@@ -154,27 +136,29 @@ export const getSingleUser = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-// Update User Role -- Admin
 export const updateRole = catchAsyncErrors(async (req, res, next) => {
+
+    if (req.user.id === req.params.id) {
+        return next(new ErrorHandler(`You cannot update your own role`, 400));
+    }
 
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
-    await User.findByIdAndUpdate(req.params.id, { role: req.body.role }, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-    });
+    await User.findByIdAndUpdate(
+        req.params.id, 
+        { role: req.body.role }, 
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
 
     res.status(200).json({
         success: true,
         message: `User Role Updated`,
-    })
+    });
 });
 
-// Update User Cards -- Admin
 export const updateCard = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.params.id);
@@ -182,11 +166,11 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
-    await User.findByIdAndUpdate(req.params.id, { "cards.total": req.body.total }, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-    });
+    await User.findByIdAndUpdate(
+        req.params.id, 
+        { "cards.total": req.body.total }, 
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
 
     res.status(200).json({
         success: true,
@@ -194,38 +178,19 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const getTreeCards = catchAsyncErrors(async (req, res, next) => {
-    const trees = await Tree.find().populate("user", "email");
-    const count = await Tree.countDocuments();
-    // if (!trees) {
-    //     return next(new ErrorHandler("Cards Not Found", 404));
-    // }
-
-    res.status(200).json({
-        success: true,
-        count,
-        trees
-    });
-});
-
-export const getSingleTreeCard = catchAsyncErrors(async (req, res, next) => {
-    const tree = await Tree.findById(req.params.id)
-    if (!tree) {
-        return next(new ErrorHandler("Card Not Found", 404));
-    }
-
-    res.status(200).json({
-        success: true,
-        tree
-    });
-});
-
-// Delete User -- Admin
 export const deleteUser = catchAsyncErrors(async (req, res, next) => {
+
+    if (req.user.id === req.params.id) {
+        return next(new ErrorHandler(`You cannot deactivate your account`, 400));
+    }
 
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
+    }
+
+    if (user.isDeactivated) {
+        return next(new ErrorHandler(`User with Id: ${req.params.id} is already deactivated`, 400));
     }
 
     await Tree.deleteMany({ user: req.params.id });
@@ -240,5 +205,29 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: `User deleted`,
+    });
+});
+
+export const reActivateUser = catchAsyncErrors(async (req, res, next) => {
+
+    if (req.user.id === req.params.id) {
+        return next(new ErrorHandler(`You cannot reactivate your account`, 400));
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
+    }
+
+    if (!user.isDeactivated) {
+        return next(new ErrorHandler(`User with Id: ${req.params.id} is already active`, 400));
+    }
+
+    user.isDeactivated = false;
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+        message: `User reActivated successfully`,
     });
 });

@@ -1,147 +1,116 @@
-import { userExist } from "@/redux/reducer/userReducer";
-import { UserResponse } from "@/types/api-types";
+import OtpInput from "@/components/rest/otp-input";
+import { donatorExist, donatorNotExist } from "@/redux/reducer/donatorReducer";
+import { DonatorResponse } from "@/types/api-types";
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-let currentOTPIndex: number = 0;
 
 const DonationLogin = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/donation/dashboard";
     const [email, setEmail] = useState<string>("");
+    const [emailSent, setEmailSent] = useState<boolean>(false);
     const [emailLoading, setEmailLoading] = useState<boolean>(false);
-    const [otp, setOtp] = useState(new Array(6).fill(""));
-    const [activeOTPIndex, setActiveOTPIndex] = useState(0);
 
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const handleOnChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = target;
-        const newOTP: string[] = [...otp];
-        newOTP[currentOTPIndex] = value.substring(value.length - 1);
-
-        if (!value) setActiveOTPIndex(currentOTPIndex - 1);
-        else setActiveOTPIndex(currentOTPIndex + 1);
-
-        setOtp(newOTP);
-    };
-
-    const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        currentOTPIndex = index;
-        if (e.key === "Backspace") setActiveOTPIndex(currentOTPIndex - 1);
-    };
-
-    useEffect(() => {
-        inputRef.current?.focus();
-    }, [activeOTPIndex]);
-
-    const handleVerify = async () => {
-        setVerifyLoading(true);
-        if (email) {
-            const otpString = Number(otp.join(''));
-            console.log(otpString);
-        }
-        // try {
-        //     const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/verify`, {otp: otpString}, {withCredentials: true});
-        //     dispatch(userExist(data.user));
-        //     toast.success("User Verified!");
-        //     navigate("/dashboard");
-        // } catch (error: any) {
-        //     toast.error(error.response.data.message);
-        // }
-        setVerifyLoading(false);
-    }
-
-    const handleEmail = async () => {
+    const handleEmail = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setEmailLoading(true);
-        console.log(email);
-        // try {
-        //     const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/verify`, {email}, {withCredentials: true});
-        //     dispatch(userExist(data.user));
-        //     toast.success("User Verified!");
-        //     navigate("/dashboard");
-        // } catch (error: any) {
-        //     toast.error(error.response.data.message);
-        // }
+        if (!email) {
+            toast.warning("Email is required");
+            setEmailLoading(false);
+            return;
+        };
+        try {
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/send/otp`, { email }, { withCredentials: true });
+            toast.success("Email sent successfully");
+            setEmailSent(true);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+        setEmailLoading(false);
     }
 
-    const resetForm = () => {
-        setEmail("");
-        setOtp(new Array(6).fill(""));
-        setEmailLoading(false);
-        setActiveOTPIndex(0);
-        inputRef.current?.focus();
-    }
+    const onOtpSubmit = async (otp: string) => {
+        if (!email) {
+            toast.warning("Email is required");
+            return;
+        };
+        if (!emailSent) {
+            toast.warning("Send the email first");
+            return;
+        }
+        try {
+            const { data }: { data: DonatorResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/donate/login`, { email, otp }, { withCredentials: true });
+            dispatch(donatorExist(data.donator));
+            toast.success("Logged in successfully");
+            navigate(from, { replace: true });
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+            dispatch(donatorNotExist());
+        }
+    };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 p-4">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                <div className="mb-4">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        placeholder="Enter your Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled={emailLoading}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                        required
-                    />
-                </div>
-                <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 w-full mb-4"
-                    onClick={handleEmail}
-                    disabled={emailLoading || !email}
-                >
-                    {emailLoading ? "Email Sent" : "Send Email"}
-                </button>
+        <section className="bg-white dark:bg-gray-900">
+            <div className="container px-6 py-24 mx-auto lg:py-32">
+                <div className="lg:flex">
+                    <div className="lg:w-1/2">
+                        <img className="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" />
 
-                {emailLoading && (
-                    <>
-                        <p className="text-red-500 text-lg mb-4 text-center">OTP was sent to your Email</p>
-                        <div className="flex justify-center items-center space-x-2 mb-4">
-                            {otp.map((_, index) => (
-                                <React.Fragment key={index}>
-                                    <input
-                                        ref={activeOTPIndex === index ? inputRef : null}
-                                        type="number"
-                                        className="w-10 h-10 border-2 rounded-xl bg-transparent outline-none text-center font-semibold text-xl spin-button-none border-gray-400 focus:border-gray-700 focus:text-gray-700 text-gray-400 transition sm:w-10 sm:h-10"
-                                        onChange={handleOnChange}
-                                        onKeyDown={(e) => handleOnKeyDown(e, index)}
-                                        value={otp[index]}
-                                    />
-                                    {index === otp.length - 1 ? null : (
-                                        <span className="w-2 py-0.5" />
-                                    )}
-                                </React.Fragment>
-                            ))}
+                        <h1 className="mt-4 text-gray-600 dark:text-gray-300 md:text-lg">Welcome back</h1>
+
+                        <h1 className="mt-4 text-2xl font-medium text-gray-800 capitalize lg:text-3xl dark:text-white">
+                            login to your account
+                        </h1>
+                    </div>
+
+                    <div className="mt-8 lg:w-1/2 lg:mt-0">
+                        <form onSubmit={handleEmail} className="w-full lg:max-w-xl">
+                            <div className="relative flex items-center">
+                                <span className="absolute">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </span>
+
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                                    placeholder="Email address"
+                                />
+                            </div>
+
+                            <div className="mt-8 md:flex md:items-center">
+                                <button
+                                    type="submit"
+                                    disabled={emailLoading}
+                                    className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                                >
+                                    {emailLoading ? "Hold on..." : "Send Email"}
+                                </button>
+                            </div>
+                        </form>
+
+                        {emailSent && (
+                            <p className="italic text-center text-gray-400">OTP sent to your email</p>
+                        )}
+
+                        <div className="mt-16">
+                            <p className="text-2xl font-semibold text-center my-4">Enter OTP here</p>
+                            <OtpInput length={6} disabled={!email || !emailSent} onOtpSubmit={onOtpSubmit} />
                         </div>
-                        <button
-                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 w-full mb-4"
-                            onClick={handleVerify}
-                            disabled={verifyLoading}
-                        >
-                            {verifyLoading ? "Verifying..." : "Click here to verify"}
-                        </button>
-                    </>
-                )}
+                    </div>
+                </div>
 
-                {emailLoading && (
-                    <button
-                        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 w-full"
-                        onClick={resetForm}
-                    >
-                        Reset the form
-                    </button>
-                )}
             </div>
-        </div>
+        </section>
     )
 }
 

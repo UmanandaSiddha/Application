@@ -6,27 +6,27 @@ import {
 } from '@heroicons/react/24/outline'
 
 import { Link,  NavLink,  useNavigate } from 'react-router-dom'
-import { User } from "../../types/types";
+import { RootState } from "../../redux/store";
 import { toast } from 'react-toastify'
 import { userNotExist } from "../../redux/reducer/userReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from 'axios';
 
-interface PropsType {
-    user: User | null;
-}
-
-export default function Header({ user }: PropsType) {
+export default function Header() {
     
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const { user, loading } = useSelector(
+        (state: RootState) => state.userReducer
+    );
+    
     const logout = async () => {
         try {
             await axios.get(`${import.meta.env.VITE_BASE_URL}/user/logout`, { withCredentials: true } );
             dispatch(userNotExist());
             toast.success("User Logged Out Successfully");
-            navigate("/");
+            navigate("/login");
             setMobileMenuOpen(false);
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -59,7 +59,7 @@ export default function Header({ user }: PropsType) {
                         Dashboard
                     </NavLink>
                     <Link to='/plans' className="text-base font-semibold leading-6 text-white font-Kanit">
-                        Subscriptions
+                        Pricing
                     </Link>
                     <Link to='/billing' className="text-base font-semibold leading-6 text-white font-Kanit">
                         Billing
@@ -121,7 +121,7 @@ export default function Header({ user }: PropsType) {
                                     onClick={() => setMobileMenuOpen(false)}
                                     className="-mx-3 rounded-lg px-3 py-2 text-lg flex font-Philosopher justify-center font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                                 >
-                                    Subscriptions
+                                    Pricing
                                 </Link>
                                 <Link
                                     to='/billing'

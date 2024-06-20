@@ -29,86 +29,63 @@ const ViewCustom = () => {
     }, [id]);
 
     return (
-        <>
-            <div className="flex justify-center mt-[1rem]">
-                <h1 className="text-3xl font-semibold font-Philosopher">
-                    Custom Plan
-                </h1>
-            </div>
-            {(user?.role === "org" && user._id === plan.user) ? (
-                <div className="md:flex md:justify-center">
-                    <div className="flex flex-col justify-center md:justify-center items-center md:w-[60%] lg:w-[100%]">
-                        <div className="w-full flex justify-center">
-                            <div className="pt-4 w-full flex flex-col md:flex-col lg:flex-row justify-center items-center lg:w-[60%] lg:gap-6">
-                                <div
-                                    className="border-2 border-blue-500 shadow-xl p-2 py-4 rounded-xl w-[90%] my-2"
-                                >
-                                    <div className="flex flex-row py-4">
-                                        <div className="basis-1/2 flex justify-end lg:justify-start lg:pl-4 font-Kanit ">
-                                            <div className="">
-                                                <p className="text-2xl font-bold">{plan?.name}</p>
-                                                <div className="">
-                                                    <p className="text-blue-400 bg-blue-200 px-1 py-1 rounded-lg">
-                                                        Plan Validity: 30 Days
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="basis-1/2">
-                                            <div className="">
-                                                <div className="font-Kanit text-lg flex justify-end pr-4 text-slate-400">
-                                                    Price
-                                                </div>
-                                                <div className="font-Kanit text-xl flex justify-end pr-4 text-black">
-                                                    Rs.200
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-row font-Kanit pl-3">
-                                        <div className="basis-2/5 flex justify-start pl-2">
-                                            Plan ID:
-                                        </div>
-                                        <div className="basis-3/5 flex justify-start pl-2">
-                                            {plan?.razorPlanId}
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-row font-Kanit pl-3">
-                                        <div className="basis-2/5 flex justify-start pl-2">
-                                            VCards Allowed:
-                                        </div>
-                                        <div className="basis-3/5 flex justify-start pl-2">
-                                            {plan?.cards}
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-row font-Kanit pl-3">
-                                        <div className="basis-2/5 flex justify-start pl-2">
-                                            Period:
-                                        </div>
-                                        <div className="basis-3/5 flex justify-start pl-2">
-                                            {plan?.period}
-                                        </div>
-                                    </div>
-                                    <div className="w-full py-3 flex justify-center">
-                                        <button
-                                            className="w-[90%] py-2 bg-blue-500 text-white rounded-sm font-Kanit hover:cursor-pointer hover:bg-blue-400"
-                                            onClick={() => {navigate(`/checkout/id=${id}`);}}
-                                        >
-                                            Buy Now
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+        <section className="bg-white dark:bg-gray-900">
+            <div className="flex items-center justify-center mt-16">
+                <div className="px-6 py-4 transition-colors duration-300 transform bg-gray-700 rounded-lg dark:bg-gray-800">
+                    <p className="text-lg font-medium text-gray-100">Popular</p>
+
+                    <h4 className="mt-2 text-3xl font-semibold text-gray-100">$99 <span className="text-base font-normal text-gray-400">/ Month</span></h4>
+
+                    <p className="mt-4 text-gray-300">For most businesses that want to optimaize web queries.</p>
+
+                    <div className="mt-8 space-y-8">
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+
+                            <span className="mx-4 text-gray-300">All limited links</span>
+                        </div>
+
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+
+                            <span className="mx-4 text-gray-300">Own analytics platform</span>
+                        </div>
+
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+
+                            <span className="mx-4 text-gray-300">Chat support</span>
+                        </div>
+
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+
+                            <span className="mx-4 text-gray-300">Optimize hashtags</span>
+                        </div>
+
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+
+                            <span className="mx-4 text-gray-300">Unlimited users</span>
                         </div>
                     </div>
-                </div>
-            ) : (
-                <div>
-                    This Plan is only for Orgnisations
-                </div>
-            )}
 
-        </>
+                    <button className="w-full px-4 py-2 mt-10 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                        Choose plan
+                    </button>
+                </div>
+            </div>
+        </section>
     )
 }
 

@@ -1,4 +1,4 @@
-import { Tree, User } from "./types";
+import { Animal, Creator, CustomReuest, Medical, Personal, Tree, User } from "./types";
 
 export type UserResponse = {
     success: boolean;
@@ -11,14 +11,20 @@ export type AllUsersResponse = {
     users: User[];
 }
 
+export type AllCustomReuestResponse = {
+    success: boolean;
+    count: number;
+    requests: CustomReuest[];
+}
+
 export type TreeResponse = {
     success: boolean;
     tree: Tree;
 };
 
-export type AllTreesResponse = {
+export type AllCardsResponse = {
     success: boolean;
     count: number;
-    trees: Tree[];
+    cards: Tree[] | Personal[] | Medical[] | Creator[] | Animal[];
 }
 

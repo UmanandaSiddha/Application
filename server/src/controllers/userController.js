@@ -335,8 +335,6 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Reset Password Token is Invalid or has Expired", 400));
     }
 
-    console.log(req.body)
-
     if (req.body.newPassword !== req.body.confirmPassword) {
         return next(new ErrorHandler("Password does not match", 400));
     }
@@ -373,6 +371,33 @@ export const setPassword = catchAsyncErrors(async (req, res, next) => {
 export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.user._id).populate("activePlan", "planId status currentEnd");
+
+    res.status(200).json({
+        success: true,
+        user,
+    });
+});
+
+export const updateBillingInfo = catchAsyncErrors(async (req, res, next) => {
+    const { phone, street, state, city, zip, country } = req.body;
+    if (!phone || !street || !state || !city || !zip || !country) {
+        return next(new ErrorHandler("All fields are required", 400));
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user.id, 
+        { 
+            phone,
+            billingAddress : {
+                street,
+                state,
+                city,
+                zip,
+                country,
+            }
+        }, 
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
 
     res.status(200).json({
         success: true,
@@ -446,13 +471,16 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
 // Delete Account
 export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
 
+    const user = await User.findById(req.user.id);
+    if (user.isDeactivated) {
+        return next(new ErrorHandler(`You are already deactivated`, 400));
+    }
+
     await Tree.deleteMany({ user: req.user.id });
     await Personal.deleteMany({ user: req.user.id });
     await Medical.deleteMany({ user: req.user.id });
     await Creator.deleteMany({ user: req.user.id });
     await Animal.deleteMany({ user: req.user.id });
-
-    const user = await User.findById(req.user.id);
 
     user.isDeactivated = true;
     await user.save();

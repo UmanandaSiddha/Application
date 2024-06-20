@@ -19,7 +19,7 @@ import { isAuthenticatedDonator } from "../middleware/donatorAuth.js";
 const router = express.Router();
 
 router.route("/send/otp").post(sendDonatorOTP);
-router.route("/login").put(isAuthenticatedDonator, loginDonator);
+router.route("/login").put(loginDonator);
 router.route("/me").get(isAuthenticatedDonator, getDonator);
 router.route("/new").post(isAuthenticatedDonator, createDonatorDetails);
 router.route("/edit/pan").put(isAuthenticatedDonator, updatePanDetail);

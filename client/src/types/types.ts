@@ -8,6 +8,11 @@ export type User = {
     customerId: string;
     isVerified: boolean;
     accountType: string;
+    isBlocked: boolean;
+    loginAttempt: {
+        count: number;
+        time: Date;
+    }
     cards: {
         total: number;
         created: number;
@@ -16,6 +21,32 @@ export type User = {
         _id: string;
         planId: string;
         status: string;
+        currentEnd: Date;
+    }
+    freePlan: {
+        status: boolean;
+        start: Date;
+        end: Date;
+        type: string;
+    }
+    billingAddress: {
+        street: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+    }
+    phone: string;
+    orgDetails: {
+        website: string;
+        address: {
+            street: string;
+            city: string;
+            state: string;
+            postalCode: string;
+            country: string;
+        },
+        phone: string;
     }
 };
 

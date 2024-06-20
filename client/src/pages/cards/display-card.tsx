@@ -15,7 +15,7 @@ import CreatorComponent from "@/components/view-card/creator";
 import AnimalComponent from "@/components/view-card/animal";
 import MedicalComponent from "@/components/view-card/medical";
 import PersonalComponent from "@/components/view-card/personal";
-import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/types";
+import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
 
 const DisplayCard = () => {
 
@@ -29,7 +29,7 @@ const DisplayCard = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            if (["tree", "personal", "medical", "creator", "animal"].includes(type!) && id) {
+            if (["botany", "individual", "medical", "creator", "animal"].includes(type!) && id) {
                 try {
                     const { data }: { data: SingleTreeResponse | SinglePersonalResponse | SingleMedicalResponse | SingleCreatorResponse | SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/details/${id!}?type=${type}`, { withCredentials: true });
                     setCard(data.vCard);
@@ -54,9 +54,9 @@ const DisplayCard = () => {
 
     const renderCard = () => {
         switch (type) {
-            case "tree":
+            case "botany":
                 return <TreeComponent card={card as Tree} />;
-            case "personal":
+            case "individual":
                 return <PersonalComponent card={card as Personal} />;
             case "medical":
                 return <MedicalComponent card={card as MedicalType} />;

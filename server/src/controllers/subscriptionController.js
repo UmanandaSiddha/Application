@@ -225,6 +225,9 @@ export const getUserTransactions = catchAsyncErrors(async (req, res, next) => {
 
 export const getParticularTransaction = catchAsyncErrors(async (req, res, next) => {
     const transaction = await Transaction.findById(req.params.id);
+    if (!transaction) {
+        return next(new ErrorHandler(`No Transaction By Id ${req.params.id}`, 404));
+    }
 
     if (transaction.transactionFor !== subscriptionEnum.USER) {
         return next(new ErrorHandler("Transaction not found", 403));

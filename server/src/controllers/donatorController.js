@@ -10,6 +10,7 @@ import Subscription, { subscriptionEnum } from "../models/payment/subscriptionMo
 import Plan from "../models/payment/planModel.js";
 import { addDonationToQueue } from "../utils/queue/donationQueue.js";
 import logger from "../config/logger.js";
+import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 
 export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
 
@@ -20,11 +21,7 @@ export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
     const donator = await Donator.findOne({ email: req.body.email });
 
     if (!donator) {
-        donator = await Donator.create({
-            name: "donatorName",
-            email: req.body.email,
-            phone: "phoneNumber",
-        })
+        donator = await Donator.create({ email: req.body.email })
     }
 
     const otp = donator.getOneTimePassword();
@@ -67,7 +64,7 @@ export const loginDonator = catchAsyncErrors(async (req, res, next) => {
         .digest("hex");
 
     const donator = await Donator.findOne({
-        _id: req.donator.id,
+        email,
         oneTimePassword,
         oneTimeExpire: { $gt: Date.now() },
     });
@@ -85,7 +82,7 @@ export const loginDonator = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getDonator = catchAsyncErrors(async (req, res, next) => {
-    const donator = await Donator.findById(req.donator._id).populate("activeDonation", "status currentEnd");
+    const donator = await Donator.findById(req.donator._id).populate("activeDonation", "planId status currentEnd");
 
     res.status(200).json({
         success: true,

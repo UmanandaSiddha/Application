@@ -1,41 +1,41 @@
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
-import { Animal, Creator, Medical, Personal, Tree } from "../../types/types";
 import axios from "axios";
-import { AllCardsResponse } from "../../types/api-types";
+import { AllCustomReuestResponse } from "../../types/api-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { CustomReuest } from "../../types/types";
 
-const Cards = () => {
+const Custom = () => {
 
     const navigate = useNavigate();
-    const [cards, setCards] = useState<Tree[] | Personal[] | Medical[] | Creator[] | Animal[]>();
+    const [requests, setRequests] = useState<CustomReuest[]>();
 
-    const gotCards = async () => {
+    const fetchRequests = async () => {
         try {
-            const { data }: { data: AllCardsResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/cards/all`, { withCredentials: true });
-            setCards(data.cards);
-            const localCards = {
+            const { data }: { data: AllCustomReuestResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/requests/all`, { withCredentials: true });
+            setRequests(data.requests);
+            const localRequests = {
                 created: Date.now() + 30 * 1000,
-                data: data.cards,
+                data: data.requests,
             }
-            window.localStorage.setItem("all_cards", JSON.stringify(localCards));
+            window.localStorage.setItem("all_requests", JSON.stringify(localRequests));
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
     }
 
     useEffect(() => {
-        const userData = window.localStorage.getItem("all_cards");
-        if (userData) {
-            if (JSON.parse(userData)?.created < Date.now()) {
-                window.localStorage.removeItem("all_cards");
-                gotCards();
+        const requestData = window.localStorage.getItem("all_requests");
+        if (requestData) {
+            if (JSON.parse(requestData)?.created < Date.now()) {
+                window.localStorage.removeItem("all_requests");
+                fetchRequests();
             } else {
-                setCards(JSON.parse(userData).data);
+                setRequests(JSON.parse(requestData).data);
             }
         } else {
-            gotCards();
+            fetchRequests();
         }
     }, []);
 
@@ -51,40 +51,40 @@ const Cards = () => {
 
                     <div className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
                         <div className="col-span-2 flex items-center">
-                            <p className="font-medium">Name</p>
+                            <p className="font-medium">Cards</p>
                         </div>
                         <div className="col-span-2 hidden items-center sm:flex">
-                            <p className="font-medium">Card Type</p>
+                            <p className="font-medium">Amount</p>
                         </div>
                         <div className="col-span-2 hidden items-center sm:flex">
-                            <p className="font-medium">Created</p>
+                            <p className="font-medium">Period</p>
                         </div>
                         <div className="col-span-2 flex items-center">
-                            <p className="font-medium">Creator</p>
+                            <p className="font-medium">Interval</p>
                         </div>
                     </div>
 
-                    {cards?.map((card, key) => (
+                    {requests?.map((request, key) => (
                         <div
                             className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
                             key={key}
-                            onClick={() => navigate(`/card-details?id=${card._id}&type=${card.type}`)}
+                            onClick={() => navigate(`/request-details?id=${request._id}`)}
                         >
                             <div className="col-span-2 flex items-center">
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                                     <p className="text-sm text-black dark:text-white">
-                                        {card.name}
+                                        {request.cards}
                                     </p>
                                 </div>
                             </div>
                             <div className="col-span-2 hidden items-center sm:flex">
                                 <p className="text-sm text-black dark:text-white">
-                                    {card.type.toUpperCase()}
+                                    {request.amount}
                                 </p>
                             </div>
                             <div className="col-span-2 hidden items-center sm:flex">
                                 <p className="text-sm text-black dark:text-white">
-                                    {String(new Date(card.createdAt).toLocaleDateString())}
+                                    {request.period}
                                 </p>
                             </div>
                             <div className="col-span-2 flex items-center">
@@ -92,10 +92,10 @@ const Cards = () => {
                                     className="text-sm text-meta-3 cursor-pointer"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(`/card-details?id=${card.user._id}`);
+                                        navigate(`/card-details?id=${request.user._id}`);
                                     }}
                                 >
-                                    {card.user._id}
+                                    {request.interval}
                                 </p>
                             </div>
                         </div>
@@ -106,4 +106,4 @@ const Cards = () => {
     )
 }
 
-export default Cards;
+export default Custom;

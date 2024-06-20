@@ -1,23 +1,18 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
 import validator from "validator";
+import jwt from "jsonwebtoken";
 
 const donatorSchema = new mongoose.Schema(
     {
-        name: {
-            type: String,
-            required: [true, "Enter Donator Name"]
-        },
+        name: String,
         email: {
             type: String,
             required: [true, "Enter Donator Email"],
             unique: true,
             validate: [validator.isEmail, "Please enter a valid Email"],
         },
-        phone: {
-            type: String,
-            required: [true, "Enter Donator Phone"]
-        },
+        phone: String,
         address: {
             street: String,
             city: String,

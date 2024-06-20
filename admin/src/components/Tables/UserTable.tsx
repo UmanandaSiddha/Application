@@ -41,7 +41,13 @@ const UserTable = ({users}: PropTypes) => {
                     <div className="col-span-3 flex items-center">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                             <div className="h-12.5 w-15 rounded-md hidden items-center sm:flex">
-                                <img className="h-15 w-15 rounded-full" src={user.image} alt={user.name} />
+                                {user.image ? (
+                                    <img className="h-15 w-15 rounded-full" src={user.image} alt={user.name} />
+                                ) : (
+                                    <p className="h-15 w-15 rounded-full flex items-center text-2xl font-semibold bg-slate-300 dark:bg-slate-500 justify-center">
+                                        {user.name.charAt(0).toUpperCase()}
+                                    </p>
+                                )}
                             </div>
                             <p className="text-sm text-black dark:text-white">
                                 {user.name}
