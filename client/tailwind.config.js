@@ -44,8 +44,5 @@ module.exports = {
       'tab': '815px'
     }
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    require('@tailwindcss/forms'),
-  ],
+  plugins: [require("tailwindcss-animate")],
 }

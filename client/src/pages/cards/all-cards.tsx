@@ -158,8 +158,7 @@ const AllCards = () => {
       ) {
         try {
           const { data }: { data: CardType } = await axios.get(
-            `${
-              import.meta.env.VITE_BASE_URL
+            `${import.meta.env.VITE_BASE_URL
             }/cards/user?page=${currentPage}&type=${type}`,
             { withCredentials: true }
           );
@@ -233,139 +232,83 @@ const AllCards = () => {
       <div className="lg:flex lg:flex-row lg:w-full lg:mt-2 lg:max-h-screen tab:flex tab:flex-row">
         <div className="lg:flex lg:flex-col lg:w-full tab:basis-3/4 tab:mt-[2rem] lg:mt-0">
           <div className="tab:flex tab:flex-row tab:justify-center">
-          <div
-            className={`font-Kanit tab:w-[90%] lg:w-full tab:pt-[5rem] lg:pt-0 ${
-              showOther ? "h-[6rem]" : "h-[34rem] rounded-b-[4rem]"
-            } lg:shadow-xl tab:rounded-none z-10 relative shadow-lg tab:rounded-t-xl bg-${color}-200`}
-          >
-            <div className="py-4 flex justify-center">
-              <div className="flex justify-center basis-1/2">
-                <button
-                  onClick={() => setShowOther(false)}
-                  className={`px-4 py-4 rounded-2xl hover:cursor-pointer ${
-                    !showOther &&
-                    `shadow-lg bg-${color}-500 hover:bg-${color}-600`
-                  }`}
-                >
-                  <div className="flex flex-row">
-                    <div className="flex items-center px-2">
-                      <BsQrCodeScan
-                        className={`w-[1rem] h-[1rem] ${
-                          !showOther && "text-white"
-                        }`}
-                      />
-                    </div>
-                    <div
-                      className={`flex items-center font-semibold ${
-                        !showOther && "text-white"
+            <div
+              className={`font-Kanit tab:w-[90%] lg:w-full tab:pt-[5rem] lg:pt-0 ${showOther ? "h-[6rem]" : "h-[34rem] rounded-b-[4rem]"
+                } lg:shadow-xl tab:rounded-none z-10 relative shadow-lg tab:rounded-t-xl bg-${color}-200`}
+            >
+              <div className="py-4 flex justify-center">
+                <div className="flex justify-center basis-1/2">
+                  <button
+                    onClick={() => setShowOther(false)}
+                    className={`px-4 py-4 rounded-2xl hover:cursor-pointer ${!showOther &&
+                      `shadow-lg bg-${color}-500 hover:bg-${color}-600`
                       }`}
-                    >
-                      {type && type.charAt(0).toUpperCase() + type.slice(1)}{" "}
-                      Data
-                    </div>
-                  </div>
-                </button>
-              </div>
-
-              <div className="basis-1/2 flex justify-center tab:hidden">
-                <button
-                  onClick={() => setShowOther(true)}
-                  className={`px-4 py-4 rounded-2xl hover:cursor-pointer ${
-                    showOther &&
-                    `shadow-lg bg-${color}-500 hover:bg-${color}-600`
-                  }`}
-                >
-                  <div className={`flex flex-row text-${color}-700`}>
-                    <div className="flex items-center px-2">
-                      <BsQrCodeScan
-                        className={`w-[1rem] h-[1rem] ${
-                          showOther && "text-white"
-                        }`}
-                      />
-                    </div>
-                    <div
-                      className={`flex items-center font-semibold ${
-                        showOther && "text-white"
-                      }`}
-                    >
-                      Other QRs
-                    </div>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {!showOther && (
-              <div className="flex flex-col py-6">
-                <div className="flex justify-center">
-                  <p className="">Share this QR Code to share your</p>
-                </div>
-                <div className="flex justify-center font-bold text-2xl font-Alice">
-                  {type && type.charAt(0).toUpperCase() + type.slice(1)} Data
-                </div>
-              </div>
-            )}
-
-            {!showOther && (
-              <div className="flex flex-row pt-10 pb-6 tab:hidden">
-                <div className="basis-1/5 flex items-center justify-center">
-                  <div
-                    className={`w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer ${
-                      !isPaid && user?.role !== "admin"
-                        ? "hover:cursor-not-allowed"
-                        : "hover:cursor-pointer"
-                    }`}
                   >
-                    <IoIosArrowBack
-                      className={`w-[2rem] h-[2rem]`}
-                      onClick={prevQR}
-                    />
-                  </div>
-                </div>
-                <div className="basis-3/5 relative h-[14rem] ">
-                  <div className="flex flex-row justify-center">
-                    {cards?.map((card, index) => (
-                      <div
-                        className={`absolute block ml-[calc(-100%*${index})]${
-                          index === currentIndex ? "" : " hidden"
-                        }`}
-                        key={index}
-                      >
-                        <VCard
-                          key={card._id}
-                          type={type!}
-                          card={card}
-                          isPaid={isPaid}
-                          user={user!}
+                    <div className="flex flex-row">
+                      <div className="flex items-center px-2">
+                        <BsQrCodeScan
+                          className={`w-[1rem] h-[1rem] ${!showOther && "text-white"
+                            }`}
                         />
                       </div>
-                    ))}
-                  </div>
+                      <div
+                        className={`flex items-center font-semibold ${!showOther && "text-white"
+                          }`}
+                      >
+                        {type && type.charAt(0).toUpperCase() + type.slice(1)}{" "}
+                        Data
+                      </div>
+                    </div>
+                  </button>
                 </div>
-                <div className="basis-1/5 flex justify-center items-center">
-                  <div className="w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer">
-                    <MdOutlineNavigateNext
-                      className="w-[2rem] h-[2rem]"
-                      onClick={nextQR}
-                    />
-                  </div>
+
+                <div className="basis-1/2 flex justify-center tab:hidden">
+                  <button
+                    onClick={() => setShowOther(true)}
+                    className={`px-4 py-4 rounded-2xl hover:cursor-pointer ${showOther &&
+                      `shadow-lg bg-${color}-500 hover:bg-${color}-600`
+                      }`}
+                  >
+                    <div className={`flex flex-row text-${color}-700`}>
+                      <div className="flex items-center px-2">
+                        <BsQrCodeScan
+                          className={`w-[1rem] h-[1rem] ${showOther && "text-white"
+                            }`}
+                        />
+                      </div>
+                      <div
+                        className={`flex items-center font-semibold ${showOther && "text-white"
+                          }`}
+                      >
+                        Other QRs
+                      </div>
+                    </div>
+                  </button>
                 </div>
               </div>
-            )}
 
-            <div className={`tab:flex tab:flex-col hidden tab:rounded-b-xl tab:pb-[7rem] lg:pb-0 bg-${color}-200`}>
-              <div>
-                <div className="flex flex-row pt-10 pb-6">
+              {!showOther && (
+                <div className="flex flex-col py-6">
+                  <div className="flex justify-center">
+                    <p className="">Share this QR Code to share your</p>
+                  </div>
+                  <div className="flex justify-center font-bold text-2xl font-Alice">
+                    {type && type.charAt(0).toUpperCase() + type.slice(1)} Data
+                  </div>
+                </div>
+              )}
+
+              {!showOther && (
+                <div className="flex flex-row pt-10 pb-6 tab:hidden">
                   <div className="basis-1/5 flex items-center justify-center">
                     <div
-                      className={`w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer ${
-                        !isPaid && user?.role !== "admin"
+                      className={`w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer ${!isPaid && user?.role !== "admin"
                           ? "hover:cursor-not-allowed"
                           : "hover:cursor-pointer"
-                      }`}
+                        }`}
                     >
                       <IoIosArrowBack
-                        className="w-[2rem] h-[2rem]"
+                        className={`w-[2rem] h-[2rem]`}
                         onClick={prevQR}
                       />
                     </div>
@@ -374,9 +317,8 @@ const AllCards = () => {
                     <div className="flex flex-row justify-center">
                       {cards?.map((card, index) => (
                         <div
-                          className={`absolute block ml-[calc(-100%*${index})]${
-                            index === currentIndex ? "" : " hidden"
-                          }`}
+                          className={`absolute block ml-[calc(-100%*${index})]${index === currentIndex ? "" : " hidden"
+                            }`}
                           key={index}
                         >
                           <VCard
@@ -391,13 +333,7 @@ const AllCards = () => {
                     </div>
                   </div>
                   <div className="basis-1/5 flex justify-center items-center">
-                    <div
-                      className={`w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer ${
-                        !isPaid && user?.role !== "admin"
-                          ? "hover:cursor-not-allowed"
-                          : "hover:cursor-pointer"
-                      }`}
-                    >
+                    <div className="w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer">
                       <MdOutlineNavigateNext
                         className="w-[2rem] h-[2rem]"
                         onClick={nextQR}
@@ -405,61 +341,112 @@ const AllCards = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
-              <div className={`-mb-4`}>
-                <div className="py-6 -mt-[2rem]">
-                  <div className="mt-[4rem] flex flex-row">
-                    <div className="basis-1/2 flex justify-end pr-[2rem]">
-                      <button
-                        className={`px-10 pt-2 pb-4 rounded-md hover:cursor-pointer text-white shadow-lg bg-${color}-500 hover:bg-${color}-600 disabled:bg-${color}-500 disabled:hover:cursor-not-allowed `}
-                        disabled={!isPaid && user?.role !== "admin"}
+              <div className={`tab:flex tab:flex-col hidden tab:rounded-b-xl tab:pb-[7rem] lg:pb-0 bg-${color}-200`}>
+                <div>
+                  <div className="flex flex-row pt-10 pb-6">
+                    <div className="basis-1/5 flex items-center justify-center">
+                      <div
+                        className={`w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer ${!isPaid && user?.role !== "admin"
+                            ? "hover:cursor-not-allowed"
+                            : "hover:cursor-pointer"
+                          }`}
                       >
-                        <div className="flex flex-col">
-                          <div className="flex justify-center items-center">
-                            <IoShareOutline className="w-[1.5rem] h-[1.5rem] pr-2" />
-                          </div>
-                          <div className="flex items-center font-semibold">
-                            Share Card
-                          </div>
-                        </div>
-                      </button>
+                        <IoIosArrowBack
+                          className="w-[2rem] h-[2rem]"
+                          onClick={prevQR}
+                        />
+                      </div>
                     </div>
-                    <div className="basis-1/2 flex justify-start pl-[1rem]">
-                      <button
-                        className={`px-8 pt-2 pb-4 mr-8 rounded-md hover:cursor-pointer text-white shadow-xl bg-${color}-500 hover:bg-${color}-600 disabled:bg-${color}-500 disabled:hover:cursor-not-allowed`}
-                        disabled={!isPaid || user?.role !== "admin"}
+                    <div className="basis-3/5 relative h-[14rem] ">
+                      <div className="flex flex-row justify-center">
+                        {cards?.map((card, index) => (
+                          <div
+                            className={`absolute block ml-[calc(-100%*${index})]${index === currentIndex ? "" : " hidden"
+                              }`}
+                            key={index}
+                          >
+                            <VCard
+                              key={card._id}
+                              type={type!}
+                              card={card}
+                              isPaid={isPaid}
+                              user={user!}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="basis-1/5 flex justify-center items-center">
+                      <div
+                        className={`w-[2.5rem] h-[2.5rem] rounded-full bg-slate-300 flex justify-center items-center hover:cursor-pointer ${!isPaid && user?.role !== "admin"
+                            ? "hover:cursor-not-allowed"
+                            : "hover:cursor-pointer"
+                          }`}
                       >
-                        <div className="flex flex-col">
-                          <div className="flex justify-center items-center">
-                            <IoDownloadOutline className="w-[1.5rem] h-[1.5rem] pr-2" />
-                          </div>
-                          <div className="flex items-center font-semibold">
-                            Download Card
-                          </div>
-                        </div>
-                      </button>
+                        <MdOutlineNavigateNext
+                          className="w-[2rem] h-[2rem]"
+                          onClick={nextQR}
+                        />
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="">
-                    <div className="w-full">
-                      <div className="flex justify-center w-full py-6">
+                <div className={`-mb-4`}>
+                  <div className="py-6 -mt-[2rem]">
+                    <div className="mt-[4rem] flex flex-row">
+                      <div className="basis-1/2 flex justify-end pr-[2rem]">
                         <button
-                          className={`px-[8rem] py-2 text-white rounded-md hover:cursor-pointer text-lg font-Kanit shadow-lg ${type === "botanical" && "bg-green-500"} bg-${color}-500 hover:bg-${color}-600`}
-                          onClick={() => {
-                            navigate(`/dashboard/${type}/create`);
-                          }}
+                          className={`px-10 pt-2 pb-4 rounded-md hover:cursor-pointer text-white shadow-lg bg-${color}-500 hover:bg-${color}-600 disabled:bg-${color}-500 disabled:hover:cursor-not-allowed `}
+                          disabled={!isPaid && user?.role !== "admin"}
                         >
-                          Add a new Vcard
+                          <div className="flex flex-col">
+                            <div className="flex justify-center items-center">
+                              <IoShareOutline className="w-[1.5rem] h-[1.5rem] pr-2" />
+                            </div>
+                            <div className="flex items-center font-semibold">
+                              Share Card
+                            </div>
+                          </div>
                         </button>
+                      </div>
+                      <div className="basis-1/2 flex justify-start pl-[1rem]">
+                        <button
+                          className={`px-8 pt-2 pb-4 mr-8 rounded-md hover:cursor-pointer text-white shadow-xl bg-${color}-500 hover:bg-${color}-600 disabled:bg-${color}-500 disabled:hover:cursor-not-allowed`}
+                          disabled={!isPaid || user?.role !== "admin"}
+                        >
+                          <div className="flex flex-col">
+                            <div className="flex justify-center items-center">
+                              <IoDownloadOutline className="w-[1.5rem] h-[1.5rem] pr-2" />
+                            </div>
+                            <div className="flex items-center font-semibold">
+                              Download Card
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="">
+                      <div className="w-full">
+                        <div className="flex justify-center w-full py-6">
+                          <button
+                            className={`px-[8rem] py-2 text-white rounded-md hover:cursor-pointer text-lg font-Kanit shadow-lg ${type === "botanical" && "bg-green-500"} bg-${color}-500 hover:bg-${color}-600`}
+                            onClick={() => {
+                              navigate(`/dashboard/${type}/create`);
+                            }}
+                          >
+                            Add a new Vcard
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
 
@@ -515,9 +502,8 @@ const AllCards = () => {
         )}
 
         <div
-          className={`${
-            showOther ? "block" : "hidden"
-          } tab:block lg:block lg:basis-1/2 lg:w-full tab:basis-1/4 tab:min-h-screen`}
+          className={`${showOther ? "block" : "hidden"
+            } tab:block lg:block lg:basis-1/2 lg:w-full tab:basis-1/4 tab:min-h-screen`}
         >
           <OtherQR cards={cards!} isPaid={isPaid} user={user!} type={type!} />
         </div>
