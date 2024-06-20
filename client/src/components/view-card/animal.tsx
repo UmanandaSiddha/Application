@@ -15,7 +15,7 @@ const AnimalComponent = ({ card }: PropsType) => {
           <h1 className="font-Alice pl-6">{card?.name}</h1>
         </div>
       </div>
-      <div className="relative flex justify-center lg:mb-2 lg:rounded-b-xl bg-orange-100 font-Kanit -mt-[4rem]">
+      <div className="relative flex justify-center lg:rounded-b-xl bg-orange-100 font-Kanit -mt-[4rem] tab:pb-[4rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
             <div className="flex justify-start">

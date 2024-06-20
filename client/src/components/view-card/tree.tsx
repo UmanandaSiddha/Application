@@ -7,15 +7,15 @@ interface PropsType {
 const TreeComponent = ({ card }: PropsType) => {
   return (
     <>
-      <div className="relative flex flex-col w-full bg-green-300 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
+      <div className="relative flex flex-col w-full bg-green-300 py-4 rounded-br-[3rem] tab:pt-[2rem] rounded-bl-[3rem] z-10 shadow-lg">
         <div className="flex justify-start font-Kanit pl-6 py-4">
-          <p className="">Botanical Data</p>
+          <p className="text-[1.1rem]">Botanical Data</p>
         </div>
         <div className="flex justify-start font-Kanit text-5xl font-bold mb-10">
           <h1 className="font-Alice pl-6">{card?.name}</h1>
         </div>
       </div>
-      <div className="relative flex justify-center lg:mb-2 lg:rounded-b-xl bg-yellow-100 font-Kanit -mt-[4rem]">
+      <div className="relative flex justify-center lg:mb-2 tab:pb-[4rem] lg:pb-0 lg:rounded-b-xl bg-yellow-100 font-Kanit -mt-[4rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
             <div className="flex justify-start">

@@ -28,7 +28,7 @@ const CreatorComponent = ({ card }: PropsType) => {
         </div>
       </div>
 
-      <div className="relative flex justify-center bg-violet-400 lg:mb-2 lg:rounded-b-xl font-Kanit -mt-[4rem] lg:pb-[8rem]">
+      <div className="relative flex justify-center bg-violet-400 lg:rounded-b-xl font-Kanit -mt-[4rem] lg:pb-[8rem] tab:pb-[8rem]">
         <div className="flex flex-col w-[90%] mt-[6rem]">
           <div className="flex flex-col w-full py-2">
             <div className="lg:flex lg:justify-center">

@@ -117,26 +117,27 @@ const ViewCard = () => {
 
   return (
     <>
-      <div className="w-full lg:-ml-[1rem] h-full lg:flex lg:flex-row">
-        <div className="lg:basis-5/6 lg:overflow-y-auto lg:mt-2 lg:rounded-tl-2xl">
+    <div className="tab:flex tab:justify-center">
+      <div className="w-full tab:-ml-[1rem] tab:w-[80%] lg:w-full h-full tab:flex tab:flex-row lg:mb-[2rem]">
+        <div className="tab:basis-5/6 tab:overflow-y-auto tab:mt-2 tab:rounded-tl-[4rem] lg:rounded-tl-[2rem] lg:rounded-br-[2rem] tab:rounded-br-[4rem]">
           {loading ? <Loader /> : <>{renderCard()}</>}
         </div>
         <div
-          className={`lg:basis-1/6 lg:w-[60%] lg:h-[45%] lg:items-center lg:mt-2 lg:rounded-r-2xl ${
+          className={`tab:basis-1/6 tab:w-[60%] tab:h-[45%] tab:items-center tab:mt-2 tab:rounded-r-2xl ${
             type === "tree" && "bg-green-400"
           } ${type === "medical" && "bg-violet-300"} ${type === "personal" && "bg-blue-300"} ${type === "creator" && "bg-violet-300"} ${type === "animal" && "bg-orange-200"}`}
         >
           <div
-            className={`flex flex-row lg:hidden lg:bottom-0 lg:w-2/5 lg:mb-3 lg:rounded-2xl py-2 ${
+            className={`flex flex-row tab:hidden tab:bottom-0 tab:w-2/5 tab:mb-3 tab:rounded-2xl py-2 ${
               type === "tree" && "bg-yellow-200"
             } ${type === "animal" && "bg-orange-100"} ${
               type === "creator" && "bg-violet-600"
-            } ${type === "medical" && "bg-violet-400 lg:bg-violet-500"} ${
+            } ${type === "medical" && "bg-violet-400 tab:bg-violet-500"} ${
               type === "personal" && "bg-blue-300"
             }`}
           >
             <div
-              className={`basis-1/3 w-full py-2 flex justify-center lg:items-center`}
+              className={`basis-1/3 w-full py-2 flex justify-center tab:items-center`}
             >
               <div className="">
                 <a href={qr} download={`${card?._id}.png`}>
@@ -154,7 +155,7 @@ const ViewCard = () => {
               </div>
             </div>
             <div
-              className={`basis-1/3 w-full py-2 flex justify-center lg:items-center`}
+              className={`basis-1/3 w-full py-2 flex justify-center tab:items-center`}
             >
               <button
                 className="py-4 px-4 bg-slate-300 font-Kanit rounded-full hover:cursor-pointer shadow-xl"
@@ -169,7 +170,7 @@ const ViewCard = () => {
               </button>
             </div>
             <div
-              className={`basis-1/3 w-full flex lg:items-center justify-center`}
+              className={`basis-1/3 w-full flex tab:items-center justify-center`}
             >
               <button
                 className=" bg-red-300 text-white font-Kanit px-4 py-4 rounded-full hover:cursor-pointer shadow-xl"
@@ -184,9 +185,9 @@ const ViewCard = () => {
               </button>
             </div>
           </div>
-          <div className="hidden lg:flex lg:flex-col lg:items-center lg:justify-center">
+          <div className="hidden tab:flex tab:flex-col tab:items-center tab:justify-center">
           <div
-              className={`basis-1/3 w-full py-2 flex lg:flex-col justify-center my-2 lg:items-center`}
+              className={`basis-1/3 w-full py-2 flex tab:flex-col justify-center my-2 tab:items-center`}
             >
               <div className="">
                 <a href={qr} download={`${card?._id}.png`}>
@@ -202,10 +203,10 @@ const ViewCard = () => {
                   </button>
                 </a>
               </div>
-              <div className="font-Philosopher lg:mt-2">Download</div>
+              <div className="font-Philosopher tab:mt-2">Download</div>
             </div>
             <div
-              className={`basis-1/3 w-full py-2 flex flex-col justify-center lg:items-center my-2`}
+              className={`basis-1/3 w-full py-2 flex flex-col justify-center tab:items-center my-2`}
             >
               <div className="">
               <button
@@ -220,10 +221,10 @@ const ViewCard = () => {
                 </div>
               </button>
               </div>
-              <div className="font-Philosopher lg:mt-2">Edit</div>
+              <div className="font-Philosopher tab:mt-2">Edit</div>
             </div>
             <div
-              className={`basis-1/3 w-full flex lg:items-center flex-col justify-center my-2`}
+              className={`basis-1/3 w-full flex tab:items-center flex-col justify-center my-2`}
             >
               <div className="">
               <button
@@ -238,11 +239,12 @@ const ViewCard = () => {
                 </div>
               </button>
               </div>
-              <div className="font-Philosopher lg:mt-2">Delete</div>
+              <div className="font-Philosopher tab:mt-2">Delete</div>
             </div>
           </div>
         </div>
       </div>
+    </div>
     </>
   );
 };
