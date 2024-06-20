@@ -207,11 +207,11 @@ const PersonalComponent = ({ card }: PropsType) => {
 
   return (
     <>
-      <div className="relative flex flex-col w-full bg-blue-500 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-xl">
-        <div className="flex justify-start font-Kanit pl-6 py-4">
+      <div className="relative flex flex-col w-full bg-blue-500 py-4 rounded-br-[4rem] tab:pt-[2rem] rounded-bl-[3rem] z-10 shadow-xl">
+        <div className="flex justify-start font-Kanit pl-10 py-4">
           <p className="font-bold text-white">Individual Data</p>
         </div>
-        <div className="lex justify-start text-5xl font-bold mt-3 mb-10">
+        <div className="flex justify-start text-5xl font-bold mt-3 mb-10">
           <h1 className="font-Philosopher pl-10 text-white">{card?.name}</h1>
         </div>
       </div>

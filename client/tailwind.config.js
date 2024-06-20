@@ -40,7 +40,8 @@ module.exports = {
     },
     screens: {
       'lg' : '1030px',
-      'md': '730px'
+      'md': '730px',
+      'tab': '815px'
     }
   },
   plugins: [require("tailwindcss-animate")],
