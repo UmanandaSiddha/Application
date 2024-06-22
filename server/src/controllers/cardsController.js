@@ -30,10 +30,13 @@ const selectModelByType = (type) => {
 
 export const createCard = catchAsyncErrors(async (req, res, next) => {
     const Model = selectModelByType(req.query.type);
+    if (!Model) {
+        return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
+    }
 
     const user = await User.findById(req.user.id);
 
-    if (user.freePlan.type === freeEnum.CUSTOM && user.cards.total <= user.cards.created) {
+    if (user.freePlan.type === freeEnum.PLAN && user.cards.total <= user.cards.created) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
 
@@ -49,6 +52,10 @@ export const createCard = catchAsyncErrors(async (req, res, next) => {
 
 export const updateCard = catchAsyncErrors(async (req, res, next) => {
     const Model = selectModelByType(req.query.type);
+    if (!Model) {
+        return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
+    }
+
     const vCard = await Model.findById(req.params.id);
 
     if (!vCard) {
@@ -57,7 +64,7 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findById(req.user.id);
 
-    if (user.freePlan.type === freeEnum.CUSTOM && user.cards.total <= user.cards.created) {
+    if (user.freePlan.type === freeEnum.PLAN && user.cards.total <= user.cards.created) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
 
@@ -74,26 +81,7 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const deleteCard = catchAsyncErrors(async (req, res, next) => {
-    // const Model = selectModelByType(req.query.type);
-    let Model;
-    switch (req.query.type) {
-        case 'botanical':
-            Model = Tree;
-            break;
-        case 'individual':
-            Model = Personal;
-            break;
-        case 'medical':
-            Model = Medical;
-            break;
-        case 'creator':
-            Model = Creator;
-            break;
-        case 'animal':
-            Model = Animal;
-            break;
-    }
-    
+    const Model = selectModelByType(req.query.type);
     if (!Model) {
         return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
     }
@@ -106,11 +94,7 @@ export const deleteCard = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id);
     
     await Model.findByIdAndDelete(req.params.id);
-    if (user.freePlan.status && user.freePlan.type !== freeEnum.CUSTOM) {
-        user.cards.created--;
-    } else {
-        user.cards.created--;
-    }
+    user.cards.created--;
     await user.save();
 
     res.status(200).json({
@@ -121,6 +105,9 @@ export const deleteCard = catchAsyncErrors(async (req, res, next) => {
 
 export const getUserCards = catchAsyncErrors(async (req, res, next) => {
     const Model = selectModelByType(req.query.type);
+    if (!Model) {
+        return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
+    }
 
     const resultPerPage = 5;
     const vCardCount = await Model.countDocuments({ user: req.user.id });
@@ -137,6 +124,9 @@ export const getUserCards = catchAsyncErrors(async (req, res, next) => {
 
 export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
     const Model = selectModelByType(req.query.type);
+    if (!Model) {
+        return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
+    }
 
     const vCard = await Model.findById(req.params.id);
     if (!vCard) {
@@ -168,6 +158,9 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
 
 export const getGeneralCard = catchAsyncErrors(async (req, res, next) => {
     const Model = selectModelByType(req.query.type);
+    if (!Model) {
+        return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
+    }
 
     const vCard = await Model.findById(req.params.id);
     if (!vCard) {

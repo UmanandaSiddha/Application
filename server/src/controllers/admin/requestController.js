@@ -59,6 +59,27 @@ export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+export const getAllCustomRequests = catchAsyncErrors(async (req, res, next) => {
+    const requests = await CustomRequest.find();
+
+    res.status(200).json({
+        success: true,
+        requests,
+    });
+});
+
+export const getaprticularRequest = catchAsyncErrors(async (req, res, next) => {
+    const request = await CustomRequest.findById(req.params.id);
+    if (!request) {
+        return next(new ErrorHandler("Request not found", 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        request,
+    });
+});
+
 export const attendCustomRequests = catchAsyncErrors(async (rqe, res, next) => {
     await CustomRequest.findByIdAndUpdate(
         req.params.id, 

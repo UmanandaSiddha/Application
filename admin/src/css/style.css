@@ -6,6 +6,11 @@
   body {
     @apply font-satoshi font-normal text-base text-body bg-whiten relative z-1;
   }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 @layer components {

@@ -1,4 +1,4 @@
-import { Personal } from "@/types/types";
+import { Personal } from "@/types/card_types";
 import { useState } from "react";
 import { FaInstagram } from "react-icons/fa";
 import { FaYoutube } from "react-icons/fa";

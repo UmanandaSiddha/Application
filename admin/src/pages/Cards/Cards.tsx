@@ -11,7 +11,7 @@ const Cards = () => {
     const navigate = useNavigate();
     const [cards, setCards] = useState<Tree[] | Personal[] | Medical[] | Creator[] | Animal[]>();
 
-    const gotCards = async () => {
+    const fetchCards = async () => {
         try {
             const { data }: { data: AllCardsResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/cards/all`, { withCredentials: true });
             setCards(data.cards);
@@ -30,12 +30,12 @@ const Cards = () => {
         if (userData) {
             if (JSON.parse(userData)?.created < Date.now()) {
                 window.localStorage.removeItem("all_cards");
-                gotCards();
+                fetchCards();
             } else {
                 setCards(JSON.parse(userData).data);
             }
         } else {
-            gotCards();
+            fetchCards();
         }
     }, []);
 

@@ -30,7 +30,7 @@ const CreateTree = () => {
 
     const navigate = useNavigate();
     const [search] = useSearchParams();
-    const id = search.get("treeId");
+    const id = search.get("botanicalId");
     const [isTree, setIsTree] = useState<boolean>(id ? true : false);
     const [treeLoading, setTreeLoading] = useState<boolean>(false);
 
@@ -48,9 +48,10 @@ const CreateTree = () => {
         const fetchTree = async () => {
             if (id) {
                 try {
-                    const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=tree`, { withCredentials: true });
+                    const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=botanical`, { withCredentials: true });
                     setIsTree(true);
                     reset(data.vCard);
+                    console.log(data.vCard)
                 } catch (error: any) {
                     toast.error(error.response.data.message);
                 }
@@ -65,6 +66,7 @@ const CreateTree = () => {
             } else {
                 setIsTree(true);
                 reset(cardDataParsed);
+                console.log(cardDataParsed)
             }
         } else {
             fetchTree();
@@ -88,16 +90,16 @@ const CreateTree = () => {
             user: user?._id,
         };
 
-        if (!isPaid && user?.role !== "admin") {
+        if (!user?.freePlan.status && !isPaid && user?.role !== "admin") {
             navigate("/plans");
         } else {
             try {
                 if (isTree) {
-                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=tree`, treeData, { withCredentials: true });
-                    toast.success("Tree VCard Updated");
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=botanical`, treeData, { withCredentials: true });
+                    toast.success("Botanical VCard Updated");
                 } else {
-                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=tree`, treeData, { withCredentials: true });
-                    toast.success("Tree VCard Created");
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=botanical`, treeData, { withCredentials: true });
+                    toast.success("Botanical VCard Created");
                 }
                 navigate(-1);
             } catch (error: any) {

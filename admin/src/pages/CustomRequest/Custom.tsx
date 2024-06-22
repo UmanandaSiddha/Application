@@ -13,7 +13,7 @@ const Custom = () => {
 
     const fetchRequests = async () => {
         try {
-            const { data }: { data: AllCustomReuestResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/requests/all`, { withCredentials: true });
+            const { data }: { data: AllCustomReuestResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/request/all`, { withCredentials: true });
             setRequests(data.requests);
             const localRequests = {
                 created: Date.now() + 30 * 1000,
@@ -45,7 +45,7 @@ const Custom = () => {
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div className="py-6 px-4 md:px-6 xl:px-7.5">
                         <h4 className="text-xl font-semibold text-black dark:text-white">
-                            All Cards
+                            All Requests
                         </h4>
                     </div>
 

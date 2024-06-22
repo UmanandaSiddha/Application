@@ -439,7 +439,7 @@ const convertToStrings = (data: any) => {
 const InputVCard = () => {
   const navigate = useNavigate();
   const [search] = useSearchParams();
-  const id = search.get("personalId");
+  const id = search.get("individualId");
   const [progressBar, setProgressBar] = useState<number>(1);
   const [isPersonal, setIsPersonal] = useState<boolean>(id ? true : false);
   const [personalLoading, setPersonalLoading] = useState<boolean>(false);
@@ -477,7 +477,7 @@ const InputVCard = () => {
           const { data }: { data: SinglePersonalResponse } = await axios.get(
             `${
               import.meta.env.VITE_BASE_URL
-            }/cards/detailed/${id}?type=personal`,
+            }/cards/detailed/${id}?type=individual`,
             { withCredentials: true }
           );
           setIsPersonal(true);
@@ -552,18 +552,18 @@ const InputVCard = () => {
       try {
         if (isPersonal) {
           await axios.put(
-            `${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=personal`,
+            `${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=individual`,
             personalData,
             { withCredentials: true }
           );
-          toast.success("Personal VCards updated!");
+          toast.success("Individual VCards updated!");
         } else {
           await axios.post(
-            `${import.meta.env.VITE_BASE_URL}/cards/new?type=personal`,
+            `${import.meta.env.VITE_BASE_URL}/cards/new?type=individual`,
             personalData,
             { withCredentials: true }
           );
-          toast.success("Personal VCards created!");
+          toast.success("Individual VCards created!");
         }
         navigate(-1);
       } catch (error: any) {

@@ -5,7 +5,6 @@ import { RootState } from "./redux/store";
 import { userExist, userNotExist } from "./redux/reducer/userReducer";
 
 import Header from "./components/rest/header";
-import Footer from "./components/rest/footer";
 import Loader from "./components/rest/loader";
 import ProtectedRoute from "./components/rest/protected-route";
 
@@ -368,7 +367,6 @@ const App = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-        {/* <Footer /> */}
       </ErrorBoundary>
     </div>
   );

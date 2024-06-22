@@ -13,14 +13,17 @@ import Loader from './components/Loader';
 import ErrorBoundary from './components/error-boundary';
 import ProtectedRoute from './components/protected-route';
 
-const SignIn = lazy(() => import ("./pages/Authentication/SignIn"));
-const Profile = lazy(() => import ("./pages/Profile"));
-const ECommerce = lazy(() => import ("./pages/Dashboard/ECommerce"));
-const Tables = lazy(() => import ("./pages/Tables"));
-const AllUsers = lazy(() => import ("./pages/Users/Users"));
-const UserDetails = lazy(() => import ("./pages/Users/UserDetails"));
+const SignIn = lazy(() => import("./pages/Authentication/SignIn"));
+const ECommerce = lazy(() => import("./pages/Dashboard/ECommerce"));
+const AllUsers = lazy(() => import("./pages/Users/Users"));
+const UserDetails = lazy(() => import("./pages/Users/UserDetails"));
 const Cards = lazy(() => import("./pages/Cards/Cards"));
 const CardDetails = lazy(() => import("./pages/Cards/CardDetails"));
+const Plans = lazy(() => import("./pages/Plans/Plans"));
+const PlanDetails = lazy(() => import("./pages/Plans/PlanDetails"));
+const NewPlan = lazy(() => import("./pages/Plans/NewPlan"));
+const Custom = lazy(() => import("./pages/CustomRequest/Custom"));
+const CustomDetails = lazy(() => import("./pages/CustomRequest/CustomDetails"));
 
 const App = () => {
 
@@ -115,7 +118,7 @@ const App = () => {
                     </>
                   }
                 />
-                 <Route
+                <Route
                   path='/card-details'
                   element={
                     <>
@@ -125,20 +128,47 @@ const App = () => {
                   }
                 />
                 <Route
-                  path="/profile"
+                  path='/all-plans'
                   element={
                     <>
-                      <PageTitle title="Profile | VCards App" />
-                      <Profile />
+                      <PageTitle title="All Plans | VCards App" />
+                      <Plans />
                     </>
                   }
                 />
                 <Route
-                  path="/tables"
+                  path='/plan-details'
                   element={
                     <>
-                      <PageTitle title="Tables | VCards App" />
-                      <Tables />
+                      <PageTitle title="Plan Details | VCards App" />
+                      <PlanDetails />
+                    </>
+                  }
+                />
+                <Route
+                  path='/plan-new'
+                  element={
+                    <>
+                      <PageTitle title="Create Plan | VCards App" />
+                      <NewPlan />
+                    </>
+                  }
+                />
+                <Route
+                  path='/all-requests'
+                  element={
+                    <>
+                      <PageTitle title="Create Plan | VCards App" />
+                      <Custom />
+                    </>
+                  }
+                />
+                 <Route
+                  path='/request-details'
+                  element={
+                    <>
+                      <PageTitle title="Create Plan | VCards App" />
+                      <CustomDetails />
                     </>
                   }
                 />

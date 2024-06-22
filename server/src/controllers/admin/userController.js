@@ -112,6 +112,38 @@ export const freeAccess = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+export const revokeFreeAccess = catchAsyncErrors(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
+    }
+
+    if (!user.freePlan.status) {
+        return next(new ErrorHandler(`User with Id: ${req.params.id} does not have free access`, 400));
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        {
+            freePlan: {
+                status: false,
+            }
+        },
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
+
+    if (!updatedUser) {
+        return next(new ErrorHandler(`Failed to update user with Id: ${req.params.id}`, 500));
+    }
+
+    res.status(200).json({
+        success: true,
+        user: updatedUser,
+    });
+});
+
+
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     const users = await User.find();
     const userCount = await User.countDocuments();

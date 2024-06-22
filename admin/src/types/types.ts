@@ -5,11 +5,11 @@ export type User = {
     role: string;
     image: string;
     googleId: string;
+    customerId: string;
     isVerified: boolean;
-    isBlocked: boolean;
     isDeactivated: boolean;
-    donator: boolean;
     accountType: string;
+    isBlocked: boolean;
     loginAttempt: {
         count: number;
         time: Date;
@@ -20,12 +20,53 @@ export type User = {
     }
     activePlan: {
         _id: string;
+        planId: string;
         status: string;
         currentEnd: Date;
     }
+    freePlan: {
+        status: boolean;
+        start: Date;
+        end: Date;
+        type: string;
+    }
+    billingAddress: {
+        street: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+    }
+    phone: string;
+    orgDetails: {
+        website: string;
+        address: {
+            street: string;
+            city: string;
+            state: string;
+            postalCode: string;
+            country: string;
+        },
+        phone: string;
+    },
     createdAt: Date;
     updatedAt: Date;
 };
+
+export type Plan = {
+    _id: string;
+    name: string;
+    amount: number;
+    cards: number;
+    description: string;
+    planType: string;
+    visible: boolean;
+    period: string;
+    interval: number;
+    razorPlanId: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 export type CustomReuest = {
     _id: string;
@@ -63,7 +104,24 @@ export type Subscription = {
     remainingCount: number;
     shortUrl: string;
     status: string;
-    user: string;
+    user: string | null;
+    currentStart: Date;
+    currentEnd: Date;
+    subscriptionType: string;
+    paymentMethod: {
+        methodType: string;
+        cardInfo: {
+            cardType: string;
+            issuer: string;
+            last4: string;
+            name: string;
+            network: string;
+        } | null;
+        bankInfo: string | null;
+        walletInfo: string | null;
+        upiInfo: string | null;
+    },
+    donator: string | null;
 }
 
 export type Transaction = {
@@ -74,8 +132,31 @@ export type Transaction = {
     status: string;
     razorpayOrderId: string;
     razorpayPaymentId: string;
-    paymentMethod: any;
-    user: string;
+    user: string | null;
+    error: {
+        error_code: string | null;
+        error_description: string | null;
+        error_source: string | null;
+        error_step: string | null;
+        error_reason: string | null;
+    }
+    transactionFor: string;
+    transactionType: string;
+    currency: string;
+    paymentMethod: {
+        methodType: string;
+        cardInfo: {
+            cardType: string;
+            issuer: string;
+            last4: string;
+            name: string;
+            network: string;
+        } | null;
+        bankInfo: string | null;
+        walletInfo: string | null;
+        upiInfo: string | null;
+    },
+    donator: string | null;
 }
 
 export type Tree = {
