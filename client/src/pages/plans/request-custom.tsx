@@ -31,7 +31,7 @@ const RequestCustom = () => {
             return;
         };
         try {
-            await axios.post(`${import.meta.env.VITE_BASE_URL}/plan/request`, requestData, { withCredentials: true });
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/plan/request/custom`, requestData, { withCredentials: true });
             toast.success("Request Submitted!");
         } catch (error: any) {
             console.log(error);
@@ -93,7 +93,7 @@ const RequestCustom = () => {
                         </div>
                     </div>
 
-                    <div className="mt-8 lg:w-1/2 lg:pl-6"> {/* Adjusted left padding here */}
+                    <div className="mt-8 lg:w-1/2 lg:pl-6">
                         <div className="w-full px-8 py-10 mx-auto overflow-hidden bg-white shadow-2xl rounded-xl dark:bg-gray-900 lg:max-w-xl">
                             <h1 className="text-xl font-medium text-gray-700 dark:text-gray-200">What do you want to ask</h1>
 

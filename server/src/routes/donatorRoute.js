@@ -2,6 +2,7 @@ import express from "express";
 import { 
     capturePayment, 
     createDonation, 
+    createDonationPlan, 
     createDonatorDetails, 
     createSubscription, 
     getDonator, 
@@ -23,6 +24,7 @@ router.route("/login").put(loginDonator);
 router.route("/me").get(isAuthenticatedDonator, getDonator);
 router.route("/new").post(isAuthenticatedDonator, createDonatorDetails);
 router.route("/edit/pan").put(isAuthenticatedDonator, updatePanDetail);
+router.route("/new/plan").post(isAuthenticatedDonator, createDonationPlan);
 router.route("/new/subscription").post(isAuthenticatedDonator, createSubscription);
 router.route("/new/pay").post(isAuthenticatedDonator, createDonation);
 router.route("/webhook/pay").post(capturePayment);

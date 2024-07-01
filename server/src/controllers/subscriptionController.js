@@ -33,12 +33,17 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         }
     }
 
-    const subscriptions = await instance.subscriptions.create({
-        plan_id: req.body.id,
-        total_count: 12,
-        quantity: 1,
-        customer_notify: 0,
-    });
+    let subscriptions;
+    try {
+        subscriptions = await instance.subscriptions.create({
+            plan_id: req.body.id,
+            total_count: 12,
+            quantity: 1,
+            customer_notify: 0,
+        });
+    } catch (error) {
+        return next(new ErrorHandler(`Razorpay Failed ${error}`, 403));
+    }
 
     const plan = await Plan.findOne({ razorPlanId: req.body.id });
 

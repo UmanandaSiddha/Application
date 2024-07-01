@@ -146,9 +146,9 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const subscription = await Subscription.findById(user?.activePlan);
-    // if (!["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now())) {
-    //     return next(new ErrorHandler("VCard Not Found", 404));
-    // }
+    if (!["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < Date.now())) {
+        return next(new ErrorHandler("VCard Not Found", 404));
+    }
 
     res.status(200).json({
         success: true,

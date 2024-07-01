@@ -379,8 +379,8 @@ export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const updateBillingInfo = catchAsyncErrors(async (req, res, next) => {
-    const { phone, street, state, city, zip, country } = req.body;
-    if (!phone || !street || !state || !city || !zip || !country) {
+    const { phone, street, state, city, postalCode, country } = req.body;
+    if (!phone || !street || !state || !city || !postalCode || !country) {
         return next(new ErrorHandler("All fields are required", 400));
     }
 
@@ -392,7 +392,7 @@ export const updateBillingInfo = catchAsyncErrors(async (req, res, next) => {
                 street,
                 state,
                 city,
-                zip,
+                postalCode,
                 country,
             }
         }, 

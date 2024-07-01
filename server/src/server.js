@@ -26,8 +26,6 @@ connectDatabase();
 export const CLIENT_URL = process.env.NODE_ENV === "production" ? "https://app.umanandasiddha.site" : "http://localhost:5173";
 export const SERVER_URL = process.env.NODE_ENV === "production" ? "https://api.umanandasiddha.site" : "http://localhost:7070";
 
-export const stripe = new Stripe(process.env.STRIPE_KEY || "");
-
 export const instance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET,

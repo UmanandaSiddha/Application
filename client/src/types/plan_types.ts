@@ -80,4 +80,5 @@ export type Transaction = {
         upiInfo: string | null;
     },
     donator: string | null;
+    createdAt: Date;
 }

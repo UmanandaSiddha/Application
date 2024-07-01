@@ -5,7 +5,7 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 
-import { Link,  NavLink,  useNavigate } from 'react-router-dom'
+import { Link,  NavLink,  useLocation,  useNavigate } from 'react-router-dom'
 import { RootState } from "../../redux/store";
 import { toast } from 'react-toastify'
 import { userNotExist } from "../../redux/reducer/userReducer";
@@ -16,8 +16,9 @@ export default function Header() {
     
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const location = useLocation();
 
-    const { user, loading } = useSelector(
+    const { user } = useSelector(
         (state: RootState) => state.userReducer
     );
     
@@ -72,7 +73,7 @@ export default function Header() {
 
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                     {
-                        user ? (
+                        user && location.pathname !== "/donation" ? (
                             <div className="flex items-center gap-5">
                                 <p className="hidden sm:block font-Philosopher text-lg">{user.name}</p>
                                 <button className='px-4 py-2 bg-white rounded-md text-black text-sm font-Kanit' onClick={logout}>Log Out</button>
@@ -140,7 +141,7 @@ export default function Header() {
                             </div>
                             <div className="py-6">
                                 {
-                                    user ? (
+                                    user && location.pathname !== "/donation" ? (
                                         <div className="flex flxe-row items-center gap-5">
                                             <div className="basis-1/2 flex justify-center">
                                                 <p className='font-Philosopher text-xl'>{user.name}</p>

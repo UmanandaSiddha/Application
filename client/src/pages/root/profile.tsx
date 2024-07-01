@@ -3,7 +3,7 @@ import { RootState } from "../../redux/store";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import Loader from "@/components/rest/loader";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { IoPersonOutline } from "react-icons/io5";
 import { MdNavigateNext } from "react-icons/md";
 import { useDispatch } from "react-redux";
@@ -11,6 +11,8 @@ import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
+
 // import {
 //   deleteUser,
 //   updateUserProfile,
@@ -21,6 +23,7 @@ import { toast } from "react-toastify";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
 import { UserResponse } from "@/types/api-types";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -247,21 +250,47 @@ const Profile = () => {
       ) : (
         <div className="flex flex-row justify-center gap-8 lg:gap-2 items-center  ">
           {user ? (
-            <div className="w-full lg:flex lg:flex-row lg:max-h-screen">
-              <div className="bg-blue-400 py-[4rem] lg:pt-6 lg:mt-12 flex flex-row rounded-b-[5rem] lg:rounded-[2rem] lg:shadow-2xl lg:ml-4 lg:basis-1/2 lg:bg-[url('../../../public/cosmic.jpg')] lg:bg-cover">
-                <div className="basis-1/4 flex justify-end pb-[8rem] lg:items-center">
-                  <IoPersonOutline className="w-[6rem] h-[6rem] lg:w-[8rem] lg:h-[8em] -mt-2 text-white" />
-                </div>
-                <div className="basis-3/4 pb-[8rem] lg:flex lg:items-center">
-                  <div className="">
-                    <p className="font-Kanit text-lg lg:text-[3rem] pl-2 lg:text-white">
-                      Welcome,
-                    </p>
-                    <p className="font-Philosopher text-6xl lg:text-[6rem] pl-4 lg:text-white">
-                      {user?.name}
-                    </p>
+            <div className="w-[85%] lg:flex lg:flex-row lg:max-h-screen">
+              <div className="bg-slate-100 py-[4rem] lg:pt-6 lg:mt-12  flex-row rounded-b-[5rem] lg:rounded-[2rem] lg:shadow-2xl lg:ml-4 lg:basis-1/2 lg:bg-[url('../../../public/')] lg:bg-cover">
+                <div className="flex mx-4 mt-8">
+                  <div className="basis-1/4 flex pb-[8rem] lg:items-center">
+                    <IoPersonOutline className="w-[5rem] h-[6rem] lg:w-[8rem] lg:h-[8em] -mt-2 text-slate-800" />
                   </div>
+                  <div className="basis-3/4 pb-[8rem] lg:flex lg:items-center">
+                    <div className="">
+                      <p className="font-Kanit text-lg lg:text-[3rem] pl-2 lg:text-slate-800">
+                        Welcome,
+                      </p>
+                      <p className="font-Philosopher text-5xl lg:text-[6rem] pl-4 lg:text-slate-800">
+                        {user?.name}
+                      </p>
+                    </div>
+
+                  </div>
+
                 </div>
+                {/* <div className="flex translate-y-24">
+                  <div className="hidden lg:block bg-slate-100 rounded p-4 w-full">
+                    <div className="text-slate-300 w-full flex justify-start text-lg font-Kanit">
+                      Navigate
+                    </div>
+                    <div className="text-xl font-Kanit my-2">
+                      <Link to='/billing'> Billing</Link>
+                    </div>
+                    <div className="text-xl font-Kanit my-2">
+                      <Link to='/dashboard'>Dashboard</Link>
+                    </div>
+                  </div> */}
+                {/* </div> */}
+                <div className="flex justify-evenly translate-y-32 ">
+                  <Link className="bg-slate-900 text-white py-6 w-24 rounded-lg text-center" to='/dashboard'>Dashboard</Link>
+                  <Link className="bg-slate-900 text-white py-6 w-24 rounded-lg text-center" to='/billing'>Billing</Link>
+                </div>
+
+
+
+
+
               </div>
 
               {/* main information containing div */}
@@ -279,7 +308,9 @@ const Profile = () => {
                             <img src={user.image} alt={user._id} />
                           ) : (
                             <>
-                            {user.name.charAt(0)}
+                              <div className="flex justify-center items-center w-10 h-10 rounded-full border">
+                                {user.name.charAt(0)}
+                              </div>
                             </>
                           )}
                         </div>
@@ -288,7 +319,7 @@ const Profile = () => {
                         <p className="w-full flex justify-start pl-[2.7rem] font-Philosopher">
                           User Id:
                         </p>
-                        <p className="w-full flex justify-start pl-[2.7rem] font-Kanit">
+                        <p className="w-full flex justify-start pl-[2.7rem] pr-1 font-Kanit">
                           {user?._id}
                         </p>
                       </div>
@@ -322,11 +353,10 @@ const Profile = () => {
                               </div>
                               <div className="basis-1/4 flex justify-center">
                                 <MdNavigateNext
-                                  className={`w-[2rem] h-[2rem] ${
-                                    openEdit
-                                      ? "transition ease-in-out rotate-90"
-                                      : "transition ease-in-out"
-                                  }`}
+                                  className={`w-[2rem] h-[2rem] ${openEdit
+                                    ? "transition ease-in-out rotate-90"
+                                    : "transition ease-in-out"
+                                    }`}
                                 />
                               </div>
                             </div>
@@ -417,11 +447,10 @@ const Profile = () => {
                               </div>
                               <div className="basis-1/4 flex justify-center">
                                 <MdNavigateNext
-                                  className={`w-[2rem] h-[2rem] ${
-                                    openReset
-                                      ? "transition ease-in-out rotate-90"
-                                      : "transition ease-in-out"
-                                  }`}
+                                  className={`w-[2rem] h-[2rem] ${openReset
+                                    ? "transition ease-in-out rotate-90"
+                                    : "transition ease-in-out"
+                                    }`}
                                 />
                               </div>
                             </div>
@@ -537,9 +566,9 @@ const Profile = () => {
                                   <div className="w-full flex justify-center py-3">
                                     <button
                                       className="px-4 py-2 bg-blue-400 text-white font-Philosopher rounded-lg shadow-lg hover:cursor-pointer"
-                                      //   onClick={sepForm.handleSubmit(
-                                      //     handleResetPassword
-                                      //   )}
+                                    //   onClick={sepForm.handleSubmit(
+                                    //     handleResetPassword
+                                    //   )}
                                     >
                                       {openSep ? "Saving..." : "Save Changes"}
                                     </button>
@@ -549,6 +578,7 @@ const Profile = () => {
                             ) : null}
                           </div>
                         </div>
+
 
                         <div
                           className="w-full flex flex-col py-2 my-2"
@@ -560,11 +590,10 @@ const Profile = () => {
                             </div>
                             <div className="basis-1/4 flex justify-center">
                               <MdNavigateNext
-                                className={`w-[2rem] h-[2rem] ${
-                                  openDelete
-                                    ? "transition ease-in-out rotate-90"
-                                    : "transition ease-in-out"
-                                }`}
+                                className={`w-[2rem] h-[2rem] ${openDelete
+                                  ? "transition ease-in-out rotate-90"
+                                  : "transition ease-in-out"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -599,6 +628,31 @@ const Profile = () => {
                             ) : null}
                           </div>
                         </div>
+
+                        <div className="block bg-blue-300 lg:hidden">
+
+                          <hr className="w-full text-slate-300" />
+
+                          <div className="text-slate-300 w-full flex justify-start pl-[2rem] py-2 text-lg font-Kanit">
+                            View
+                          </div>
+                          <div className="mx-8">
+                            <div className="flex justify-between items-center">
+                              <Link className="flex justify-between items-center w-full" to='/billing'>
+                                <div className="text-xl font-Kanit my-4">Billing</div>
+                                <MdNavigateNext className="w-[2rem] h-[2rem] lg:mr-4" />
+                              </Link>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <Link className="flex justify-between items-center w-full" to='/dashboard'>
+                                <div className="text-xl font-Kanit my-4">Pricing</div>
+                                <MdNavigateNext className="w-[2rem] h-[2rem] lg:mr-4" />
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+
+
                       </div>
                     </>
                   )}

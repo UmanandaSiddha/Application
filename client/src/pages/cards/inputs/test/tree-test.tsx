@@ -6,7 +6,6 @@ import { RootState } from "../../../redux/store";
 import { SingleTreeResponse } from "@/types/api-types";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import SideBar from "@/components/rest/sidebar";
 
 const inputs = [
     { name: "name", label: "Name", text: "Enter name", type: "text" },
@@ -52,6 +51,7 @@ const CreateTree = () => {
                     const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=botanical`, { withCredentials: true });
                     setIsTree(true);
                     reset(data.vCard);
+                    console.log(data.vCard)
                 } catch (error: any) {
                     toast.error(error.response.data.message);
                 }
@@ -66,6 +66,7 @@ const CreateTree = () => {
             } else {
                 setIsTree(true);
                 reset(cardDataParsed);
+                console.log(cardDataParsed)
             }
         } else {
             fetchTree();
@@ -89,16 +90,17 @@ const CreateTree = () => {
             user: user?._id,
         };
 
+        // if (!user?.freePlan?.status && !isPaid && user?.role !== "admin") {
         if (!isPaid && user?.role !== "admin") {
             navigate("/plans");
         } else {
             try {
                 if (isTree) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=botanical`, treeData, { withCredentials: true });
-                    toast.success("Tree VCard Updated");
+                    toast.success("Botanical VCard Updated");
                 } else {
                     await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=botanical`, treeData, { withCredentials: true });
-                    toast.success("Tree VCard Created");
+                    toast.success("Botanical VCard Created");
                 }
                 navigate(-1);
             } catch (error: any) {
@@ -109,51 +111,44 @@ const CreateTree = () => {
     }
 
     return (
-        <div className="flex justify-center">
-            <div className="flex flex-row w-[80%] md:space-x-4 lg:space-x-4">
-                <div className="basis-1/4 hidden lg:block xl:block">
-                    <SideBar />
-                </div>
-                <div className="basis-full lg:basis-3/4 lg:max-h-screen">
-                    <div className="h-[85vh] overflow-y-scroll mb-4 hide-scrollbar">
-                        <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Botanical</h1>
-                        <div className="flex flex-col justify-center items-center min-h-screen mb-8 lg:w-full">
-                            <div className="flex flex-col justify-center max-h-screen pb-10">
-                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
-                                    {inputs.map((input, index) => (
-                                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
-                                            <label
-                                                htmlFor={input.name}
-                                                className="text-md font-semibold text-gray-700 min-w-24"
-                                            >
-                                                {input.label}:
-                                            </label>
-                                            <div className="relative h-11 w-full min-w-44">
-                                                <input
-                                                    type={input.type}
-                                                    id={input.name}
-                                                    placeholder={input.text}
-                                                    {...register(input.name, { required: true })}
-                                                    autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    <div className="flex justify-center">
-                                        <button
-                                            className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full max-w-2xl text-white bg-[#3FA398] text-lg"
-                                            type="submit"
-                                            disabled={treeLoading}
-                                        >
-                                            {treeLoading ? "APPLYING..." : "APPLY CHANGES"}
-                                        </button>
-                                    </div>
-                                </form>
+        <div className="">
+            <div className="my-2 lg:flex lg:justify-center lg:mt-4 lg:mb-[4rem]">
+                <h1 className="font-Philosopher underline font-bold text-3xl pl-8">Tree Card</h1>
+            </div>
+            <div className="flex flex-col justify-center items-center min-h-screen mb-8 -mt-8 lg:w-full">
+                <div className="flex flex-col justify-center max-h-screen pb-10">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 lg:w-full">
+                        {inputs.map((input, index) => (
+                            <div className="flex flex-row gap-6" key={index}>
+                                <div className="basis-1/3 flex justify-start items-center">
+                                    <label
+                                        htmlFor={input.name}
+                                        className="flex justify-start items-center font-Kanit pl-3"
+                                    >
+                                        {input.label}
+                                    </label>
+                                </div>
+                                <div className="basis-2/3 w-[90%] lg:w-full mr-2">
+                                    <input
+                                        type={input.type}
+                                        id={input.name}
+                                        className="block py-2.5 px-0 w-full text-sm font-Philosopher bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600 pl-2"
+                                        placeholder={input.text}
+                                        {...register(input.name, { required: true })}
+                                    />
+                                </div>
                             </div>
+                        ))}
+                        <div className="flex justify-center">
+                            <button
+                                className="px-4 py-2 lg:mt-4 rounded-lg hover:cursor-pointer w-[90%] bg-red-400 font-Kanit text-lg"
+                                type="submit"
+                                disabled={treeLoading}
+                            >
+                                {treeLoading ? "Saving..." : "Save"}
+                            </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

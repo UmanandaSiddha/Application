@@ -23,9 +23,6 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
         newOtp[index] = value.substring(value.length - 1);
         setOtp(newOtp);
 
-        // const combinedOtp = newOtp.join("");
-        // if (combinedOtp.length === length) onOtpSubmit(combinedOtp);
-
         if (value && index < length - 1) {
             inputRefs.current[index + 1]?.focus();
         }
@@ -71,7 +68,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
                             onChange={(e) => handleChange(index, e)}
                             onClick={() => handleClick(index)}
                             onKeyDown={(e) => handleKeyDown(index, e)}
-                            className="w-10 h-10 m-1 rounded-md text-center text-lg md:w-12 md:h-12 md:text-xl lg:w-14 lg:h-14 lg:text-2xl"
+                            className="w-10 h-10 m-1 border border-slate-500 rounded-md text-center text-lg md:w-12 md:h-12 md:text-xl lg:w-14 lg:h-14 lg:text-2xl"
                         />
                     );
                 })}

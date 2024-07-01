@@ -38,7 +38,7 @@ const Checkout = () => {
         paymentStatus: "hold on",
     });
     const { user } = useSelector((state: RootState) => state.userReducer);
-    
+
     const [updateData, setUpdateData] = useState({
         phone: user?.phone,
         street: user?.billingAddress?.street,
@@ -47,7 +47,9 @@ const Checkout = () => {
         postalCode: user?.billingAddress?.postalCode,
         country: user?.billingAddress?.country,
     });
+    
     const [updateLoading, setUpdateLoading] = useState<boolean>(false);
+    const [sdkLoading, setSdkLoading] = useState<boolean>(false);
 
     const location = useLocation();
     const from = location.state?.from?.pathname || "/dashboard";
@@ -64,11 +66,16 @@ const Checkout = () => {
     useEffect(() => {
         const plansData = window.sessionStorage.getItem("all_plans");
         if (plansData) {
-            const currentPlan: Plan[] = JSON.parse(plansData).filter((cPlan: Plan) => cPlan._id === id);
-            if (currentPlan.length > 0) {
-                setPlan(currentPlan[0]);
-            } else {
+            if (JSON.parse(plansData)?.created < Date.now()) {
+                window.localStorage.removeItem("all_plans");
                 fetchPlan();
+            } else {
+                const currentPlan: Plan[] = JSON.parse(plansData).data.filter((cPlan: Plan) => cPlan._id === id);
+                if (currentPlan.length > 0) {
+                    setPlan(currentPlan[0]);
+                } else {
+                    fetchPlan();
+                }
             }
         } else {
             fetchPlan();
@@ -77,6 +84,21 @@ const Checkout = () => {
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const { phone, billingAddress } = user || {};
+        const { street, state, city, postalCode, country } = billingAddress || {};
+        const isDataSame =
+            phone === updateData.phone &&
+            street === updateData.street &&
+            state === updateData.state &&
+            city === updateData.city &&
+            postalCode === updateData.postalCode &&
+            country === updateData.country;
+
+        if (isDataSame) {
+            toast.warning("Make changes to update");
+            return;
+        }
+
         for (const [field, value] of Object.entries(updateData)) {
             if (!value) {
                 toast.warning(`${field} is required`);
@@ -96,19 +118,23 @@ const Checkout = () => {
     }
 
     const handlePayment = async (razId: string) => {
+        setSdkLoading(true);
         if (!id || plan?._id !== id) {
+            setSdkLoading(false);
             toast.error("This is a broken link");
             return;
         }
 
         const { phone, billingAddress } = user || {};
         if (!phone || !billingAddress) {
+            setSdkLoading(false);
             toast.warning("Please update your billing details");
             return;
         }
 
         const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
         if (!res) {
+            setSdkLoading(false);
             toast.warning("Razorpay SDK failed to load. Are you online?");
             return;
         }
@@ -119,7 +145,9 @@ const Checkout = () => {
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
             const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, { id: razId }, config);
             if (!data) {
+                setSdkLoading(false);
                 toast.error("Failed to Execute Payment");
+                return;
             }
             const options = {
                 key: data.key,
@@ -128,31 +156,33 @@ const Checkout = () => {
                 description: "just fine",
                 subscription_id: data.subscriptions_id,
                 handler: async function (response: any) {
-                    setOpen(true);
-                    // add try catch here
-                    const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
-                    if (["active", "created", "authenticated"].includes(data.subscriptionStatus) && ["authorized", "captured", "created"].includes(data.paymentStatus)) {
-                        setDialogHeader("Redirecting to Dashboard...");
-                        setDialogData({
-                            subscriptionStatus: data.subscriptionStatus,
-                            paymentStatus: data.paymentStatus,
-                        });
-                        toast.success("All set");
-                        setTimeout(() => {
-                            setOpen(false);
-                            navigate(from, { replace: true });
-                        }, 3000);
-                    } else {
-                        setDialogHeader("An Error Occured");
-                        setDialogData({
-                            subscriptionStatus: "pending",
-                            paymentStatus: "pending",
-                        });
-                        toast.error("If the amount was debited from your account, please don't pay again. We are looking into this matter");
-                        // send error message to server
-                        setTimeout(() => {
-                            setOpen(false);
-                        }, 3000);
+                    try {
+                        setOpen(true);
+                        const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
+                        if (["active", "created", "authenticated"].includes(data.subscriptionStatus) && ["authorized", "captured", "created"].includes(data.paymentStatus)) {
+                            setDialogHeader("Redirecting to Dashboard...");
+                            setDialogData({
+                                subscriptionStatus: data.subscriptionStatus,
+                                paymentStatus: data.paymentStatus,
+                            });
+                            toast.success("All set");
+                            setTimeout(() => {
+                                setOpen(false);
+                                navigate(from, { replace: true });
+                            }, 3000);
+                        } else {
+                            setDialogHeader("An Error Occured");
+                            setDialogData({
+                                subscriptionStatus: "pending",
+                                paymentStatus: "pending",
+                            });
+                            toast.error("If the amount was debited from your account, please don't pay again. We are looking into this matter");
+                            setTimeout(() => {
+                                setOpen(false);
+                            }, 3000);
+                        }
+                    } catch (error) {
+                        console.log(error)
                     }
                 },
                 prefill: {
@@ -172,6 +202,7 @@ const Checkout = () => {
             };
             const razor = new (window as any).Razorpay(options);
             razor.on("payment.failed", function (response: any) {
+                setSdkLoading(false);
                 // send error message to server
                 console.log(response.error.description);
                 console.log(response.error.metadata.order_id);
@@ -179,18 +210,29 @@ const Checkout = () => {
                 console.log(response);
                 toast.info(response.error.description);
             });
-            console.log(razor);
             razor.open();
         } catch (error: any) {
+            setSdkLoading(false);
             toast.error(error.response.data.message);
         }
 
+        setSdkLoading(false);
         setCheckoutLoading(false);
     };
 
     return (
         <div className="w-[80%] mx-auto mt-8 mb-12">
             <div className="flex justify-center items-center gap-4">
+                {sdkLoading && (
+                    <div className="font-Kanit">
+                    <div
+                        className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
+                        id="popupform"
+                    >
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    </div>
+                </div>
+                )}
                 {open && (
                     <div className="font-Kanit">
                         <div
@@ -226,70 +268,70 @@ const Checkout = () => {
                         <form onSubmit={handleUpdate} className="mt-8 space-y-2">
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium">Phone Number</label>
-                                <input 
-                                    type="tel" 
-                                    id="phone" 
-                                    name="phone" 
-                                    className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" 
-                                    placeholder="123-456-7890" 
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
+                                    placeholder="123-456-7890"
                                     value={updateData.phone}
-                                    onChange={(e) => setUpdateData({...updateData, phone: e.target.value})}
+                                    onChange={(e) => setUpdateData({ ...updateData, phone: e.target.value })}
                                 />
                             </div>
                             <div>
                                 <label htmlFor="billing-address" className="block text-sm font-medium">Billing Address</label>
-                                <input 
-                                    type="text" 
-                                    id="billing-address" 
-                                    name="billing-address" 
-                                    className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" 
-                                    placeholder="Street Address" 
+                                <input
+                                    type="text"
+                                    id="billing-address"
+                                    name="billing-address"
+                                    className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
+                                    placeholder="Street Address"
                                     value={updateData.street}
-                                    onChange={(e) => setUpdateData({...updateData, street: e.target.value})}
+                                    onChange={(e) => setUpdateData({ ...updateData, street: e.target.value })}
                                 />
                             </div>
                             <div className="flex space-x-4">
-                                <input 
-                                    type="text" 
-                                    name="city" 
-                                    className="w-1/2 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" 
-                                    placeholder="City" 
+                                <input
+                                    type="text"
+                                    name="city"
+                                    className="w-1/2 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
+                                    placeholder="City"
                                     value={updateData.city}
-                                    onChange={(e) => setUpdateData({...updateData, city: e.target.value})}
+                                    onChange={(e) => setUpdateData({ ...updateData, city: e.target.value })}
                                 />
-                                <input 
-                                    type="text" 
-                                    name="state" 
-                                    className="w-1/2 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" 
-                                    placeholder="State" 
+                                <input
+                                    type="text"
+                                    name="state"
+                                    className="w-1/2 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
+                                    placeholder="State"
                                     value={updateData.state}
-                                    onChange={(e) => setUpdateData({...updateData, state: e.target.value})}
+                                    onChange={(e) => setUpdateData({ ...updateData, state: e.target.value })}
                                 />
                             </div>
                             <div className="flex space-x-4">
-                                <input 
-                                    type="text" 
-                                    name="zip" 
-                                    className="w-1/2 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" 
-                                    placeholder="Postal Code" 
+                                <input
+                                    type="text"
+                                    name="zip"
+                                    className="w-1/2 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
+                                    placeholder="Postal Code"
                                     value={updateData.postalCode}
-                                    onChange={(e) => setUpdateData({...updateData, postalCode: e.target.value})}
+                                    onChange={(e) => setUpdateData({ ...updateData, postalCode: e.target.value })}
                                 />
-                                <input 
-                                    type="text" 
-                                    name="country" 
-                                    className="w-1/2 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" 
-                                    placeholder="Country" 
+                                <input
+                                    type="text"
+                                    name="country"
+                                    className="w-1/2 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
+                                    placeholder="Country"
                                     value={updateData.country}
-                                    onChange={(e) => setUpdateData({...updateData, country: e.target.value})}
+                                    onChange={(e) => setUpdateData({ ...updateData, country: e.target.value })}
                                 />
                             </div>
-                            <button 
-                                type="submit" 
-                                disabled={updateLoading}
+                            <button
+                                type="submit"
+                                disabled={sdkLoading || updateLoading}
                                 className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                             >
-                                {updateLoading ? "Hold on..." : "Update Changes"}
+                                {sdkLoading || updateLoading ? "Hold on..." : "Update Changes"}
                             </button>
                         </form>
                     </div>

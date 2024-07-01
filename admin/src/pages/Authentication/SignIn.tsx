@@ -28,11 +28,10 @@ const SignIn: React.FC = () => {
         withCredentials: true,
       };
       const { data }: { data: UserResponse } = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/admin/login`,
+        `${import.meta.env.VITE_BASE_URL}/admin/users/login`,
         userData,
         config
       );
-      console.log(data);
       dispatch(userExist(data.user));
       navigate("/");
       toast.success("Logged In!");

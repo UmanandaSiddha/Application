@@ -7,7 +7,7 @@ import { Plan } from "@/types/plan_types";
 import { PlanResponse } from "@/types/api-types";
 import { toast } from "react-toastify";
 
-const periodEnum = {
+export const periodEnum = {
     DAILY: "daily",
     WEEKLY: "weekly",
     MONTHLY: "monthly",
@@ -17,7 +17,7 @@ const periodEnum = {
 const PlanPage = () => {
     const navigate = useNavigate();
     const [plans, setPlans] = useState<Plan[] | null>();
-    const [role, setRole] = useState<string>("user");
+    const [role, setRole] = useState<string[]>(["user", "free"]);
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
 
     const periodToDays = (period: string) => {
@@ -34,22 +34,26 @@ const PlanPage = () => {
     }
 
     const handleOrgSwitch = () => {
-        if (role === "user") {
-            setRole("org");
+        if (role.includes("user") || role.includes("free")) {
+            setRole(["org"]);
         }
-    }
+    };
 
     const handleUserSwitch = () => {
-        if (role === "org") {
-            setRole("user");
+        if (role.includes("org")) {
+            setRole(["user", "free"]);
         }
-    }
+    };
 
     const fetchPlans = async () => {
         try {
             const { data }: { data: PlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/all`, { withCredentials: true });
             setPlans(data.plans);
-            window.sessionStorage.setItem("all_plans", JSON.stringify(data.plans));
+            const chachedPlan = {
+                created: Date.now() + 30 * 1000,
+                data: data.plans,
+            }
+            window.sessionStorage.setItem("all_plans", JSON.stringify(chachedPlan));
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
@@ -58,7 +62,12 @@ const PlanPage = () => {
     useEffect(() => {
         const plansData = window.sessionStorage.getItem("all_plans");
         if (plansData) {
-            setPlans(JSON.parse(plansData));
+            if (JSON.parse(plansData)?.created < Date.now()) {
+                window.localStorage.removeItem("all_plans");
+                fetchPlans();
+            } else {
+                setPlans(JSON.parse(plansData).data);
+            }
         } else {
             fetchPlans();
         }
@@ -77,26 +86,17 @@ const PlanPage = () => {
                             <span className="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
                         </div>
 
-                        {/* <p className="mt-4 font-medium text-gray-500 dark:text-gray-300">
-                            You can get All Access by selecting your plan!
-                        </p> */}
-
-                        {/* <a href="#" className="flex items-center mt-4 -mx-1 text-sm text-gray-700 capitalize dark:text-blue-400 hover:underline hover:text-blue-600 dark:hover:text-blue-500">
-                            <span className="mx-1">read more</span>
-                            <svg className="w-4 h-4 mx-1 rtl:-scale-x-100" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                        </a> */}
-
                         {(!user || user?.role === "admin") && (
                             <div className="flex justify-center items-center h-full w-full mt-3">
                                 <div className="inline-flex justify-center items-center border-2 border-blue-500 shadow-x rounded-lg">
                                     <button
-                                        className={`px-4 py-2 ${role === "user" ? "bg-blue-500 text-white rounded-md" : "text-blue-500"}`}
+                                        className={`px-4 py-2 ${(role.includes("user") || role.includes("free")) ? "bg-blue-500 text-white rounded-md" : "text-blue-500"}`}
                                         onClick={() => handleUserSwitch()}
                                     >
                                         Individual
                                     </button>
                                     <button
-                                        className={`px-4 py-2 ${role === "org" ? "bg-blue-500 text-white rounded-md" : "text-blue-500"}`}
+                                        className={`px-4 py-2 ${role.includes("org") ? "bg-blue-500 text-white rounded-md" : "text-blue-500"}`}
                                         onClick={() => handleOrgSwitch()}
                                     >
                                         Organisation
@@ -110,14 +110,13 @@ const PlanPage = () => {
                         <div className="mt-8 space-y-8 md:-mx-4 md:flex md:items-center md:justify-center md:space-y-0 xl:mt-0">
                             {plans?.map((plan: Plan, index: number) => (
                                 <div key={index}>
-                                    {plan.visible && ((user && user.role !== "admin") ? user?.role === plan.planType : role === plan.planType) && (
-
+                                    {plan.visible && ((user && user.role !== "admin") ? (user.role === "user" ? [`${user?.role}`, "free"].includes(plan.planType) : [`${user?.role}`].includes(plan.planType)) : role.includes(plan.planType)) && (
                                         <div className="max-w-sm mx-auto border rounded-lg md:mx-4 dark:border-gray-700">
                                             <div className="p-6">
                                                 <h1 className="text-xl font-medium text-gray-700 capitalize lg:text-2xl dark:text-white">{plan.name}</h1>
 
                                                 <p className="mt-4 text-gray-500 dark:text-gray-300">
-                                                    {plan.description}
+                                                    {plan.description} Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, blanditiis?
                                                 </p>
 
                                                 <h2 className="mt-4 text-2xl font-semibold text-gray-700 sm:text-3xl dark:text-gray-300">Rs. {plan.amount} <span className="text-sm text-gray-400">Once in {plan.interval} {periodToDays(plan.period)}{plan.interval > 1 && "s"}</span></h2>
@@ -126,19 +125,19 @@ const PlanPage = () => {
                                                     {user?.activePlan?.planId === plan._id && ["active", "pending"].includes(user?.activePlan?.status) && ("active")}
                                                 </p>
 
-                                                <button 
+                                                <button
                                                     disabled={isPaid}
                                                     onClick={() => navigate(`/checkout?id=${plan?._id}`)}
                                                     className="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:bg-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-80"
                                                 >
-                                                    Start Now
+                                                    Buy Plan
                                                 </button>
                                             </div>
 
                                             <hr className="border-gray-200 dark:border-gray-700" />
 
                                             <div className="p-6">
-                                                <h1 className="text-lg font-medium text-gray-700 capitalize lg:text-xl dark:text-white">What's included:</h1>
+                                                <h1 className="text-lg font-medium text-gray-700 capitalize lg:text-xl dark:text-white">Details:</h1>
 
                                                 <div className="mt-8 space-y-4">
                                                     <div className="flex items-center">
@@ -146,7 +145,7 @@ const PlanPage = () => {
                                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                                         </svg>
 
-                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Cards: {plan.cards} / user</span>
+                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Cards: {plan.cards}</span>
                                                     </div>
 
                                                     <div className="flex items-center">
@@ -154,7 +153,7 @@ const PlanPage = () => {
                                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                                         </svg>
 
-                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Id: {plan.razorPlanId}</span>
+                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Period: {plan.period}</span>
                                                     </div>
 
                                                     <div className="flex items-center">
@@ -162,31 +161,7 @@ const PlanPage = () => {
                                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                                         </svg>
 
-                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Chat support</span>
-                                                    </div>
-
-                                                    <div className="flex items-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                        </svg>
-
-                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Optimize hashtags</span>
-                                                    </div>
-
-                                                    <div className="flex items-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
-                                                        </svg>
-
-                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Mobile app</span>
-                                                    </div>
-
-                                                    <div className="flex items-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
-                                                        </svg>
-
-                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Unlimited users</span>
+                                                        <span className="mx-4 text-gray-700 dark:text-gray-300">Interval: {plan.interval}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -195,6 +170,61 @@ const PlanPage = () => {
                                 </div>
                             ))}
 
+                            {role.includes("org") && (
+                                <div className="max-w-sm mx-auto border rounded-lg md:mx-4 dark:border-gray-700">
+                                    <div className="p-6">
+                                        <h1 className="text-xl font-medium text-gray-700 capitalize lg:text-2xl dark:text-white">Custom Plan</h1>
+
+                                        <p className="mt-4 text-gray-500 dark:text-gray-300">
+                                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, molestiae! ghdgfh hdfghd dfg dfthgdf
+                                        </p>
+
+                                        <h2 className="mt-4 text-2xl font-semibold text-gray-700 sm:text-3xl dark:text-gray-300">Rs. 00 <span className="text-sm text-gray-400">Once in</span></h2>
+
+                                        <p className="mt-1 text-gray-500 dark:text-gray-300">
+                                            {/* {user?.activePlan?.planId === plan._id && ["active", "pending"].includes(user?.activePlan?.status) && ("active")} */}
+                                        </p>
+
+                                        <button
+                                            disabled={isPaid}
+                                            onClick={() => navigate(`/request-custom`)}
+                                            className="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-600 rounded-md hover:bg-slate-500 focus:outline-none focus:bg-slate-500 focus:ring focus:ring-slate-300 focus:ring-opacity-80"
+                                        >
+                                            Request Custom Plan
+                                        </button>
+                                    </div>
+                                    <hr className="border-gray-200 dark:border-gray-700" />
+                                    <div className="p-6">
+                                        <h1 className="text-lg font-medium text-gray-700 capitalize lg:text-xl dark:text-white">Details:</h1>
+
+                                        <div className="mt-8 space-y-4">
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+
+                                                <span className="mx-4 text-gray-700 dark:text-gray-300">Cards: 00</span>
+                                            </div>
+
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+
+                                                <span className="mx-4 text-gray-700 dark:text-gray-300">Period: 00</span>
+                                            </div>
+
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+
+                                                <span className="mx-4 text-gray-700 dark:text-gray-300">Interval: 00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

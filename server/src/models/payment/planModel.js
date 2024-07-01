@@ -11,7 +11,8 @@ export const planEnum = {
     USER: "user",
     ORG: "org",
     FREE: "free",
-    CUSTOM: "custom"
+    CUSTOM: "custom",
+    DONATOR: "donator",
 }
 
 const planSchema = new mongoose.Schema(

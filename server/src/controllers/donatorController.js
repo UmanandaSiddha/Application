@@ -7,7 +7,7 @@ import Donator from "../models/donatorModel.js";
 import Transaction, { transactionEnum } from "../models/payment/transactionModel.js";
 import sendDonatorToken from "../utils/tokens/donatorToken.js";
 import Subscription, { subscriptionEnum } from "../models/payment/subscriptionModel.js";
-import Plan from "../models/payment/planModel.js";
+import Plan, { planEnum } from "../models/payment/planModel.js";
 import { addDonationToQueue } from "../utils/queue/donationQueue.js";
 import logger from "../config/logger.js";
 import { addEmailToQueue } from "../utils/queue/emailQueue.js";
@@ -145,6 +145,49 @@ export const updatePanDetail = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         updatedDonator,
+    });
+});
+
+export const createDonationPlan = catchAsyncErrors(async (req, res, next) => {
+    const { amount, period } = req.body;
+    if (!amount || !period) {
+        return next(new ErrorHandler("All fields are required", 404));
+    };
+
+    let razorPlan;
+    try {
+        razorPlan = await instance.plans.create({
+            period,
+            interval: 1,
+            item: {
+                name: req.donation.id,
+                amount: Number(amount) * 100,
+                currency: "INR",
+                description: `Donation Plan for ${req.donator.id}`,
+            },
+        });   
+    } catch (error) {
+        return next(new ErrorHandler(`Error: ${error.error.description}`, error.statusCode));
+    }
+
+    if (!razorPlan) {
+        return next(new ErrorHandler("Failed to create plan", 404));
+    }
+
+    const plan = await Plan.create({
+        name: req.donation.id,
+        amount: Number(amount),
+        description: `Donation Plan for ${req.donator.id}`,
+        cards: 0,
+        planType: planEnum.DONATOR,
+        period,
+        interval: 1,
+        razorPlanId: razorPlan.id,
+    });
+
+    res.status(200).json({
+        success: true,
+        plan
     });
 });
 
