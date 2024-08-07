@@ -5,13 +5,13 @@ import User, { freeEnum } from "../models/userModel.js";
 import Subscription from "../models/payment/subscriptionModel.js";
 
 export const isAuthenticatedUser = catchAsyncErrors( async (req, res, next) => {
-    const {token} = req.cookies;
+    const {user_token} = req.cookies;
 
-    if (!token) {
+    if (!user_token) {
         return next(new ErrorHandler("Please login to access this resource", 401));
     }
 
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const decodedToken = jwt.verify(user_token, process.env.JWT_SECRET);
     req.user = await User.findById(decodedToken.id);
     next();
 });

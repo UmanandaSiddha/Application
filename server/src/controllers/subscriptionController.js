@@ -11,9 +11,7 @@ import { handleSubscription, handleTransaction } from "../common/payment.js";
 import { addSubscriptionToQueue } from "../utils/queue/subscriptionQueue.js";
 
 export const createSubscription = catchAsyncErrors(async (req, res, next) => {
-
     const user = await User.findById(req.user.id);
-
     if (user.role === roleEnum.ADMIN) {
         return next(new ErrorHandler("Admin don't need to buy Plans", 403));
     }
@@ -33,16 +31,14 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         }
     }
 
-    let subscriptions;
-    try {
-        subscriptions = await instance.subscriptions.create({
-            plan_id: req.body.id,
-            total_count: 12,
-            quantity: 1,
-            customer_notify: 0,
-        });
-    } catch (error) {
-        return next(new ErrorHandler(`Razorpay Failed ${error}`, 403));
+    const subscriptions = await instance.subscriptions.create({
+        plan_id: req.body.id,
+        total_count: 12,
+        quantity: 1,
+        customer_notify: 0,
+    });
+    if (!subscriptions) {
+        return next(new ErrorHandler("Razorpay Failed", 403));
     }
 
     const plan = await Plan.findOne({ razorPlanId: req.body.id });
@@ -78,6 +74,9 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 
 export const createFreeSubscription = catchAsyncErrors(async (req, res, next) => {
     const plan = Plan.findById(req.params.id);
+    if (!plan) {
+        return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
+    }
     if (!plan.visible) {
         return next(new ErrorHandler("Plan not available", 404));
     }
@@ -138,8 +137,6 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
 
     const payment = await instance.payments.fetch(razorpay_payment_id);
     const subscription = await instance.subscriptions.fetch(razorpay_subscription_id);
-    console.log(subscription);
-    console.log(payment);
 
     if (expectedSigntaure === razorpay_signature) {
         if (["active", "created", "authenticated", "activated"].includes(subscription.status) && ["authorized", "captured", "created"].includes(payment.status)) {
@@ -181,7 +178,6 @@ export const verifySubscription = async (req, res) => {
 
 export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
     const subscription = await Subscription.findById(req.params.id);
-
     if (!subscription) {
         return next(new ErrorHandler("No Subscription is found", 404));
     }
@@ -190,16 +186,21 @@ export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("This subscription cannot be cancelled", 403));
     }
 
-    try {
-        await instance.subscriptions.cancel(subscription.razorSubscriptionId);
-        if (subscription.currentEnd <= Date.now()) {
-            await User.findByIdAndUpdate(req.user.id,
-                { "cards.total": 0 },
-                { new: true, runValidators: true, useFindAndModify: false }
-            );
-        }
-    } catch (error) {
-        logger.error("Couldn't cancel Subscription");
+    // instance.subscriptions.cancel(subscriptionId,options)
+    // cancel_at_cycle_end
+    // Possible values:
+    // 0 (default): Cancel the subscription immediately.
+    // 1: Cancel the subscription at the end of the current billing cycle.
+
+    const cancelSubscription = await instance.subscriptions.cancel(subscription.razorSubscriptionId);
+    if (!cancelSubscription) {
+        return next(new ErrorHandler("Failed to cancel subscription", 403));
+    }
+    if (subscription.currentEnd <= Date.now()) {
+        await User.findByIdAndUpdate(req.user.id,
+            { "cards.total": 0 },
+            { new: true, runValidators: true, useFindAndModify: false }
+        );
     }
 
     res.status(200).json({

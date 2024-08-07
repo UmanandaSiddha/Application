@@ -4,28 +4,21 @@ import { instance } from "../../server.js";
 import Plan, { planEnum } from "../../models/payment/planModel.js";
 
 export const createPlan = catchAsyncErrors(async (req, res, next) => {
-
     const { name, description, planType, cards, amount, period, interval } = req.body;
     if (!name || !description || !planType || !cards || !amount || !period || !interval) {
         return next(new ErrorHandler("All fields are required", 404));
     };
 
-    let razorPlan;
-    try {
-        razorPlan = await instance.plans.create({
-            period,
-            interval,
-            item: {
-                name,
-                amount: Number(amount) * 100,
-                currency: "INR",
-                description,
-            },
-        });   
-    } catch (error) {
-        return next(new ErrorHandler(`Error: ${error.error.description}`, error.statusCode));
-    }
-
+    const razorPlan = await instance.plans.create({
+        period,
+        interval,
+        item: {
+            name,
+            amount: Number(amount) * 100,
+            currency: "INR",
+            description,
+        },
+    });   
     if (!razorPlan) {
         return next(new ErrorHandler("Failed to create plan", 404));
     }
@@ -48,15 +41,20 @@ export const createPlan = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const createFreePlan = catchAsyncErrors(async (req, res, next) => {
+    const { name, description, cards, period, interval } = req.body;
+    if (!cards || !period || !interval || !name || !description) {
+        return next(new ErrorHandler("All fields are required", 404));
+    }
+
     const plan = await Plan.create({
-        name: req.body.name,
+        name,
         amount: 0,
-        description: req.body.description,
-        cards: Number(req.body.cards),
+        description,
+        cards: Number(cards),
         planType: planEnum.FREE,
         visible: false,
-        period: req.body.period,
-        interval: Number(req.body.interval),
+        period,
+        interval: Number(interval),
     });
 
     res.status(200).json({
@@ -66,21 +64,22 @@ export const createFreePlan = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const updateFreePlan = catchAsyncErrors(async (req, res, next) => {
-    const plan = await Plan.findById(req.params.id);
-
+    const plan = await Plan.findOne({ _id: req.params.id, planType: planEnum.FREE });
     if (!plan) {
         return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
     }
+    
+    const { name, description, cards, period, interval } = req.body;
+    const updatePlan = {};
+    if (name) updatePlan.name = name;
+    if (description) updatePlan.description = description;
+    if (cards) updatePlan.cards = Number(cards);
+    if (period) updatePlan.period = period;
+    if (interval) updatePlan.interval = Number(interval);
 
     await Plan.findByIdAndUpdate(
         req.params.id, 
-        { 
-            name: req.body.name,
-            description: req.body.description,
-            cards: Number(req.body.cards),
-            period: req.body.period,
-            interval: Number(req.body.interval),
-        }, 
+        updatePlan,
         { new: true, runValidators: true, useFindAndModify: false }
     );
 
@@ -92,7 +91,6 @@ export const updateFreePlan = catchAsyncErrors(async (req, res, next) => {
 
 export const switchPlanVisibility = catchAsyncErrors(async (req, res, next) => {
     const plan = await Plan.findById(req.params.id);
-
     if (!plan) {
         return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
     }
@@ -138,13 +136,15 @@ export const updatePlan = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
     }
 
+    const { name, description, cards } = req.body;
+    const planData = {};
+    if (name) planData.name = name;
+    if (description) planData.description = description;
+    if (cards) planData.cards = Number(cards);
+
     const updatedPlan = await Plan.findByIdAndUpdate(
         req.params.id, 
-        { 
-            name: req.body.name,
-            description: req.body.description,
-            cards: Number(req.body.cards),
-        }, 
+        planData, 
         { new: true, runValidators: true, useFindAndModify: false }
     );
 

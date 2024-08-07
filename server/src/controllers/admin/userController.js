@@ -7,21 +7,19 @@ import Animal from "../../models/cards/animalModel.js";
 import Personal from "../../models/cards/personalModel.js";
 import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
-import User, { accountEnum, freeEnum, roleEnum } from "../../models/userModel.js";
+import User, { freeEnum, roleEnum } from "../../models/userModel.js";
+import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const adminLogin = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
-
     if (!email || !password) {
         return next(new ErrorHandler("Please enter Email and Password", 400));
     }
 
     const user = await User.findOne({ email }).select("+password");
-
     if (!user) {
         return next(new ErrorHandler("Invalid Credentials", 401));
     }
-
     if (user.role !== roleEnum.ADMIN) {
         return next(new ErrorHandler("Only Admins are allowed", 401));
     }
@@ -82,7 +80,6 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
 
 export const freeAccess = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.params.id);
-
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
@@ -114,7 +111,6 @@ export const freeAccess = catchAsyncErrors(async (req, res, next) => {
 
 export const revokeFreeAccess = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.params.id);
-
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
@@ -143,21 +139,35 @@ export const revokeFreeAccess = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
-    const users = await User.find();
-    const userCount = await User.countDocuments();
+    const resultPerPage = 3;
+    const count = await User.countDocuments();
 
-    res.status(200).json({
+    const apiFeatures = new ApiFeatures(User.find().sort({ $natural: -1 }), req.query).search().filter();
+
+    // let link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
+
+    // if (category) {
+    //     link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
+    // }
+
+    let filteredUsers = await apiFeatures.query;
+    let filteredUsersCount = filteredUsers.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredUsers = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        count: userCount,
-        users,
+        count,
+        resultPerPage,
+        users: filteredUsers,
+        filteredUsersCount
     });
 });
 
 export const getSingleUser = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.params.id).populate("activePlan", "planId status currentEnd");
-
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
@@ -192,7 +202,6 @@ export const updateRole = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const updateCard = catchAsyncErrors(async (req, res, next) => {
-
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
@@ -241,7 +250,6 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const reActivateUser = catchAsyncErrors(async (req, res, next) => {
-
     if (req.user.id === req.params.id) {
         return next(new ErrorHandler(`You cannot reactivate your account`, 400));
     }

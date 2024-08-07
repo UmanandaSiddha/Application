@@ -21,7 +21,7 @@ const AdminPlan = lazy(() => import("./pages/admin-plan"));
 const BillingPage = lazy(() => import("./pages/plans/billing"));
 const RecieptPage = lazy(() => import("./pages/plans/reciept"));
 const Onboarding = lazy(() => import("./pages/auth/onboarding"));
-const OrgRegister = lazy(() => import("./pages/auth/orgRegister"));
+const OrgRegister = lazy(() => import("./pages/auth/org-resgister"));
 const Checkout = lazy(() => import("./pages/plans/checkout"));
 
 const AllCards = lazy(() => import("./pages/cards/all-cards"));
@@ -44,7 +44,7 @@ const DonatorDashboard = lazy(() => import("./pages/donation/dash"));
 const DonationBilling = lazy(() => import("./pages/donation/billing"));
 
 const UnBlockPage = lazy(() => import("./pages/auth/unblock"));
-
+const AboutUs = lazy(() => import("./pages/others/about"));
 const ContactUs = lazy(() => import("./pages/others/contact"));
 const ReportPage = lazy(() => import("./pages/others/report"));
 
@@ -58,11 +58,17 @@ import { donatorExist, donatorNotExist } from "./redux/reducer/donatorReducer";
 const App = () => {
     const location = useLocation();
 
+    const noPaddingTopRoutes = ["/login", "/register", "/org/register"];
+
+    const containerClass = noPaddingTopRoutes.includes(location.pathname)
+        ? ""
+        : "custom-padding";
+
     const { user, loading } = useSelector(
         (state: RootState) => state.userReducer
     );
 
-    const { donator, loading:lod2 } = useSelector(
+    const { donator, loading: lod2 } = useSelector(
         (state: RootState) => state.donatorReducer
     );
 
@@ -91,10 +97,10 @@ const App = () => {
         fetchDonator();
     }, []);
 
-    return loading ? (
+    return (loading || lod2) ? (
         <Loader />
     ) : (
-        <div>
+        <div className={containerClass}>
             <ToastContainer
                 position="top-center"
                 autoClose={5000}
@@ -108,7 +114,7 @@ const App = () => {
                 theme="dark"
             />
             <ErrorBoundary>
-                {!["/login", "/register"].includes(location.pathname) && (<Header />)}
+                {!["/login", "/register", "/org/register"].includes(location.pathname) && (<Header />)}
                 <Suspense fallback={<Loader />}>
                     <Routes>
                         <Route path="/" element={<Home user={user!} />} />
@@ -116,21 +122,22 @@ const App = () => {
                         <Route path="/display" element={<DisplayCard />} />
                         <Route path="/onboarding" element={<Onboarding />} />
                         <Route path="/donation/login" element={<DonationLogin />} />
-                        <Route path="/contact-us" element={<ContactUs />} />
+                        <Route path="/contact" element={<ContactUs />} />
+                        <Route path="/about" element={<AboutUs />} />
                         <Route path="/report" element={<ReportPage />} />
                         <Route path="/unblock" element={<UnBlockPage />} />
 
                         {/* Not logged In Route */}
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/organization/register" element={<OrgRegister />} />
+                        <Route path="/org/register" element={<OrgRegister />} />
                         <Route path="/reset" element={<ResetPassword />} />
                         <Route path="/donation" element={<Donation />} />
                         <Route path="/receipt" element={<RecieptPage />} />
 
                         <Route
-                            element={<ProtectedRoute isAuthenticated={!lod2 && donator ? true : false} redirect="/donation/login" />}
-                        >                         
+                            element={<ProtectedRoute isAuthenticated={donator ? true : false} redirect="/donation/login" />}
+                        >
                             <Route path="/donation/checkout" element={<DonationCheckout />} />
                             <Route path="/donation/dashboard" element={<DonatorDashboard />} />
                             <Route path="/donation/billing" element={<DonationBilling />} />

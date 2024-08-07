@@ -56,14 +56,14 @@ export type Donator = {
     email: string;
     phone: string;
     address: {
-        street: String;
-        city: String;
-        state: String;
-        postalCode: String;
-        country: String;
+        street: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
     },
-    pan: String;
-    customerId: String;
+    pan: string;
+    customerId: string;
     activeDonation: {
         _id: string;
         status: string;

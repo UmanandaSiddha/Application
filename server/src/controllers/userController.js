@@ -18,10 +18,15 @@ import logger from "../config/logger.js";
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
 
-    const { name, email, password } = req.body
+    const { name, email, password, image } = req.body
 
     if (!name || !email || !password) {
         return next(new ErrorHandler("Please enter Name, Email and Password", 400));
+    }
+
+    const userExists = await User.findOne({ email });
+    if (!userExists) {
+        return next(new ErrorHandler("Email already exists", 400));
     }
 
     const user = await User.create({
@@ -36,6 +41,11 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Error Registering User, Try Again Later", 500));
     }
 
+    if (email === process.env.ADMIN_EMAIL) {
+        user.role = roleEnum.ADMIN
+        await user.save();
+    }
+
     if (req.query.type === roleEnum.ORG) {
         user.role = roleEnum.ORG;
         const { street, city, state, postalCode, country, website, phone } = req.body;
@@ -44,6 +54,14 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
             return next(new ErrorHandler("All fields are required", 400));
         }
 
+        user.phone = phone;
+        user.billingAddress = {
+            street,
+            city,
+            state,
+            postalCode,
+            country,
+        }
         user.orgDetails = {
             address: {
                 street,
@@ -58,9 +76,8 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
         await user.save();
     }
 
-    if (req.body.image) {
-        const img = req.body.image;
-        const data = img.replace(/^data:image\/\w+;base64,/, "");
+    if (image) {
+        const data = image.replace(/^data:image\/\w+;base64,/, "");
         const buffer = Buffer.from(data, 'base64');
 
         try {
@@ -138,6 +155,10 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
 export const verifyUser = catchAsyncErrors(async (req, res, next) => {
     const { otp } = req.body;
 
+    if (!otp) {
+        return next(new ErrorHandler("Please enter OTP", 400));
+    }
+
     const oneTimePassword = crypto
         .createHash("sha256")
         .update(otp.toString())
@@ -157,14 +178,11 @@ export const verifyUser = catchAsyncErrors(async (req, res, next) => {
     user.oneTimePassword = undefined;
     user.oneTimeExpire = undefined;
 
-    const uss = await user.save();
+    const savedUser = await user.save();
 
-    let message;
-    if (uss) {
-        message = "Account Verified Successfully!!"
-    } else {
-        message = "Account Verification Failed, Please try again later."
-    }
+    const message = savedUser
+        ? "Account Verified Successfully!!"
+        : "Account Verification Failed, Please try again later.";
 
     try {
         await addEmailToQueue({
@@ -258,6 +276,10 @@ export const fetchBlocked = catchAsyncErrors(async (req, res, next) => {
 export const unblockUser = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
+    if (!user) {
+        return next(new ErrorHandler("User not Found", 404));
+    }
+
     if (req.body.isMe) {
         user.isBlocked = false;
         user.loginAttempt.count = 0;
@@ -320,9 +342,15 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 
 // Reset Password
 export const resetPassword = catchAsyncErrors(async (req, res, next) => {
+    const {token} = req.params;
+
+    if (token) {
+        return next(new ErrorHandler("Broken Link", 500));
+    }
+
     const resetPasswordToken = crypto
         .createHash("sha256")
-        .update(req.params.token)
+        .update(token)
         .digest("hex");
 
     const user = await User.findOne({
@@ -335,11 +363,17 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Reset Password Token is Invalid or has Expired", 400));
     }
 
-    if (req.body.newPassword !== req.body.confirmPassword) {
+    const { newPassword, confirmPassword } = req.body;
+
+    if (!newPassword || !confirmPassword) {
+        return next(new ErrorHandler("All fields are required", 404));
+    }
+
+    if (newPassword !== confirmPassword) {
         return next(new ErrorHandler("Password does not match", 400));
     }
 
-    user.password = req.body.newPassword;
+    user.password = newPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
@@ -351,15 +385,25 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 export const setPassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id).select("+password");
 
+    if (user.accountType !== accountEnum.HYBRID) {
+        return next(new ErrorHandler("Account is aready hybrid", 400));
+    }
+
     if (user.accountType !== accountEnum.GOOGLE) {
         return next(new ErrorHandler("Password Already Saved", 400));
     }
 
-    if (req.body.newPassword !== req.body.confirmPassword) {
-        return next(new ErrorHandler("Password Does Not Match", 400));
+    const { newPassword, confirmPassword } = req.body;
+
+    if (!newPassword || !confirmPassword) {
+        return next(new ErrorHandler("All fields are required", 404));
     }
 
-    user.password = req.body.newPassword;
+    if (newPassword !== confirmPassword) {
+        return next(new ErrorHandler("Password does not match", 400));
+    }
+
+    user.password = newPassword;
     user.accountType = accountEnum.HYBRID;
 
     await user.save();
@@ -369,7 +413,7 @@ export const setPassword = catchAsyncErrors(async (req, res, next) => {
 
 // Get User Details
 export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
-
+    
     const user = await User.findById(req.user._id).populate("activePlan", "planId status currentEnd");
 
     res.status(200).json({
@@ -386,7 +430,7 @@ export const updateBillingInfo = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findByIdAndUpdate(
         req.user.id, 
-        { 
+        {
             phone,
             billingAddress : {
                 street,
@@ -409,17 +453,22 @@ export const updateBillingInfo = catchAsyncErrors(async (req, res, next) => {
 export const updatePassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id).select("+password");
 
-    const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        return next(new ErrorHandler("All fields are required", 404));
+    }
+
+    const isPasswordMatched = await user.comparePassword(oldPassword);
 
     if (!isPasswordMatched) {
         return next(new ErrorHandler("Old password is incorrect", 400));
     }
 
-    if (req.body.newPassword !== req.body.confirmPassword) {
+    if (newPassword !== confirmPassword) {
         return next(new ErrorHandler("Password does not match", 400));
     }
 
-    user.password = req.body.newPassword;
+    user.password = newPassword;
 
     await user.save();
 
@@ -428,15 +477,32 @@ export const updatePassword = catchAsyncErrors(async (req, res, next) => {
 
 // Update User Profile
 export const updateProfile = catchAsyncErrors(async (req, res, next) => {
-
     const userx = await User.findById(req.user.id);
 
-    if (req.body.image) {
+    const { 
+        name,
+        phone,
+        street,
+        state,
+        city,
+        postalCode,
+        country,
+        image,
+        orgWebsite,
+        orgPhone,
+        orgStreet,
+        orgState,
+        orgCity,
+        orgPostalCode,
+        orgCountry,
+    } = req.body;
+
+    if (image) {
         if ((userx.image.length > 0) && (fs.existsSync(`./public/avatars/${userx._id}.jpg`))) {
             fs.unlinkSync(`./public/avatars/${userx._id}.jpg`);
         }
-        const img = req.body.image;
-        const data = img.replace(/^data:image\/\w+;base64,/, "");
+
+        const data = image.replace(/^data:image\/\w+;base64,/, "");
         const buffer = Buffer.from(data, 'base64');
 
         try {
@@ -456,11 +522,29 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
         }
     }
 
-    const user = await User.findByIdAndUpdate(req.user.id, { name: req.body.name }, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false,
-    });
+    const updateUser = {};
+    if (name) updateUser.name = name;
+    if (phone) updateUser.phone = phone;
+    if (street) updateUser.billingAddress.street = street;
+    if (state) updateUser.billingAddress.state = state;
+    if (city) updateUser.billingAddress.city = city;
+    if (postalCode) updateUser.billingAddress.postalCode = postalCode;
+    if (country) updateUser.billingAddress.country = country;
+    if (userx.role === roleEnum.ORG) {
+        if (orgWebsite) updateUser.orgDetails.website = orgWebsite;
+        if (orgPhone) updateUser.orgDetails.phone = orgPhone;
+        if (orgStreet) updateUser.orgDetails.address.street = orgStreet;
+        if (orgState) updateUser.orgDetails.address.state = orgState;
+        if (orgCity) updateUser.orgDetails.address.city = orgCity;
+        if (orgPostalCode) updateUser.orgDetails.address.postalCode = orgPostalCode;
+        if (orgCountry) updateUser.orgDetails.address.country = orgCountry;
+    } 
+
+    const user = await User.findByIdAndUpdate(
+        req.user.id,
+        updateUser,
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
 
     res.status(200).json({
         success: true,

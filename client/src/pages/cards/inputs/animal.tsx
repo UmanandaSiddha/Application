@@ -124,8 +124,18 @@ const CreateAnimal = () => {
                 <div className="basis-full lg:basis-3/4 lg:max-h-screen">
                     <div className="h-[85vh] overflow-y-scroll mb-4 hide-scrollbar">
                         <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Animal</h1>
-                        <div className="flex flex-col justify-center items-center min-h-screen mb-8 lg:w-full">
-                            <div className="flex flex-col justify-center max-h-screen pb-10">
+                        <div className="flex flex-col justify-center items-center lg:w-full">
+                            <div className="flex flex-col justify-center pb-10">
+
+                                <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
+                                    <div className="w-full h-4 bg-blue-100 rounded-full">
+                                        <div
+                                            className="h-4 bg-blue-500 rounded-full"
+                                            style={{ width: `100%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
                                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
                                     {inputs.map((input, index) => (
                                         <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>

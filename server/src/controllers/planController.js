@@ -21,7 +21,7 @@ export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
         user: req.user.id,
     });
 
-    const message = `Request for ${newRequest}`;
+    const message = `Request for ${JSON.stringify(newRequest)}`;
 
     try {
         await addEmailToQueue({
@@ -61,7 +61,6 @@ export const getCustomPlan = catchAsyncErrors(async (req, res, next) => {
 
 export const getAllPlans = catchAsyncErrors( async (req, res, next) => {
     const plans = await Plan.find({ visible: true, planType: { $ne: planEnum.CUSTOM }});
-    // const planCount = await Plan.countDocuments({ visible: true, planType: { $ne: planEnum.CUSTOM }});
 
     res.status(200).json({
         success: true,

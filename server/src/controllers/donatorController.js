@@ -13,15 +13,15 @@ import logger from "../config/logger.js";
 import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 
 export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
-
-    if (!req.body.email) {
+    const { email } = req.body;
+    if (!email) {
         return next(new ErrorHandler("Please enter Email", 400));
     }
 
-    const donator = await Donator.findOne({ email: req.body.email });
+    const donator = await Donator.findOne({ email });
 
     if (!donator) {
-        donator = await Donator.create({ email: req.body.email })
+        donator = await Donator.create({ email })
     }
 
     const otp = donator.getOneTimePassword();
@@ -53,7 +53,6 @@ export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
 
 export const loginDonator = catchAsyncErrors(async (req, res, next) => {
     const { otp, email } = req.body;
-
     if (!email || !otp) {
         return next(new ErrorHandler("Please enter Email and And Otp", 400));
     }
@@ -68,7 +67,6 @@ export const loginDonator = catchAsyncErrors(async (req, res, next) => {
         oneTimePassword,
         oneTimeExpire: { $gt: Date.now() },
     });
-
     if (!donator) {
         return next(new ErrorHandler("Email Veification OTP has Expired", 400));
     }
@@ -92,7 +90,6 @@ export const getDonator = catchAsyncErrors(async (req, res, next) => {
 
 export const createDonatorDetails = catchAsyncErrors(async (req, res, next) => {
     const { name, phone, street, city, state, postalCode, country } = req.body;
-
     if (!name || !phone || !street || !city || !state || !postalCode || !country) {
         return next(new ErrorHandler("Please enter all the required fields", 400));
     }
@@ -131,7 +128,6 @@ export const updatePanDetail = catchAsyncErrors(async (req, res, next) => {
     }
 
     const donator = await Donator.findById(req.donator.id);
-
     if (donator.pan) {
         return next(new ErrorHandler("Pan is already there", 500));
     }
@@ -153,23 +149,17 @@ export const createDonationPlan = catchAsyncErrors(async (req, res, next) => {
     if (!amount || !period) {
         return next(new ErrorHandler("All fields are required", 404));
     };
-
-    let razorPlan;
-    try {
-        razorPlan = await instance.plans.create({
-            period,
-            interval: 1,
-            item: {
-                name: req.donation.id,
-                amount: Number(amount) * 100,
-                currency: "INR",
-                description: `Donation Plan for ${req.donator.id}`,
-            },
-        });   
-    } catch (error) {
-        return next(new ErrorHandler(`Error: ${error.error.description}`, error.statusCode));
-    }
-
+    
+    const razorPlan = await instance.plans.create({
+        period,
+        interval: 1,
+        item: {
+            name: req.donation.id,
+            amount: Number(amount) * 100,
+            currency: "INR",
+            description: `Donation Plan for ${req.donator.id}`,
+        },
+    });   
     if (!razorPlan) {
         return next(new ErrorHandler("Failed to create plan", 404));
     }
@@ -211,6 +201,9 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         quantity: 1,
         customer_notify: 0,
     });
+    if (!subscriptions) {
+        return next(new ErrorHandler("Failed to create subscription", 404));
+    }
 
     const plan = await Plan.findOne({ razorPlanId: req.body.id });
 
@@ -244,13 +237,11 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const createDonation = catchAsyncErrors(async (req, res, next) => {
-    const options = {
+    const order = await instance.orders.create({
         amount: Number(req.body.amount) * 100,
         currency: req.body.currency,
         receipt: `receipt_${short.generate()}`
-    };
-
-    const order = await instance.orders.create(options);
+    });
     if (!order) {
         return next(new ErrorHandler("Order Failed", 400));
     }

@@ -138,7 +138,7 @@ const Login = () => {
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign in to access your account</p>
                         </div>
 
-                        <div className="mt-8">
+                        <div className="mt-8 px-4">
                             <form onSubmit={handleSubmit}>
                                 <div className="mt-6">
                                     <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">

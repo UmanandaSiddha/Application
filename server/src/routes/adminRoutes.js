@@ -2,21 +2,8 @@ import express from "express";
 import { isAuthenticatedUser, isUserVerified, authorizeRoles } from "../middleware/auth.js";
 import { deleteErrorLogs, deleteInfoLogs, getErrorLogs, getInfoLogs } from "../controllers/admin/logsController.js";
 import { adminLogin, deleteUser, freeAccess, getAllUsers, getSingleUser, reActivateUser, revokeFreeAccess, updateCard, updateRole } from "../controllers/admin/userController.js";
-import {
-    getAllContacts,
-    getAllReports,
-    getAttendedContact,
-    getAttendedReport,
-    getUnAttendedReport,
-    getUnAttendedContact,
-    getSingleContact,
-    getSingleReport,
-    switchAttendedContact,
-    deleteContact,
-    switchAttendedReport,
-    deleteReport
-} from "../controllers/admin/contactController.js";
-import { attendCustomRequests, createCustomPlan, getAllCustomRequests, getaprticularRequest, rejectCustomPlan } from "../controllers/admin/requestController.js";
+import { getAllContacts, getSingleContact, switchAttendedContact, deleteContact } from "../controllers/admin/contactController.js";
+import { attendCustomRequests, createCustomPlan, getAllCustomRequests, getParticularRequest, rejectCustomPlan } from "../controllers/admin/requestController.js";
 import { createFreePlan, createPlan, deletePlan, getAllPlans, getParticularPlan, switchPlanVisibility, updateFreePlan, updatePlan } from "../controllers/admin/planController.js";
 import { getAllCards } from "../controllers/admin/cardsController.js";
 import { getAllTransactions, getUserTransactions } from "../controllers/admin/transactionController.js";
@@ -49,25 +36,14 @@ router.route("/cards/all").get(isAuthenticatedUser, isUserVerified, authorizeRol
 
 // Contact controller
 router.route("/contacts/all").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAllContacts);
-router.route("/contacts/attended/true").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAttendedContact);
-router.route("/contacts/attended/false").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getUnAttendedContact);
 router.route("/contacts/:id")
     .get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getSingleContact)
     .put(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), switchAttendedContact)
     .delete(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), deleteContact);
 
-// Report controller
-router.route("/reports/all").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAllReports);
-router.route("/reports/attended/true").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAttendedReport);
-router.route("/reports/attended/false").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getUnAttendedReport);
-router.route("/reports/:id")
-    .get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getSingleReport)
-    .put(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), switchAttendedReport)
-    .delete(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), deleteReport);
-
 // Request controller 
 router.route("/request/all").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getAllCustomRequests);
-router.route("/request/:id").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getaprticularRequest);
+router.route("/request/:id").get(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), getParticularRequest);
 router.route("/request/create").post(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), createCustomPlan);
 router.route("/request/attend/:id").put(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), attendCustomRequests);
 router.route("/request/reject/:id").put(isAuthenticatedUser, isUserVerified, authorizeRoles("admin"), rejectCustomPlan);

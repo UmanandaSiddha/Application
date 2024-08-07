@@ -74,6 +74,7 @@ const BillingPage = () => {
 
     return (
         <div className="bg-white py-1 sm:py-6">
+            {subscription && !["just_created", "created"].includes(subscription.status) ? (
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                     <div className="mx-auto mt-8 max-w-2xl rounded-3xl ring-1 ring-gray-200 sm:mt-20 lg:mx-0 lg:flex lg:max-w-none">
                         <div className="p-8 sm:p-10 lg:flex-auto">
@@ -116,6 +117,9 @@ const BillingPage = () => {
                         </div>
                     </div>
                 </div>
+            ) : (
+                <p className="text-center mt-16 text-2xl font-semibold">No Subscription here</p>
+            )}
 
             {transactions && transactions.length > 0 ? (
                 <div className="mx-auto my-16 max-w-7xl px-6 lg:px-8 mt-16">

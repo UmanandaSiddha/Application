@@ -349,8 +349,8 @@ const MedicalInput = () => {
                 <div className="basis-full lg:basis-3/4 lg:max-h-screen">
                     <div className="h-[85vh] overflow-y-scroll mb-4 hide-scrollbar">
                         <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Medical</h1>
-                        <div className="flex flex-col justify-center items-center min-h-screen mb-8 lg:w-full">
-                            <div className="flex flex-col justify-center max-h-screen pb-10">
+                        <div className="flex flex-col justify-center items-center lg:w-full">
+                            <div className="flex flex-col justify-center pb-10">
 
                                 <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
                                     <div className="w-full h-4 bg-blue-100 rounded-full">

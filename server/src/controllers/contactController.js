@@ -4,7 +4,7 @@ import Contact from "../models/messages/contactModel.js";
 
 export const createContact = catchAsyncErrors(async (req, res, next) => {
 
-    const { email, name, message } = req.body;
+    const { email, name, message, report } = req.body;
 
     if (!email || !name || !message) {
         return next(new ErrorHandler("All fields are required", 404));
@@ -14,7 +14,7 @@ export const createContact = catchAsyncErrors(async (req, res, next) => {
         email,
         name,
         message,
-        report: Boolean(req.body?.report)
+        report: report !== undefined ? Boolean(report) : undefined
     });
 
     res.status(200).json({

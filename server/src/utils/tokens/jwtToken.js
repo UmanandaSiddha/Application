@@ -11,7 +11,7 @@ const sendToken = (user, statusCode, res) => {
         sameSite: 'strict',       
     };
 
-    res.status(statusCode).cookie("token", token, options).json({
+    res.status(statusCode).cookie("user_token", token, options).json({
         success: true,
         user,
         token,

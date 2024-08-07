@@ -10,6 +10,7 @@
 body {
     margin: 0;
     padding: 0;
+    background-color: whitesmoke;
 }
 
 @media (max-width: 730px) {
@@ -29,6 +30,14 @@ body {
     }
 }
 
+.custom-padding {
+    padding-top: 5.5rem;
+}
+
+.toggle-checkbox:checked+.toggle-bg+.toggle-dot {
+    transform: translateX(1.5rem);
+}
+
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -36,4 +45,8 @@ body {
 .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+body.no-scroll {
+    overflow: hidden;
 }

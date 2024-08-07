@@ -1,76 +1,30 @@
 import ErrorHandler from "../../utils/errorHandler.js";
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
 import Contact from "../../models/messages/contactModel.js";
+import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const getAllContacts = catchAsyncErrors(async (req, res, next) => {
-    const contacts = await Contact.find({ report: false });
-    const count = await Contact.countDocuments({ report: false });
+    const resultPerPage = 5;
+    const count = await Contact.countDocuments();
 
-    res.status(200).json({
+    const apiFeatures = new ApiFeatures(Contact.find().sort({ $natural: -1 }), req.query).filter();
+    let filteredContacts = await apiFeatures.query;
+    let filteredContactsCount = filteredContacts.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredContacts = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        contacts,
-        count
-    });
-});
-
-export const getAllReports = catchAsyncErrors(async (req, res, next) => {
-    const reports = await Contact.find({ report: true });
-    const count = await Contact.countDocuments({ report: true });
-
-    res.status(200).json({
-        success: true,
-        reports,
-        count
-    });
-});
-
-export const getAttendedContact = catchAsyncErrors(async (req, res, next) => {
-    const contacts = await Contact.find({ attended: true, report: false });
-    const count = await Contact.countDocuments({ attended: true, report: false });
-
-    res.status(200).json({
-        success: true,
-        contacts,
-        count
-    });
-});
-
-export const getUnAttendedContact = catchAsyncErrors(async (req, res, next) => {
-    const contacts = await Contact.find({ attended: false, report: false });
-    const count = await Contact.countDocuments({ attended: false, report: false });
-
-    res.status(200).json({
-        success: true,
-        contacts,
-        count
-    });
-});
-
-export const getAttendedReport = catchAsyncErrors(async (req, res, next) => {
-    const reports = await Contact.find({ attended: true, report: true });
-    const count = await Contact.countDocuments({ attended: true, report: true });
-
-    res.status(200).json({
-        success: true,
-        reports,
-        count
-    });
-});
-
-export const getUnAttendedReport = catchAsyncErrors(async (req, res, next) => {
-    const reports = await Contact.find({ attended: false, report: true });
-    const count = await Contact.countDocuments({ attended: false, report: true });
-
-    res.status(200).json({
-        success: true,
-        reports,
-        count
+        count,
+        resultPerPage,
+        filteredContacts,
+        filteredContactsCount
     });
 });
 
 export const getSingleContact = catchAsyncErrors(async (req, res, next) => {
-    const contact = await Contact.findOne({ _id: req.params.id, report: false });
-
+    const contact = await Contact.findById(req.params.id);
     if (!contact) {
         next(new ErrorHandler("Contact not found", 404));
     }
@@ -81,21 +35,8 @@ export const getSingleContact = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const getSingleReport = catchAsyncErrors(async (req, res, next) => {
-    const report = await Contact.findOne({ _id: req.params.id, report: true });
-
-    if (!report) {
-        next(new ErrorHandler("Report not found", 404));
-    }
-
-    res.status(200).json({
-        success: true,
-        report
-    });
-});
-
 export const deleteContact = catchAsyncErrors(async (req, res, next) => {
-    const contact = await Contact.findOne({ _id: req.params.id, report: false });
+    const contact = await Contact.findById(req.params.id);
     if (!contact) {
         next(new ErrorHandler("Contact not found", 404));
     }
@@ -108,23 +49,8 @@ export const deleteContact = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const deleteReport = catchAsyncErrors(async (req, res, next) => {
-    const report = await Contact.findOne({ _id: req.params.id, report: true });
-    if (!report) {
-        next(new ErrorHandler("Report not found", 404));
-    }
-
-    await Contact.findByIdAndDelete(req.params.id);
-
-    res.status(200).json({
-        success: true,
-        message: "Report deleted successfully"
-    });
-});
-
 export const switchAttendedContact = catchAsyncErrors(async (req, res, next) => {
-
-    const contact = await Contact.findOne({ _id: req.params.id, report: false });
+    const contact = await Contact.findById(req.params.id);
     if (!contact) {
         next(new ErrorHandler("Contact not found", 404));
     }
@@ -138,24 +64,5 @@ export const switchAttendedContact = catchAsyncErrors(async (req, res, next) => 
     res.status(200).json({
         success: true,
         message: "Contact attended switched successfully"
-    });
-});
-
-export const switchAttendedReport = catchAsyncErrors(async (req, res, next) => {
-
-    const report = await Contact.findOne({ _id: req.params.id, report: true });
-    if (!report) {
-        next(new ErrorHandler("Report not found", 404));
-    }
-
-    await Contact.findByIdAndUpdate(
-        req.params.id, 
-        { attended: !report.attended }, 
-        { new: true, runValidators: true, useFindAndModify: false }
-    );
-
-    res.status(200).json({
-        success: true,
-        message: "Report attended switched successfully"
     });
 });

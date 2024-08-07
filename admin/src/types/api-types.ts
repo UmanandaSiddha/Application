@@ -24,6 +24,8 @@ export type SubscriptionResponse = {
 export type AllUsersResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
+    filteredUsersCount: number;
     users: User[];
 }
 

@@ -117,8 +117,8 @@ const Register = () => {
                 </div>
 
                 <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-2/6">
-                    <div className="flex-1">
-                        <div className="text-center">
+                    <div className="flex-1 hide-scrollbar overflow-auto h-full">
+                        <div className="text-center mt-5">
                             <div className="flex justify-center mx-auto">
                                 <img className="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" />
                             </div>
@@ -126,7 +126,7 @@ const Register = () => {
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign up to access your account</p>
                         </div>
 
-                        <div className="mt-8">
+                        <div className="mt-8 px-4">
                             <form onSubmit={handleSubmit}>
 
                                 <div className="mt-6">
@@ -226,7 +226,7 @@ const Register = () => {
 
                             </form>
 
-                            <p className="mt-6 text-sm text-center text-gray-400">Already have an account? <Link to="/login" className="text-blue-500 focus:outline-none focus:underline hover:underline">Sign in</Link>.</p>
+                            <p className="mt-3 mb-8 text-sm text-center text-gray-400">Already have an account? <Link to="/login" className="text-blue-500 focus:outline-none focus:underline hover:underline">Sign in</Link>.</p>
                         </div>
                     </div>
                 </div>

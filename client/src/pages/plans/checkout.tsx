@@ -254,9 +254,9 @@ const Checkout = () => {
                 )}
             </div>
             <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
-                <div className="px-4 pt-8">
+                <div className="px-4 pt-2">
                     <p className="text-xl font-medium">User Details</p>
-                    <div className="mt-8 space-y-4">
+                    <div className="mt-6 space-y-4">
                         <div>
                             <label htmlFor="name" className="block text-sm font-medium">Name</label>
                             <input type="text" readOnly id="name" value={user?.name} name="name" className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" placeholder="Your Name" />

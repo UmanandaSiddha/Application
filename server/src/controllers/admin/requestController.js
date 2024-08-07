@@ -5,53 +5,64 @@ import Plan, { planEnum } from "../../models/payment/planModel.js";
 import CustomRequest from "../../models/messages/customRequestModel.js";
 import User from "../../models/userModel.js";
 import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
+import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {
+    const { period, interval, userId, amount, cards } = req.body;
+    if (!period || !interval || amount || cards || userId) {
+        return next(new ErrorHandler("All fields are required", 400));
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id: ${userId}`, 404));
+    }
+
+    const customRequest = await CustomRequest.findById(req.params.id);
+    if (!customRequest) {
+        return next(new ErrorHandler(`Custom Request does not exist with Id: ${req.params.id}`, 404));
+    }
+
     const razorPlan = await instance.plans.create({
-        period: req.body.period,
-        interval: req.body.interval,
+        period,
+        interval,
         item: {
-            name: req.body.user,
-            amount: Number(req.body.amount) * 100,
+            name: userId,
+            amount: Number(amount) * 100,
             currency: "INR",
-            description: `Custom Plan for ${req.body.user}`
+            description: `Custom Plan for ${userId}`
         },
     });
-
     if (!razorPlan) {
         return next(new ErrorHandler("Failed to create plan", 500));
     }
 
     const plan = await Plan.create({
-        name: req.body.user,
-        amount: Number(req.body.amount),
-        description: `Custom Plan for ${req.body.user}`,
-        cards: Number(req.body.cards),
+        name: userId,
+        amount: Number(amount),
+        description: `Custom Plan for ${userId}`,
+        cards: Number(cards),
         planType: planEnum.CUSTOM,
-        period: req.body.period,
-        interval: Number(req.body.interval),
+        period,
+        interval: Number(interval),
         razorPlanId: razorPlan.id,
     });
-
-    const user = await User.findById(req.body.user);
 
     try {
         await addEmailToQueue({
             email: user.email,
-            subject: req.params.id? `Custom Plan Request Accepted` : `Custom Plan For ${req.body.user}`,
+            subject: `Custom Plan Request Accepted`,
             message: `http://${CLIENT_URL}/custom-plan?id=${plan._id}&user=${user._id}`,
         });
     } catch (error) {
         console.log(error.message);
     }
 
-    if (req.params.id) {
-        await CustomRequest.findByIdAndUpdate(
-            req.params.id, 
-            { attended: true, "status.accepted": true }, 
-            { new: true, runValidators: true, useFindAndModify: false }
-        );
-    }
+    await CustomRequest.findByIdAndUpdate(
+        req.params.id, 
+        { attended: true, "status.accepted": true }, 
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
 
     res.status(200).json({
         success: true,
@@ -60,15 +71,26 @@ export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getAllCustomRequests = catchAsyncErrors(async (req, res, next) => {
-    const requests = await CustomRequest.find();
+    const resultPerPage = 5;
+    const count = await CustomRequest.countDocuments();
 
-    res.status(200).json({
+    const apiFeatures = new ApiFeatures(CustomRequest.find().sort({ $natural: -1 }), req.query).filter();
+    let filteredRequests = await apiFeatures.query;
+    let filteredRequestsCount = filteredRequests.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredRequests = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        requests,
+        count,
+        resultPerPage,
+        filteredRequests,
+        filteredRequestsCount
     });
 });
 
-export const getaprticularRequest = catchAsyncErrors(async (req, res, next) => {
+export const getParticularRequest = catchAsyncErrors(async (req, res, next) => {
     const request = await CustomRequest.findById(req.params.id);
     if (!request) {
         return next(new ErrorHandler("Request not found", 404));
@@ -80,7 +102,12 @@ export const getaprticularRequest = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const attendCustomRequests = catchAsyncErrors(async (rqe, res, next) => {
+export const attendCustomRequests = catchAsyncErrors(async (req, res, next) => {
+    const request = await CustomRequest.findById(req.params.id);
+    if (!request) {
+        return next(new ErrorHandler("Request not found", 404));
+    }
+
     await CustomRequest.findByIdAndUpdate(
         req.params.id, 
         { attended: true, "status.accepted": Boolean(req.body.status), "status.reason": req.body.reason }, 
@@ -94,7 +121,20 @@ export const attendCustomRequests = catchAsyncErrors(async (rqe, res, next) => {
 });
 
 export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
-    const user = await User.findById(req.body.user);
+    const { cards, amount, period, interval, userId } = req.body;
+    if (!cards || !amount || !period || !interval || !userId) {
+        return next(new ErrorHandler("All fields are required", 404));
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id: ${userId}`, 404));
+    }
+
+    const customRequest = await CustomRequest.findById(req.params.id);
+    if (!customRequest) {
+        return next(new ErrorHandler(`Custom Request does not exist with Id: ${req.params.id}`, 404));
+    }
 
     const data = {
         card: req.body.cards,
@@ -107,7 +147,7 @@ export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
         await addEmailToQueue({
             email: user.email,
             subject: `Custom Plan Request Rejected`,
-            message: `Requested Custom Plan is rejected for ${data}. Reason - ${req.body.reason}`,
+            message: `Requested Custom Plan is rejected for ${JSON.stringify(data)}. Reason - ${req.body.reason}`,
         });
     } catch (error) {
         console.log(error.message);

@@ -816,8 +816,8 @@ const InputVCard = () => {
                 <div className="basis-full lg:basis-3/4 lg:max-h-screen">
                     <div className="h-[85vh] overflow-y-scroll mb-4 hide-scrollbar">
                         <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Individual</h1>
-                        <div className="flex flex-col justify-center items-center min-h-screen mb-8 lg:w-full">
-                            <div className="flex flex-col justify-center max-h-screen pb-10">
+                        <div className="flex flex-col justify-center items-center lg:w-full">
+                            <div className="flex flex-col justify-center pb-10">
 
                                 <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
                                     <div className="w-full h-4 bg-blue-100 rounded-full">
@@ -827,7 +827,7 @@ const InputVCard = () => {
                                         ></div>
                                     </div>
                                 </div>
-
+                                
                                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
                                     {formParts()}
                                     <div className="flex justify-center space-x-4">
@@ -835,9 +835,7 @@ const InputVCard = () => {
                                             className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-1/2 max-w-2xl text-white bg-blue-500 text-lg"
                                             type="button"
                                             disabled={progressBar === 1}
-                                            onClick={() => {
-                                                setProgressBar((currPage) => currPage - 1);
-                                            }}
+                                            onClick={() => setProgressBar((currPage) => currPage - 1)}
                                         >
                                             PREV
                                         </button>
@@ -854,9 +852,7 @@ const InputVCard = () => {
                                                 className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-1/2 max-w-2xl text-white bg-blue-500 text-lg"
                                                 type="button"
                                                 disabled={progressBar === 5}
-                                                onClick={() => {
-                                                    setProgressBar((currPage) => currPage + 1);
-                                                }}
+                                                onClick={() => setProgressBar((currPage) => currPage + 1)}
                                             >
                                                 NEXT
                                             </button>
@@ -869,6 +865,7 @@ const InputVCard = () => {
                 </div>
             </div>
         </div>
+
     );
 };
 

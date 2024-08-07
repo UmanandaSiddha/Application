@@ -1,22 +1,51 @@
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
 import Transaction from "../../models/payment/transactionModel.js";
+import User from "../../models/userModel.js";
 import ErrorHandler from "../../utils/errorHandler.js";
+import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const getAllTransactions = catchAsyncErrors(async (req, res, next) => {
-    const transactions = await Transaction.find();
+    const resultPerPage = 5;
+    const count = await Transaction.countDocuments();
 
-    res.status(200).json({
+    const apiFeatures = new ApiFeatures(Transaction.find().sort({ $natural: -1 }), req.query).filter();
+    let filteredTransactions = await apiFeatures.query;
+    let filteredTransactionsCount = filteredTransactions.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredTransactions = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        transactions,
+        count,
+        resultPerPage,
+        filteredTransactions,
+        filteredTransactionsCount
     });
 });
 
 export const getUserTransactions = catchAsyncErrors(async (req, res, next) => {
-    const transactions = await Transaction.find({ user: req.params.id });
+    const user = await User.findById(req.params.id);
+    if (!user) {
+        return next(new ErrorHandler(`No User By Id ${req.params.id}`, 404));
+    }
 
-    res.status(200).json({
+    const resultPerPage = 5;
+    const count = await Transaction.countDocuments({ user: req.params.id });
+
+    const apiFeatures = new ApiFeatures(Transaction.find({ user: req.params.id }).sort({ $natural: -1 }), req.query).filter();
+    let filteredTransactions = await apiFeatures.query;
+    let filteredTransactionsCount = filteredTransactions.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredTransactions = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        transactions,
+        count,
+        resultPerPage,
+        filteredTransactions,
+        filteredTransactionsCount
     });
 });
 

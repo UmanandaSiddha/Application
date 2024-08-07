@@ -5,13 +5,12 @@ import Creator from "../models/cards/creatorModel.js";
 import Animal from "../models/cards/animalModel.js";
 import User, { freeEnum } from "../models/userModel.js";
 import Subscription from "../models/payment/subscriptionModel.js";
-
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import ApiFeatures from "../utils/services/apiFeatures.js";
 
 // Function to select model based on type
-const selectModelByType = (type) => {
+export const selectModelByType = (type) => {
     switch (type) {
         case 'botanical':
             return Tree;
@@ -35,7 +34,6 @@ export const createCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const user = await User.findById(req.user.id);
-
     if (user.freePlan.type === freeEnum.PLAN && user.cards.total <= user.cards.created) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
@@ -57,19 +55,20 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const vCard = await Model.findById(req.params.id);
-
     if (!vCard) {
         return next(new ErrorHandler(`VCard does not exist with Id: ${req.params.id}`, 404));
     }
 
     const user = await User.findById(req.user.id);
-
     if (user.freePlan.type === freeEnum.PLAN && user.cards.total <= user.cards.created) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
 
-    const updatedVCard = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, useFindAndModify: false });
-
+    const updatedVCard = await Model.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
     if (!updatedVCard) {
         return next(new ErrorHandler(`Update Failed`), 404);
     }
@@ -134,19 +133,15 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const user = await User.findById(vCard.user);
-
     if (user?.freePlan?.status) {
         const { type, end } = user.freePlan;
-        if (type === freeEnum.CUSTOM || end > Date.now()) {
-            return res.status(200).json({
-                success: true,
-                vCard,
-            });
+        if (type === freeEnum.PLAN && end > Date.now()) {
+            return next(new ErrorHandler("VCard Not Found", 404));
         }
     }
 
     const subscription = await Subscription.findById(user?.activePlan);
-    if (!["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < Date.now())) {
+    if (!subscription || !["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < Date.now())) {
         return next(new ErrorHandler("VCard Not Found", 404));
     }
 

@@ -1,673 +1,120 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
-import Loader from "@/components/rest/loader";
-import { useState, useMemo, useCallback } from "react";
-import { IoPersonOutline } from "react-icons/io5";
-import { MdNavigateNext } from "react-icons/md";
-import { useDispatch } from "react-redux";
-import { userExist, userNotExist } from "../../redux/reducer/userReducer";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-
-
-// import {
-//   deleteUser,
-//   updateUserProfile,
-//   requestVerifyUser,
-//   updatePassword,
-// } from "@/redux/api/userApi";
-import { toast } from "react-toastify";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
-import { UserResponse } from "@/types/api-types";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { IoIosLogOut } from "react-icons/io";
+import { toast } from "react-toastify";
 
 const Profile = () => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [openSep, setOpenSep] = useState<boolean>(false);
-  const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
-  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [avatar, setAvatar] = useState<any>();
 
-  const [openDelete, setOpenDelete] = useState<boolean>(false);
-  const [openReset, setOpenReset] = useState<boolean>(false);
-  const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [pwdVisible, setPwdVisible] = useState<boolean>(false);
-  const [newpwdVisible, setNewPwdVisible] = useState<boolean>(false);
-  const [conpwdVisible, setConPwdVisible] = useState<boolean>(false);
+    const [contactData, setContactData] = useState({
+        email: "",
+        name: "",
+        message: "",
+    });
+    const [contactLoading, setContactLoading] = useState<boolean>(false);
 
-  const dispatch = useDispatch();
-
-  const { user, loading } = useSelector(
-    (state: RootState) => state.userReducer
-  );
-
-  const togglePwdVisible = () => {
-    if (pwdVisible) {
-      setPwdVisible(false);
-    } else {
-      setPwdVisible(true);
-    }
-  };
-  const toggleNewPwdVisible = () => {
-    if (newpwdVisible) {
-      setNewPwdVisible(false);
-    } else {
-      setNewPwdVisible(true);
-    }
-  };
-  const toggleConPwdVisible = () => {
-    if (conpwdVisible) {
-      setConPwdVisible(false);
-    } else {
-      setConPwdVisible(true);
-    }
-  };
-
-  const toggleDelete = () => {
-    if (openDelete) {
-      setOpenDelete(false);
-    } else {
-      setOpenDelete(true);
-    }
-  };
-
-  const toggleReset = () => {
-    if (openReset) {
-      setOpenReset(false);
-    } else {
-      setOpenReset(true);
-    }
-  };
-
-  const toggleEditProfile = () => {
-    if (openEdit) {
-      setOpenEdit(false);
-    } else {
-      setOpenEdit(true);
-    }
-  };
-
-  //   const gotPayment = async () => {
-  //     if (user?.isVerified) {
-  //       try {
-  //         const data = await getAllPayments();
-  //         dispatch(paymentExist(data.payments));
-  //       } catch (error: any) {
-  //         toast.error(error.response.data.message);
-  //       }
-  //     }
-  //   };
-
-  //   useEffect(() => {
-  //     gotPayment();
-  //   }, []);
-
-  const formSchema = useMemo(
-    () =>
-      z.object({
-        name: z.string(),
-      }),
-    []
-  );
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: useMemo(
-      () => ({
-        name: user?.name,
-      }),
-      [user]
-    ),
-  });
-
-  const {
-    register: formRegister,
-    handleSubmit: formHandleSubmit,
-    formState: { errors: formErrors },
-  } = form;
-
-  const sepForm = useForm({
-    defaultValues: useMemo(
-      () => ({
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      }),
-      []
-    ),
-  });
-
-  const {
-    register: sepFormRegister,
-    handleSubmit: sepFormHandleSubmit,
-    formState: { errors: sepFormErrors },
-  } = sepForm;
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setOpen(true);
-    const updateData = {
-      name: values.name,
-      image: avatar,
-    };
-    console.log(updateData);
-    try {
-      const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/me/update`, updateData, { withCredentials: true });
-      // const data = await updateUserProfile(updateData);
-      dispatch(userExist(data.user));
-      setOpen(false);
-      toast.success("Profile Updated Successfully");
-    } catch (error: any) {
-      setOpen(false);
-      toast.error(error.response.data.message);
-    }
-  };
-
-  const handleRequestVerify = useCallback(async () => {
-    setVerifyLoading(true);
-    try {
-      // await requestVerifyUser();
-      await axios.get(`${import.meta.env.VITE_BASE_URL}/user/request/verification`, { withCredentials: true });
-      toast.success("Email Sent  Successfully");
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-    setVerifyLoading(false);
-  }, []);
-
-  const handleDeleteAccount = useCallback(async () => {
-    setDeleteLoading(true);
-    try {
-      await axios.delete(`${import.meta.env.VITE_BASE_URL}/user/delete/account`, { withCredentials: true });
-      dispatch(userNotExist());
-      toast.success("Account Deleted Successfully");
-    } catch (error: any) {
-      toast.error(error.response.data.message);
-    }
-    setDeleteLoading(false);
-  }, [dispatch]);
-
-  const handleResetPassword = useCallback(
-    async (resetValues: any) => {
-      const resetDate = {
-        oldPassword: resetValues.oldPassword,
-        newPassword: resetValues.newPassword,
-        confirmPassword: resetValues.confirmPassword,
-      };
-      setOpenSep(true);
-      try {
-        if (user?.accountType === "google") {
-          const config = {
-            headers: { "Content-Type": "multipart/form-data" },
-            withCredentials: true,
-          };
-          const { data }: { data: UserResponse } = await axios.put(
-            `${import.meta.env.VITE_BASE_URL}/user/set/password`,
-            resetDate,
-            config
-          );
-          dispatch(userExist(data.user));
-        } else {
-          const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, resetDate, { withCredentials: true });
-          // const data = await updatePassword(resetDate);
-          dispatch(userExist(data.user));
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setContactLoading(true);
+        try {
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/contact/con/new`, contactData, { withCredentials: true });
+            toast.success("Request Submitted!");
+        } catch (error: any) {
+            console.log(error);
+            toast.error(error.response.data.message);
         }
-        setOpenSep(false);
-        toast.success("Password Updated Successfully");
-        setOpenReset(false);
-      } catch (error: any) {
-        setOpenSep(false);
-        toast.error(error.response.data.message);
-      }
-    },
-    [dispatch]
-  );
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files![0];
-    if (file instanceof Blob) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setAvatar(reader.result);
-        } else {
-          console.log("Failed to read the file.");
-        }
-      };
-      reader.readAsDataURL(file);
-    } else {
-      console.error("The selected file is not a Blob.");
+        setContactLoading(false);
     }
-  };
 
-  return (
-    <>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className="flex flex-row justify-center gap-8 lg:gap-2 items-center  ">
-          {user ? (
-            <div className="w-[85%] lg:flex lg:flex-row lg:max-h-screen">
-              <div className="bg-slate-100 py-[4rem] lg:pt-6 lg:mt-12  flex-row rounded-b-[5rem] lg:rounded-[2rem] lg:shadow-2xl lg:ml-4 lg:basis-1/2 lg:bg-[url('../../../public/')] lg:bg-cover">
-                <div className="flex mx-4 mt-8">
-                  <div className="basis-1/4 flex pb-[8rem] lg:items-center">
-                    <IoPersonOutline className="w-[5rem] h-[6rem] lg:w-[8rem] lg:h-[8em] -mt-2 text-slate-800" />
-                  </div>
-                  <div className="basis-3/4 pb-[8rem] lg:flex lg:items-center">
-                    <div className="">
-                      <p className="font-Kanit text-lg lg:text-[3rem] pl-2 lg:text-slate-800">
-                        Welcome,
-                      </p>
-                      <p className="font-Philosopher text-5xl lg:text-[6rem] pl-4 lg:text-slate-800">
-                        {user?.name}
-                      </p>
-                    </div>
+    return (
+        <div className="w-[80%] mx-auto">
+            <div className="flex justify-center items-center gap-6">
+                <div className="sidebar basis-1/4 hidden lg:block">
+                    <div
+                        className="flex w-full min-h-[80vh] px-8 py-4 mt-4 bg-white rounded-lg shadow-lg"
+                    >
+                        <div className="flex w-full flex-col justify-between mt-6">
+                            <nav className="flex flex-col justify-center gap-4">
+                                <h1 className="mx-4 text-2xl font-bold capitalize">Welcome John</h1>
 
-                  </div>
+                                <hr className="my-2 border-gray-400 " />
 
-                </div>
-                {/* <div className="flex translate-y-24">
-                  <div className="hidden lg:block bg-slate-100 rounded p-4 w-full">
-                    <div className="text-slate-300 w-full flex justify-start text-lg font-Kanit">
-                      Navigate
-                    </div>
-                    <div className="text-xl font-Kanit my-2">
-                      <Link to='/billing'> Billing</Link>
-                    </div>
-                    <div className="text-xl font-Kanit my-2">
-                      <Link to='/dashboard'>Dashboard</Link>
-                    </div>
-                  </div> */}
-                {/* </div> */}
-                <div className="flex justify-evenly translate-y-32 ">
-                  <Link className="bg-slate-900 text-white py-6 w-24 rounded-lg text-center" to='/dashboard'>Dashboard</Link>
-                  <Link className="bg-slate-900 text-white py-6 w-24 rounded-lg text-center" to='/billing'>Billing</Link>
-                </div>
-
-
-
-
-
-              </div>
-
-              {/* main information containing div */}
-              <div className="lg:relative lg:mt-[12rem] flex justify-center lg:basis-1/2">
-                <div className="relative bg-slate-100 w-[90%] shadow-xl rounded-2xl  -mt-[9rem] h-[38rem]">
-                  <div className="py-4">
-                    <div className="flex flex-row">
-                      <div className="basis-1/4 flex justify-end">
-                        {/* <Avatar className="w-14 h-14 border-2 border-blue-400">
-                          <AvatarImage src={user.image} alt={user._id} />
-                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                        </Avatar> */}
-                        <div>
-                          {user.image ? (
-                            <img src={user.image} alt={user._id} />
-                          ) : (
-                            <>
-                              <div className="flex justify-center items-center w-10 h-10 rounded-full border">
-                                {user.name.charAt(0)}
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      <div className="basis-3/4 flex flex-col justify-start items-center">
-                        <p className="w-full flex justify-start pl-[2.7rem] font-Philosopher">
-                          User Id:
-                        </p>
-                        <p className="w-full flex justify-start pl-[2.7rem] pr-1 font-Kanit">
-                          {user?._id}
-                        </p>
-                      </div>
-                      <div className=""></div>
-                    </div>
-                  </div>
-
-                  <hr className="w-full text-slate-300" />
-
-                  {!user?.isVerified ? (
-                    <div className="flex flex-col justify-center items-center space-y-4 mt-2">
-                      <p className="text-red-600 font-semibold">
-                        You are not verified
-                      </p>
-                      <button className="px-4 py-2 bg-black font-Philosopher text-white rounded-lg" onClick={handleRequestVerify}>
-                        Verify Email
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="">
-                        <div className="text-slate-300 w-full flex justify-start pl-[2rem] py-2 text-lg font-Kanit">
-                          Account Settings
-                        </div>
-
-                        <div className="w-full flex flex-col py-2">
-                          <button className="" onClick={toggleEditProfile}>
-                            <div className="flex flex-row">
-                              <div className="basis-3/4 flex justify-start text-xl font-Kanit pl-[2rem]">
-                                Edit Profile
-                              </div>
-                              <div className="basis-1/4 flex justify-center">
-                                <MdNavigateNext
-                                  className={`w-[2rem] h-[2rem] ${openEdit
-                                    ? "transition ease-in-out rotate-90"
-                                    : "transition ease-in-out"
-                                    }`}
-                                />
-                              </div>
-                            </div>
-                          </button>
-                          {openEdit ? (
-                            <div
-                              id="dropdown"
-                              className="relative bg-slate-200 flex flex-col items-start rounded-lg shadow-lg transition ease-in-out delay-150 py-2 my-2"
-                            >
-                              <form
-                                action=""
-                                className="w-full"
-                                onSubmit={formHandleSubmit(onSubmit)}
-                              >
-                                <div className="flex flex-col w-full py-4">
-                                  <label
-                                    htmlFor=""
-                                    className="pl-8 pb-2 font-Kanit"
-                                  >
-                                    Set New Name:
-                                  </label>
-                                  <div className="flex flex-row">
-                                    <input
-                                      type="text"
-                                      className="ml-8 w-[80%] py-1 rounded-lg shadow-lg pl-4 flex justify-center items-center font-Kanit"
-                                      placeholder="New Name"
-                                      {...formRegister("name", {
-                                        required: true,
-                                      })}
-                                    />
-                                  </div>
-                                </div>
-                                <div className="flex flex-col w-full py-2">
-                                  <label
-                                    htmlFor=""
-                                    className="pl-8 pb-2 font-Kanit"
-                                  >
-                                    Set New Profile Picture:
-                                  </label>
-                                  <div className="flex flex-row">
-                                    <input
-                                      name="avatar"
-                                      type="file"
-                                      accept="image/*"
-                                      className="ml-8 w-[80%] py-1 rounded-lg  flex justify-center items-center font-Kanit"
-                                      onChange={handleChange}
-                                      placeholder="Profile Pic"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="flex justify-center">
-                                  <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-blue-400 text-white rounded-lg font-Philosopher"
-                                  >
-                                    {/* {open ? "Saving..." : "Save Changes"} */}
-                                    Save Changes
-                                  </button>
-                                </div>
-                              </form>
-                            </div>
-                          ) : null}
-                        </div>
-
-                        <div className="w-full flex flex-row py-2 mt-2 mb-8">
-                          <div className="basis-3/4 flex justify-start text-xl font-Kanit pl-[2rem]">
-                            Change Password
-                          </div>
-                          <div className="basis-1/4 flex justify-center">
-                            <MdNavigateNext className="w-[2rem] h-[2rem]" />
-                          </div>
-                        </div>
-
-                        <hr className="w-full text-slate-300" />
-
-                        <div className="text-slate-300 w-full flex justify-start pl-[2rem] py-2 text-lg font-Kanit">
-                          More
-                        </div>
-
-                        {/* set Reset Dillema */}
-                        <div className="w-full flex flex-col py-2 mt-3">
-                          <button className="" onClick={toggleReset}>
-                            <div className="flex flex-row">
-                              <div className="basis-3/4 flex justify-start text-xl font-Kanit pl-[2rem]">
-                                {user.accountType === "google"
-                                  ? "Set Password"
-                                  : "Reset Password"}
-                              </div>
-                              <div className="basis-1/4 flex justify-center">
-                                <MdNavigateNext
-                                  className={`w-[2rem] h-[2rem] ${openReset
-                                    ? "transition ease-in-out rotate-90"
-                                    : "transition ease-in-out"
-                                    }`}
-                                />
-                              </div>
-                            </div>
-                          </button>
-                          <div className="w-full">
-                            {openReset ? (
-                              <div
-                                id="dropdown"
-                                className="relative bg-slate-200 flex flex-col items-start rounded-lg shadow-lg transition ease-in-out delay-150 py-2 my-2"
-                              >
-                                <form
-                                  action=""
-                                  className="w-full"
-                                  onSubmit={sepFormHandleSubmit(
-                                    handleResetPassword
-                                  )}
+                                <a
+                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                                    href=""
                                 >
-                                  {user?.accountType !== "google" && (
-                                    <div className="flex flex-col w-full py-4">
-                                      <label
-                                        htmlFor=""
-                                        className="pl-8 pb-2 font-Kanit"
-                                      >
-                                        Enter Old Password:
-                                      </label>
-                                      <div className="flex flex-row">
-                                        <input
-                                          type={
-                                            pwdVisible ? "text" : "password"
-                                          }
-                                          className="ml-8 w-[70%] py-1 rounded-l-lg shadow-lg pl-4 flex justify-center items-center font-Kanit"
-                                          placeholder="Old Password"
-                                          {...sepFormRegister("oldPassword", {
-                                            required: true,
-                                          })}
-                                        />
-                                        <button
-                                          type="button"
-                                          className="px-2 rounded-r-lg shadow-lg"
-                                          onClick={togglePwdVisible}
-                                        >
-                                          {pwdVisible ? (
-                                            <FaEyeSlash className="w-[1.5rem] h-[1.5rem]" />
-                                          ) : (
-                                            <FaEye className="w-[1.5rem] h-[1.5rem]" />
-                                          )}
-                                        </button>
-                                      </div>
-                                    </div>
-                                  )}
-                                  <div className="flex flex-col w-full pb-4">
-                                    <label
-                                      htmlFor=""
-                                      className="pl-8 pb-2 font-Kanit"
-                                    >
-                                      Enter New Password:
-                                    </label>
-                                    <div className="flex flex-row">
-                                      <input
-                                        type={
-                                          newpwdVisible ? "text" : "password"
-                                        }
-                                        className="ml-8 w-[70%] py-1 rounded-l-lg shadow-lg pl-4 flex justify-center items-center font-Kanit"
-                                        placeholder="New Password"
-                                        {...sepFormRegister("newPassword", {
-                                          required: true,
-                                        })}
-                                      />
-                                      <button
-                                        type="button"
-                                        className="px-2 rounded-r-lg shadow-lg"
-                                        onClick={toggleNewPwdVisible}
-                                      >
-                                        {newpwdVisible ? (
-                                          <FaEyeSlash className="w-[1.5rem] h-[1.5rem]" />
-                                        ) : (
-                                          <FaEye className="w-[1.5rem] h-[1.5rem]" />
-                                        )}
-                                      </button>
-                                    </div>
-                                  </div>
-                                  <div className="flex flex-col w-full pb-4">
-                                    <label
-                                      htmlFor=""
-                                      className="pl-8 pb-2 font-Kanit"
-                                    >
-                                      Confirm Password:
-                                    </label>
-                                    <div className="flex flex-row">
-                                      <input
-                                        type={
-                                          conpwdVisible ? "text" : "password"
-                                        }
-                                        className="ml-8 w-[70%] py-1 rounded-l-lg shadow-lg pl-4 flex justify-center items-center font-Kanit"
-                                        placeholder="Confirm Password"
-                                        {...sepFormRegister("confirmPassword", {
-                                          required: true,
-                                        })}
-                                      />
-                                      <button
-                                        type="button"
-                                        className="px-2 rounded-r-lg shadow-lg"
-                                        onClick={toggleConPwdVisible}
-                                      >
-                                        {conpwdVisible ? (
-                                          <FaEyeSlash className="w-[1.5rem] h-[1.5rem]" />
-                                        ) : (
-                                          <FaEye className="w-[1.5rem] h-[1.5rem]" />
-                                        )}
-                                      </button>
-                                    </div>
-                                  </div>
-                                  <div className="w-full flex justify-center py-3">
-                                    <button
-                                      className="px-4 py-2 bg-blue-400 text-white font-Philosopher rounded-lg shadow-lg hover:cursor-pointer"
-                                    //   onClick={sepForm.handleSubmit(
-                                    //     handleResetPassword
-                                    //   )}
-                                    >
-                                      {openSep ? "Saving..." : "Save Changes"}
-                                    </button>
-                                  </div>
-                                </form>
-                              </div>
-                            ) : null}
-                          </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                                    </svg>
+                                    <span className="mx-4 font-medium">Dashboard</span>
+                                </a>
+                                <a
+                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                                    href=""
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
+                                    </svg>
+                                    <span className="mx-4 font-medium">Billing</span>
+                                </a>
+                                <a
+                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                                    href=""
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
+                                    </svg>
+                                    <span className="mx-4 font-medium">Report</span>
+                                </a>
+                                <a
+                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                                    href=""
+                                >
+                                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" strokeWidth="1.5" stroke="currentColor">
+                                        <path d="M15 5V7M15 11V13M15 17V19M5 5C3.89543 5 3 5.89543 3 7V10C4.10457 10 5 10.8954 5 12C5 13.1046 4.10457 14 3 14V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V14C19.8954 14 19 13.1046 19 12C19 10.8954 19.8954 10 21 10V7C21 5.89543 20.1046 5 19 5H5Z" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                    <span className="mx-4 font-medium">Donate</span>
+                                </a>
+                            </nav>
+                            <button onClick={() => { }} className='flex justify-center items-center gap-4 px-4 py-2 bg-black hover:bg-gray-700 rounded-md'>
+                                <p className="text-white text-md">Log Out</p>
+                                <span><IoIosLogOut className="object-cover text-white mx-2 rounded-full h-5 w-5" /></span>
+                            </button>
                         </div>
-
-
-                        <div
-                          className="w-full flex flex-col py-2 my-2"
-                          onClick={toggleDelete}
-                        >
-                          <div className="flex flex-row hover:cursor-pointer">
-                            <div className="basis-3/4 flex justify-start text-xl font-Kanit pl-[2rem]">
-                              Delete Account
-                            </div>
-                            <div className="basis-1/4 flex justify-center">
-                              <MdNavigateNext
-                                className={`w-[2rem] h-[2rem] ${openDelete
-                                  ? "transition ease-in-out rotate-90"
-                                  : "transition ease-in-out"
-                                  }`}
-                              />
-                            </div>
-                          </div>
-                          <div className="w-full flex justify-center">
-                            {openDelete ? (
-                              <div
-                                id="dropdown"
-                                className="absolute bg-red-200 flex flex-col items-start rounded-lg px-10 py-4 shadow-lg transition ease-in-out delay-150"
-                              >
-                                <p className="text-sm underline p-2 font-Philosopher">
-                                  Warning:
-                                </p>
-                                <p className="pl-2 text-red-400 font-Kanit">
-                                  Deleting your account will permanently delete
-                                  all your data in this website.
-                                </p>
-                                <p className="pl-2 text-sm font-Kanit">
-                                  Do you wish to proceed?
-                                </p>
-                                <div className="w-full flex justify-center">
-                                  <button
-                                    className="px-4 py-2 bg-red-400 text-white font-Philosopher rounded-lg my-2 shadow-lg"
-                                    onClick={handleDeleteAccount}
-                                    disabled={deleteLoading}
-                                  >
-                                    {deleteLoading
-                                      ? "Deleting You..."
-                                      : "Delete Account"}
-                                  </button>
-                                </div>
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-
-                        <div className="block bg-blue-300 lg:hidden">
-
-                          <hr className="w-full text-slate-300" />
-
-                          <div className="text-slate-300 w-full flex justify-start pl-[2rem] py-2 text-lg font-Kanit">
-                            View
-                          </div>
-                          <div className="mx-8">
-                            <div className="flex justify-between items-center">
-                              <Link className="flex justify-between items-center w-full" to='/billing'>
-                                <div className="text-xl font-Kanit my-4">Billing</div>
-                                <MdNavigateNext className="w-[2rem] h-[2rem] lg:mr-4" />
-                              </Link>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <Link className="flex justify-between items-center w-full" to='/dashboard'>
-                                <div className="text-xl font-Kanit my-4">Pricing</div>
-                                <MdNavigateNext className="w-[2rem] h-[2rem] lg:mr-4" />
-                              </Link>
-                            </div>
-                          </div>
-                        </div>
-
-
-                      </div>
-                    </>
-                  )}
+                    </div>
                 </div>
-              </div>
+                <div className="main basis-full md:basis-3/4 my-4">
+                    <div className="w-full px-8 py-4 mt-20 lg:mt-2 bg-white rounded-lg shadow-lg">
+                        <div className="flex -mt-16 justify-end">
+                            <img
+                                className="object-cover w-20 h-20 border-4 border-blue-400 rounded-full"
+                                alt="Testimonial avatar"
+                                src="https://images.unsplash.com/photo-1499714608240-22fc6ad53fb2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=76&q=80"
+                            />
+                        </div>
+                        <h2 className="mt-2 text-xl font-semibold text-gray-800 md:mt-0">
+                            John Doe
+                        </h2>
+                        <div className="flex justify-between items-center mt-4">
+                            <div>
+                                <p className="mt-2 text-sm text-gray-600">john23@gmail.com</p>
+                                <p className="mt-2 text-sm text-gray-600">789456</p>
+                            </div>
+                            <button className="border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">Edit Profile</button>
+                        </div>
+                    </div>
+                    <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
+                        <h1 className="text-lg font-semibold">Privacy Settings</h1>
+                        <button className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">Reset Password</button>
+                    </div>
+                    <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
+                        <h1 className="text-lg font-semibold">Account Actions</h1>
+                        <p className="mt-2 text-gray-500 italic">Lorem ipsum dolor sit amet consectetur.</p>
+                        <button className="mt-2 border-2 border-red-500 text-center px-3 py-2 rounded-lg text-white bg-red-500">Deactivate Account</button>
+                    </div>
+                </div>
             </div>
-          ) : (
-            <div>
-              <p>You are not logged in</p>
-            </div>
-          )}
         </div>
-      )}
-    </>
-  );
-};
+    )
+}
 
 export default Profile;

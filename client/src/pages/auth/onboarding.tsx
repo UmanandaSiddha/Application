@@ -23,7 +23,7 @@ const onboarding = () => {
                     </div>
                     <div className=" lg:flex lg:justify-center my-4 flex justify-center w-full">
                         <button className="bg-blue-200 lg:hover:bg-blue-300 text-blue-800 font-bold font-Philosopher px-[5.7rem] py-4 rounded-lg text-xl" onClick={() => {
-                            navigate("/organization/register")
+                            navigate("/org/register")
                         }}>
                             I am an Organisation
                         </button>

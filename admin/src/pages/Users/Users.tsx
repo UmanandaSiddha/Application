@@ -10,34 +10,37 @@ const Users = () => {
 
     const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>();
+    const [keyword, setKeyword] = useState("");
+    const [role, setRole] = useState("");
+    const [accountType, setAccountType] = useState("");
+    const [counts, setCounts] = useState({
+        currentPage: 1,
+        resultPerPage: 1,
+        filteredUsers: 1,
+        totalUsers: 1
+    });
 
-    const gotUsers = async () => {
+    const gotUsers = async (url: string) => {
         try {
-            const { data }: { data: AllUsersResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/users/all`, { withCredentials: true });
+            const { data }: { data: AllUsersResponse } = await axios.get(url, { withCredentials: true });
             setUsers(data.users);
-            const localUsers = {
-                created: Date.now() + 30 * 1000,
-                data: data.users,
-            }
-            window.localStorage.setItem("all_users", JSON.stringify(localUsers));
+            setCounts({ ...counts,
+                resultPerPage: data.resultPerPage,
+                filteredUsers: data.filteredUsersCount,
+                totalUsers: data.count
+            });
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
     }
 
     useEffect(() => {
-        const userData = window.localStorage.getItem("all_users");
-        if (userData) {
-            if (JSON.parse(userData)?.created < Date.now()) {
-                window.localStorage.removeItem("all_users");
-                gotUsers();
-            } else {
-                setUsers(JSON.parse(userData).data);
-            }
-        } else {
-            gotUsers();
+        let link = `${import.meta.env.VITE_BASE_URL}/admin/users/all?keyword=${keyword}&page=${counts.currentPage}`;
+        if (role) {
+            link += `&role=${role}`;
         }
-    }, []);
+        gotUsers(link);
+    }, [keyword, counts.currentPage, role]);
 
     return (
         <DefaultLayout>
@@ -50,10 +53,15 @@ const Users = () => {
                             <div className="flex items-center justify-center">
                                 <input
                                     type="text"
+                                    value={keyword}
+                                    onChange={(e) => {
+                                        setKeyword(e.target.value);
+                                        setCounts({ ...counts, currentPage: 1 });
+                                    }}
                                     placeholder="Search User..."
                                     className="w-full bg-transparent pl-9 pr-4 text-black focus:outline-none dark:text-white xl:w-125"
                                 />
-                                <button className="border-2 rounded-md px-3 py-2 border-black dark:border-white">
+                                {/* <button className="border-2 rounded-md px-3 py-2 border-black dark:border-white">
                                     <svg
                                         className="fill-body hover:fill-primary dark:fill-bodydark dark:hover:fill-primary"
                                         width="20"
@@ -75,12 +83,41 @@ const Users = () => {
                                             fill=""
                                         />
                                     </svg>
-                                </button>
+                                </button> */}
                             </div>
                         <div className="flex justify-center items-center space-x-4">
-                            <button onClick={() => { }} className="bg-slate-600 text-white py-2 px-4 rounded-md">Prev</button>
-                            <p className="text-md font-semibold">1 / 10</p>
-                            <button onClick={() => { }} className="bg-slate-600 text-white py-2 px-4 rounded-md">Next</button>
+                            <button
+                                onClick={() => setCounts({...counts, currentPage: counts.currentPage - 1})}
+                                disabled={counts.currentPage === 1}
+                                className="bg-slate-600 text-white py-2 px-4 rounded-md"
+                            >
+                                Prev
+                            </button>
+                            <p className="text-md font-semibold">{counts.currentPage} / {Math.ceil(counts.filteredUsers / counts.resultPerPage)}</p>
+                            <button
+                                onClick={() => setCounts({...counts, currentPage: counts.currentPage + 1})}
+                                disabled={counts.currentPage === Math.ceil(counts.filteredUsers / counts.resultPerPage)}
+                                className="bg-slate-600 text-white py-2 px-4 rounded-md"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-evenly items-center py-6 px-4 md:px-6 xl:px-7.5">
+                        <div>
+                            <select 
+                                value={role} 
+                                onChange={(e) => {
+                                    setRole(e.target.value);
+                                    setCounts({ ...counts, currentPage: 1});
+                                }}
+                            >
+                                <option value="">All</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                                <option value="org">Org</option>
+                            </select>
                         </div>
                     </div>
 
