@@ -1,45 +1,48 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify";
+import { FaArrowRight } from "react-icons/fa";
 
 const onboarding = () => {
+
     const navigate = useNavigate();
+    const tabs = ["I am an Individual", "I am an Organisation", "I am a Donor"];
+    const [activeTab, setActiveTab] = useState<string>();
+
+    const handleNavigation = () => {
+        if (activeTab === tabs[0]) {
+            navigate("/register");
+        } else if (activeTab === tabs[1]) {
+            navigate("/org/register");
+        } else if (activeTab === tabs[2]) {
+            navigate("/donation");
+        } else {
+            toast.warning("Select a tab to navigate");
+            return;
+        }
+    }
+
     return (
-        <>
-            <div className="lg:w-full lg:mt-[3rem] md:w-full md:mt-[3rem]">
-                <div className="lg:flex lg:justify-center md:flex md:justify-center lg:flex-col lg:items-center lg:text-3xl lg:mt-[4rem] p-4">
-                    <p className="font-Philosopher text-2xl font-bold">
-                        Who are you?
-                    </p>
-                    <p className="font-Kanit text-base leading-tight text-slate-500">
-                        To assist you in streamlining the process for achieving your objective
-                    </p>
-                </div>
-                <div className="lg:flex lg:flex-col lg:w-full lg:gap-4 lg:mt-[2rem] w-full">
-                    <div className=" lg:flex lg:justify-center flex justify-center w-full mt-4 lg:mt-2">
-                        <button className="bg-blue-200 lg:hover:bg-blue-300 sm:text-black  text-blue-800 font-bold font-Philosopher px-[6.5rem] py-4 rounded-lg text-xl" onClick={() => {
-                            navigate("/register");
-                        }}>
-                            I am an Individual
-                        </button>
-                    </div>
-                    <div className=" lg:flex lg:justify-center my-4 flex justify-center w-full">
-                        <button className="bg-blue-200 lg:hover:bg-blue-300 text-blue-800 font-bold font-Philosopher px-[5.7rem] py-4 rounded-lg text-xl" onClick={() => {
-                            navigate("/org/register")
-                        }}>
-                            I am an Organisation
-                        </button>
-                    </div>
-                    <div className=" lg:flex lg:justify-center my-4 flex justify-center w-full lg:my-0">
-                        <button className="bg-blue-200 lg:hover:bg-blue-300 text-blue-800 font-bold font-Philosopher px-[7.5rem] py-4 rounded-lg text-xl" onClick={() => {
-                            navigate("/donation")
-                        }}>
-                            I am an Donor
-                        </button>
-                    </div>
-
-
-                </div>
+        <div className="w-full mt-16">
+            <div className="p-4 w-full mx-auto md:w-[50%] lg:w-[40%]">
+                <h1 className="text-3xl lg:text-4xl text-left lg:text-center font-bold">Who are you?</h1>
+                <p className="text-lg mt-4 leading-tight text-left lg:text-center text-slate-500">To assist you in streamlining the process for achieving your objective</p>
             </div>
-        </>
+            <div className="p-4 flex flex-col justify-center items-center gap-4">
+                {tabs.map((tab, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setActiveTab(tab)}
+                        className={`w-full md:w-[50%] lg:w-[40%] ${activeTab === tab ? "bg-indigo-400 text-white" : "bg-blue-50 hover:bg-indigo-400 hover:text-white text-indigo-400"} border border-indigo-200 font-semibold py-4 rounded-lg text-xl`}
+                    >
+                        {tab}
+                    </button>
+                ))}
+                <button onClick={() => handleNavigation()} className="w-full md:w-[50%] lg:w-[40%] border-2 border-black text-black hover:text-white hover:bg-black font-semibold py-4 rounded-lg text-xl">
+                    Continue
+                </button>
+            </div>
+        </div>
     )
 }
 

@@ -98,9 +98,9 @@ const GenerateQRCode = ({ type, card, way }: { type: string, card: Tree | Person
 
     if (way && way === "qr-group") {
         return (
-            <div>
+            <div className="h-full w-full">
                 <div className="bg-white p-2 rounded-xl">
-                    <img src={qrCodeDataUrl} alt={card._id} className="rounded-lg w-56 h-56 object-cover" />
+                    <img src={qrCodeDataUrl} alt={card._id} className="rounded-lg object-cover" />
                 </div>
                 <div className="flex items-center justify-center mt-3 text-2xl font-semibold">
                     {card.name}
@@ -110,7 +110,7 @@ const GenerateQRCode = ({ type, card, way }: { type: string, card: Tree | Person
     }
 
     return (
-        <div className="flex flex-col justify-center items-center p-4 rounded-xl bg-slate-100 gap-2">
+        <div className="flex flex-col justify-center items-center p-4 rounded-xl bg-white shadow-lg border gap-2">
             <img src={qrCodeDataUrl} alt={card.name} className="h-40 w-40 rounded-lg" />
             <p>{card.name}</p>
         </div>
@@ -254,7 +254,7 @@ const AllCards = () => {
                                     {cards?.map((card, index) => (
                                         <div
                                             key={card._id}
-                                            className={`flex flex-col transition-transform duration-300 ease-in-out ${index === currentIndex ? 'block' : 'hidden'}`}
+                                            className={`flex h-56 w-56 flex-col transition-transform duration-300 ease-in-out ${index === currentIndex ? 'block' : 'hidden'}`}
                                             onClick={() => navigate(`/dashboard/cards/card?id=${card._id}&type=${type}`)}
                                         >
                                             <GenerateQRCode way="qr-group" card={card} type={type || "botanical"} />

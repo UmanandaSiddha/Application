@@ -17,7 +17,6 @@ const Profile = lazy(() => import("./pages/root/profile"));
 const Verify = lazy(() => import("./pages/auth/verify"));
 const ResetPassword = lazy(() => import("./pages/auth/reset-password"));
 const PlanPage = lazy(() => import("./pages/plans/plan"));
-const AdminPlan = lazy(() => import("./pages/admin-plan"));
 const BillingPage = lazy(() => import("./pages/plans/billing"));
 const RecieptPage = lazy(() => import("./pages/plans/reciept"));
 const Onboarding = lazy(() => import("./pages/auth/onboarding"));
@@ -154,7 +153,6 @@ const App = () => {
                             <Route path="/checkout" element={<Checkout />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/verify" element={<Verify />} />
-                            <Route path="/admin-plan" element={<AdminPlan />} />
                             <Route path="/billing" element={<BillingPage />} />
 
                             <Route path="/dashboard" element={<Dashboard />} />

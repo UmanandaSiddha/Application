@@ -292,7 +292,7 @@ export const unblockUser = catchAsyncErrors(async (req, res, next) => {
 
 // User Logout
 export const logoutUser = catchAsyncErrors(async (req, res, next) => {
-    res.cookie("token", null, {
+    res.cookie("user_token", null, {
         expires: new Date(Date.now()),
         httpOnly: true,
     });

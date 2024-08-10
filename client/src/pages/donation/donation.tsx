@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 const Donation = () => {
     const navigate = useNavigate();
     return (
-        <section className="bg-white dark:bg-gray-900">
+        <section className="bg-white dark:bg-gray-900 p-4">
             <div className="container px-1 py-10 mx-auto">
                 <div className="lg:flex lg:items-center">
                     <div className="w-full space-y-8 lg:w-1/2 ">
