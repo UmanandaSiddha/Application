@@ -58,10 +58,13 @@ const App = () => {
     const location = useLocation();
 
     const noPaddingTopRoutes = ["/login", "/register", "/org/register"];
+    const isWhiteSmokeRoute = ["/profile", "/billing"];
 
     const containerClass = noPaddingTopRoutes.includes(location.pathname)
         ? ""
         : "custom-padding";
+
+    document.body.style.backgroundColor = isWhiteSmokeRoute.includes(location.pathname) ? "#f5f5f5" : "#ffffff";
 
     const { user, loading } = useSelector(
         (state: RootState) => state.userReducer

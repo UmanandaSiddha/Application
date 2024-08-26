@@ -6,84 +6,9 @@ interface PropsType {
 
 const AnimalComponent = ({ card }: PropsType) => {
     return (
-        <>
-            <div className="relative flex flex-col w-full bg-orange-300 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
-                <div className="flex justify-start font-Kanit pl-6 py-4">
-                    <p className="">Animal Data</p>
-                </div>
-                <div className="flex justify-start font-Kanit text-5xl font-bold mb-10">
-                    <h1 className="font-Alice pl-6">{card?.name}</h1>
-                </div>
-            </div>
-            <div className="relative flex justify-center lg:mb-2 lg:rounded-b-xl bg-orange-100 font-Kanit -mt-[4rem]">
-                <div className="flex flex-col w-[90%] mt-[6rem]">
-                    <div className="flex flex-col w-full py-2">
-                        <div className="flex justify-start">
-                            <label htmlFor="">Species:</label>
-                        </div>
-                        <div className="w-full flex justify-center pt-2">
-                            <div className="border-2 bg-white border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.species}</div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-full py-2">
-                        <div className="flex justify-start">
-                            <label htmlFor="">Name:</label>
-                        </div>
-                        <div className="w-full flex justify-center pt-2">
-                            <div className="border-2 bg-white border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.name}</div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-full py-2">
-                        <div className="flex justify-start">
-                            <label htmlFor="">Age:</label>
-                        </div>
-                        <div className="w-full flex justify-center pt-2">
-                            <div className="border-2 bg-white border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.age}</div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-full py-2">
-                        <div className="flex justify-start">
-                            <label htmlFor="">Location:</label>
-                        </div>
-                        <div className="w-full flex justify-center pt-2">
-                            <div className="border-2 bg-white border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.location}</div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-full py-2">
-                        <div className="flex justify-start">
-                            <label htmlFor="">Gender:</label>
-                        </div>
-                        <div className="w-full flex justify-center pt-2">
-                            <div className="border-2 bg-white border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.gender}</div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-full py-2">
-                        <div className="flex justify-start">
-                            <label htmlFor="">Colour/Markings:</label>
-                        </div>
-                        <div className="w-full flex justify-center pt-2">
-                            <div className="border-2 bg-white border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.color}</div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-full py-2">
-                        <div className="flex justify-start">
-                            <label htmlFor="">Owner:</label>
-                        </div>
-                        <div className="w-full flex justify-center pt-2">
-                            <div className="border-2 bg-white border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.owner}</div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-full py-2">
-                        <div className="flex justify-start">
-                            <label htmlFor="">Phone Number:</label>
-                        </div>
-                        <div className="w-full flex justify-center pt-2">
-                            <div className="border-2 bg-white border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.phone}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
+        <div className="bg-gray-500">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem harum tempora vel sit minus nihil delectus facere? Neque similique nihil, dolore ipsum eaque atque doloremque repellat molestias soluta quisquam. Illo deleniti, maiores veritatis est beatae, voluptatem eius tempora blanditiis illum dolores qui cum quae neque facilis reprehenderit vitae deserunt quibusdam harum. Eum natus deserunt minima alias nesciunt cum, eos iste enim! Debitis dolorum est eius natus explicabo amet illo recusandae doloremque. Sit sequi expedita aspernatur ducimus cumque minus. Impedit, natus! Esse, beatae vel. Ex sit quas animi hic consectetur explicabo dolorum dolore, at, esse distinctio ad ipsa aliquid quam suscipit deleniti fuga perspiciatis a quaerat ullam culpa minus libero ut quasi dignissimos. Porro perferendis ratione consectetur libero iusto laboriosam fuga ex nobis repellendus. Quis cum voluptate laudantium error nobis saepe illum dicta vel quasi? Rem et optio aperiam corrupti tempore animi, magni hic maiores excepturi accusamus quisquam, quasi odio architecto tempora! Officia nostrum obcaecati quibusdam earum expedita dolorum ipsam cupiditate, reprehenderit fuga, omnis ducimus corrupti repellat est, atque ipsa itaque hic et tempore porro sint pariatur perferendis. Optio, esse quaerat adipisci distinctio doloremque quidem eveniet odit corporis officia tempora illo sed aliquid, consequatur ea explicabo quam minima quas omnis earum dolorem. Similique est ad temporibus deserunt sit tempore suscipit quos repudiandae ullam voluptatem non nobis, ratione, in voluptatibus nihil nostrum? Commodi vel laudantium quibusdam similique quasi, praesentium provident illum? Ipsam nesciunt nobis perferendis soluta aspernatur ea vitae ab laboriosam fuga quae, corporis totam explicabo expedita accusantium animi ut recusandae voluptatibus illum! Eos, velit odit debitis beatae doloribus aliquam ipsum laboriosam! Voluptatum dolorum rem illo suscipit eos rerum ipsam quod fugiat tempore nostrum beatae, laboriosam, pariatur aspernatur animi aliquam obcaecati atque, ratione cupiditate fuga deserunt reprehenderit natus accusantium. Praesentium sequi veritatis quam mollitia error, deleniti neque doloribus vero voluptates amet deserunt sapiente doloremque animi consequatur corrupti asperiores magni odit velit a tempore consectetur molestias dolorem modi officiis. Rerum accusantium aliquam ducimus harum quis ad nemo? Delectus eius numquam eos, rerum possimus nesciunt voluptate id! Natus, earum. Fuga quos rem incidunt, aut illo omnis debitis repellat dolorem, nulla, architecto neque at possimus quisquam fugit? Quas modi ut sint accusantium corrupti iusto facilis optio omnis odit obcaecati quam temporibus minima, labore doloribus doloremque commodi, vero ducimus officiis soluta dignissimos iure nihil nam architecto voluptatum. Praesentium, sunt, nesciunt reprehenderit beatae vitae aspernatur tempore nam inventore optio possimus explicabo doloribus ut dicta aliquid consequatur mollitia facilis quos at vel eos atque reiciendis nisi blanditiis. Molestias quo hic recusandae. Consequuntur culpa quas debitis, numquam doloremque laborum quisquam tenetur commodi vero fugiat error illo nihil facilis. Eum explicabo molestias quae atque, cumque perferendis, autem non quidem, laborum esse maiores! Corporis, necessitatibus! Placeat molestias nostrum suscipit pariatur explicabo, dicta iste sint sed debitis repudiandae, maiores officiis adipisci ipsam hic distinctio iusto. Error, cum dignissimos delectus aspernatur ullam nihil neque quidem voluptate repudiandae quam sit? Porro sint fugiat, et veritatis fugit omnis libero suscipit impedit quis alias officia consequatur dolor voluptatum similique enim soluta numquam nihil nisi aut magnam dicta officiis exercitationem. Excepturi esse, incidunt itaque ab doloremque nam qui eos obcaecati, aspernatur illo aliquam! Maiores quo harum porro, excepturi, nobis quibusdam eos animi accusamus et suscipit exercitationem sapiente cum fuga quod. Ratione eum, autem magni rerum libero tempore aliquid, repudiandae odio accusantium, dolorem ipsa sed neque qui eius id accusamus perspiciatis nihil soluta veniam veritatis quod. Distinctio alias nostrum magnam explicabo temporibus officia fugiat architecto, adipisci quaerat aut libero eius ex obcaecati, iste atque quidem! Accusantium sunt minima nobis exercitationem praesentium! Consequatur omnis dignissimos maxime eius? Exercitationem placeat voluptas nesciunt culpa consequuntur veritatis rerum, hic ratione vel quae cupiditate, magni natus, qui doloribus velit aut alias laborum labore molestias optio? Aliquam dolore voluptates cum modi quas ullam vitae minima adipisci voluptas distinctio sequi facere deserunt cumque sunt optio incidunt corrupti pariatur, reiciendis impedit excepturi dolorem dolorum repellendus? Modi temporibus est doloribus repellat quasi officiis aspernatur sequi dolorum dignissimos minus ea totam ipsam maiores facere numquam aut, voluptas incidunt magnam voluptate dolor asperiores! A, consequatur. Quos natus sint modi illum alias atque corrupti, veritatis voluptatem ipsam perferendis totam inventore accusantium soluta reprehenderit ducimus dolorum quis laborum deleniti harum! Exercitationem eveniet, alias in cupiditate minus aut dolor distinctio numquam, illo nulla, praesentium minima tempora. Eum molestias iure quis sed nemo fugit saepe assumenda rerum culpa voluptatem et ab autem sint deserunt, ratione placeat natus temporibus vitae atque debitis reprehenderit architecto. Iste nesciunt error, omnis officia necessitatibus id vel enim nam repudiandae eum odit sint laboriosam consequatur maxime accusantium mollitia non excepturi. Vitae velit consequuntur repellat laudantium quisquam nulla fuga sit accusantium distinctio voluptate, odio, voluptatem sequi! Quam unde porro harum assumenda, sit tenetur explicabo, soluta magni natus, inventore maxime asperiores sapiente? Quos ex assumenda quis. Eius perferendis sit ab provident deleniti veritatis reiciendis officiis ullam labore quae. Aliquid aliquam culpa consectetur facere possimus illo enim quos impedit eaque dolorem. Non sit soluta natus? Asperiores ipsam totam placeat laboriosam, voluptatibus cumque eum molestias perferendis deserunt, consequatur ducimus maiores hic? Atque repellendus ipsa odit, nihil beatae delectus recusandae nam similique assumenda nisi, ducimus aperiam doloribus deserunt ullam doloremque suscipit laborum, quasi nemo hic aliquam fuga iure itaque eligendi! Quis at quasi culpa iure minus dolore deleniti cupiditate deserunt iste nulla? Inventore maiores nisi ad! Qui numquam facere cum maiores excepturi! Laudantium tempora labore quam! Placeat reprehenderit accusantium exercitationem tempora deserunt quia architecto sint et repudiandae assumenda vero molestiae sit velit quaerat quam eligendi totam numquam officia laboriosam, nemo hic commodi. Ut et voluptas earum eius aut temporibus minima repellat molestias vel debitis, ipsam itaque, distinctio libero vitae, quis eveniet perspiciatis autem blanditiis eaque! Officiis expedita ratione illum facilis. Hic tempora, accusamus fugit fuga cupiditate beatae consectetur molestias aliquam exercitationem non facere, fugiat cum perferendis eaque, error recusandae. Delectus maxime repudiandae aut cupiditate quis, tenetur odio minima voluptatem nisi nemo placeat totam facilis vel labore molestiae at reprehenderit? Suscipit est sint quaerat? A, rem neque voluptatibus dolore quaerat eius nulla vero minus aperiam ea quia pariatur natus similique esse nostrum doloribus blanditiis obcaecati?
+        </div>
     );
 };
 

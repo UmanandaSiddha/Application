@@ -43,7 +43,7 @@ export default function Header() {
 
     return (
         <header className="bg-white border-b-2 fixed top-0 left-0 right-0 z-50">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
+            <nav className="mx-auto flex max-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
                         <img className="w-auto h-6 sm:h-7" src="https://merakiui.com/images/logo.svg" alt="" />
@@ -81,13 +81,13 @@ export default function Header() {
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                     {
                         user ? (
-                            <div onClick={() => navigate("/profile")}  className="flex items-center gap-5">
+                            <div onClick={() => navigate("/profile")} className="flex items-center gap-5">
                                 <p className="hidden cursor-pointer sm:block text-lg">{user.name}</p>
                                 {user.image ? (
                                     <img src={user.image} className='h-10 w-10 rounded-full' alt="avatar" />
                                 ) : (
                                     <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
-                                        <p className='text-xl font-semibold text-black'>{user.name[0]}</p>
+                                        <p className='text-xl font-semibold text-black'>{user.name[0].toUpperCase()}</p>
                                     </div>
                                 )}
                             </div>
@@ -169,7 +169,14 @@ export default function Header() {
                             {user ? (
                                 <div className="flex items-center justify-between px-4 -mx-2">
                                     <Link to="/profile" className='flex items-center'>
-                                        <img className='rounded-full h-10 w-10' src={user.image} alt="avatar" />
+                                        {/* <img className='rounded-full h-10 w-10' src={user.image} alt="avatar" /> */}
+                                        {user.image ? (
+                                            <img src={user.image} className='h-10 w-10 rounded-full' alt="avatar" />
+                                        ) : (
+                                            <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
+                                                <p className='text-xl font-semibold text-black'>{user.name[0].toUpperCase()}</p>
+                                            </div>
+                                        )}
                                         <span className="mx-2 font-medium text-gray-800 dark:text-gray-200">{user.name}</span>
                                     </Link>
                                     <IoIosLogOut onClick={logout} className="object-cover mx-2 rounded-full h-6 w-6" />

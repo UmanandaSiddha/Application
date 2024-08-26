@@ -4,6 +4,8 @@ import { Subscription, Transaction } from "@/types/plan_types";
 import { SubscriptionResponse } from "@/types/api-types";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { HiMiniArrowSmallRight } from "react-icons/hi2";
+import { HiMiniArrowSmallLeft } from "react-icons/hi2";
 
 const BillingPage = () => {
 
@@ -80,37 +82,57 @@ const BillingPage = () => {
 
                     <h1 className="text-3xl text-center font-semibold">Current Subscription</h1>
 
-                    <div className="flex flex-col md:flex-row gap-2 items-center justify-between max-w-4xl px-12 py-6 mx-auto bg-white cursor-pointer shadow-xl rounded-xl">
-                        <div className="flex flex-col justify-center gap-2">
-                            <h1 className="text-2xl font-semibold underline">Subscription Id: 468748465123178744534</h1>
-                            <p className="text-md font-semibold">Service Period: <span className="text-gray-500">7/10/24 - 7/12/24</span></p>
-                            <p className="text-md font-semibold">Next Billing: <span className="text-gray-500">7/11/24</span></p>
-                            <p className="text-md font-semibold">Payment Method: <span className="text-gray-500">Credit Card **** **** **** 1254</span></p>
-                            <p className="text-md font-semibold">Razoray Link: <span className="italic underline text-gray-500">http:rzpy.com/api/sub/45867891221564</span></p>
-                            <p className="text-sm italic text-gray-500">( Recommended for changing payment method)</p>
-                        </div>
-                        <div className="flex flex-col justify-center items-center gap-4">
-                            <h1 className="text-2xl font-semibold">Status: <span className="text-blue-500">Active</span></h1>
-                            <button className="border-2 border-red-500 text-red-500 font-semibold rounded-lg px-3 py-2">Cancel Subscription</button>
-                        </div>
-                    </div>
-
-                    <h1 className="text-3xl text-center font-semibold">Transactions</h1>
-
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(item => (
-                        <div key={item} className="flex items-center justify-between max-w-4xl px-12 py-6 mx-auto bg-white cursor-pointer shadow-xl rounded-xl">
-                            <div className="flex flex-col justify-center gap-1">
-                                <p className="text-md font-semibold">Date: 7/11/24</p>
-                                <p className="text-md font-semibold">Service Period: 7/11/24 - 7/12/24</p>
-                                <p className="text-md font-semibold">Payment Method: Credit Card **** **** **** 1254</p>
+                    {subscription && !["just_created", "created"].includes(subscription.status) ? (
+                        <div className="flex flex-col md:flex-row gap-2 items-center justify-between max-w-4xl px-12 py-6 mx-auto bg-white cursor-pointer shadow-xl rounded-xl">
+                            <div className="flex flex-col justify-center gap-2">
+                                <h1 className="text-2xl font-semibold underline">Subscription Id: {subscription._id}</h1>
+                                <p className="text-md font-semibold">Service Period: <span className="text-gray-500">{String(new Date(subscription.currentEnd).toDateString())} - {String(new Date(subscription.currentStart).toDateString())}</span></p>
+                                <p className="text-md font-semibold">Next Billing: <span className="text-gray-500">{String(new Date(subscription.currentEnd).toDateString())}</span></p>
+                                <p className="text-md font-semibold">Payment Method: <span className="text-gray-500">{subscription?.paymentMethod?.methodType} **** **** **** 1254</span></p>
+                                <p className="text-md font-semibold">Razoray Link: <Link to={subscription.shortUrl} className="italic underline text-gray-500">{subscription.shortUrl}</Link></p>
+                                <p className="text-sm italic text-gray-500">( Recommended for changing payment method)</p>
                             </div>
-                            <div className="flex flex-col justify-center gap-1">
-                                <p className="text-md font-semibold">Status: Captured</p>
-                                <p className="text-md font-semibold">Amount: 100</p>
-                                <Link to="/receipt" className="text-md underline">Go To Reciept</Link>
+                            <div className="flex flex-col justify-center items-center gap-4">
+                                <h1 className="text-2xl font-semibold">Status: <span className="text-blue-500">{subscription.status}</span></h1>
+                                <button onClick={() => handleSubscription(subscription?._id)} className="border-2 border-red-500 text-red-500 font-semibold rounded-lg px-3 py-2">Cancel Subscription</button>
                             </div>
                         </div>
-                    ))}
+                    ) : (
+                        <p className="text-center mt-16 text-2xl font-semibold">No Subscription here</p>
+                    )}
+
+                    {transactions && transactions.length > 0 && (
+                        <>
+                            <div className="flex justify-between px-16">
+                                <h1 className="text-3xl text-center font-semibold">Transactions</h1>
+                                <div className='flex justify-center items-center gap-6'>
+                                    <button onClick={() => {}} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
+                                        <HiMiniArrowSmallLeft size={25} />
+                                    </button>
+                                    <p className="text-lg font-semibold">1 / 10</p>
+                                    <button onClick={() => {}} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
+                                        <HiMiniArrowSmallRight size={25} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {transactions.map((transaction, index) => (
+                                <div key={index} className="flex items-center justify-between max-w-4xl px-12 py-6 mx-auto bg-white cursor-pointer shadow-xl rounded-xl">
+                                    <div className="flex flex-col justify-center gap-1">
+                                        <p className="text-md font-semibold">Date: {String(new Date(transaction.createdAt).toDateString())}</p>
+                                        <p className="text-md font-semibold">Service Period: {String(new Date(transaction.end).toDateString())} - {String(new Date(transaction.start).toDateString())}</p>
+                                        <p className="text-md font-semibold">Payment Method: {transaction.paymentMethod.methodType} **** **** **** 1254</p>
+                                        <p className="text-md font-semibold">Payment Id: {transaction.razorpayPaymentId}</p>
+                                    </div>
+                                    <div className="flex flex-col justify-center gap-1">
+                                        <p className="text-md font-semibold">Status: <span className="text-green-500">{transaction.status}</span></p>
+                                        <p className="text-md font-semibold">Amount: {transaction.amount}</p>
+                                        <Link to="/receipt" className="text-md underline">Go To Reciept</Link>
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    )}
 
                 </div>
             </div>

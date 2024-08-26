@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import { DonatorResponse } from "@/types/api-types";
 import { donatorExist } from "@/redux/reducer/donatorReducer";
-import { string } from "zod";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {

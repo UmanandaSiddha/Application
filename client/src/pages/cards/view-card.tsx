@@ -124,7 +124,7 @@ const ViewCard = () => {
                 <div className="basis-full lg:basis-3/4 lg:max-h-screen">
                     <div className="tab:flex tab:justify-center">
                         <div className="w-full tab:-ml-[1rem] tab:w-[80%] lg:w-full h-full tab:flex tab:flex-row lg:mb-[2rem]">
-                            <div className="overflow-auto max-h-screen tab:basis-5/6 tab:mt-2 tab:rounded-tl-[4rem] lg:rounded-tl-[2rem] lg:rounded-br-[2rem] tab:rounded-br-[4rem]">
+                            <div className="overflow-auto max-h-[75vh] md:max-h-[83vh] tab:basis-5/6 tab:mt-2 rounded-b-xl rounded-tl-xl hide-scrollbar">
                                 {loading ? <Loader /> : <>{renderCard()}</>}
                             </div>
                             <div

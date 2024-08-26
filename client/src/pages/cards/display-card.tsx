@@ -54,7 +54,7 @@ const DisplayCard = () => {
 
     const renderCard = () => {
         switch (type) {
-            case "botany":
+            case "botanical":
                 return <TreeComponent card={card as Tree} />;
             case "individual":
                 return <PersonalComponent card={card as Personal} />;
