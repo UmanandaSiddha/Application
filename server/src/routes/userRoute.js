@@ -15,6 +15,7 @@ import {
     unblockUser,
     fetchBlocked,
     updateBillingInfo,
+    updateOrganisationDetails,
 } from "../controllers/userController.js";
 import { checkCancellation, checkDeactivated, isAuthenticatedUser, isUserVerified } from "../middleware/auth.js";
 
@@ -32,6 +33,7 @@ router.route("/password/reset/:token").put(resetPassword);
 router.route("/set/password").put(isAuthenticatedUser, isUserVerified, checkDeactivated, setPassword);
 router.route("/me").get(isAuthenticatedUser, checkDeactivated, checkCancellation, getUserDetails);
 router.route("/billing/update").put(isAuthenticatedUser, isUserVerified, checkDeactivated, updateBillingInfo);
+router.route("/org/update").put(isAuthenticatedUser, isUserVerified, checkDeactivated, updateOrganisationDetails);
 router.route("/password/update").put(isAuthenticatedUser, isUserVerified, checkDeactivated, updatePassword);
 router.route("/me/update").put(isAuthenticatedUser, isUserVerified, checkDeactivated, updateProfile);
 router.route("/delete/account").delete(isAuthenticatedUser, isUserVerified, checkDeactivated, deleteAccount);

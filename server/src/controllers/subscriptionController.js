@@ -139,7 +139,8 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
     const subscription = await instance.subscriptions.fetch(razorpay_subscription_id);
 
     if (expectedSigntaure === razorpay_signature) {
-        if (["active", "created", "authenticated", "activated"].includes(subscription.status) && ["authorized", "captured", "created"].includes(payment.status)) {
+        // if (["active", "created", "authenticated", "activated"].includes(subscription.status) && ["authorized", "captured", "created"].includes(payment.status)) {
+        if (["active"].includes(subscription.status) && ["captured"].includes(payment.status)) {
             const subscriptionx = await Subscription.findOne({ razorSubscriptionId: subscription.id });
 
             await handleSubscription(subscription, subscriptionx);

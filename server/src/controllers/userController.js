@@ -259,6 +259,7 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
     sendToken(user, 200, res);
 });
 
+// Get Block User
 export const fetchBlocked = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
@@ -423,29 +424,30 @@ export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const updateBillingInfo = catchAsyncErrors(async (req, res, next) => {
-    const { phone, street, state, city, postalCode, country } = req.body;
-    if (!phone || !street || !state || !city || !postalCode || !country) {
-        return next(new ErrorHandler("All fields are required", 400));
-    }
+    const { street, state, city, postalCode, country } = req.body;
 
-    const user = await User.findByIdAndUpdate(
-        req.user.id, 
+    const user = await User.findById(req.user.id);
+
+    const updateBillingAddress = { ...user.billingAddress };
+    if (street) updateBillingAddress.street = street;
+    if (state) updateBillingAddress.state = state;
+    if (city) updateBillingAddress.city = city;
+    if (postalCode) updateBillingAddress.postalCode = postalCode;
+    if (country) updateBillingAddress.country = country;
+    
+    console.log(updateBillingAddress);
+
+    const newUser = await User.findByIdAndUpdate(
+        req.user.id,
         {
-            phone,
-            billingAddress : {
-                street,
-                state,
-                city,
-                postalCode,
-                country,
-            }
-        }, 
+            billingAddress: updateBillingAddress
+        },
         { new: true, runValidators: true, useFindAndModify: false }
     );
 
     res.status(200).json({
         success: true,
-        user,
+        user: newUser,
     });
 });
 
@@ -479,23 +481,7 @@ export const updatePassword = catchAsyncErrors(async (req, res, next) => {
 export const updateProfile = catchAsyncErrors(async (req, res, next) => {
     const userx = await User.findById(req.user.id);
 
-    const { 
-        name,
-        phone,
-        street,
-        state,
-        city,
-        postalCode,
-        country,
-        image,
-        orgWebsite,
-        orgPhone,
-        orgStreet,
-        orgState,
-        orgCity,
-        orgPostalCode,
-        orgCountry,
-    } = req.body;
+    const { name, phone, image } = req.body;
 
     if (image) {
         if ((userx.image.length > 0) && (fs.existsSync(`./public/avatars/${userx._id}.jpg`))) {
@@ -523,22 +509,8 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
     }
 
     const updateUser = {};
-    if (name) updateUser.name = name;
-    if (phone) updateUser.phone = phone;
-    if (street) updateUser.billingAddress.street = street;
-    if (state) updateUser.billingAddress.state = state;
-    if (city) updateUser.billingAddress.city = city;
-    if (postalCode) updateUser.billingAddress.postalCode = postalCode;
-    if (country) updateUser.billingAddress.country = country;
-    if (userx.role === roleEnum.ORG) {
-        if (orgWebsite) updateUser.orgDetails.website = orgWebsite;
-        if (orgPhone) updateUser.orgDetails.phone = orgPhone;
-        if (orgStreet) updateUser.orgDetails.address.street = orgStreet;
-        if (orgState) updateUser.orgDetails.address.state = orgState;
-        if (orgCity) updateUser.orgDetails.address.city = orgCity;
-        if (orgPostalCode) updateUser.orgDetails.address.postalCode = orgPostalCode;
-        if (orgCountry) updateUser.orgDetails.address.country = orgCountry;
-    } 
+    name ? updateUser.name = name : userx.name;
+    phone ? updateUser.phone = phone : userx.phone; 
 
     const user = await User.findByIdAndUpdate(
         req.user.id,
@@ -549,6 +521,34 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         user,
+    });
+});
+
+export const updateOrganisationDetails = catchAsyncErrors(async (req, res, next) => {
+    const { phone, website, address } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    const updateOrganisation = { ...user.orgDetails };
+    if (phone) updateOrganisation.phone = phone;
+    if (website) updateOrganisation.website = website;
+    if (address.street) updateOrganisation.address.street = address.street;
+    if (address.state) updateOrganisation.address.state = address.state;
+    if (address.city) updateOrganisation.address.city = address.city;
+    if (address.postalCode) updateOrganisation.address.postalCode = address.postalCode;
+    if (address.country) updateOrganisation.address.country = address.country;
+
+    const newUser = await User.findByIdAndUpdate(
+        req.user.id,
+        {
+            orgDetails: updateOrganisation
+        },
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
+
+    res.status(200).json({
+        success: true,
+        user: newUser,
     });
 });
 

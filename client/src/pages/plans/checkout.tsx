@@ -8,6 +8,8 @@ import { Loader2 } from "lucide-react";
 import { Plan } from "@/types/plan_types";
 import { SinglePlanResponse, UserResponse } from "@/types/api-types";
 import { userExist } from "@/redux/reducer/userReducer";
+import { FaCheckCircle } from "react-icons/fa";
+import { RxCrossCircled } from "react-icons/rx";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -23,6 +25,18 @@ function loadScript(src: any) {
     });
 }
 
+interface SubscriptionCatpureResponse {
+    success: boolean;
+    subscriptionStatus: string;
+    paymentStatus: string;
+}
+
+interface LoadingStateType {
+    id: number;
+    loading: string;
+    data: string;
+}
+
 const Checkout = () => {
 
     const [search] = useSearchParams();
@@ -30,15 +44,7 @@ const Checkout = () => {
     const navigate = useNavigate();
     const id = search.get("id");
     const [plan, setPlan] = useState<Plan | null>();
-    const [open, setOpen] = useState<boolean>(false);
-    const [checkoutLoading, setCheckoutLoading] = useState<boolean>(false);
-    const [dialogHeader, setDialogHeader] = useState<string>("Waiting For Confirmation");
-    const [dialogData, setDialogData] = useState({
-        subscriptionStatus: "hold on",
-        paymentStatus: "hold on",
-    });
     const { user } = useSelector((state: RootState) => state.userReducer);
-
     const [updateData, setUpdateData] = useState({
         phone: user?.phone,
         street: user?.billingAddress?.street,
@@ -47,9 +53,9 @@ const Checkout = () => {
         postalCode: user?.billingAddress?.postalCode,
         country: user?.billingAddress?.country,
     });
-    
     const [updateLoading, setUpdateLoading] = useState<boolean>(false);
-    const [sdkLoading, setSdkLoading] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(false);
+    const [loadingStates, setLoadingStates] = useState<LoadingStateType[]>([]);
 
     const location = useLocation();
     const from = location.state?.from?.pathname || "/dashboard";
@@ -117,38 +123,89 @@ const Checkout = () => {
         setUpdateLoading(false);
     }
 
+    const handlePaymentVerifcation = async (response: string, count: number) => {
+        try {
+            if (count === 0) {
+                setOpen(true);
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3, loading: "started", data: "Verifying Payment..." }]);
+            }
+            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
+            const { data }: { data: SubscriptionCatpureResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
+            if (!data) {
+                setOpen(false);
+                setLoadingStates([]);
+                toast.error("Failed to Verify Payment");
+                return;
+            }
+
+            if (["active"].includes(data.subscriptionStatus) && ["captured"].includes(data.paymentStatus)) {
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === count ? { ...state, loading: "success", data: "Payment verification success" } : state));
+                toast.success("All set");
+                setTimeout(() => {
+                    setOpen(false);
+                    navigate(from, { replace: true });
+                }, 3000);
+            } else if (count < 3) {
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 3 + count ? { ...state, loading: "failed", data: "Payment verification failed" } : state));
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3 + count + 1, loading: "started", data: `Verifying Payment... ${count + 1}` }]);
+                setTimeout(async () => {
+                    await handlePaymentVerifcation(response, count + 1);
+                }, 3000);
+            } else {
+                toast.info("If the amount was debited from your account, please don't pay again. We are looking into this matter");
+                setLoadingStates([]);
+                setTimeout(() => {
+                    setOpen(false);
+                    navigate(from, { replace: true });
+                }, 3000);
+            }
+        } catch (error: any) {
+            setOpen(false);
+            setLoadingStates([]);
+            toast.error(error.response.data.message);
+        }
+    }
+
     const handlePayment = async (razId: string) => {
-        setSdkLoading(true);
+
+        setOpen(true);
+        setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 1, loading: "started", data: "SDK Loading..." }]);
         if (!id || plan?._id !== id) {
-            setSdkLoading(false);
+            setOpen(false);
+            setLoadingStates([]);
             toast.error("This is a broken link");
             return;
         }
 
         const { phone, billingAddress } = user || {};
         if (!phone || !billingAddress) {
-            setSdkLoading(false);
+            setOpen(false);
+            setLoadingStates([]);
             toast.warning("Please update your billing details");
             return;
         }
 
         const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
         if (!res) {
-            setSdkLoading(false);
+            setOpen(false);
+            setLoadingStates([]);
             toast.warning("Razorpay SDK failed to load. Are you online?");
             return;
         }
 
-        setCheckoutLoading(true);
+        setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 1 ? { ...state, loading: "success", data: "SDK successfully loaded" } : state));
 
         try {
+            setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 2, loading: "started", data: "Creating new subscription..." }]);
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
             const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, { id: razId }, config);
             if (!data) {
-                setSdkLoading(false);
+                setOpen(false);
+                setLoadingStates([]);
                 toast.error("Failed to Execute Payment");
                 return;
             }
+            setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 2 ? { ...state, loading: "success", data: "Subscription created successfuly" } : state));
             const options = {
                 key: data.key,
                 currency: "INR",
@@ -156,34 +213,7 @@ const Checkout = () => {
                 description: "just fine",
                 subscription_id: data.subscriptions_id,
                 handler: async function (response: any) {
-                    try {
-                        setOpen(true);
-                        const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
-                        if (["active", "created", "authenticated"].includes(data.subscriptionStatus) && ["authorized", "captured", "created"].includes(data.paymentStatus)) {
-                            setDialogHeader("Redirecting to Dashboard...");
-                            setDialogData({
-                                subscriptionStatus: data.subscriptionStatus,
-                                paymentStatus: data.paymentStatus,
-                            });
-                            toast.success("All set");
-                            setTimeout(() => {
-                                setOpen(false);
-                                navigate(from, { replace: true });
-                            }, 3000);
-                        } else {
-                            setDialogHeader("An Error Occured");
-                            setDialogData({
-                                subscriptionStatus: "pending",
-                                paymentStatus: "pending",
-                            });
-                            toast.error("If the amount was debited from your account, please don't pay again. We are looking into this matter");
-                            setTimeout(() => {
-                                setOpen(false);
-                            }, 3000);
-                        }
-                    } catch (error) {
-                        console.log(error)
-                    }
+                    await handlePaymentVerifcation(response, 0);
                 },
                 prefill: {
                     name: user?.name,
@@ -202,7 +232,8 @@ const Checkout = () => {
             };
             const razor = new (window as any).Razorpay(options);
             razor.on("payment.failed", function (response: any) {
-                setSdkLoading(false);
+                setOpen(false);
+                setLoadingStates([]);
                 // send error message to server
                 console.log(response.error.description);
                 console.log(response.error.metadata.order_id);
@@ -210,46 +241,37 @@ const Checkout = () => {
                 console.log(response);
                 toast.info(response.error.description);
             });
-            razor.open();
+            setTimeout(() => {
+                setOpen(false);
+                razor.open();
+            }, 3000);
         } catch (error: any) {
-            setSdkLoading(false);
+            setOpen(false);
+            setLoadingStates([]);
             toast.error(error.response.data.message);
         }
 
-        setSdkLoading(false);
-        setCheckoutLoading(false);
+        setOpen(false);
+        setLoadingStates([]);
     };
 
     return (
         <div className="w-[80%] mx-auto mt-8 mb-12">
             <div className="flex justify-center items-center gap-4">
-                {sdkLoading && (
-                    <div className="font-Kanit">
-                    <div
-                        className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
-                        id="popupform"
-                    >
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    </div>
-                </div>
-                )}
                 {open && (
-                    <div className="font-Kanit">
-                        <div
-                            className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
-                            id="popupform"
-                        >
-                            <div className="bg-white p-8 rounded shadow-lg w-[425px]">
-                                <h2 className="text-lg font-bold mb-4 flex justify-center underline">
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    {dialogHeader}
-                                </h2>
-                                <div>
-                                    <p>Payment Status: {dialogData.paymentStatus}</p>
-                                    <p>Subscription Status: {dialogData.subscriptionStatus}</p>
-                                </div>
+                    <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex flex-col justify-center items-center z-10">
+                        {loadingStates && loadingStates.map(state => (
+                            <div className="flex items-center gap-2">
+                                {state.loading === "started" ? (
+                                    <Loader2 className="h-4 w-4 text-gray-400 animate-spin" />
+                                ) : state.loading === "success" ? (
+                                    <FaCheckCircle size={20} className="text-green-500" />
+                                ) : (
+                                    <RxCrossCircled size={20} className="text-red-500" />
+                                )}
+                                <p>{state.data}</p>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 )}
             </div>
@@ -328,10 +350,10 @@ const Checkout = () => {
                             </div>
                             <button
                                 type="submit"
-                                disabled={sdkLoading || updateLoading}
+                                disabled={open || updateLoading}
                                 className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                             >
-                                {sdkLoading || updateLoading ? "Hold on..." : "Update Changes"}
+                                {open || updateLoading ? "Hold on..." : "Update Changes"}
                             </button>
                         </form>
                     </div>
@@ -366,11 +388,11 @@ const Checkout = () => {
                     </div>
 
                     <button
-                        disabled={!user || !id || plan?._id !== id || checkoutLoading}
+                        disabled={!user || !id || plan?._id !== id || open}
                         onClick={() => handlePayment(plan?.razorPlanId!)}
                         className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                     >
-                        {checkoutLoading ? "Hold on..." : "Buy Now"}
+                        {open ? "Hold on..." : "Buy Now"}
                     </button>
 
                     <div className="mt-4 flex items-center justify-center space-x-2">

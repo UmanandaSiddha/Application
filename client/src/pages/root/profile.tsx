@@ -7,18 +7,12 @@ import { IoIosLogOut } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import Compressor from "compressorjs";
+import Loader from "@/components/rest/loader";
 
 const Profile = () => {
 
     const dispatch = useDispatch();
-    const [open, setOpen] = useState<boolean>(false);
-    const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-    const [avatar, setAvatar] = useState<any>();
-    const [openSep, setOpenSep] = useState<boolean>(false);
-
-    const [openReset, setOpenReset] = useState<boolean>(false);
-    const [openEdit, setOpenEdit] = useState<boolean>(false);
-
     const [openProfile, setOpenProfile] = useState(false);
     const [openBilling, setOpenBilling] = useState(false);
     const [openOrg, setOpenOrg] = useState(false);
@@ -48,6 +42,11 @@ const Profile = () => {
             postalCode: ""
         }
     });
+    const [password, setPassword] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
 
     const { user, loading } = useSelector(
         (state: RootState) => state.userReducer
@@ -55,17 +54,11 @@ const Profile = () => {
 
     const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setOpen(true);
-        const updateData = {
-
-        };
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/me/update`, updateData, { withCredentials: true });
+            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/me/update`, profileData, { withCredentials: true });
             dispatch(userExist(data.user));
-            setOpen(false);
             toast.success("Profile Updated Successfully");
         } catch (error: any) {
-            setOpen(false);
             toast.error(error.response.data.message);
         }
     };
@@ -73,23 +66,27 @@ const Profile = () => {
     const handleUpdateBillingAddress = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-
-        } catch (error) {
-
+            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/billing/update`, billingAddress, { withCredentials: true });
+            dispatch(userExist(data.user));
+            toast.success("Billing Address Updated Successfully");
+        } catch (error: any) {
+            toast.error(error.response.data.message);
         }
     }
 
     const handleUpdateOrgDetails = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-
-        } catch (error) {
-
+            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/org/update`, orgDetails, { withCredentials: true });
+            dispatch(userExist(data.user));
+            toast.success("Organization Details Updated Successfully");
+        } catch (error: any) {
+            toast.error(error.response.data.message);
         }
     }
 
-    const handleDeleteAccount = useCallback(async () => {
-        setDeleteLoading(true);
+    const handleDeleteAccount = useCallback(async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
         try {
             await axios.delete(`${import.meta.env.VITE_BASE_URL}/user/delete/account`, { withCredentials: true });
             dispatch(userNotExist());
@@ -97,61 +94,79 @@ const Profile = () => {
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
-        setDeleteLoading(false);
     }, [dispatch]);
 
-    const handleResetPassword = useCallback(async () => {
-        const resetDate = {
-            oldPassword: "",
-            newPassword: "",
-            confirmPassword: "",
-        };
-        setOpenSep(true);
+    const handleResetPassword = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
         try {
             if (user?.accountType === "google") {
-                const config = {
-                    headers: { "Content-Type": "multipart/form-data" },
-                    withCredentials: true,
-                };
-                const { data }: { data: UserResponse } = await axios.put(
-                    `${import.meta.env.VITE_BASE_URL}/user/set/password`,
-                    resetDate,
-                    config
-                );
+                if (!password.newPassword || !password.confirmPassword) {
+                    toast.warning("Enter your password");
+                    return;
+                }
+                const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/set/password`, password, { withCredentials: true });
                 dispatch(userExist(data.user));
             } else {
-                const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, resetDate, { withCredentials: true });
+                if (!password.oldPassword || !password.newPassword || !password.confirmPassword) {
+                    toast.warning("Enter your password");
+                    return;
+                }
+                const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, password, { withCredentials: true });
                 dispatch(userExist(data.user));
             }
-            setOpenSep(false);
             toast.success("Password Updated Successfully");
-            setOpenReset(false);
         } catch (error: any) {
-            setOpenSep(false);
             toast.error(error.response.data.message);
         }
-    },
-        [dispatch]
-    );
+    }, [dispatch]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files![0];
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file: File | null = e.target.files![0];
         if (file instanceof Blob) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                if (reader.readyState === 2) {
-                    setAvatar(reader.result);
-                } else {
-                    console.log("Failed to read the file.");
+            const compressImage = async (file: File) => {
+                try {
+                    return await new Promise((resolve, reject) => {
+                        new Compressor(file, {
+                            quality: 0.6,
+                            maxWidth: 800,
+                            maxHeight: 600,
+                            success(result) {
+                                resolve(result);
+                            },
+                            error(err) {
+                                reject(err);
+                            },
+                        });
+                    });
+                } catch (error) {
+                    console.error("Error compressing image:", error);
+                    throw error;
                 }
             };
-            reader.readAsDataURL(file);
+
+            try {
+                const compressedFile = await compressImage(file);
+                const reader = new FileReader();
+                reader.onload = () => {
+                    if (typeof reader.result === "string") {
+                        setProfileData({ ...profileData, image: reader.result });
+                    } else {
+                        console.error("Failed to read the compressed file.");
+                    }
+                };
+                reader.readAsDataURL(compressedFile as Blob);
+            } catch (error) {
+                console.error("Error compressing image:", error);
+            }
         } else {
             console.error("The selected file is not a Blob.");
         }
     };
 
-    return (
+    return loading ? (
+        <Loader />
+    ) : (
         <div className="w-[80%] mx-auto">
             {openProfile && (
                 <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
@@ -160,18 +175,18 @@ const Profile = () => {
                             <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Profile</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenProfile(false)}>Close</button>
                         </div>
-                        <form className="flex flex-col gap-4">
+                        <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="avatar" className="text-lg font-semibold">Avatar</label>
-                                <input type="file" placeholder="Enter you avatar" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="file" onChange={handleChange} placeholder="Enter you avatar" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="name" className="text-lg font-semibold">Name</label>
-                                <input type="text" placeholder="Enter you Name" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={profileData.name || user?.name} onChange={(e) => setProfileData({ ...profileData, name: e.target.value })} placeholder="Enter you Name" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="phone" className="text-lg font-semibold">Phone</label>
-                                <input type="number" placeholder="Enter you Phone" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="number" value={profileData.phone || Number(user?.phone)} onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} placeholder="Enter you Phone" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
                         </form>
@@ -185,29 +200,29 @@ const Profile = () => {
                             <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Billing Address</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenBilling(false)}>Close</button>
                         </div>
-                        <form className="flex flex-col gap-4">
+                        <form onSubmit={handleUpdateBillingAddress} className="flex flex-col gap-4">
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="street" className="text-lg font-semibold">Street</label>
-                                <input type="text" placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={billingAddress.street || user?.billingAddress.street} onChange={(e) => setBillingAddress({ ...billingAddress, street: e.target.value })} placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="city" className="text-lg font-semibold">City</label>
-                                    <input type="text" placeholder="Enter you city" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={billingAddress.city || user?.billingAddress.city} onChange={(e) => setBillingAddress({ ...billingAddress, city: e.target.value })} placeholder="Enter you city" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="state" className="text-lg font-semibold">State</label>
-                                    <input type="text" placeholder="Enter you state" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={billingAddress.state || user?.billingAddress.state} onChange={(e) => setBillingAddress({ ...billingAddress, state: e.target.value })} placeholder="Enter you state" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="country" className="text-lg font-semibold">Country</label>
-                                    <input type="text" placeholder="Enter you country" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={billingAddress.country || user?.billingAddress.country} onChange={(e) => setBillingAddress({ ...billingAddress, country: e.target.value })} placeholder="Enter you country" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="postal code" className="text-lg font-semibold">Postal Code</label>
-                                    <input type="text" placeholder="Enter you postal code" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={billingAddress.postalCode || user?.billingAddress.postalCode} onChange={(e) => setBillingAddress({ ...billingAddress, postalCode: e.target.value })} placeholder="Enter you postal code" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                             </div>
                             <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
@@ -222,28 +237,28 @@ const Profile = () => {
                             <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Organisation Details</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenOrg(false)}>Close</button>
                         </div>
-                        <form className="flex flex-col gap-4">
+                        <form onSubmit={handleUpdateOrgDetails} className="flex flex-col gap-4">
                             <div className="w-full flex flex-col md:flex-row gap-2">
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="phone" className="text-lg font-semibold">Phone</label>
-                                    <input type="number" placeholder="Enter you phone" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="number" value={orgDetails.phone || user?.orgDetails?.phone} onChange={(e) => setOrgDetails({ ...orgDetails, phone: e.target.value })} placeholder="Enter you phone" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="website" className="text-lg font-semibold">Website</label>
-                                    <input type="text" placeholder="Enter website link" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={orgDetails.website || user?.orgDetails?.website} onChange={(e) => setOrgDetails({ ...orgDetails, website: e.target.value })} placeholder="Enter website link" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="address" className="text-lg font-semibold">Address</label>
-                                <input type="text" placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.street || user?.orgDetails?.address?.street} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, street: e.target.value }})} placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
-                                <input type="text" placeholder="Enter you city" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
-                                <input type="text" placeholder="Enter you state" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.city || user?.orgDetails?.address?.city} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, city: e.target.value }})} placeholder="Enter you city" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.state || user?.orgDetails?.address?.state} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, state: e.target.value }})} placeholder="Enter you state" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
-                                <input type="text" placeholder="Enter you country" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
-                                <input type="text" placeholder="Enter you postal code" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.country || user?.orgDetails?.address?.country} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, country: e.target.value }})} placeholder="Enter you country" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.postalCode || user?.orgDetails?.address?.postalCode} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, postalCode: e.target.value }})} placeholder="Enter you postal code" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
                         </form>
@@ -257,18 +272,18 @@ const Profile = () => {
                             <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Password</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenPassword(false)}>Close</button>
                         </div>
-                        <form className="flex flex-col gap-4">
+                        <form onSubmit={handleResetPassword} className="flex flex-col gap-4">
                             <div className="flex flex-col gap-4">
-                                <label htmlFor="oldPassword" className="text-lg font-semibold">Old Passowrd</label>
-                                <input type="text" placeholder="Enter your old password" className="border-2 px-3 py-2 rounded-lg" />
+                                <label htmlFor="oldPassword" className="text-lg font-semibold">Previous Passowrd</label>
+                                <input type="text" value={password.oldPassword} onChange={(e) => setPassword({ ...password, oldPassword: e.target.value })} placeholder="Enter your previous password" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="newPassword" className="text-lg font-semibold">New Passowrd</label>
-                                <input type="text" placeholder="Enter your new password" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={password.newPassword} onChange={(e) => setPassword({ ...password, newPassword: e.target.value })} placeholder="Enter your new password" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="confirmPassword" className="text-lg font-semibold">Confirm Passowrd</label>
-                                <input type="number" placeholder="Again enter your new password" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="number" value={password.confirmPassword} onChange={(e) => setPassword({ ...password, confirmPassword: e.target.value })} placeholder="Enter your new password again" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
                         </form>
@@ -284,8 +299,8 @@ const Profile = () => {
                         </div>
                         <p className="text-lg italic text-gray-500">This will deactivate your account and delete all your cards. You may Reactivate by contacting the admin</p>
                         <div className="w-full flex gap-2">
-                            <button className="w-1/2 mt-4 px-3 py-2 text-lg text-white bg-red-500 rounded-lg">Yes I am sure</button>
-                            <button className="w-1/2 mt-4 px-3 py-2 text-lg text-black border-2 border-gray-700 rounded-lg">Cancel</button>
+                            <button onClick={handleDeleteAccount} className="w-1/2 mt-4 px-3 py-2 text-lg text-white bg-red-500 rounded-lg">Yes, I am sure</button>
+                            <button onClick={() => setOpenDelete(false)} className="w-1/2 mt-4 px-3 py-2 text-lg text-black border-2 border-gray-700 rounded-lg">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -347,59 +362,65 @@ const Profile = () => {
                     <div className="max-h-[85vh] overflow-auto hide-scrollbar pt-24 pb-12">
                         <div className="w-full px-8 py-4 lg:mt-2 bg-white rounded-lg shadow-lg">
                             <div className="flex -mt-16 justify-end">
-                                <img
-                                    className="object-cover w-20 h-20 border-4 border-blue-400 rounded-full"
-                                    alt={user?.name}
-                                    src={user?.image}
-                                />
+                                {user?.image ? (
+                                    <img
+                                        className="object-cover w-20 h-20 border-4 border-blue-400 rounded-full"
+                                        alt={user?.name}
+                                        src={user?.image}
+                                    />
+                                ) : (
+                                    <div className='h-20 w-20 rounded-full bg-gray-300 border-4 border-blue-400 flex items-center justify-center'>
+                                        <p className='text-3xl font-semibold text-black'>{user?.name[0].toUpperCase()}</p>
+                                    </div>
+                                )}
                             </div>
                             <h2 className="mt-2 text-xl font-semibold text-gray-800 md:mt-0">
                                 {user?.name}
                             </h2>
-                            <div className="flex justify-between items-center mt-4">
+                            <div className="flex flex-col md:flex-row justify-between mt-4">
                                 <div>
                                     <p className="mt-2 text-md font-semibold">Email: <span className="mt-2 text-sm text-gray-600">{user?.email}</span></p>
                                     <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.phone}</span></p>
                                 </div>
-                                <button className="text-md bg-white underline">Edit Profile</button>
+                                <button onClick={() => setOpenProfile(true)} className="text-md mt-4 md:mt-0 bg-white underline">Edit Profile</button>
                             </div>
                         </div>
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                             <div className="flex justify-between">
-                                <h1 className="text-lg font-semibold">Billing Address</h1>
-                                <button className="text-md bg-white underline">Edit</button>
+                                <h1 className="text-xl font-semibold">Billing Address</h1>
+                                <button onClick={() => setOpenBilling(true)} className="text-md bg-white underline">Edit</button>
                             </div>
-                            <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress.street}</span></p>
-                            <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress.city}</span></p>
-                            <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress.state}</span></p>
-                            <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress.postalCode}</span></p>
-                            <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress.country}</span></p>
+                            <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.street}</span></p>
+                            <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.city}</span></p>
+                            <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.state}</span></p>
+                            <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.postalCode}</span></p>
+                            <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.country}</span></p>
                         </div>
                         {user?.role === "org" && (
                             <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                                 <div className="flex justify-between">
-                                    <h1 className="text-lg font-semibold">Organisation Details</h1>
-                                    <button className="text-md bg-white underline">Edit</button>
+                                    <h1 className="text-xl font-semibold">Organisation Details</h1>
+                                    <button onClick={() => setOpenOrg(true)} className="text-md bg-white underline">Edit</button>
                                 </div>
-                                <p className="mt-2 text-md font-semibold">website: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails.website}</span></p>
-                                <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails.phone}</span></p>
-                                <h2 className="text-md font-semibold">Address</h2>
-                                <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails.address.street}</span></p>
-                                <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails.address.city}</span></p>
-                                <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails.address.state}</span></p>
-                                <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails.address.postalCode}</span></p>
-                                <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails.address.country}</span></p>
+                                <p className="mt-2 text-md font-semibold">website: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.website}</span></p>
+                                <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.phone}</span></p>
+                                <h2 className="mt-4 text-xl font-semibold">Address</h2>
+                                <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.street}</span></p>
+                                <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.city}</span></p>
+                                <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.state}</span></p>
+                                <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.postalCode}</span></p>
+                                <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.country}</span></p>
                             </div>
                         )}
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
-                            <h1 className="text-lg font-semibold">Privacy Settings</h1>
-                            <p className="mt-2 text-gray-500 italic">You can reset your password here</p>
-                            <button className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">Reset Password</button>
+                            <h1 className="text-xl font-semibold">Privacy Settings</h1>
+                            <p className="mt-2 text-gray-500 italic">You can {user?.accountType === "google" ? "" : "re"}set your password here</p>
+                            <button onClick={() => setOpenPassword(true)} className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">{user?.accountType === "google" ? "" : "Re"}set Password</button>
                         </div>
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
-                            <h1 className="text-lg font-semibold">Account Actions</h1>
+                            <h1 className="text-xl font-semibold">Account Actions</h1>
                             <p className="mt-2 text-gray-500 italic">Caution: Account deactictivation will lead to deletion of all cards with no further recovery</p>
-                            <button className="mt-2 border-2 border-red-500 text-center px-3 py-2 rounded-lg text-white bg-red-500">Deactivate Account</button>
+                            <button onClick={() => setOpenDelete(true)} className="mt-2 border-2 border-red-500 text-center px-3 py-2 rounded-lg text-white bg-red-500">Deactivate Account</button>
                         </div>
                     </div>
                 </div>

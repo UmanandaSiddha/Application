@@ -9,7 +9,6 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import ApiFeatures from "../utils/services/apiFeatures.js";
 
-// Function to select model based on type
 export const selectModelByType = (type) => {
     switch (type) {
         case 'botanical':
@@ -133,7 +132,7 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const user = await User.findById(vCard.user);
-    if (user?.freePlan?.status) {
+    if (user?.freePlan?.status && user.role !== "admin") {
         const { type, end } = user.freePlan;
         if (type === freeEnum.PLAN && end > Date.now()) {
             return next(new ErrorHandler("VCard Not Found", 404));
@@ -141,8 +140,8 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const subscription = await Subscription.findById(user?.activePlan);
-    if (!subscription || !["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < Date.now())) {
-        return next(new ErrorHandler("VCard Not Found", 404));
+    if (user.role !== "admin" && (!subscription || !["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < Date.now()))) {
+        return next(new ErrorHandler("VCard Not Found 2", 404));
     }
 
     res.status(200).json({
