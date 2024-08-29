@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 4000;
 
 connectDatabase();
 
-export const CLIENT_URL = process.env.NODE_ENV === "production" ? "https://app.voolata.com" : "http://localhost:5173";
+export const CLIENT_URL = process.env.NODE_ENV === "production" ? "https://voolata.com" : "http://localhost:5173";
 export const SERVER_URL = process.env.NODE_ENV === "production" ? "https://api.voolata.com" : "http://localhost:7070";
 
 export const instance = new Razorpay({
