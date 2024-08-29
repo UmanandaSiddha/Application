@@ -23,8 +23,8 @@ const corsOptions = {
       const allowedOrigins = [
         "http://localhost:5173",
         "http://localhost:5174",
-        "https://voolata.com",
-        "https://www.voolata.com",
+        "https://app.voolata.com",
+        "https://www.app.voolata.com",
       ];
       const isAllowed = allowedOrigins.includes(origin);
       callback(null, isAllowed ? origin : false);
