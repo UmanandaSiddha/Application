@@ -12,7 +12,7 @@ const Users = () => {
     const [users, setUsers] = useState<User[]>();
     const [keyword, setKeyword] = useState("");
     const [role, setRole] = useState("");
-    const [accountType, setAccountType] = useState("");
+    // const [accountType, setAccountType] = useState("");
     const [counts, setCounts] = useState({
         currentPage: 1,
         resultPerPage: 1,

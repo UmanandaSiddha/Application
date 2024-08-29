@@ -1,11 +1,11 @@
 import { useSearchParams } from "react-router-dom";
-import DefaultLayout from "../../layout/DefaultLayout";
+// import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { UserResponse } from "../../types/api-types";
 import axios from "axios";
 import { User } from "../../types/types";
-import CardsChart from "../../components/Charts/CardsChart";
+// import CardsChart from "../../components/Charts/CardsChart";
 
 const CardDetails = () => {
 
@@ -13,13 +13,17 @@ const CardDetails = () => {
     const id = search.get("id");
     const type = search.get("type");
     const [user, setUser] = useState<User>();
+    // const [user, setUser] = useState<User>();
+    console.log(user)
 
-    const [selectedOption, setSelectedOption] = useState<string>('');
-    const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
+    // const [selectedOption, setSelectedOption] = useState<string>('');
+    // const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
-    const changeTextColor = () => {
-        setIsOptionSelected(true);
-    };
+    // const changeTextColor = () => {
+    //     setIsOptionSelected(true);
+    //     console.log(user)
+    //     console.log(isOptionSelected)
+    // };
 
     const fetchCard = async () => {
         try {
