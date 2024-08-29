@@ -170,6 +170,7 @@ const Checkout = () => {
 
         setOpen(true);
         setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 1, loading: "started", data: "SDK Loading..." }]);
+        
         if (!id || plan?._id !== id) {
             setOpen(false);
             setLoadingStates([]);

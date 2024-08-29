@@ -23,8 +23,8 @@ const corsOptions = {
       const allowedOrigins = [
         "http://localhost:5173",
         "http://localhost:5174",
-        "https://app.umanandasiddha.site",
-        "https://www.app.umanandasiddha.site",
+        "https://voolata.com",
+        "https://www.voolata.com",
       ];
       const isAllowed = allowedOrigins.includes(origin);
       callback(null, isAllowed ? origin : false);

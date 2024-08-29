@@ -154,7 +154,7 @@ export const createDonationPlan = catchAsyncErrors(async (req, res, next) => {
         period,
         interval: 1,
         item: {
-            name: req.donation.id,
+            name: req.donator.id,
             amount: Number(amount) * 100,
             currency: "INR",
             description: `Donation Plan for ${req.donator.id}`,
@@ -165,7 +165,7 @@ export const createDonationPlan = catchAsyncErrors(async (req, res, next) => {
     }
 
     const plan = await Plan.create({
-        name: req.donation.id,
+        name: req.donator.id,
         amount: Number(amount),
         description: `Donation Plan for ${req.donator.id}`,
         cards: 0,
@@ -250,6 +250,7 @@ export const createDonation = catchAsyncErrors(async (req, res, next) => {
         amount: req.body.amount,
         status: "just_created",
         razorpayOrderId: order.id,
+        razorpayPaymentId: "12",
         transactionFor: subscriptionEnum.DONATOR,
         transactionType: transactionEnum.ONETIME,
         currency: req.body.currency,
@@ -259,7 +260,6 @@ export const createDonation = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         key: process.env.RAZORPAY_KEY_ID,
-        donation,
         order,
     });
 });
@@ -291,6 +291,9 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
         .digest("hex")
 
     const payment = await instance.payments.fetch(razorpay_payment_id);
+    if (!payment) {
+        return next(new ErrorHandler("Payment Not Found 2", 404));
+    }
 
     if (expectedSigntaure === razorpay_signature) {
         const donation = await Transaction.findOne({ razorpayOrderId: payment.order_id });

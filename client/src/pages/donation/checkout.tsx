@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { useState } from "react";
 import axios from "axios";
@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import { DonatorResponse } from "@/types/api-types";
 import { donatorExist } from "@/redux/reducer/donatorReducer";
+import { FaCheckCircle } from "react-icons/fa";
+import { RxCrossCircled } from "react-icons/rx";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -22,24 +24,32 @@ function loadScript(src: any) {
     });
 }
 
+interface SubscriptionCatpureResponse {
+    success: boolean;
+    subscriptionStatus: string;
+    paymentStatus: string;
+}
+
+interface PaymentCatpureResponse {
+    success: boolean;
+    paymentStatus: string;
+}
+
+interface LoadingStateType {
+    id: number;
+    loading: string;
+    data: string;
+}
+
 const DonationCheckout = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
     const [open, setOpen] = useState(false);
-    const [checkoutLoading, setCheckoutLoading] = useState(false);
     const [updateLoading, setUpdateLoading] = useState(false);
-    const [sdkLoading, setSdkLoading] = useState(false);
     const [isRecurring, setIsRecurring] = useState(true);
-
-    const [dialogHeader, setDialogHeader] = useState("Waiting for Confirmation");
-    const [dialogData, setDialogData] = useState({
-        subscriptionStatus: "hold on",
-        paymentStatus: "hold on",
-    });
     const { donator } = useSelector((state: RootState) => state.donatorReducer);
-
+    const [loadingStates, setLoadingStates] = useState<LoadingStateType[]>([]);
     const [paymentData, setPaymentData] = useState<{
         amount: number | null;
         period: string;
@@ -60,6 +70,9 @@ const DonationCheckout = () => {
         postalCode: donator?.address?.postalCode || "",
         country: donator?.address?.country || "",
     });
+
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/donation/dashboard";
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -97,19 +110,98 @@ const DonationCheckout = () => {
         setUpdateLoading(false);
     }
 
-    const handleTestPayment = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        console.log(paymentData);
+    const handlePaymentVerification = async (response: string, count: number) => {
+        try {
+            if (count === 0) {
+                setOpen(true);
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3, loading: "started", data: "Verifying Payment..." }]);
+            }
+            const { data }: { data: PaymentCatpureResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/verify/pay`, response, { withCredentials: true });
+            if (!data) {
+                setOpen(false);
+                setLoadingStates([]);
+                toast.error("Failed to Verify Payment");
+                return;
+            }
+            if (["captured"].includes(data.paymentStatus)) {
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === count ? { ...state, loading: "success", data: "Payment verification success" } : state));
+                toast.success("All set");
+                setTimeout(() => {
+                    setOpen(false);
+                    navigate(from, { replace: true });
+                }, 3000);
+            } else if (count < 3) {
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 3 + count ? { ...state, loading: "failed", data: "Payment verification failed" } : state));
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3 + count + 1, loading: "started", data: `Verifying Payment... ${count + 1}` }]);
+                setTimeout(async () => {
+                    await handlePaymentVerification(response, count + 1);
+                }, 3000);
+            } else {
+                toast.info("If the amount was debited from your account, please don't pay again. We are looking into this matter");
+                setLoadingStates([]);
+                setTimeout(() => {
+                    setOpen(false);
+                    navigate(from, { replace: true });
+                }, 3000);
+            }
+        } catch (error: any) {
+            setOpen(false);
+            setLoadingStates([]);
+            toast.error(error.response.data.message);
+        }
+    }
+
+    const handleSubscriptionVerification = async (response: string, count: number) => {
+        try {
+            if (count === 0) {
+                setOpen(true);
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 4, loading: "started", data: "Verifying Payment..." }]);
+            }
+            const { data }: { data: SubscriptionCatpureResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, { withCredentials: true });
+            if (!data) {
+                setOpen(false);
+                setLoadingStates([]);
+                toast.error("Failed to Verify Payment");
+                return;
+            }
+            if (["active"].includes(data.subscriptionStatus) && ["captured"].includes(data.paymentStatus)) {
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === count ? { ...state, loading: "success", data: "Payment verification success" } : state));
+                toast.success("All set");
+                setTimeout(() => {
+                    setOpen(false);
+                    navigate(from, { replace: true });
+                }, 3000);
+            } else if (count < 3) {
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 3 + count ? { ...state, loading: "failed", data: "Payment verification failed" } : state));
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3 + count + 1, loading: "started", data: `Verifying Payment... ${count + 1}` }]);
+                setTimeout(async () => {
+                    await handleSubscriptionVerification(response, count + 1);
+                }, 3000);
+            } else {
+                toast.info("If the amount was debited from your account, please don't pay again. We are looking into this matter");
+                setLoadingStates([]);
+                setTimeout(() => {
+                    setOpen(false);
+                    navigate(from, { replace: true });
+                }, 3000);
+            }
+        } catch (error: any) {
+            setOpen(false);
+            setLoadingStates([]);
+            toast.error(error.response.data.message);
+        }
     }
 
     const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setSdkLoading(true);
+        setOpen(true);
+        setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 1, loading: "started", data: "SDK Loading..." }]);
 
         const { name, phone, address } = donator || {};
         if (!name || !phone || !address) {
-            setSdkLoading(false);
+            setOpen(false);
+            setLoadingStates([]);
             toast.warning("Please update your billing details");
             return;
         }
@@ -117,46 +209,56 @@ const DonationCheckout = () => {
         const { amount, period, currency } = paymentData;
         if (isRecurring) {
             if (!amount || !period || !currency) {
+                setOpen(false);
+                setLoadingStates([]);
                 toast.warning("All fields are required");
-                setSdkLoading(false);
                 return;
             }
         } else {
             if (!amount || !currency) {
+                setOpen(false);
+                setLoadingStates([]);
                 toast.warning("All fields are required");
-                setSdkLoading(false);
                 return;
             }
         }
 
         const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
         if (!res) {
-            setSdkLoading(false);
+            setOpen(false);
+            setLoadingStates([]);
             toast.error("Razorpay SDK failed to load. Are you online?");
             return;
         }
 
-        setSdkLoading(false);
-        setCheckoutLoading(true);
+        setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 1 ? { ...state, loading: "success", data: "SDK successfully loaded" } : state));
 
         try {
-            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-
             let options;
 
             if (isRecurring) {
-                const { planData }: { planData: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/plan`, { paymentData }, config);
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 2, loading: "started", data: "Creating new plan..." }]);
+                const { planData }: { planData: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/plan`, paymentData, { withCredentials: true });
                 if (!planData) {
+                    setOpen(false);
+                    setLoadingStates([]);
                     toast.error("Failed to Create Plan");
                     return;
                 }
-                toast.success("Successfully creaeted plan");
+                
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 2 ? { ...state, loading: "success", data: "Plan created successfuly" } : state));
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3, loading: "started", data: "Creating new subscription..." }]);
 
-                const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/subscription`, { id: planData.plan.id }, config);
+                const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/subscription`, { id: planData.plan.id }, { withCredentials: true });
+                console.log(data);
                 if (!data) {
+                    setOpen(false);
+                    setLoadingStates([]);
                     toast.error("Failed to Execute Payment");
                     return;
                 }
+
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 3 ? { ...state, loading: "success", data: "Subscription created successfuly" } : state));
 
                 options = {
                     key: data.key,
@@ -165,30 +267,7 @@ const DonationCheckout = () => {
                     description: "just fine",
                     subscription_id: data.subscriptions_id,
                     handler: async function (response: any) {
-                        setOpen(true);
-                        const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
-                        if (["active", "created", "authenticated", "activated"].includes(data.subscriptionStatus) && ["authorized", "captured", "created"].includes(data.paymentStatus)) {
-                            setDialogHeader("Redirecting to Dashboard...");
-                            setDialogData({
-                                subscriptionStatus: data.subscriptionStatus,
-                                paymentStatus: data.paymentStatus,
-                            });
-                            toast.success("All set");
-                            setTimeout(() => {
-                                setOpen(false);
-                                navigate("/dashboard");
-                            }, 3000);
-                        } else {
-                            setDialogHeader("An Error Occurred");
-                            setDialogData({
-                                subscriptionStatus: "pending",
-                                paymentStatus: "pending",
-                            });
-                            toast.error("Error occurred, please try again");
-                            setTimeout(() => {
-                                setOpen(false);
-                            }, 3000);
-                        }
+                        await handleSubscriptionVerification(response, 0);
                     },
                     prefill: {
                         email: donator?.email,
@@ -203,11 +282,15 @@ const DonationCheckout = () => {
                     },
                 };
             } else {
-                const { donationData }: { donationData: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/pay`, { paymentData }, config);
+                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 2, loading: "started", data: "Creating new order..." }]);
+                const { donationData }: { donationData: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/pay`, paymentData, { withCredentials: true });
                 if (!donationData) {
+                    setOpen(false);
+                    setLoadingStates([]);
                     toast.error("Failed to Execute Payment");
                     return;
                 }
+                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 2 ? { ...state, loading: "success", data: "Order created successfuly" } : state));
 
                 options = {
                     key: donationData.key,
@@ -217,30 +300,7 @@ const DonationCheckout = () => {
                     description: "just fine",
                     order_id: donationData.order._id,
                     handler: async function (response: any) {
-                        setOpen(true);
-                        const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/verify/pay`, response, config);
-                        if (["authorized", "captured", "created"].includes(data.paymentStatus)) {
-                            setDialogHeader("Redirecting to Dashboard...");
-                            setDialogData({
-                                subscriptionStatus: "",
-                                paymentStatus: data.paymentStatus,
-                            });
-                            toast.success("All set");
-                            setTimeout(() => {
-                                setOpen(false);
-                                navigate("/dashboard");
-                            }, 3000);
-                        } else {
-                            setDialogHeader("An Error Occurred");
-                            setDialogData({
-                                subscriptionStatus: "pending",
-                                paymentStatus: "pending",
-                            });
-                            toast.error("Error occurred, please try again");
-                            setTimeout(() => {
-                                setOpen(false);
-                            }, 3000);
-                        }
+                        await handlePaymentVerification(response, 0);
                     },
                     prefill: {
                         email: donator?.email,
@@ -258,15 +318,26 @@ const DonationCheckout = () => {
 
             const razor = new (window as any).Razorpay(options);
             razor.on("payment.failed", function (response: any) {
+                setOpen(false);
+                setLoadingStates([]);
                 console.log(response.error.description);
                 console.log(response.error.metadata.order_id);
                 console.log(response.error.metadata.payment_id);
                 toast.info(response.error.description);
             });
-            razor.open();
+            setTimeout(() => {
+                setOpen(false);
+                razor.open();
+            }, 3000);
         } catch (error: any) {
+            setOpen(false);
+            setLoadingStates([]);
+            console.log("hello")
             toast.error(error.response.data.message);
         }
+
+        setOpen(false);
+        setLoadingStates([]);
     };
 
     const handleDonationTypeChange = () => {
@@ -276,32 +347,20 @@ const DonationCheckout = () => {
     return (
         <div className="w-[80%] mx-auto mt-6 mb-12">
             <div className="flex justify-center items-center gap-4">
-                {sdkLoading && (
-                    <div className="font-inter">
-                        <div
-                            className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
-                            id="popupform"
-                        >
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        </div>
-                    </div>
-                )}
                 {open && (
-                    <div className="font-inter">
-                        <div
-                            className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
-                            id="popupform"
-                        >
-                            <div className="bg-white p-8 rounded shadow-lg w-[425px]">
-                                <h2 className="text-lg font-bold mb-4 flex justify-center underline">
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    {dialogHeader}
-                                </h2>
-                                <div>
-                                    <p>Payment Status: {dialogData.paymentStatus}</p>
-                                </div>
+                    <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex flex-col justify-center items-center z-10">
+                        {loadingStates && loadingStates.map(state => (
+                            <div className="flex items-center gap-2">
+                                {state.loading === "started" ? (
+                                    <Loader2 className="h-4 w-4 text-gray-400 animate-spin" />
+                                ) : state.loading === "success" ? (
+                                    <FaCheckCircle size={20} className="text-green-500" />
+                                ) : (
+                                    <RxCrossCircled size={20} className="text-red-500" />
+                                )}
+                                <p>{state.data}</p>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 )}
             </div>
@@ -409,10 +468,10 @@ const DonationCheckout = () => {
                             </div>
                             <button
                                 type="submit"
-                                disabled={sdkLoading || updateLoading}
+                                disabled={open || updateLoading}
                                 className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                             >
-                                {sdkLoading || updateLoading ? "Hold on..." : "Update Changes"}
+                                {open || updateLoading ? "Hold on..." : "Update Changes"}
                             </button>
                         </form>
                     </div>
@@ -433,15 +492,15 @@ const DonationCheckout = () => {
                         </label>
                     </div>
 
-                    <form onSubmit={handleTestPayment}>
+                    <form onSubmit={handlePayment}>
                         <div className="mt-4 space-y-3 rounded-lg px-2 py-4 sm:px-6">
                             <div>
                                 <label htmlFor="amount" className="block text-sm font-medium">Amount</label>
                                 <div className="flex space-x-2 w-full">
                                     <select
-                                        value={paymentData.currency} 
+                                        value={paymentData.currency}
                                         onChange={(e) => setPaymentData({ ...paymentData, currency: e.target.value })}
-                                        name="currency" 
+                                        name="currency"
                                         className="md:w-[20%] w-[30%] rounded-md border border-gray-200 px-1.5 py-2 text-md shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
                                     >
                                         <option className="m-2" value="INR">INR</option>
