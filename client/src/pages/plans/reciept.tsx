@@ -1,8 +1,8 @@
-import Loader from "@/components/rest/loader";
 import "@/css/print.css";
-import { Transaction } from "@/types/plan_types";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+// import Loader from "@/components/rest/loader";
+// import { Transaction } from "@/types/plan_types";
+// import { useEffect, useState } from "react";
+// import { useSearchParams } from "react-router-dom";
 
 const RecieptPage = () => {
 
