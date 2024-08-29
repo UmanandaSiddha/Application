@@ -25,7 +25,7 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
     }
 
     const userExists = await User.findOne({ email });
-    if (!userExists) {
+    if (userExists) {
         return next(new ErrorHandler("Email already exists", 400));
     }
 
