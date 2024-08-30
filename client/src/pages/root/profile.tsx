@@ -273,10 +273,12 @@ const Profile = () => {
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenPassword(false)}>Close</button>
                         </div>
                         <form onSubmit={handleResetPassword} className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-4">
-                                <label htmlFor="oldPassword" className="text-lg font-semibold">Previous Passowrd</label>
-                                <input type="text" value={password.oldPassword} onChange={(e) => setPassword({ ...password, oldPassword: e.target.value })} placeholder="Enter your previous password" className="border-2 px-3 py-2 rounded-lg" />
-                            </div>
+                            {user?.accountType !== "google" && (
+                                <div className="flex flex-col gap-4">
+                                    <label htmlFor="oldPassword" className="text-lg font-semibold">Previous Passowrd</label>
+                                    <input type="text" value={password.oldPassword} onChange={(e) => setPassword({ ...password, oldPassword: e.target.value })} placeholder="Enter your previous password" className="border-2 px-3 py-2 rounded-lg" />
+                                </div>
+                            )}
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="newPassword" className="text-lg font-semibold">New Passowrd</label>
                                 <input type="text" value={password.newPassword} onChange={(e) => setPassword({ ...password, newPassword: e.target.value })} placeholder="Enter your new password" className="border-2 px-3 py-2 rounded-lg" />
@@ -415,7 +417,7 @@ const Profile = () => {
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                             <h1 className="text-xl font-semibold">Privacy Settings</h1>
                             <p className="mt-2 text-gray-500 italic">You can {user?.accountType === "google" ? "" : "re"}set your password here</p>
-                            <button onClick={() => setOpenPassword(true)} className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">{user?.accountType === "google" ? "" : "Re"}set Password</button>
+                            <button onClick={() => setOpenPassword(true)} className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">{user?.accountType === "google" ? "S" : "Res"}et Password</button>
                         </div>
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                             <h1 className="text-xl font-semibold">Account Actions</h1>
