@@ -43,7 +43,7 @@ export default function Header() {
 
     return (
         <header className="bg-white border-b-2 fixed top-0 left-0 right-0 z-50">
-            <nav className="mx-auto flex max-w-[95%] md:mx-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
+            <nav className="mx-auto flex max-w-[95%] md:max-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
                         <img className="w-auto h-6 sm:h-7" src="https://merakiui.com/images/logo.svg" alt="" />
