@@ -19,27 +19,31 @@ const Profile = () => {
     const [openPassword, setOpenPassword] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
 
+    const { user, loading } = useSelector(
+        (state: RootState) => state.userReducer
+    );
+
     const [profileData, setProfileData] = useState({
-        name: "",
-        phone: "",
+        name: user?.name || "",
+        phone: user?.phone || "",
         image: ""
     });
     const [billingAddress, setBillingAddress] = useState({
-        street: "",
-        city: "",
-        state: "",
-        country: "",
-        postalCode: ""
+        street: user?.billingAddress?.street || "",
+        city: user?.billingAddress?.city || "",
+        state: user?.billingAddress?.state || "",
+        country: user?.billingAddress?.country || "",
+        postalCode: user?.billingAddress?.postalCode || ""
     });
     const [orgDetails, setOrgDetails] = useState({
-        website: "",
-        phone: "",
+        website: user?.orgDetails?.website || "",
+        phone: user?.orgDetails?.phone || "",
         address: {
-            street: "",
-            city: "",
-            state: "",
-            country: "",
-            postalCode: ""
+            street: user?.orgDetails?.address?.street || "",
+            city: user?.orgDetails?.address?.city || "",
+            state: user?.orgDetails?.address?.state || "",
+            country: user?.orgDetails?.address?.country || "",
+            postalCode: user?.orgDetails?.address?.postalCode || ""
         }
     });
     const [password, setPassword] = useState({
@@ -47,10 +51,6 @@ const Profile = () => {
         newPassword: "",
         confirmPassword: ""
     });
-
-    const { user, loading } = useSelector(
-        (state: RootState) => state.userReducer
-    );
 
     const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -182,11 +182,11 @@ const Profile = () => {
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="name" className="text-lg font-semibold">Name</label>
-                                <input type="text" value={profileData.name || user?.name} onChange={(e) => setProfileData({ ...profileData, name: e.target.value })} placeholder="Enter you Name" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={profileData.name} onChange={(e) => setProfileData({ ...profileData, name: e.target.value })} placeholder="Enter you Name" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="phone" className="text-lg font-semibold">Phone</label>
-                                <input type="number" value={profileData.phone || Number(user?.phone)} onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} placeholder="Enter you Phone" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="number" value={profileData.phone} onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} placeholder="Enter you Phone" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
                         </form>
@@ -203,26 +203,26 @@ const Profile = () => {
                         <form onSubmit={handleUpdateBillingAddress} className="flex flex-col gap-4">
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="street" className="text-lg font-semibold">Street</label>
-                                <input type="text" value={billingAddress.street || user?.billingAddress.street} onChange={(e) => setBillingAddress({ ...billingAddress, street: e.target.value })} placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={billingAddress.street} onChange={(e) => setBillingAddress({ ...billingAddress, street: e.target.value })} placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="city" className="text-lg font-semibold">City</label>
-                                    <input type="text" value={billingAddress.city || user?.billingAddress.city} onChange={(e) => setBillingAddress({ ...billingAddress, city: e.target.value })} placeholder="Enter you city" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={billingAddress.city} onChange={(e) => setBillingAddress({ ...billingAddress, city: e.target.value })} placeholder="Enter you city" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="state" className="text-lg font-semibold">State</label>
-                                    <input type="text" value={billingAddress.state || user?.billingAddress.state} onChange={(e) => setBillingAddress({ ...billingAddress, state: e.target.value })} placeholder="Enter you state" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={billingAddress.state} onChange={(e) => setBillingAddress({ ...billingAddress, state: e.target.value })} placeholder="Enter you state" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="country" className="text-lg font-semibold">Country</label>
-                                    <input type="text" value={billingAddress.country || user?.billingAddress.country} onChange={(e) => setBillingAddress({ ...billingAddress, country: e.target.value })} placeholder="Enter you country" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={billingAddress.country} onChange={(e) => setBillingAddress({ ...billingAddress, country: e.target.value })} placeholder="Enter you country" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="postal code" className="text-lg font-semibold">Postal Code</label>
-                                    <input type="text" value={billingAddress.postalCode || user?.billingAddress.postalCode} onChange={(e) => setBillingAddress({ ...billingAddress, postalCode: e.target.value })} placeholder="Enter you postal code" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={billingAddress.postalCode} onChange={(e) => setBillingAddress({ ...billingAddress, postalCode: e.target.value })} placeholder="Enter you postal code" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                             </div>
                             <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
@@ -241,24 +241,24 @@ const Profile = () => {
                             <div className="w-full flex flex-col md:flex-row gap-2">
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="phone" className="text-lg font-semibold">Phone</label>
-                                    <input type="number" value={orgDetails.phone || user?.orgDetails?.phone} onChange={(e) => setOrgDetails({ ...orgDetails, phone: e.target.value })} placeholder="Enter you phone" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="number" value={orgDetails.phone} onChange={(e) => setOrgDetails({ ...orgDetails, phone: e.target.value })} placeholder="Enter you phone" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                                     <label htmlFor="website" className="text-lg font-semibold">Website</label>
-                                    <input type="text" value={orgDetails.website || user?.orgDetails?.website} onChange={(e) => setOrgDetails({ ...orgDetails, website: e.target.value })} placeholder="Enter website link" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={orgDetails.website} onChange={(e) => setOrgDetails({ ...orgDetails, website: e.target.value })} placeholder="Enter website link" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="address" className="text-lg font-semibold">Address</label>
-                                <input type="text" value={orgDetails.address.street || user?.orgDetails?.address?.street} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, street: e.target.value }})} placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.street} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, street: e.target.value }})} placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
-                                <input type="text" value={orgDetails.address.city || user?.orgDetails?.address?.city} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, city: e.target.value }})} placeholder="Enter you city" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
-                                <input type="text" value={orgDetails.address.state || user?.orgDetails?.address?.state} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, state: e.target.value }})} placeholder="Enter you state" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.city} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, city: e.target.value }})} placeholder="Enter you city" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.state} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, state: e.target.value }})} placeholder="Enter you state" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
-                                <input type="text" value={orgDetails.address.country || user?.orgDetails?.address?.country} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, country: e.target.value }})} placeholder="Enter you country" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
-                                <input type="text" value={orgDetails.address.postalCode || user?.orgDetails?.address?.postalCode} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, postalCode: e.target.value }})} placeholder="Enter you postal code" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.country} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, country: e.target.value }})} placeholder="Enter you country" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.postalCode} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, postalCode: e.target.value }})} placeholder="Enter you postal code" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
                         </form>

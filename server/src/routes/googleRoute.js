@@ -76,7 +76,7 @@ router.route("/api/google/oauth").get(catchAsyncErrors(async (req, res) => {
     if (user) {
         if (user.googleId === googleUser.id) {
             const token = user.getJWTToken();
-            res.status(200).cookie("token", token, options);
+            res.status(200).cookie("user_token", token, options);
         } else {
             user.googleId = googleUser.id;
             user.accountType = accountEnum.HYBRID;
@@ -85,7 +85,7 @@ router.route("/api/google/oauth").get(catchAsyncErrors(async (req, res) => {
             }
             await user.save();
             const token = user.getJWTToken();
-            res.status(200).cookie("token", token, options);
+            res.status(200).cookie("user_token", token, options);
         }
     } else {
         const newUser = await User.create({
@@ -98,7 +98,7 @@ router.route("/api/google/oauth").get(catchAsyncErrors(async (req, res) => {
         });
 
         const token = newUser.getJWTToken();
-        res.status(200).cookie("token", token, options);
+        res.status(200).cookie("user_token", token, options);
     }
 
     res.redirect(CLIENT_URL);

@@ -424,7 +424,7 @@ export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const updateBillingInfo = catchAsyncErrors(async (req, res, next) => {
-    const { street, state, city, postalCode, country } = req.body;
+    const { phone, street, state, city, postalCode, country } = req.body;
 
     const user = await User.findById(req.user.id);
 
@@ -434,12 +434,11 @@ export const updateBillingInfo = catchAsyncErrors(async (req, res, next) => {
     if (city) updateBillingAddress.city = city;
     if (postalCode) updateBillingAddress.postalCode = postalCode;
     if (country) updateBillingAddress.country = country;
-    
-    console.log(updateBillingAddress);
 
     const newUser = await User.findByIdAndUpdate(
         req.user.id,
         {
+            phone: phone ? phone : user.phone,
             billingAddress: updateBillingAddress
         },
         { new: true, runValidators: true, useFindAndModify: false }

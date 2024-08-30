@@ -56,13 +56,13 @@ const createQRCode = (type: string, cardId: string) => {
         width: 300,
         height: 300,
         margin: 0,
-        data: `http://localhost:5173/display?id=${cardId}&type=${type}`,
+        data: `${window.location.protocol}//${window.location.host}/display?id=${cardId}&type=${type}`,
         qrOptions: {
             typeNumber: 0,
             mode: "Byte",
             errorCorrectionLevel: "H",
         },
-        image: `http://localhost:5173/${type}.svg`,
+        image: `${window.location.protocol}//${window.location.host}/${type}.svg`,
         imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,
