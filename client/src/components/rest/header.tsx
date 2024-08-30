@@ -43,7 +43,7 @@ export default function Header() {
 
     return (
         <header className="bg-white border-b-2 fixed top-0 left-0 right-0 z-50">
-            <nav className="mx-auto flex w-full md:mx-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
+            <nav className="mx-auto flex max-w-[95%] md:mx-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
                         <img className="w-auto h-6 sm:h-7" src="https://merakiui.com/images/logo.svg" alt="" />
@@ -165,27 +165,29 @@ export default function Header() {
                                     </>
                                 )}
                             </nav>
-
-                            {user ? (
-                                <div className="flex items-center justify-between px-4 -mx-2">
-                                    <Link to="/profile" className='flex items-center'>
-                                        {/* <img className='rounded-full h-10 w-10' src={user.image} alt="avatar" /> */}
-                                        {user.image ? (
-                                            <img src={user.image} className='h-10 w-10 rounded-full' alt="avatar" />
-                                        ) : (
-                                            <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
-                                                <p className='text-xl font-semibold text-black'>{user.name[0].toUpperCase()}</p>
-                                            </div>
-                                        )}
-                                        <span className="mx-2 font-medium text-gray-800 dark:text-gray-200">{user.name}</span>
+                            
+                            <div>
+                                {user ? (
+                                    <div className="flex items-center justify-between px-4 -mx-2">
+                                        <Link to="/profile" className='flex items-center'>
+                                            {/* <img className='rounded-full h-10 w-10' src={user.image} alt="avatar" /> */}
+                                            {user.image ? (
+                                                <img src={user.image} className='h-10 w-10 rounded-full' alt="avatar" />
+                                            ) : (
+                                                <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
+                                                    <p className='text-xl font-semibold text-black'>{user.name[0].toUpperCase()}</p>
+                                                </div>
+                                            )}
+                                            <span className="mx-2 font-medium text-gray-800 dark:text-gray-200">{user.name}</span>
+                                        </Link>
+                                        <IoIosLogOut onClick={logout} className="object-cover mx-2 rounded-full h-6 w-6" />
+                                    </div>
+                                ) : (
+                                    <Link to="/login" className="flex items-center px-4 py-2 rounded-md bg-gray-800 text-gray-200">
+                                        Login
                                     </Link>
-                                    <IoIosLogOut onClick={logout} className="object-cover mx-2 rounded-full h-6 w-6" />
-                                </div>
-                            ) : (
-                                <Link to="/login" className="flex items-center px-4 py-2 rounded-md bg-gray-800 text-gray-200">
-                                    Login
-                                </Link>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </aside>
                 </div>
