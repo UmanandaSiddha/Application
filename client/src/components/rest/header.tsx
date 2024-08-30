@@ -166,7 +166,7 @@ export default function Header() {
                                 )}
                             </nav>
                             
-                            <div>
+                            <div className='pb-10'>
                                 {user ? (
                                     <div className="flex items-center justify-between px-4 -mx-2">
                                         <Link to="/profile" className='flex items-center'>
