@@ -32,7 +32,7 @@ export const instance = new Razorpay({
 
 app.get("/", (req, res) => {
     res.status(200).json({
-        message: "Server Working 2!"
+        message: "Server Working 3!"
     })
 });
 

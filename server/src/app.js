@@ -21,12 +21,12 @@ const app = express();
 const corsOptions = {
     origin: (origin, callback) => {
       const allowedOrigins = [
-        "http://localhost:5173",
-        "http://localhost:5174",
         "https://voolata.com",
         "https://www.voolata.com",
         "https://admin.voolata.com",
         "https://www.admin.voolata.com",
+        "http://localhost:5173",
+        "http://localhost:5174",
       ];
       const isAllowed = allowedOrigins.includes(origin);
       callback(null, isAllowed ? origin : false);

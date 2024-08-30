@@ -32,10 +32,13 @@ const DonatorDashboard = () => {
         <section className="bg-white mx-auto w-[85%] dark:bg-gray-900 ">
             <div className="flex min-h-screen px-6 py-12 mx-auto ml-4 w-full">
                 <div className="w-full">
-                    <div className="mt-3 text-3xl lg:text-5xl font-semibold text-gray-800 dark:text-white md:text-5xl">Welcome {donator?.name ? donator.name : donator?.email}</div>
-                    <p className="mt-4 text-gray-500 dark:text-gray-400">We are very thankful for your donations.</p>
-
-
+                    
+                    <div className="mt-3 text-xl sm:text-2xl md:text-3xl lg:text-5xl font-semibold text-gray-800 dark:text-white">
+                        Welcome {donator?.name ? donator.name : donator?.email}
+                    </div>
+                    <p className="mt-4 text-sm sm:text-base md:text-lg lg:text-xl text-gray-500 dark:text-gray-400">
+                        We are very thankful for your donations.
+                    </p>
 
                     <div className="mt-10 space-y-6 w-full">
                         <div className="border w-[90%] lg:w-[60%] px-6 py-2 shadow-xl rounded-lg bg-slate-100">
