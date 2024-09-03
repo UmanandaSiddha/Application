@@ -54,6 +54,7 @@ export type TreeResponse = {
 export type AllCardsResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
     cards: Tree[] | Personal[] | Medical[] | Creator[] | Animal[];
 }
 

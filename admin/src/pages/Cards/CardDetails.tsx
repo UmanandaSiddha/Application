@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { UserResponse } from "../../types/api-types";
 import axios from "axios";
 import { User } from "../../types/types";
+import DefaultLayout from "../../layout/DefaultLayout";
 // import CardsChart from "../../components/Charts/CardsChart";
 
 const CardDetails = () => {
@@ -57,10 +58,10 @@ const CardDetails = () => {
     }, [id, type]);
 
     return (
-        <div>
+        <DefaultLayout>
             {id}
             {type}
-        </div>
+        </DefaultLayout>
     )
 }
 
