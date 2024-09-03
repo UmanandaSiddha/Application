@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import { Plan } from "@/types/plan_types";
 import { SinglePlanResponse, UserResponse } from "@/types/api-types";
-import { userExist } from "@/redux/reducer/userReducer";
+import { togglePaid, userExist } from "@/redux/reducer/userReducer";
 import { FaCheckCircle } from "react-icons/fa";
 import { RxCrossCircled } from "react-icons/rx";
 
@@ -44,7 +44,7 @@ const Checkout = () => {
     const navigate = useNavigate();
     const id = search.get("id");
     const [plan, setPlan] = useState<Plan | null>();
-    const { user } = useSelector((state: RootState) => state.userReducer);
+    const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
     const [updateData, setUpdateData] = useState({
         phone: user?.phone,
         street: user?.billingAddress?.street,
@@ -117,7 +117,6 @@ const Checkout = () => {
             dispatch(userExist(data.user));
             toast.success("Billing details updated");
         } catch (error: any) {
-            console.log(error);
             toast.error(error.response.data.message);
         }
         setUpdateLoading(false);
@@ -140,9 +139,10 @@ const Checkout = () => {
 
             if (["active"].includes(data.subscriptionStatus) && ["captured"].includes(data.paymentStatus)) {
                 setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === count ? { ...state, loading: "success", data: "Payment verification success" } : state));
-                toast.success("All set");
+                // toast.success("All set");
                 setTimeout(() => {
                     setOpen(false);
+                    dispatch(togglePaid(true));
                     navigate(from, { replace: true });
                 }, 3000);
             } else if (count < 3) {
@@ -166,7 +166,13 @@ const Checkout = () => {
         }
     }
 
-    const handlePayment = async (razId: string) => {
+    const handleCheckout = async (razId: string) => {
+
+        if (isPaid) {
+            toast.info("You are already a paid subscriber");
+            navigate(from, { replace: true });
+            return;
+        }
 
         setOpen(true);
         setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 1, loading: "started", data: "SDK Loading..." }]);
@@ -226,26 +232,21 @@ const Checkout = () => {
                     name: user?.name,
                 },
                 remember_customer: true,
-                // customer_id: "cust_NZH06k5bvcDzUE",
                 theme: {
                     color: "#3399cc",
                 },
             };
             const razor = new (window as any).Razorpay(options);
+            razor.open();
             razor.on("payment.failed", function (response: any) {
                 setOpen(false);
                 setLoadingStates([]);
-                // send error message to server
                 console.log(response.error.description);
                 console.log(response.error.metadata.order_id);
                 console.log(response.error.metadata.payment_id);
                 console.log(response);
                 toast.info(response.error.description);
             });
-            setTimeout(() => {
-                setOpen(false);
-                razor.open();
-            }, 3000);
         } catch (error: any) {
             setOpen(false);
             setLoadingStates([]);
@@ -255,6 +256,17 @@ const Checkout = () => {
         setOpen(false);
         setLoadingStates([]);
     };
+
+    const handleFreePlan = async (id: string) => {
+        try {
+            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new/free/${id}`, { data: "null" }, { withCredentials: true });
+            dispatch(userExist(data.user));
+            dispatch(togglePaid(true));
+            toast.success("Free plan activated successfully");
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
 
     return (
         <div className="w-[80%] mx-auto mt-8 mb-12">
@@ -360,55 +372,68 @@ const Checkout = () => {
                     </div>
                 </div>
 
-                <div className="mt-10 bg-gray-50 px-4 pt-8 lg:mt-0">
-                    <p className="text-xl font-medium">Plan Details</p>
-                    <div className="mt-4 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-                        <div className="flex flex-col rounded-lg bg-white sm:flex-row">
-                            <div className="flex w-full flex-col px-4 py-4">
-                                <span className="font-semibold">{plan?.name}</span>
-                                <p className="text-sm text-gray-400">Description: {plan?.description}</p>
-                                <p className="text-sm text-gray-400">Cards: {plan?.cards}</p>
-                                <p className="text-sm text-gray-400">Price: Rs {plan?.amount}</p>
+                {plan ? (
+                    <div className="mt-10 bg-gray-50 px-4 pt-8 lg:mt-0">
+                        <p className="text-xl font-medium">Plan Details</p>
+                        <div className="mt-4 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
+                            <div className="flex flex-col rounded-lg bg-white sm:flex-row">
+                                <div className="flex w-full flex-col px-4 py-4">
+                                    <span className="font-semibold">{plan?.name}</span>
+                                    <p className="text-sm text-gray-400">Description: {plan?.description}</p>
+                                    <p className="text-sm text-gray-400">Cards: {plan?.cards}</p>
+                                    <p className="text-sm text-gray-400">Price: Rs {plan?.amount}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="mt-8 border-t border-b py-2">
-                        <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-gray-900">Billing Amount</p>
-                            <p className="font-semibold text-gray-900">Rs {plan?.amount}</p>
+                        <div className="mt-8 border-t border-b py-2">
+                            <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium text-gray-900">Billing Amount</p>
+                                <p className="font-semibold text-gray-900">Rs {plan?.amount}</p>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium text-gray-900">Billing Period</p>
+                                <p className="font-semibold text-gray-900">1 Year</p>
+                            </div>
+                            <div className="mt-6 flex items-center justify-between">
+                                <p className="text-lg font-medium text-gray-900">Total Amount</p>
+                                <p className="text-lg font-bold text-gray-900">Rs {plan?.amount}</p>
+                            </div>
                         </div>
-                        <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-gray-900">Billing Period</p>
-                            <p className="font-semibold text-gray-900">1 Year</p>
+
+                        <button
+                            disabled={!user || !id || plan?._id !== id || open}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (plan.planType === "free") {
+                                    handleFreePlan(plan._id)
+                                } else {
+                                    handleCheckout(plan?.razorPlanId!);
+                                }
+                            }}
+                            className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
+                        >
+                            {open ? "Hold on..." : "Buy Now"}
+                        </button>
+
+                        <div className="mt-4 flex items-center justify-center space-x-2">
+                            <img src="./upi.svg" alt="UPI" className="h-6" />
+                            <img src="./visa.svg" alt="Visa" className="h-8" />
+                            <img src="./mastercard.svg" alt="Mastercard" className="h-6" />
+                            <img src="./google-pay.svg" alt="GooglePay" className="h-10" />
+                            <img src="./paytm.svg" alt="Paytm" className="h-4" />
+                            <img src="./rupay.svg" alt="Rupay" className="h-4" />
                         </div>
-                        <div className="mt-6 flex items-center justify-between">
-                            <p className="text-lg font-medium text-gray-900">Total Amount</p>
-                            <p className="text-lg font-bold text-gray-900">Rs {plan?.amount}</p>
-                        </div>
+
+                        <p className="mt-4 text-center italic text-md text-bold text-gray-700 flex items-center justify-center">
+                            Powered by <img src="./razorpay.svg" alt="Razorpay" className="h-5 ml-2" />
+                        </p>
                     </div>
-
-                    <button
-                        disabled={!user || !id || plan?._id !== id || open}
-                        onClick={() => handlePayment(plan?.razorPlanId!)}
-                        className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
-                    >
-                        {open ? "Hold on..." : "Buy Now"}
-                    </button>
-
-                    <div className="mt-4 flex items-center justify-center space-x-2">
-                        <img src="./upi.svg" alt="UPI" className="h-6" />
-                        <img src="./visa.svg" alt="Visa" className="h-8" />
-                        <img src="./mastercard.svg" alt="Mastercard" className="h-6" />
-                        <img src="./google-pay.svg" alt="GooglePay" className="h-10" />
-                        <img src="./paytm.svg" alt="Paytm" className="h-4" />
-                        <img src="./rupay.svg" alt="Rupay" className="h-4" />
+                ) : (
+                    <div>
+                        Error loading plan
                     </div>
-
-                    <p className="mt-4 text-center italic text-md text-bold text-gray-700 flex items-center justify-center">
-                        Powered by <img src="./razorpay.svg" alt="Razorpay" className="h-5 ml-2" />
-                    </p>
-                </div>
+                )}
             </div>
         </div>
     )

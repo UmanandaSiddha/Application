@@ -5,7 +5,7 @@ import Plan, { periodEnum } from "../models/payment/planModel.js";
 import crypto from "crypto";
 import Subscription, { subscriptionEnum } from "../models/payment/subscriptionModel.js";
 import Transaction from "../models/payment/transactionModel.js";
-import User, { roleEnum } from "../models/userModel.js";
+import User, { freeEnum, roleEnum } from "../models/userModel.js";
 import logger from "../config/logger.js";
 import { handleSubscription, handleTransaction } from "../common/payment.js";
 import { addSubscriptionToQueue } from "../utils/queue/subscriptionQueue.js";
@@ -17,7 +17,7 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     }
 
     if (user?.freePlan?.status) {
-        return next(new ErrorHandler("You already have active Plan 1", 403));
+        return next(new ErrorHandler("You already have active Plan", 403));
     }
 
     if (user?.activePlan) {
@@ -26,9 +26,17 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
             if (subscription?.status === "just_created") {
                 await Subscription.findByIdAndDelete(user?.activePlan);
             } else if (!["completed", "cancelled"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now())) {
-                return next(new ErrorHandler("You already have active Plan 2", 403));
+                return next(new ErrorHandler("You already have active Plan", 403));
             }
         }
+    }
+
+    const plan = await Plan.findOne({ razorPlanId: req.body.id });
+    if (!plan) {
+        return next(new ErrorHandler("No Plan By Id", 404));
+    }
+    if (!plan.visible) {
+        return next(new ErrorHandler("Plan not available", 404));
     }
 
     const subscriptions = await instance.subscriptions.create({
@@ -40,8 +48,6 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     if (!subscriptions) {
         return next(new ErrorHandler("Razorpay Failed", 403));
     }
-
-    const plan = await Plan.findOne({ razorPlanId: req.body.id });
 
     const subscription = await Subscription.create({
         planId: plan._id,
@@ -73,12 +79,32 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const createFreeSubscription = catchAsyncErrors(async (req, res, next) => {
-    const plan = Plan.findById(req.params.id);
+    const plan = await Plan.findById(req.params.id);
     if (!plan) {
         return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
     }
     if (!plan.visible) {
         return next(new ErrorHandler("Plan not available", 404));
+    }
+
+    const user = await User.findById(req.user.id);
+    if (user.role === roleEnum.ADMIN) {
+        return next(new ErrorHandler("Admin don't need to buy Plans", 403));
+    }
+
+    if (user?.freePlan?.status) {
+        return next(new ErrorHandler("You already have active Plan", 403));
+    }
+
+    if (user?.activePlan) {
+        const subscription = await Subscription.findById(user?.activePlan);
+        if (subscription) {
+            if (subscription?.status === "just_created") {
+                await Subscription.findByIdAndDelete(user?.activePlan);
+            } else if (!["completed", "cancelled"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now())) {
+                return next(new ErrorHandler("You already have active Plan", 403));
+            }
+        }
     }
 
     let endDate;
@@ -109,9 +135,7 @@ export const createFreeSubscription = catchAsyncErrors(async (req, res, next) =>
                 start: new Date(Date.now()),
                 end: new Date(Date.now() + (plan.interval * endDate * 24 * 60 * 60 * 1000)),
             },
-            cards: {
-                total: plan.cards
-            }
+            "cards.total": plan.cards
         },
         { new: true, runValidators: true, useFindAndModify: false }
     );
@@ -138,8 +162,8 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
     const payment = await instance.payments.fetch(razorpay_payment_id);
     const subscription = await instance.subscriptions.fetch(razorpay_subscription_id);
 
+    // if (["active", "created", "authenticated", "activated"].includes(subscription.status) && ["authorized", "captured", "created"].includes(payment.status)) {
     if (expectedSigntaure === razorpay_signature) {
-        // if (["active", "created", "authenticated", "activated"].includes(subscription.status) && ["authorized", "captured", "created"].includes(payment.status)) {
         if (["active"].includes(subscription.status) && ["captured"].includes(payment.status)) {
             const subscriptionx = await Subscription.findOne({ razorSubscriptionId: subscription.id });
 

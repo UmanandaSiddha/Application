@@ -18,14 +18,17 @@ export const userReducer = createSlice({
             if (["active", "pending"].includes(action.payload.activePlan?.status)) {
                 state.isPaid = true
             }
+            if (action.payload.freePlan.status) {{
+                state.isPaid = true
+            }}
             state.loading = false;
         },
         userNotExist: (state) => {
             state.loading = false;
             state.user = null;
         },
-        togglePaid: (state, action: PayloadAction<User>) => {
-            if (["active", "pending"].includes(action.payload.activePlan?.status)) {
+        togglePaid: (state, action: PayloadAction<boolean>) => {
+            if (action.payload === true) {
                 state.isPaid = true
             } else {
                 state.isPaid = false

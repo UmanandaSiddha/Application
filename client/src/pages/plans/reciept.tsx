@@ -1,100 +1,112 @@
+import Loader from "@/components/rest/loader";
 import "@/css/print.css";
-// import Loader from "@/components/rest/loader";
-// import { Transaction } from "@/types/plan_types";
-// import { useEffect, useState } from "react";
-// import { useSearchParams } from "react-router-dom";
+import { RootState } from "@/redux/store";
+import { Transaction } from "@/types/plan_types";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const RecieptPage = () => {
 
-    // const [search] = useSearchParams();
-    // const id = search.get("id");
-    // const [receiptData, setReceiptData] = useState<Transaction | null>();
+    const [search] = useSearchParams();
+    const id = search.get("id");
+    const type = search.get("type");
+    const [transaction, setTransaction] = useState<Transaction | null>();
+    const { donator } = useSelector((state: RootState) => state.donatorReducer);
+    const [reciept, setReciept] = useState(false);
 
-    // useEffect(() => {
-    //     if (id) {
-    //         const transactions: Transaction[] = JSON.parse(localStorage.getItem("transactions")!);
-    //         const data: Transaction[] = transactions.filter(transaction => transaction._id === id);
-    //         setReceiptData(data[0]);
-    //     }
-    // }, [id]);
+    const fetchTransaction = async () => {
+        try {
+            let link;
+            if (type === "user") {
+                link = `${import.meta.env.VITE_BASE_URL}/sub/transaction/${id}`;
+            } else {
+                link = `${import.meta.env.VITE_BASE_URL}/donate/transaction/${id}`
+            }
+            const { data } = await axios.get(link, { withCredentials: true });
+            setTransaction(data.transaction);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    };
 
-    return (
-        <>
-            <h1 className="flex items-center justify-center text-3xl">Receipt - 45656486755</h1>
-            <div className="printable">
-                <div className="bg-white rounded-lg shadow-lg px-8 py-10 max-w-xl mx-auto">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center">
-                            <img className="h-8 w-8 mr-2" src="https://tailwindflex.com/public/images/logos/favicon-32x32.png"
-                                alt="Logo" />
-                            <div className="text-gray-700 font-semibold text-lg">VCARDS APP</div>
-                        </div>
-                        <div className="text-gray-700">
-                            <div className="font-bold text-xl mb-2">INVOICE</div>
-                            {/* <div className="text-sm">{String(new Date(receiptData?.start!).toDateString())}</div> */}
-                        </div>
-                    </div>
-                    <div className="border-b-2 border-gray-300 pb-8 mb-8">
-                        <h2 className="text-2xl font-bold mb-4">Bill To:</h2>
-                        <div className="text-gray-700 mb-2">John Doe</div>
-                        <div className="text-gray-700 mb-2">123 Main St.</div>
-                        <div className="text-gray-700 mb-2">Anytown, USA 12345</div>
-                        <div className="text-gray-700">johndoe@example.com</div>
-                    </div>
-                    <table className="w-full text-left mb-8">
-                        <thead>
-                            <tr>
-                                <th className="text-gray-700 font-bold uppercase py-2">Description</th>
-                                <th className="text-gray-700 font-bold uppercase py-2">Quantity</th>
-                                <th className="text-gray-700 font-bold uppercase py-2">Price</th>
-                                <th className="text-gray-700 font-bold uppercase py-2">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td className="py-4 text-gray-700">Product 1</td>
-                                <td className="py-4 text-gray-700">1</td>
-                                <td className="py-4 text-gray-700">$100.00</td>
-                                <td className="py-4 text-gray-700">$100.00</td>
-                            </tr>
-                            <tr>
-                                <td className="py-4 text-gray-700">Product 2</td>
-                                <td className="py-4 text-gray-700">2</td>
-                                <td className="py-4 text-gray-700">$50.00</td>
-                                <td className="py-4 text-gray-700">$100.00</td>
-                            </tr>
-                            <tr>
-                                <td className="py-4 text-gray-700">Product 3</td>
-                                <td className="py-4 text-gray-700">3</td>
-                                <td className="py-4 text-gray-700">$75.00</td>
-                                <td className="py-4 text-gray-700">$225.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div className="flex justify-end mb-8">
-                        <div className="text-gray-700 mr-2">Subtotal:</div>
-                        <div className="text-gray-700">$425.00</div>
-                    </div>
-                    <div className="text-right mb-8">
-                        <div className="text-gray-700 mr-2">Tax:</div>
-                        <div className="text-gray-700">$25.50</div>
+    useEffect(() => {
+        fetchTransaction();
+    }, [id, type]);
 
-                    </div>
-                    <div className="flex justify-end mb-8">
-                        <div className="text-gray-700 mr-2">Total:</div>
-                        <div className="text-gray-700 font-bold text-xl">$450.50</div>
+    return (!id || !transaction) ? <Loader /> : (
+        <div className="h-[85vh] w-[80%] mx-auto">
+            <div className="w-full flex flex-col md:flex-row justify-center items-center p-2 gap-4">
+                <div className="w-full md:w-1/2 flex flex-col">
+                    <h1 className="text-3xl font-semibold underline">Transaction Details</h1>
+                    <div className="mt-4">
+                        <h2 className="text-xl font-semibold">Id: {transaction?._id}</h2>
+                        <p>Amount: {transaction.currency === "INR" ? "₹" : "$"} {transaction?.amount}</p>
+                        <p>Period: {String(new Date(transaction?.start).toDateString())} - {String(new Date(transaction?.end).toDateString())}</p>
+                        <p>Status: {transaction.status.toUpperCase()}</p>
+                        <p>Payment Id: {transaction.razorpayPaymentId}</p>
+                        <p>Order Id: {transaction.razorpayOrderId}</p>
+                        <p>Currency: {transaction.currency.toUpperCase()}</p>
+                        <p>Payment Method: {transaction.paymentMethod?.methodType.toUpperCase()}</p>
+                        {type === "donate" && donator?.pan && (
+                            <div className="flex justify-center items-center h-full w-full mt-3">
+                                <div className="inline-flex justify-center items-center border-2 border-blue-500 shadow-x rounded-lg">
+                                    <button
+                                        className={`px-4 py-2 ${reciept ? "bg-blue-500 text-white rounded-md" : "text-blue-500"}`}
+                                        onClick={() => {
+                                            setReciept(prev => !prev);
+                                        }}
+                                    >
+                                        80g Receipt
+                                    </button>
+                                    <button
+                                        className={`px-4 py-2 ${!reciept ? "bg-blue-500 text-white rounded-md" : "text-blue-500"}`}
+                                        onClick={() => {
+                                            setReciept(prev => !prev);
+                                        }}
+                                    >
+                                        Invoice
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
+                <div className="w-full md:w-1/2 bg-white flex flex-col printable py-6 px-3 gap-2">
+                    <div className="flex flex-col">
+                        <h1 className="mt-6 text-3xl font-semibold text-indigo-600 text-center">Voolata Pvt Ltd</h1>
+                        {type === "donate" && donator?.pan && (
+                            <h2 className="mt-2 text-2xl font-semibold text-center">{reciept ? "80g Receipt" : "Invoice"}</h2>
+                        )}
+                        <div className="mt-6 px-4">
+                            <h2 className="text-xl font-semibold">Premium Delux Plan</h2>
+                            <p className="text-sm">description of this delux plan which is good</p>
+                            <p className="text-sm">Amount: ₹ 101</p>
+                            <p className="text-sm">Next due on 3 Oct 2024</p>
+                        </div>
+                        <div className="mt-6 px-4">
+                            <h2 className="text-xl font-semibold">Payment Details</h2>
+                            <p className="text-sm">Payment ID: OsP9778XimvThh</p>
+                            <p className="text-sm">Paid on 3 Sep 2024 00:26:43</p>
+                        </div>
+                        <div className="mt-6 px-4">
+                            <h2 className="text-xl font-semibold">Bill Date</h2>
+                            <p className="text-sm">3 Sep 2024</p>
+                        </div>
+                        <div className="mt-6 px-4">
+                            <h2 className="text-xl font-semibold">Payment Method</h2>
+                            <p className="text-sm">UPI *********azorpay</p>
+                        </div>
+                        <div className="mt-6 px-4">
+                            <p className="text-sm">You may contact Shivaji for any query related to this subscription with the subscription ID as sub_OsPKqVufRVCZJj</p>
+                        </div>
+                    </div>
+                    <button className="my-8 not px-4 py-1 bg-indigo-500 text-white rounded-full cursor-pointer hover:bg-indigo-400 self-center" onClick={() => window.print()}>Print</button>
+                </div>
             </div>
-            <div className="w-full py-3 flex justify-center">
-                <button
-                    onClick={() => window.print()}
-                    className="w-[90%] py-2 bg-blue-500 text-white rounded-sm font-Kanit hover:cursor-pointer hover:bg-blue-400"
-                >
-                    Print Receipt
-                </button>
-            </div>
-        </>
+        </div>
     )
 }
 

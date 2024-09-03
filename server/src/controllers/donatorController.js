@@ -11,6 +11,7 @@ import Plan, { planEnum } from "../models/payment/planModel.js";
 import { addDonationToQueue } from "../utils/queue/donationQueue.js";
 import logger from "../config/logger.js";
 import { addEmailToQueue } from "../utils/queue/emailQueue.js";
+import { handleDonation } from "../common/payment.js";
 
 export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
     const { email } = req.body;
@@ -18,7 +19,7 @@ export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Please enter Email", 400));
     }
 
-    const donator = await Donator.findOne({ email });
+    let donator = await Donator.findOne({ email });
 
     if (!donator) {
         donator = await Donator.create({ email })
@@ -161,7 +162,7 @@ export const createDonationPlan = catchAsyncErrors(async (req, res, next) => {
         },
     });   
     if (!razorPlan) {
-        return next(new ErrorHandler("Failed to create plan", 404));
+        return next(new ErrorHandler("Failed to create plan from backend", 404));
     }
 
     const plan = await Plan.create({
@@ -195,6 +196,11 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         }
     }
 
+    const plan = await Plan.findOne({ razorPlanId: req.body.id });
+    if (!plan) {
+        return next(new ErrorHandler("Invalid Plan", 404));
+    }
+
     const subscriptions = await instance.subscriptions.create({
         plan_id: req.body.id,
         total_count: 12,
@@ -204,8 +210,6 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     if (!subscriptions) {
         return next(new ErrorHandler("Failed to create subscription", 404));
     }
-
-    const plan = await Plan.findOne({ razorPlanId: req.body.id });
 
     const subscription = await Subscription.create({
         planId: plan._id,
@@ -221,7 +225,7 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         shortUrl: subscriptions.short_url,
         status: "just_created",
         subscriptionType: subscriptionEnum.DONATOR,
-        user: req.user.id,
+        donator: req.donator.id,
     });
 
     await Donator.findByIdAndUpdate(req.donator.id,
@@ -237,17 +241,23 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const createDonation = catchAsyncErrors(async (req, res, next) => {
+
+    const { amount, currency} = req.body;
+    if (!amount || !currency) {
+        return next(new ErrorHandler("All fields are required", 404));
+    };
+
     const order = await instance.orders.create({
-        amount: Number(req.body.amount) * 100,
-        currency: req.body.currency,
+        amount: Number(amount) * 100,
+        currency: currency,
         receipt: `receipt_${short.generate()}`
     });
     if (!order) {
         return next(new ErrorHandler("Order Failed", 400));
     }
 
-    const donation = await Transaction.create({
-        amount: req.body.amount,
+    await Transaction.create({
+        amount: amount,
         status: "just_created",
         razorpayOrderId: order.id,
         razorpayPaymentId: "12",
@@ -292,7 +302,7 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
 
     const payment = await instance.payments.fetch(razorpay_payment_id);
     if (!payment) {
-        return next(new ErrorHandler("Payment Not Found 2", 404));
+        return next(new ErrorHandler("Payment Not Found", 404));
     }
 
     if (expectedSigntaure === razorpay_signature) {

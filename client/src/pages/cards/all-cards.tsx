@@ -13,11 +13,6 @@ import { IoShareOutline } from "react-icons/io5";
 import { IoDownloadOutline } from "react-icons/io5";
 import { HiMiniArrowSmallRight } from "react-icons/hi2";
 import { HiMiniArrowSmallLeft } from "react-icons/hi2";
-
-// import Loader from "@/components/rest/loader";
-// import { User } from "../../types/types";
-// import { useSelector } from "react-redux";
-// import { RootState } from "../../redux/store";
 import QRCodeStyling from "qr-code-styling";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
@@ -137,23 +132,21 @@ const AllCards = () => {
     const [search] = useSearchParams();
     const type = search.get("type");
     const [currentIndex, setCurrentIndex] = useState<number>(0);
-    
-    // const { isPaid, user } = useSelector((state: RootState) => state.userReducer);
-    
     const [currentPage, setCurrentPage] = useState(1);
     const [countData, setCountData] = useState(1);
     const [loading, setLoading] = useState(false);
     const [cards, setCards] = useState<Tree[] | Personal[] | MedicalType[] | Creator[] | Animal[] | null>();
 
-    const fetchData = async () => {
+    const fetchData = async (page: number) => {
         setLoading(true);
         if (["botanical", "individual", "medical", "creator", "animal"].includes(type!)) {
             try {
-                const { data }: { data: CardType } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/user?page=${currentPage}&type=${type}`, { withCredentials: true });
+                const { data }: { data: CardType } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/user?page=${page}&type=${type}`, { withCredentials: true });
                 setCards(data.vCards);
                 setCountData(data.count);
+                setCurrentPage(page);
                 localStorage.setItem("all_card", JSON.stringify(data.vCards));
-                localStorage.setItem("current_page", JSON.stringify(currentPage));
+                localStorage.setItem("current_page", JSON.stringify(page));
                 localStorage.setItem("card_type", JSON.stringify(type));
             } catch (error: any) {
                 toast.error(error.response.data.message);
@@ -170,36 +163,31 @@ const AllCards = () => {
             setCards(JSON.parse(cardData));
             setCountData(JSON.parse(cardData).length);
         } else {
-            fetchData();
+            fetchData(currentPage);
         }
     }, [currentPage, type]);
 
-
-    function prevQR(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-        e.stopPropagation();
-        e.preventDefault();
+    const handleNext = () => {
         if (cards) {
-            if (currentIndex === 0) {
-                setCurrentPage(prev => prev === 0 ? 0 : prev + 1);
+            if (currentIndex < cards.length - 1) {
+                setCurrentIndex(currentIndex + 1);
+            } else if (currentPage * 5 < countData) {
+                setCurrentPage(currentPage + 1)
+                setCurrentIndex(0);
             }
-            setCurrentIndex((prevIndex) =>
-                prevIndex === 0 ? cards?.length - 1 : prevIndex - 1
-            );
         }
-    }
-
-    function nextQR(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-        e.stopPropagation();
-        e.preventDefault();
+    };
+    
+    const handlePrev = () => {
         if (cards) {
-            if (currentIndex === countData - 1) {
-                setCurrentPage(prev => prev + 1);
+            if (currentIndex > 0) {
+                setCurrentIndex(currentIndex - 1);
+            } else if (currentPage > 1) {
+                setCurrentPage(currentPage - 1)
+                setCurrentIndex(4);
             }
-            setCurrentIndex((nextIndex) =>
-                nextIndex === cards.length - 1 ? 0 : nextIndex + 1
-            );
         }
-    }
+    };
 
     const typeStyles: Record<string, { backgroundColor: string, textColor: string, mdBackgroundColor: string, iconColor: string }> = {
         botanical: { backgroundColor: "bg-green-200", textColor: "bg-green-500", mdBackgroundColor: "md:bg-green-500", iconColor: "text-green-500" },
@@ -274,7 +262,9 @@ const AllCards = () => {
                                         <div className="flex flex-row justify-evenly items-center pt-4 space-x-6 px-4">
                                             <button
                                                 className={`p-1 rounded-full ${styles.textColor} text-white flex justify-center items-center hover:cursor-pointer`}
-                                                onClick={prevQR}
+                                                // onClick={prevQR}
+                                                onClick={handlePrev}
+                                                disabled={currentPage === 1 && currentIndex === 0}
                                             >
                                                 <IoIosArrowBack className="w-[2rem] h-[2rem]" />
                                             </button>
@@ -292,7 +282,9 @@ const AllCards = () => {
                                             </div>
                                             <button
                                                 className={`p-1 rounded-full ${styles.textColor} text-white flex justify-center items-center hover:cursor-pointer`}
-                                                onClick={nextQR}
+                                                // onClick={nextQR}
+                                                onClick={handleNext}
+                                                disabled={currentPage * 5 >= countData && currentIndex === cards.length - 1}
                                             >
                                                 <MdOutlineNavigateNext className="w-[2rem] h-[2rem]" />
                                             </button>

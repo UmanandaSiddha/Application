@@ -31,7 +31,6 @@ const corsOptions = {
       const isAllowed = allowedOrigins.includes(origin);
       callback(null, isAllowed ? origin : false);
     },
-    // origin: "https://app.umanandasiddha.site",
     methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
     credentials: true,
   };

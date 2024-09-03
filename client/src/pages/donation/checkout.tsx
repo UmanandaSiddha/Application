@@ -76,7 +76,7 @@ const DonationCheckout = () => {
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { name, phone, address } = donator || {};
+        const { name, phone, address, pan } = donator || {};
         const { street, state, city, postalCode, country } = address || {};
         const isDataSame =
             name === updateData.name &&
@@ -85,7 +85,8 @@ const DonationCheckout = () => {
             state === updateData.state &&
             city === updateData.city &&
             postalCode === updateData.postalCode &&
-            country === updateData.country;
+            country === updateData.country && 
+            pan === updateData.pan
 
         if (isDataSame) {
             toast.warning("Make changes to update");
@@ -125,7 +126,7 @@ const DonationCheckout = () => {
             }
             if (["captured"].includes(data.paymentStatus)) {
                 setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === count ? { ...state, loading: "success", data: "Payment verification success" } : state));
-                toast.success("All set");
+                // toast.success("All set");
                 setTimeout(() => {
                     setOpen(false);
                     navigate(from, { replace: true });
@@ -166,7 +167,7 @@ const DonationCheckout = () => {
             }
             if (["active"].includes(data.subscriptionStatus) && ["captured"].includes(data.paymentStatus)) {
                 setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === count ? { ...state, loading: "success", data: "Payment verification success" } : state));
-                toast.success("All set");
+                // toast.success("All set");
                 setTimeout(() => {
                     setOpen(false);
                     navigate(from, { replace: true });
@@ -192,7 +193,7 @@ const DonationCheckout = () => {
         }
     }
 
-    const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleCheckout = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setOpen(true);
@@ -238,7 +239,8 @@ const DonationCheckout = () => {
 
             if (isRecurring) {
                 setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 2, loading: "started", data: "Creating new plan..." }]);
-                const { planData }: { planData: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/plan`, paymentData, { withCredentials: true });
+                const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
+                const planData: any = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/plan`, paymentData, config);
                 if (!planData) {
                     setOpen(false);
                     setLoadingStates([]);
@@ -249,9 +251,8 @@ const DonationCheckout = () => {
                 setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 2 ? { ...state, loading: "success", data: "Plan created successfuly" } : state));
                 setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3, loading: "started", data: "Creating new subscription..." }]);
 
-                const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/subscription`, { id: planData.plan.id }, { withCredentials: true });
-                console.log(data);
-                if (!data) {
+                const subData: any = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/subscription`, { id: planData.data.plan.razorPlanId }, config);
+                if (!subData) {
                     setOpen(false);
                     setLoadingStates([]);
                     toast.error("Failed to Execute Payment");
@@ -261,11 +262,11 @@ const DonationCheckout = () => {
                 setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 3 ? { ...state, loading: "success", data: "Subscription created successfuly" } : state));
 
                 options = {
-                    key: data.key,
+                    key: subData.data.key,
                     currency: "INR",
                     name: "VCards App",
                     description: "just fine",
-                    subscription_id: data.subscriptions_id,
+                    subscription_id: subData.data.subscriptions_id,
                     handler: async function (response: any) {
                         await handleSubscriptionVerification(response, 0);
                     },
@@ -283,7 +284,8 @@ const DonationCheckout = () => {
                 };
             } else {
                 setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 2, loading: "started", data: "Creating new order..." }]);
-                const { donationData }: { donationData: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/pay`, paymentData, { withCredentials: true });
+                const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
+                const donationData: any = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new/pay`, paymentData, config);
                 if (!donationData) {
                     setOpen(false);
                     setLoadingStates([]);
@@ -293,12 +295,12 @@ const DonationCheckout = () => {
                 setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 2 ? { ...state, loading: "success", data: "Order created successfuly" } : state));
 
                 options = {
-                    key: donationData.key,
-                    currency: donationData.order.currency,
-                    amount: donationData.order.amount,
+                    key: donationData.data.key,
+                    currency: donationData.data.order.currency,
+                    amount: donationData.data.order.amount,
                     name: "VCards App",
                     description: "just fine",
-                    order_id: donationData.order._id,
+                    order_id: donationData.data.order.id,
                     handler: async function (response: any) {
                         await handlePaymentVerification(response, 0);
                     },
@@ -325,14 +327,10 @@ const DonationCheckout = () => {
                 console.log(response.error.metadata.payment_id);
                 toast.info(response.error.description);
             });
-            setTimeout(() => {
-                setOpen(false);
-                razor.open();
-            }, 3000);
+            razor.open();
         } catch (error: any) {
             setOpen(false);
             setLoadingStates([]);
-            console.log("hello")
             toast.error(error.response.data.message);
         }
 
@@ -492,7 +490,7 @@ const DonationCheckout = () => {
                         </label>
                     </div>
 
-                    <form onSubmit={handlePayment}>
+                    <form onSubmit={handleCheckout}>
                         <div className="mt-4 space-y-3 rounded-lg px-2 py-4 sm:px-6">
                             <div>
                                 <label htmlFor="amount" className="block text-sm font-medium">Amount</label>

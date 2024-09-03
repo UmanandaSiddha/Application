@@ -14,13 +14,13 @@ const DonationBilling = () => {
 
     const fetchSubscription = async () => {
         try {
-            const { data }: { data: SubscriptionResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/subscription/latest`, { withCredentials: true });
+            const { data }: { data: SubscriptionResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/donate/subcription/latest`, { withCredentials: true });
             setSubscription(data.subscription);
             const chachedSubscription = {
                 created: Date.now() + 30 * 1000,
                 data: data.subscription,
             }
-            window.sessionStorage.setItem("latest_sub", JSON.stringify(chachedSubscription));
+            window.sessionStorage.setItem("latest_rec", JSON.stringify(chachedSubscription));
         } catch (error) {
             console.log(error);
         }
@@ -28,24 +28,24 @@ const DonationBilling = () => {
 
     const fetchTransactions = async () => {
         try {
-            const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/transactions/all`, { withCredentials: true });
+            const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/donate/transaction/all`, { withCredentials: true });
             setTransactions(data.transactions);
             const chachedTransaction = {
                 created: Date.now() + 30 * 1000,
                 data: data.transactions,
             }
-            window.sessionStorage.setItem("transactions", JSON.stringify(chachedTransaction));
+            window.sessionStorage.setItem("donation_transactions", JSON.stringify(chachedTransaction));
         } catch (error) {
             console.log(error);
         }
     };
 
     useEffect(() => {
-        const subData = window.sessionStorage.getItem("latest_sub");
-        const transactionData = window.sessionStorage.getItem("transactions");
+        const subData = window.sessionStorage.getItem("latest_rec");
+        const transactionData = window.sessionStorage.getItem("donation_transactions");
         if (subData) {
             if (JSON.parse(subData)?.created < Date.now()) {
-                window.localStorage.removeItem("latest_sub");
+                window.localStorage.removeItem("latest_rec");
                 fetchSubscription();
             } else {
                 setSubscription(JSON.parse(subData).data);
@@ -55,7 +55,7 @@ const DonationBilling = () => {
         }
         if (transactionData) {
             if (JSON.parse(transactionData)?.created < Date.now()) {
-                window.localStorage.removeItem("transactions");
+                window.localStorage.removeItem("donation_transactions");
                 fetchTransactions();
             } else {
                 setTransactions(JSON.parse(transactionData).data);
@@ -80,7 +80,7 @@ const DonationBilling = () => {
         <div className="container px-6 py-8 mx-auto">
             <div className="mt-6 space-y-8 xl:mt-12">
 
-                <h1 className="text-3xl text-center font-semibold">Current Subscription</h1>
+                <h1 className="text-3xl text-center font-semibold">Recurring Donation</h1>
 
                 {subscription && !["just_created", "created"].includes(subscription.status) ? (
                     <div className="flex flex-col md:flex-row gap-2 items-center justify-between max-w-4xl px-12 py-6 mx-auto bg-white cursor-pointer shadow-xl rounded-xl">
@@ -121,13 +121,13 @@ const DonationBilling = () => {
                                 <div className="flex flex-col justify-center gap-1">
                                     <p className="text-md font-semibold">Date: {String(new Date(transaction.createdAt).toDateString())}</p>
                                     <p className="text-md font-semibold">Service Period: {String(new Date(transaction.end).toDateString())} - {String(new Date(transaction.start).toDateString())}</p>
-                                    <p className="text-md font-semibold">Payment Method: {transaction.paymentMethod.methodType} **** **** **** 1254</p>
+                                    <p className="text-md font-semibold">Payment Method: {transaction.paymentMethod?.methodType} **** **** **** 1254</p>
                                     <p className="text-md font-semibold">Payment Id: {transaction.razorpayPaymentId}</p>
                                 </div>
                                 <div className="mt-4 md:mt-0 flex flex-col justify-center gap-1">
                                     <p className="text-md font-semibold">Status: <span className="text-green-500">{transaction.status}</span></p>
                                     <p className="text-md font-semibold">Amount: {transaction.amount}</p>
-                                    <Link to="/receipt" className="text-md underline">Go To Reciept</Link>
+                                    <Link to={`/receipt?type=donate&id=${transaction._id}`} className="text-md underline">Go To Reciept</Link>
                                 </div>
                             </div>
                         ))}

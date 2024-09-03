@@ -58,7 +58,7 @@ const App = () => {
     const location = useLocation();
 
     const noPaddingTopRoutes = ["/login", "/register", "/org/register"];
-    const isWhiteSmokeRoute = ["/profile", "/billing"];
+    const isWhiteSmokeRoute = ["/profile", "/billing", "/donation/billing", "/receipt", "/donation/dashboard"];
 
     const containerClass = noPaddingTopRoutes.includes(location.pathname)
         ? ""

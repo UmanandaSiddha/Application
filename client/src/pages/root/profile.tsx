@@ -5,20 +5,20 @@ import axios from "axios";
 import React, { useCallback, useState } from "react";
 import { IoIosLogOut } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Compressor from "compressorjs";
 import Loader from "@/components/rest/loader";
 
 const Profile = () => {
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const [openProfile, setOpenProfile] = useState(false);
     const [openBilling, setOpenBilling] = useState(false);
     const [openOrg, setOpenOrg] = useState(false);
     const [openPassword, setOpenPassword] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
-
     const { user, loading } = useSelector(
         (state: RootState) => state.userReducer
     );
@@ -164,10 +164,21 @@ const Profile = () => {
         }
     };
 
+    const logout = async () => {
+        try {
+            await axios.get(`${import.meta.env.VITE_BASE_URL}/user/logout`, { withCredentials: true });
+            dispatch(userNotExist());
+            toast.success("User Logged Out Successfully");
+            navigate("/login");
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
+
     return loading ? (
         <Loader />
     ) : (
-        <div className="w-[80%] mx-auto">
+        <div className="w-full md:w-[80%] mx-auto px-4">
             {openProfile && (
                 <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
                     <div className="bg-white p-8 rounded-2xl shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
@@ -312,7 +323,7 @@ const Profile = () => {
                     <div className="flex w-full min-h-[80vh] px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                         <div className="flex w-full flex-col justify-between mt-6">
                             <nav className="flex flex-col justify-center gap-4">
-                                <h1 className="mx-4 text-2xl font-bold capitalize">Welcome {user?.name}</h1>
+                                <h1 className="mx-4 text-2xl font-bold capitalize">Welcome, {user?.name}</h1>
 
                                 <hr className="my-2 border-gray-400 " />
 
@@ -353,7 +364,7 @@ const Profile = () => {
                                     <span className="mx-4 font-medium">Donate</span>
                                 </Link>
                             </nav>
-                            <button onClick={() => { }} className='flex justify-center items-center gap-4 px-4 py-2 bg-black hover:bg-gray-700 rounded-md'>
+                            <button onClick={logout} className='flex justify-center items-center gap-4 px-4 py-2 bg-black hover:bg-gray-700 rounded-md'>
                                 <p className="text-white text-md">Log Out</p>
                                 <span><IoIosLogOut className="object-cover text-white mx-2 rounded-full h-5 w-5" /></span>
                             </button>
@@ -366,21 +377,23 @@ const Profile = () => {
                             <div className="flex -mt-16 justify-end">
                                 {user?.image ? (
                                     <img
-                                        className="object-cover w-20 h-20 border-4 border-blue-400 rounded-full"
+                                        className="object-cover w-20 h-20 border-4 border-gray-300 rounded-full"
                                         alt={user?.name}
                                         src={user?.image}
                                     />
                                 ) : (
-                                    <div className='h-20 w-20 rounded-full bg-gray-300 border-4 border-blue-400 flex items-center justify-center'>
+                                    <div className='h-20 w-20 rounded-full bg-gray-300 border-4 border-gray-300 flex items-center justify-center'>
                                         <p className='text-3xl font-semibold text-black'>{user?.name[0].toUpperCase()}</p>
                                     </div>
                                 )}
                             </div>
                             <h2 className="mt-2 text-xl font-semibold text-gray-800 md:mt-0">
-                                {user?.name}
+                                User ID: <span className="text-md">{user?._id}</span>
                             </h2>
-                            <div className="flex flex-col md:flex-row justify-between mt-4">
+                            <hr className="my-2 border-gray-400 " />
+                            <div className="flex flex-col md:flex-row justify-between mt-2">
                                 <div>
+                                    <p className="mt-2 text-md font-semibold">Name: <span className="mt-2 text-sm text-gray-600">{user?.name}</span></p>
                                     <p className="mt-2 text-md font-semibold">Email: <span className="mt-2 text-sm text-gray-600">{user?.email}</span></p>
                                     <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.phone}</span></p>
                                 </div>
@@ -392,6 +405,7 @@ const Profile = () => {
                                 <h1 className="text-xl font-semibold">Billing Address</h1>
                                 <button onClick={() => setOpenBilling(true)} className="text-md bg-white underline">Edit</button>
                             </div>
+                            <hr className="my-2 border-gray-400 " />
                             <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.street}</span></p>
                             <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.city}</span></p>
                             <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.state}</span></p>
@@ -404,6 +418,7 @@ const Profile = () => {
                                     <h1 className="text-xl font-semibold">Organisation Details</h1>
                                     <button onClick={() => setOpenOrg(true)} className="text-md bg-white underline">Edit</button>
                                 </div>
+                                <hr className="my-2 border-gray-400 " />
                                 <p className="mt-2 text-md font-semibold">website: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.website}</span></p>
                                 <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.phone}</span></p>
                                 <h2 className="mt-4 text-xl font-semibold">Address</h2>
@@ -416,11 +431,13 @@ const Profile = () => {
                         )}
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                             <h1 className="text-xl font-semibold">Privacy Settings</h1>
+                            <hr className="my-2 border-gray-400 " />
                             <p className="mt-2 text-gray-500 italic">You can {user?.accountType === "google" ? "" : "re"}set your password here</p>
                             <button onClick={() => setOpenPassword(true)} className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">{user?.accountType === "google" ? "S" : "Res"}et Password</button>
                         </div>
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                             <h1 className="text-xl font-semibold">Account Actions</h1>
+                            <hr className="my-2 border-gray-400 " />
                             <p className="mt-2 text-gray-500 italic">Caution: Account deactictivation will lead to deletion of all cards with no further recovery</p>
                             <button onClick={() => setOpenDelete(true)} className="mt-2 border-2 border-red-500 text-center px-3 py-2 rounded-lg text-white bg-red-500">Deactivate Account</button>
                         </div>

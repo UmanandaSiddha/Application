@@ -14,7 +14,7 @@ import { isAuthenticatedUser, isUserVerified } from "../middleware/auth.js";
 const router = express.Router();
 
 router.route("/new").post(isAuthenticatedUser, isUserVerified, createSubscription);
-router.route("/new/free").post(isAuthenticatedUser, isUserVerified, createFreeSubscription);
+router.route("/new/free/:id").post(isAuthenticatedUser, isUserVerified, createFreeSubscription);
 router.route("/capture").post(isAuthenticatedUser, isUserVerified, captureSubscription);
 router.route("/webhook/sub").post(verifySubscription);
 router.route("/cancel/:id").get(isAuthenticatedUser, isUserVerified, cancelSubscription);

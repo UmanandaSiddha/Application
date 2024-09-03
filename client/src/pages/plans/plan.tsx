@@ -126,8 +126,14 @@ const PlanPage = () => {
                                                 </p>
 
                                                 <button
-                                                    disabled={isPaid}
-                                                    onClick={() => navigate(`/checkout?id=${plan?._id}`)}
+                                                    // disabled={isPaid}
+                                                    onClick={() => {
+                                                        if (isPaid) {
+                                                            toast.warning("You already have a plan");
+                                                            return;
+                                                        }
+                                                        navigate(`/checkout?id=${plan?._id}`)
+                                                    }}
                                                     className="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:bg-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-80"
                                                 >
                                                     Buy Plan

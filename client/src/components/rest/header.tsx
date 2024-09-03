@@ -47,7 +47,7 @@ export default function Header() {
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
                         <img className="w-auto h-6 sm:h-7" src="https://merakiui.com/images/logo.svg" alt="" />
-                        <span className="font-semibold text-xl">VCARDS</span>
+                        <span className="font-semibold text-xl">VOOLATA</span>
                     </Link>
                 </div>
                 <div className="flex lg:hidden">
@@ -64,16 +64,16 @@ export default function Header() {
                     )}
                 </div>
                 <Popover.Group className="hidden lg:flex lg:gap-x-12">
-                    <NavLink to='/donation' className="text-lg font-semibold leading-6">
+                    <NavLink to='/donation' className="text-md font-semibold leading-6">
                         Donate
                     </NavLink>
-                    <Link to='/plans' className="text-lg font-semibold leading-6">
+                    <Link to='/plans' className="text-md font-semibold leading-6">
                         Pricing
                     </Link>
-                    <Link to='/about' className="text-lg font-semibold leading-6">
+                    <Link to='/about' className="text-md font-semibold leading-6">
                         About Us
                     </Link>
-                    <Link to='/contact' className="text-lg font-semibold leading-6">
+                    <Link to='/contact' className="text-md font-semibold leading-6">
                         Contact
                     </Link>
                 </Popover.Group>
@@ -82,12 +82,12 @@ export default function Header() {
                     {
                         user ? (
                             <div onClick={() => navigate("/profile")} className="flex items-center gap-5">
-                                <p className="hidden cursor-pointer sm:block text-lg">{user.name}</p>
+                                <p className="hidden cursor-pointer sm:block text-md">{user.name}</p>
                                 {user.image ? (
-                                    <img src={user.image} className='h-10 w-10 rounded-full' alt="avatar" />
+                                    <img src={user.image} className='h-8 w-8 rounded-full' alt="avatar" />
                                 ) : (
-                                    <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
-                                        <p className='text-xl font-semibold text-black'>{user.name[0].toUpperCase()}</p>
+                                    <div className='h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center'>
+                                        <p className='text-lg font-semibold text-black'>{user.name[0].toUpperCase()}</p>
                                     </div>
                                 )}
                             </div>
@@ -106,7 +106,7 @@ export default function Header() {
                     <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
                         <Link to='/' className="flex items-center space-x-2">
                             <img className="w-auto h-6 sm:h-6" src="https://merakiui.com/images/logo.svg" alt="" />
-                            <span className="font-semibold text-xl">VCARDS</span>
+                            <span className="font-semibold text-xl">VOOLATA</span>
                         </Link>
 
                         <div className="flex flex-col justify-between flex-1 mt-6">
@@ -170,7 +170,6 @@ export default function Header() {
                                 {user ? (
                                     <div className="flex items-center justify-between px-4 -mx-2">
                                         <Link to="/profile" className='flex items-center'>
-                                            {/* <img className='rounded-full h-10 w-10' src={user.image} alt="avatar" /> */}
                                             {user.image ? (
                                                 <img src={user.image} className='h-10 w-10 rounded-full' alt="avatar" />
                                             ) : (

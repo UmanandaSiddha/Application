@@ -1,21 +1,34 @@
 @page {
-    size: auto;
+    size: A4;
     margin: 0;
 }
 
 @media print {
     body {
-        Visibility: hidden
+        visibility: hidden;
+        margin: 0;
     }
 
-    .printable,
-    .printable * {
-        Visibility: visible
-    }
-
-    /* .printable {
+    .printable {
+        visibility: visible;
+        width: 100vw;
+        height: 100vh;
         position: absolute;
-        left: 0;
         top: 0;
-    } */
+        left: 0;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        /* display: flex;
+        justify-content: center;
+        align-items: center; */
+    }
+
+    .printable * {
+        visibility: visible;
+    }
+
+    .printable .not {
+        visibility: hidden;
+    }
 }
