@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Popover } from '@headlessui/react'
-import { Bars3Icon } from '@heroicons/react/24/outline'
+import { RiMenu3Line } from "react-icons/ri";
 import { IoIosLogOut } from "react-icons/io";
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { RootState } from "../../redux/store";
 import { toast } from 'react-toastify'
 import { userNotExist } from "../../redux/reducer/userReducer";
@@ -57,16 +56,16 @@ export default function Header() {
                             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
                             onClick={() => setMobileMenuOpen(true)}
                         >
-                            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                            <RiMenu3Line className="h-6 w-6" aria-hidden="true" />
                         </button>
                     ) : (
                         <button className='px-5 py-2 border-2 border-gray-500 font-semibold rounded-md text-md'><Link to="/login">Login</Link></button>
                     )}
                 </div>
-                <Popover.Group className="hidden lg:flex lg:gap-x-12">
-                    <NavLink to='/donation' className="text-md font-semibold leading-6">
+                <div className="hidden lg:flex lg:gap-x-12">
+                    <Link to='/donation' className="text-md font-semibold leading-6">
                         Donate
-                    </NavLink>
+                    </Link>
                     <Link to='/plans' className="text-md font-semibold leading-6">
                         Pricing
                     </Link>
@@ -76,7 +75,7 @@ export default function Header() {
                     <Link to='/contact' className="text-md font-semibold leading-6">
                         Contact
                     </Link>
-                </Popover.Group>
+                </div>
 
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                     {

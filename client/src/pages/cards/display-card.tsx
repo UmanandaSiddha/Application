@@ -29,7 +29,7 @@ const DisplayCard = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            if (["botany", "individual", "medical", "creator", "animal"].includes(type!) && id) {
+            if (["botanical", "individual", "medical", "creator", "animal"].includes(type!) && id) {
                 try {
                     const { data }: { data: SingleTreeResponse | SinglePersonalResponse | SingleMedicalResponse | SingleCreatorResponse | SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/details/${id!}?type=${type}`, { withCredentials: true });
                     setCard(data.vCard);

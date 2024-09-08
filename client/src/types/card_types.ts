@@ -118,16 +118,17 @@ export type MedicalType = {
     allergyHistory: string,
     chronicHistory: string,
     currentMedication: string,
-    previousSurgeries: string,
+    previousSurgeries: string,//
     smoker: string,
     alcohol: string,
     exercise: string,
     diet: string,
     mentalCondition: string,
     vaccinationHistory: string,
-    insuranceProvider: string,
-    insurancePolicyNumber: number,
-    insuranceGrpNumber: number,
+    insuranceProvider: string,//
+    insurancePolicyNumber: number,//
+    insuranceGrpNumber: number,//
+
     user: string;
 }
 

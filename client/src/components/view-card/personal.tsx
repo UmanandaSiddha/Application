@@ -1,16 +1,15 @@
 import { Personal } from "@/types/card_types";
-import { useState } from "react";
-import { FaInstagram } from "react-icons/fa";
-import { FaYoutube } from "react-icons/fa";
-import { FaSpotify } from "react-icons/fa";
-import { FaDiscord } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
 import { FcAbout, FcBriefcase } from "react-icons/fc";
 import { FcBusinessContact } from "react-icons/fc";
 import { FcCloth } from "react-icons/fc";
 import { FcComboChart } from "react-icons/fc";
 import { FcDataProtection } from "react-icons/fc";
 import { GrLinkNext } from "react-icons/gr";
+import { IconType } from "react-icons";
+import { useState } from "react";
+import * as icons from 'simple-icons';
+import { IoMdLink } from "react-icons/io";
+import { Link } from "react-router-dom";
 
 interface PropsType {
     card: Personal | null;
@@ -18,669 +17,270 @@ interface PropsType {
 
 const PersonalComponent = ({ card }: PropsType) => {
 
-    const [lifestyles, setLifestyles] = useState<boolean>(false);
-    const [fav, setFav] = useState<boolean>(false);
-    const [misc, setMisc] = useState<boolean>(false);
-    const [interest, setInterest] = useState<boolean>(false);
-    const [professionals, setProfessionals] = useState<boolean>(false);
-    const [others, setOthers] = useState<boolean>(false);
-
     const birthDate = card?.dateOfBirth ? new Date(card?.dateOfBirth) : null;
     const formattedDate = birthDate ? birthDate.toLocaleDateString() : null;
 
-    const professionalDetails = [
+    const data = [
         {
-            label: "Current Occupation",
-            value: card?.currentOcupation,
+            label: "Lifestyle",
+            icon: FcBriefcase as IconType,
+            data: [
+                {
+                    label: "Date of Birth",
+                    value: formattedDate ?? "",
+                }, {
+                    label: "Home Town",
+                    value: card?.homeTown,
+                }, {
+                    label: "Current City",
+                    value: card?.currentCity,
+                }, {
+                    label: "Languages",
+                    value: card?.languages,
+                },
+            ]
         }, {
-            label: "Career Goals",
-            value: card?.careerAspiation,
+            label: "Professional",
+            icon: FcDataProtection as IconType,
+            data: [
+                {
+                    label: "Current Occupation",
+                    value: card?.currentOcupation,
+                }, {
+                    label: "Career Goals",
+                    value: card?.careerAspiation,
+                }
+            ]
+        }, {
+            label: "Favourites",
+            icon: FcBusinessContact as IconType,
+            data: [
+                {
+                    label: "Fav Music",
+                    value: card?.music,
+                }, {
+                    label: "Fav Colour",
+                    value: card?.color
+                }, {
+                    label: "Fav City",
+                    value: card?.city,
+                }, {
+                    label: "Fav-Destination",
+                    value: card?.travelDestination,
+                }, {
+                    label: "Fav Season",
+                    value: card?.season,
+                }, {
+                    label: "Unique Skills",
+                    value: card?.uniqueSkills,
+                }, {
+                    label: "Fav-Cuisine",
+                    value: card?.cuisine,
+                }
+            ]
+        }, {
+            label: "Miscellaneous",
+            icon: FcCloth as IconType,
+            data: [
+                {
+                    label: "Pet Lover?",
+                    value: card?.petLover,
+                }, {
+                    label: "Party Enthusiast?",
+                    value: card?.partyEnthusiast,
+                }, {
+                    label: "Smoker?",
+                    value: card?.smoker,
+                }, {
+                    label: "Marital Status?",
+                    value: card?.maritalStatus,
+                }, {
+                    label: "Relationship?",
+                    value: card?.relationshipStatus,
+                }, {
+                    label: "Morning/Night Person?",
+                    value: card?.morningPerson,
+                }, {
+                    label: "Sleeping Habits?",
+                    value: card?.sleepingHabit,
+                }, {
+                    label: "Dietary Preferences",
+                    value: card?.diet,
+                }, {
+                    label: "Fitness Routine",
+                    value: card?.fitnessRoutine,
+                }
+            ]
+        }, {
+            label: "Interests",
+            icon: FcComboChart as IconType,
+            data: [
+                {
+                    label: "Preferred Mode of Travel",
+                    value: card?.travelMode
+                }, {
+                    label: "Fav Movies/TV Shows",
+                    value: card?.genre
+                }, {
+                    label: "Sports Activites",
+                    value: card?.sports,
+                }, {
+                    label: "Artistic Hobbies",
+                    value: card?.artistisPursuits,
+                }, {
+                    label: "Gaming Preferences",
+                    value: card?.gaming,
+                }, {
+                    label: "Collecting Hobby/Interest",
+                    value: card?.collectignHobby,
+                }, {
+                    label: "Coffee or Tea?",
+                    value: card?.coffee,
+                }, {
+                    label: "Cooking Skills",
+                    value: card?.cookingSkills,
+                }
+            ]
+        }, {
+            label: "Additional",
+            icon: FcAbout as IconType,
+            data: [
+                {
+                    label: "Other Interests",
+                    value: card?.otherInterests,
+                }, {
+                    label: "Future Goals",
+                    value: card?.futureGoals,
+                }, {
+                    label: "Currently Learning",
+                    value: card?.current,
+                }, {
+                    label: "Most Unusual Experience",
+                    value: card?.unusualExperinece,
+                }, {
+                    label: "Strangest Habit I Have",
+                    value: card?.strangeHabits,
+                }
+            ]
         }
     ];
 
-    const favourites = [
-        {
-            label: "Fav Music",
-            value: card?.music,
-        }, {
-            label: "Fav Colour",
-            value: card?.color
-        }, {
-            label: "Fav City",
-            value: card?.city,
-        }, {
-            label: "Fav-Destination",
-            value: card?.travelDestination,
-        }, {
-            label: "Fav Season",
-            value: card?.season,
-        }, {
-            label: "Unique Skills",
-            value: card?.uniqueSkills,
-        }, {
-            label: "Fav-Cuisine",
-            value: card?.cuisine,
-        }
-    ];
+    const [expandedSections, setExpandedSections] = useState<boolean[]>(new Array(data.length).fill(false));
 
-    const lifestyless = [
-        {
-            label: "Date of Birth",
-            value: formattedDate ?? "",
-        }, {
-            label: "Home Town",
-            value: card?.homeTown,
-        }, {
-            label: "Current City",
-            value: card?.currentCity,
-        }, {
-            label: "Languages",
-            value: card?.languages,
-        },
-    ];
+    const toggleSection = (index: number) => {
+        setExpandedSections((prev) =>
+            prev.map((expanded, i) => (i === index ? !expanded : expanded))
+        );
+    };
 
-    const miscellaneouss = [
-        {
-            label: "Pet Lover?",
-            value: card?.petLover,
-        }, {
-            label: "Party Enthusiast?",
-            value: card?.partyEnthusiast,
-        }, {
-            label: "Smoker?",
-            value: card?.smoker,
-        }, {
-            label: "Marital Status?",
-            value: card?.maritalStatus,
-        }, {
-            label: "Relationship?",
-            value: card?.relationshipStatus,
-        }, {
-            label: "Morning/Night Person?",
-            value: card?.morningPerson,
-        }, {
-            label: "Sleeping Habits?",
-            value: card?.sleepingHabit,
-        }, {
-            label: "Dietary Preferences",
-            value: card?.diet,
-        }, {
-            label: "Fitness Routine",
-            value: card?.fitnessRoutine,
-        }
-    ];
-
-    const interestss = [
-        {
-            label: "Preferred Mode of Travel",
-            value: card?.travelMode
-        }, {
-            label: "Fav Movies/TV Shows",
-            value: card?.genre
-        }, {
-            label: "Sports Activites",
-            value: card?.sports,
-        }, {
-            label: "Artistic Hobbies",
-            value: card?.artistisPursuits,
-        }, {
-            label: "Gaming Preferences",
-            value: card?.gaming,
-        }, {
-            label: "Collecting Hobby/Interest",
-            value: card?.collectignHobby,
-        }, {
-            label: "Coffee or Tea?",
-            value: card?.coffee,
-        }, {
-            label: "Cooking Skills",
-            value: card?.cookingSkills,
-        }
-    ];
-
-    const additionalData = [
-        {
-            label: "Other Interests",
-            value: card?.otherInterests,
-        }, {
-            label: "Future Goals",
-            value: card?.futureGoals,
-        }, {
-            label: "Currently Learning",
-            value: card?.current,
-        }, {
-            label: "Most Unusual Experience",
-            value: card?.unusualExperinece,
-        }, {
-            label: "Strangest Habit I Have",
-            value: card?.strangeHabits,
-        },
-    ];
-
-    function toggleLifestyle() {
-        if (lifestyles === true) {
-            setLifestyles(false);
+    const setSvg = (input: string) => {
+        const platformKey = `si${input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()}`;
+        const icon = icons[platformKey as keyof typeof icons];
+        if (icon) {
+            return icon.path;
         } else {
-            setLifestyles(true);
+            return "";
         }
     }
 
-    function toggleFavs() {
-        if (fav === true) {
-            setFav(false);
-        } else {
-            setFav(true);
-        }
-    }
-
-    function toggleMisc() {
-        if (misc === true) {
-            setMisc(false);
-        } else {
-            setMisc(true);
-        }
-    }
-
-    function toggleInterests() {
-        if (interest == true) {
-            setInterest(false);
-        } else {
-            setInterest(true);
-        }
-    }
-
-    function toggleOthers() {
-        if (others == true) {
-            setOthers(false);
-        } else {
-            setOthers(true);
-        }
-    }
-
-    function toggleProfessional() {
-        if (professionals == true) {
-            setProfessionals(false);
-        } else {
-            setProfessionals(true);
-        }
-    }
     return (
-        <div className="bg-slate-300 pb-4">
-            <div className="bg-slate-500 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
-                <div className="flex justify-start font-Kanit pl-6 py-4">
-                    <p>INDIVIDUAL DATA</p>
+        <div className="bg-slate-300 pb-16 md:pb-6">
+            <div className="bg-slate-400 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
+                <div className="flex justify-start pl-6 py-4">
+                    <p className="text-white">INDIVIDUAL DATA</p>
                 </div>
-                <div className="font-Kanit text-5xl font-bold mb-10">
-                    <h1 className="font-Alice pl-6">{card?.name}</h1>
+                <div className="text-white text-3xl md:text-5xl font-semibold mb-10">
+                    <h1 className="pl-6">{card?.name}</h1>
                 </div>
             </div>
 
             <div className="flex justify-center w-full">
                 <div className="w-[90%]">
-
-                    <div className="my-8 flex flex-col gap-y-2 py-2 font-Kanit">
-                        <p className="text-lg font-normal">Name:</p>
-                        <p className="bg-white border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.name}</p>
+                    <div className="my-8 flex flex-col gap-y-2 py-2">
+                        <p className="text-lg font-semibold">Name:</p>
+                        <p className="bg-white border-2 border-slate-200 w-full rounded-lg pl-3 py-2 text-lg shadow-lg">{card?.name}</p>
                     </div>
 
                     <div className="bg-white rounded-xl mb-16 pb-8">
 
                         <div className="flex justify-center">
-                            <div className="w-[80%] flex justify-center mt-2">
-                                <div className="mt-4 flex flex-row w-full gap-2">
-                                    <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
-                                        <FaInstagram className="p-1 w-[2rem] h-[2rem]" />
-                                    </div>
-                                    <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
-                                        <FaYoutube className="p-1 w-[2rem] h-[2rem]" />
-                                    </div>
-                                    <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
-                                        <FaSpotify className="p-1 w-[2rem] h-[2rem]" />
-                                    </div>
-                                    <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
-                                        <FaDiscord className="p-1 w-[2rem] h-[2rem]" />
-                                    </div>
-                                    <div className="basis-1/5 flex justify-center border-2 rounded-full w-[3.1rem] h-[3.1rem] items-center">
-                                        <FaXTwitter className="p-1 w-[2rem] h-[2rem]" />
-                                    </div>
-                                </div>
+                            <div className="w-[80%] flex flex-wrap justify-between gap-2 mt-6">
+                                {card?.socialMedia.map((item: any, index: number) => (
+                                    <Link key={index} to={item.name} target="blank" className="flex justify-center border-2 rounded-full px-5 py-2.5 items-center">
+                                        {setSvg(item.label) === "" ? (
+                                            <IoMdLink size={25} />
+                                        ) : (
+                                            <svg
+                                                className="fill-current"
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    clipRule="evenodd"
+                                                    d={setSvg(item.label)}
+                                                    fill="black"
+                                                />
+                                            </svg>
+                                        )}
+                                    </Link>
+                                ))}
                             </div>
                         </div>
 
-                        <div className="flex flex-col justify-center">
-                            <div className="flex justify-center">
-                                <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
-                                    <button
-                                        className="w-full px-4 border-none flex flex-row"
-                                        onClick={toggleLifestyle}
-                                        type="button"
-                                    >
-                                        <div className="flex flex-row w-full">
-                                            <div className="basis-1/5 flex items-center justify-center">
-                                                <FcBriefcase className="w-[2rem] h-[2rem]" />
-                                            </div>
-                                            <div className="basis-3/5 flex justify-start items-center font-Kanit">
-                                                <p className="pl-2 text-sm font-bold pt-1">
-                                                    Lifestyle
-                                                </p>
-                                            </div>
-                                            <div className="basis-1/5 flex justify-end items-center">
-                                                <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
-                                            </div>
-                                        </div>
-                                    </button>
-
-                                </div>
-
-                            </div>
-                            <div className="flex justify-center">
-                                {lifestyles ? (
-                                    <div
-                                        id="dropdown"
-                                        className="relative bg-slate-200 divide-gray-100 rounded-lg shadow-lg w-[80%] dark:bg-gray-700 py-2 mt-2 flex justify-center"
-                                    >
-                                        <ul
-                                            className="text-sm text-gray-700 dark:text-gray-200"
-                                            aria-labelledby="dropdownDefaultButton"
+                        {data.map((item, index) => (
+                            <div key={index} className="flex flex-col justify-center">
+                                <div className="flex justify-center">
+                                    <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
+                                        <button
+                                            className="w-full px-4 border-none flex flex-row"
+                                            onClick={() => toggleSection(index)}
+                                            type="button"
                                         >
-                                            {lifestyles && (
-                                                <div className="flex flex-col space-y-2">
-                                                    {lifestyless.map((life, idx) => (
-                                                        <div
-                                                            key={idx}
-                                                            className="flex flex-row justify-center items-center gap-2"
-                                                        >
-                                                            <div className="basis-1/3 flex justify-center items-center text-lg text-black">
-                                                                <label htmlFor="" className="">
-                                                                    {life.label}
-                                                                </label>
-                                                            </div>
-                                                            <div className="basis-2/3 px-4">
-                                                                <input
-                                                                    type="text"
-                                                                    className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                                                    // readOnly
-                                                                    disabled
-                                                                    value={life?.value}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                            <div className="flex flex-row w-full">
+                                                <div className="basis-1/5 flex items-center justify-center">
+                                                    {item.icon ? (
+                                                        <item.icon className="w-[2rem] h-[2rem]" />
+                                                    ) : (
+                                                        <FcBriefcase className="w-[2rem] h-[2rem]" />
+                                                    )}
                                                 </div>
-                                            )}
-                                        </ul>
+                                                <div className="basis-3/5 flex justify-start items-center font-Kanit">
+                                                    <p className="pl-2 text-md font-bold pt-1">{item.label}</p>
+                                                </div>
+                                                <div className="basis-1/5 flex justify-end items-center">
+                                                    <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
+                                                </div>
+                                            </div>
+                                        </button>
                                     </div>
-                                ) : null}
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col justify-center">
-                            <div className="flex justify-center">
-                                <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
-                                    <button
-                                        className="w-full px-4 border-none flex flex-row"
-                                        onClick={toggleFavs}
-                                        type="button"
-                                    >
-                                        <div className="flex flex-row w-full">
-                                            <div className="basis-1/5 flex items-center justify-center">
-                                                <FcBusinessContact className="w-[2rem] h-[2rem]" />
-                                            </div>
-                                            <div className="basis-3/5 flex justify-start items-center font-Kanit">
-                                                <p className="pl-2 text-sm font-bold pt-1">
-                                                    Favourites
-                                                </p>
-                                            </div>
-                                            <div className="basis-1/5 flex justify-end items-center">
-                                                <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
-                                            </div>
-                                        </div>
-                                    </button>
-
                                 </div>
-
-                            </div>
-                            <div className="flex justify-center">
-                                {fav ? (
-                                    <div
-                                        id="dropdown"
-                                        className="relative bg-slate-200 divide-gray-100 rounded-lg shadow-lg w-[80%] dark:bg-gray-700 mt-2"
-                                    >
-                                        <ul
-                                            className="text-sm text-gray-200 dark:text-gray-200"
-                                            aria-labelledby="dropdownDefaultButton"
-                                        >
-                                            <div className="flex flex-col space-y-2">
-                                                {favourites.map((favourites, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className="flex flex-row justify-center items-center gap-2"
-                                                    >
-                                                        <div className="basis-1/3 flex justify-center text-black items-center text-lg">
-                                                            <label htmlFor="" className="pl-2">
-                                                                {favourites.label}
-                                                            </label>
-                                                        </div>
-                                                        <div className="basis-2/3 px-4">
-                                                            <input
-                                                                type="text"
-                                                                className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                                                readOnly
-                                                                defaultValue={favourites.value}
-                                                            />
-                                                        </div>
+                                <div className="flex justify-center">
+                                    {expandedSections[index] && (
+                                        <div className="relative bg-slate-200 divide-gray-100 rounded-lg shadow-lg w-[80%] dark:bg-gray-700 py-2 mt-2 flex justify-center">
+                                            <ul className="w-full mx-6 md:mx-16 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                                                {item.data && (
+                                                    <div className="flex flex-col space-y-2">
+                                                        {item.data.map((item, index) => (
+                                                            <div key={index} className="flex flex-col md:flex-row justify-center md:items-center md:gap-4">
+                                                                <div className="md:basis-1/3 flex justify-start items-center text-lg text-black"><p className="text-sm font-semibold">{item.label}:</p></div>
+                                                                <div className="md:basis-2/3 flex justify-start items-center">
+                                                                    <p className="block py-2.5 px-0 w-full text-base bg-transparent border-0 border-b-2 border-gray-600 appearance-none text-gray-600 focus:outline-none focus:ring-0 focus:border-gray-600">{item.value}</p>
+                                                                </div>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        </ul>
-                                    </div>
-                                ) : null}
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col justify-center">
-                            <div className="flex justify-center">
-                                <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
-                                    <button
-                                        className="w-full px-4 border-none flex flex-row"
-                                        onClick={toggleMisc}
-                                        type="button"
-                                    >
-                                        <div className="flex flex-row w-full">
-                                            <div className="basis-1/5 flex items-center justify-center">
-                                                <FcCloth className="w-[2rem] h-[2rem]" />
-                                            </div>
-                                            <div className="basis-3/5 flex justify-start items-center font-Kanit">
-                                                <p className="pl-2 text-sm font-bold pt-1">
-                                                    Micellaneous
-                                                </p>
-                                            </div>
-                                            <div className="basis-1/5 flex justify-end items-center">
-                                                <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
-                                            </div>
+                                                )}
+                                            </ul>
                                         </div>
-                                    </button>
-
+                                    )}
                                 </div>
-
                             </div>
-                            <div className="flex justify-center">
-                                {misc ? (
-                                    <div
-                                        id="dropdown"
-                                        className="relative bg-slate-200 divide-gray-100 rounded-lg shadow w-[80%] dark:bg-gray-700 mt-2"
-                                    >
-                                        <ul
-                                            className=" text-sm text-gray-200 dark:text-gray-200"
-                                            aria-labelledby="dropdownDefaultButton"
-                                        >
-                                            {misc && (
-                                                <div className="flex flex-col space-y-2">
-                                                    {miscellaneouss.map((misce, idx) => (
-                                                        <div
-                                                            key={idx}
-                                                            className="flex flex-row justify-center items-center gap-2"
-                                                        >
-                                                            <div className="basis-1/3 flex justify-start text-black items-center text-lg">
-                                                                <label htmlFor="" className="pl-2">
-                                                                    {misce.label}
-                                                                </label>
-                                                            </div>
-                                                            <div className="basis-2/3 px-4">
-                                                                <input
-                                                                    type="text"
-                                                                    className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                                                    readOnly
-                                                                    defaultValue={misce.value}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </ul>
-                                    </div>
-                                ) : null}
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col justify-center">
-                            <div className="flex justify-center">
-                                <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
-                                    <button
-                                        className="w-full px-4 border-none flex flex-row"
-                                        onClick={toggleInterests}
-                                        type="button"
-                                    >
-                                        <div className="flex flex-row w-full">
-                                            <div className="basis-1/5 flex items-center justify-center">
-                                                <FcComboChart className="w-[2rem] h-[2rem]" />
-                                            </div>
-                                            <div className="basis-3/5 flex justify-start items-center font-Kanit">
-                                                <p className="pl-2 text-sm font-bold pt-1">
-                                                    Interest & Activities
-                                                </p>
-                                            </div>
-                                            <div className="basis-1/5 flex justify-end items-center">
-                                                <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
-                                            </div>
-                                        </div>
-                                    </button>
-
-                                </div>
-
-                            </div>
-                            <div className="flex justify-center">
-                                {interest ? (
-                                    <div
-                                        id="dropdown"
-                                        className="relative bg-slate-200 divide-gray-100 rounded-lg shadow w-[80%] dark:bg-gray-700 mt-2"
-                                    >
-                                        <ul
-                                            className=" text-sm text-gray-200 dark:text-gray-200"
-                                            aria-labelledby="dropdownDefaultButton"
-                                        >
-                                            {interest && (
-                                                <div className="flex flex-col space-y-2">
-                                                    {interestss.map((int, idx) => (
-                                                        <>
-                                                            <div
-                                                                key={idx}
-                                                                className="flex flex-row justify-center items-center gap-2 py-1"
-                                                            >
-                                                                <div className="basis-1/3 flex justify-start text-black items-center text-lg">
-                                                                    <label htmlFor="" className="pl-2">
-                                                                        {int.label}
-                                                                    </label>
-                                                                </div>
-                                                                <div className="basis-2/3 px-4">
-                                                                    <input
-                                                                        type="text"
-                                                                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                                                        readOnly
-                                                                        defaultValue={int.value}
-                                                                    />
-                                                                </div>
-
-                                                            </div>
-                                                        </>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </ul>
-                                    </div>
-                                ) : null}
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col justify-center">
-                            <div className="flex justify-center">
-                                <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
-                                    <button
-                                        className="w-full px-4 border-none flex flex-row"
-                                        onClick={toggleProfessional}
-                                        type="button"
-                                    >
-                                        <div className="flex flex-row w-full">
-                                            <div className="basis-1/5 flex items-center justify-center">
-                                                <FcDataProtection className="w-[2rem] h-[2rem]" />
-                                            </div>
-                                            <div className="basis-3/5 flex justify-start items-center font-Kanit">
-                                                <p className="pl-2 text-sm font-bold pt-1">
-                                                    Professional Details
-                                                </p>
-                                            </div>
-                                            <div className="basis-1/5 flex justify-end items-center">
-                                                <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
-                                            </div>
-                                        </div>
-                                    </button>
-
-                                </div>
-
-                            </div>
-                            <div className="flex justify-center">
-                                {professionals ? (
-                                    <div
-                                        id="dropdown"
-                                        className="relative bg-slate-200 divide-gray-100 rounded-lg shadow w-[80%] dark:bg-gray-700 mt-2"
-                                    >
-                                        <ul
-                                            className=" text-sm text-gray-200 dark:text-gray-200"
-                                            aria-labelledby="dropdownDefaultButton"
-                                        >
-                                            {professionals && (
-                                                <div className="flex flex-col space-y-2">
-                                                    {professionalDetails.map((prof, idx) => (
-                                                        <>
-                                                            <div
-                                                                key={idx}
-                                                                className="flex flex-row justify-center items-center gap-2 py-1"
-                                                            >
-                                                                <div className="basis-1/3 flex justify-start text-black items-center text-lg">
-                                                                    <label htmlFor="" className="pl-2">
-                                                                        {prof.label}
-                                                                    </label>
-                                                                </div>
-                                                                <div className="basis-2/3 px-4">
-                                                                    <input
-                                                                        type="text"
-                                                                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                                                        readOnly
-                                                                        defaultValue={prof.value}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </>
-                                                    ))}
-                                                </div>
-                                            )}
-                                            <div className="flex flex-row justify-center items-center gap-2 py-1">
-                                                <div className="basis-1/3 flex justify-start text-center text-black items-center text-lg">
-                                                    <label htmlFor="" className="pl-2">
-                                                        Education Background
-                                                    </label>
-                                                </div>
-                                                <div className="basis-2/3 px-4">
-                                                    <input
-                                                        type="text"
-                                                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                                        readOnly
-                                                        defaultValue={card?.education}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-row justify-center items-center gap-2 py-1">
-                                                <div className="basis-1/3 flex justify-start items-center text-black text-lg">
-                                                    <label htmlFor="" className="pl-2">
-                                                        Professional Skills
-                                                    </label>
-                                                </div>
-                                                <div className="basis-2/3 px-4">
-                                                    <input
-                                                        type="text"
-                                                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                                        readOnly
-                                                        defaultValue={card?.skills}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </ul>
-                                    </div>
-                                ) : null}
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col justify-center pb-4">
-                            <div className="flex justify-center">
-                                <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
-                                    <button
-                                        className="w-full px-4 border-none flex flex-row"
-                                        onClick={toggleOthers}
-                                        type="button"
-                                    >
-                                        <div className="flex flex-row w-full">
-                                            <div className="basis-1/5 flex items-center justify-center">
-                                                <FcAbout className="w-[2rem] h-[2rem]" />
-                                            </div>
-                                            <div className="basis-3/5 flex justify-start items-center font-Kanit">
-                                                <p className="pl-2 text-sm font-bold pt-1">
-                                                    Others
-                                                </p>
-                                            </div>
-                                            <div className="basis-1/5 flex justify-end items-center">
-                                                <GrLinkNext className="w-[1.5rem] h-[1.5rem]" />
-                                            </div>
-                                        </div>
-                                    </button>
-
-                                </div>
-
-                            </div>
-                            <div className="flex justify-center">
-                                {others ? (
-                                    <div
-                                        id="dropdown"
-                                        className="relative bg-slate-200 divide-gray-100 rounded-lg shadow w-[80%] dark:bg-gray-700 mt-2"
-                                    >
-                                        <ul
-                                            className="text-sm text-center dark:text-gray-200"
-                                            aria-labelledby="dropdownDefaultButton"
-                                        >
-                                            {others && (
-                                                <div className="flex flex-col space-y-2">
-                                                    {additionalData.map((add, idx) => (
-                                                        <>
-                                                            <div
-                                                                key={idx}
-                                                                className="flex flex-row justify-center items-center gap-2 py-1"
-                                                            >
-                                                                <div className="basis-1/3 flex justify-start text-center text-black items-center text-lg">
-                                                                    <label htmlFor="" className="pl-2">
-                                                                        {add.label}
-                                                                    </label>
-                                                                </div>
-                                                                <div className="basis-2/3 px-4">
-                                                                    <input
-                                                                        type="text"
-                                                                        className="block py-2.5 px-0 w-full text-base font-Kanit bg-transparent border-0 border-b-2 border-black appearance-none text-black focus:outline-none focus:ring-0 focus:border-blue-600"
-                                                                        readOnly
-                                                                        defaultValue={add.value}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </ul>
-                                    </div>
-                                ) : null}
-                            </div>
-                        </div>
-
+                        ))}
                     </div>
-
                 </div>
             </div>
         </div>

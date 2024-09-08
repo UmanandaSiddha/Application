@@ -54,7 +54,7 @@ const Favourites = [
     { name: "city", label: "Favourite City", text: "Enter Favourite City" },
     { name: "travelDestination", label: "Favourite Destination", text: "Enter Favourite Destinations" },
     { name: "season", label: "Favourite Season", text: "Enter Favourite Season" },
-    { name: "uniqueskills", label: "Unique Skills", text: "Enter Unique Skills" },
+    { name: "uniqueSkills", label: "Unique Skills", text: "Enter Unique Skills" },
     { name: "cuisine", label: "Favourite Cuisine", text: "Enter Favourite Cuisine/Food" },
     { name: "beverage", label: "Favourite Beverage", text: "Enter Beverage" },
 ];
@@ -180,24 +180,20 @@ const InputVCard = () => {
 
     const { handleSubmit, register, reset, watch, setValue } = form;
 
-    useEffect(() => {
-        const fetchPersonal = async () => {
-            if (id) {
-                try {
-                    const { data }: { data: SinglePersonalResponse } = await axios.get(
-                        `${import.meta.env.VITE_BASE_URL
-                        }/cards/detailed/${id}?type=individual`,
-                        { withCredentials: true }
-                    );
-                    setIsPersonal(true);
-                    reset(convertToStrings(data.vCard));
-                    setSocialData(data.vCard.socialMedia);
-                } catch (error: any) {
-                    toast.error(error.response.data.message);
-                }
+    const fetchPersonal = async () => {
+        if (id) {
+            try {
+                const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=individual`, { withCredentials: true });
+                setIsPersonal(true);
+                reset(convertToStrings(data.vCard));
+                setSocialData(data.vCard.socialMedia);
+            } catch (error: any) {
+                toast.error(error.response.data.message);
             }
-        };
+        }
+    };
 
+    useEffect(() => {
         const cardData = localStorage.getItem("current_card");
         if (cardData && id) {
             const cardDataParsed = JSON.parse(cardData);
@@ -260,18 +256,10 @@ const InputVCard = () => {
         } else {
             try {
                 if (isPersonal) {
-                    await axios.put(
-                        `${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=individual`,
-                        personalData,
-                        { withCredentials: true }
-                    );
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=individual`, personalData, { withCredentials: true });
                     toast.success("Personal VCards updated!");
                 } else {
-                    await axios.post(
-                        `${import.meta.env.VITE_BASE_URL}/cards/new?type=individual`,
-                        personalData,
-                        { withCredentials: true }
-                    );
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=individual`, personalData, { withCredentials: true });
                     toast.success("Personal VCards created!");
                 }
                 navigate(-1);

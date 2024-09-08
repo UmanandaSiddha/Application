@@ -18,7 +18,13 @@ interface ButtonItemProps {
 const ButtonItem: React.FC<ButtonItemProps> = ({ icon: Icon, title, type, isVerified }) => {
     const navigate = useNavigate();
     return (
-        <div className="w-full flex justify-center pt-4">
+        <button 
+            className="w-full flex justify-center pt-4" 
+            disabled={!isVerified}
+            onClick={() => {
+                navigate(`/dashboard/cards?type=${type}`);
+            }}
+        >
             <div className="w-[100%] text-white">
                 <div className="flex flex-row items-center w-full border-2 border-slate-300 rounded-lg">
                     <div className="basis-1/7 pl-2 py-3">
@@ -27,18 +33,12 @@ const ButtonItem: React.FC<ButtonItemProps> = ({ icon: Icon, title, type, isVeri
                     <div className="basis-5/7 flex justify-start pl-3 w-full text-[1.5rem] font-bold text-black py-3">
                         {title}
                     </div>
-                    <button
-                        className="basis-1/7 bg-slate-100 flex justify-center px-3 py-3"
-                        disabled={!isVerified}
-                        onClick={() => {
-                            navigate(`/dashboard/cards?type=${type}`);
-                        }}
-                    >
+                    <div className="basis-1/7 bg-slate-100 flex justify-center px-3 py-3">
                         <IoIosAdd className="w-[2rem] h-[2rem] hover:cursor-pointer text-black" />
-                    </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </button>
     );
 };
 

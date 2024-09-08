@@ -29,7 +29,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
     };
 
     const handleClick = (index: number) => {
-        inputRefs.current[index]?.setSelectionRange(1, 1);
+        // inputRefs.current[index]?.setSelectionRange(1, 1);
 
         if (index > 0 && !otp[index - 1]) {
             const emptyIndex = otp.indexOf("");
@@ -62,7 +62,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
                     return (
                         <input
                             key={index}
-                            type="text"
+                            type="number"
                             ref={(input) => (inputRefs.current[index] = input)}
                             value={value}
                             onChange={(e) => handleChange(index, e)}

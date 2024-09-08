@@ -44,7 +44,7 @@ const qrStyles: Record<string, { qrColor: string; dotColor: string }> = {
     default: { qrColor: "#9ca3af", dotColor: "#6b7280" },
 };
 
-const createQRCode = (type: string, cardId: string) => {
+export const createQRCode = (type: string, cardId: string) => {
     const styles = type && qrStyles[type] ? qrStyles[type] : qrStyles.default;
 
     return new QRCodeStyling({
@@ -237,7 +237,7 @@ const AllCards = () => {
                         <div className={`absolute w-full h-full ${styles.backgroundColor} mobile-curve rounded-lg`}></div>
                         <div className="absolute w-full h-full flex flex-col justify-evenly space-y-2 items-center z-10 md:overflow-y-auto hide-scrollbar md:p-4">
 
-                            <div className='flex flex-col items-center justify-center pt-4 space-y-3'>
+                            <button onClick={() => navigate(`/dashboard/${type}/create`)} className='flex flex-col items-center justify-center pt-4 space-y-3'>
                                 <div className={`flex justify-center items-center ${styles.textColor} rounded-2xl py-4 px-4 shadow-xl text-white font-semibold`}>
                                     <BsQrCodeScan className='mx-2 w-[1rem] h-[1rem]' />
                                     <p className='text-lg font-bold'>
@@ -250,7 +250,7 @@ const AllCards = () => {
                                         {type && type.charAt(0).toUpperCase() + type.slice(1)} Data
                                     </h1>
                                 </div>
-                            </div>
+                            </button>
 
                             {loading ? (
                                 <div>
