@@ -219,7 +219,7 @@ const AllCards = () => {
 
     const handleShare = () => {
         if (cards?.[currentIndex]._id && type) {
-            window.navigator.clipboard.writeText(`http://localhost:5173/display?id=${cards?.[currentIndex]._id}&type=${type}`);
+            window.navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/display?id=${cards?.[currentIndex]._id}&type=${type}`);
             toast.success("Link has been copied to clipboard");
         } else {
             toast.error("Something went wrong");
