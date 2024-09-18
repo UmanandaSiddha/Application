@@ -2,6 +2,7 @@ import ErrorHandler from "../../utils/errorHandler.js";
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
 import { instance } from "../../server.js";
 import Plan, { planEnum } from "../../models/payment/planModel.js";
+import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const createPlan = catchAsyncErrors(async (req, res, next) => {
     const { name, description, planType, cards, amount, period, interval } = req.body;
@@ -108,13 +109,24 @@ export const switchPlanVisibility = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getAllPlans = catchAsyncErrors( async (req, res, next) => {
-    const plans = await Plan.find();
+    
+    const resultPerPage = 3;
     const count  = await Plan.countDocuments();
 
-    res.status(200).json({
+    const apiFeatures = new ApiFeatures(Plan.find().sort({ $natural: -1 }), req.query).search().filter();
+
+    let filteredPlans = await apiFeatures.query;
+    let filteredPlanCount = filteredPlans.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredPlans = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        plans,
-        count
+        count,
+        resultPerPage,
+        plans: filteredPlans,
+        filteredPlanCount
     });
 });
 

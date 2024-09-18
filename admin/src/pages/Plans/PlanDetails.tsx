@@ -15,7 +15,7 @@ const PlanDetails = () => {
 
     const fetchPlan = async () => {
         try {
-            const { data }: { data: PlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/plans/${id}`, { withCredentials: true });
+            const { data }: { data: PlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, { withCredentials: true });
             setPlan(data.plan);
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -23,18 +23,12 @@ const PlanDetails = () => {
     }
 
     useEffect(() => {
-        const localPlan = window.localStorage.getItem("all_plans");
-        if (localPlan) {
-            const extractedPlan = JSON.parse(localPlan).data.filter((plan: Plan) => plan._id === id);
-            setPlan(extractedPlan[0]);
-        } else {
-            fetchPlan();
-        }
+        fetchPlan();
     }, [id]);
 
     const handleSwitch = async () => {
         try {
-            const { data }: { data: { message: string }} = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/plans/${id}`, { data: "random" }, { withCredentials: true });
+            const { data }: { data: { message: string }} = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, { data: "random" }, { withCredentials: true });
             window.localStorage.removeItem("all_plans");
             toast.success(data.message);
             navigate(-1);
@@ -45,7 +39,7 @@ const PlanDetails = () => {
 
     const handleDelete = async () => {
         try {
-            const { data }: { data: { message: string }} = await axios.delete(`${import.meta.env.VITE_BASE_URL}/admin/plans/${id}`, { withCredentials: true });
+            const { data }: { data: { message: string }} = await axios.delete(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, { withCredentials: true });
             window.localStorage.removeItem("all_plans");
             toast.success(data.message);
             navigate(-1);
@@ -75,7 +69,7 @@ const PlanDetails = () => {
                     <button onClick={handleSwitch} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
                         Switch Visibility
                     </button>
-                    <button onClick={() => navigate(`/plan-new?type=${plan?.planType}&action=edit`)} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                    <button onClick={() => navigate(`/plans/new?type=${plan?.planType}&action=edit`)} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
                         Update Plan
                     </button>
                     <button onClick={handleDelete} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">

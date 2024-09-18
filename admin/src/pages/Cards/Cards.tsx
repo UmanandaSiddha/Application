@@ -90,7 +90,7 @@ const Cards = () => {
                         <div
                             className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
                             key={key}
-                            onClick={() => navigate(`/card-details?id=${card._id}&type=${card.type}`)}
+                            onClick={() => navigate(`/cards/details?id=${card._id}&type=${type}`)}
                         >
                             <div className="col-span-2 flex items-center">
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -117,7 +117,7 @@ const Cards = () => {
                                         navigate(`/card-details?id=${card.user._id}`);
                                     }}
                                 >
-                                    {card.user._id}
+                                    {card.user?._id}
                                 </p>
                             </div>
                         </div>

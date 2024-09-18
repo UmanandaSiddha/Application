@@ -43,7 +43,7 @@ const AnimalComponent = ({ card }: PropsType) => {
 
     return (
         <div className="bg-red-100 pb-32 md:pb-6">
-            <div className="bg-red-300 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
+            <div className="bg-red-400 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
                 <div className="flex justify-start pl-6 py-4">
                     <p className="text-white">ANIMAL DATA</p>
                 </div>
@@ -57,7 +57,7 @@ const AnimalComponent = ({ card }: PropsType) => {
                    {data.map((item, index) => (
                         <div key={index} className="flex flex-col gap-y-2 py-2">
                             <p className="text-lg font-semibold">{item.title}:</p>
-                            <p className="bg-white border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{item.value}</p>
+                            <p className="bg-white border-2 border-slate-200 w-full rounded-lg px-3 py-1 text-lg shadow-lg">{item.value}</p>
                         </div>
                     ))}
                 </div>

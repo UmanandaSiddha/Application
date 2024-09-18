@@ -198,7 +198,7 @@ const PersonalComponent = ({ card }: PropsType) => {
                 <div className="w-[90%]">
                     <div className="my-8 flex flex-col gap-y-2 py-2">
                         <p className="text-lg font-semibold">Name:</p>
-                        <p className="bg-white border-2 border-slate-200 w-full rounded-lg pl-3 py-2 text-lg shadow-lg">{card?.name}</p>
+                        <p className="bg-white border-2 border-slate-200 w-full rounded-lg px-3 py-2 text-lg shadow-lg">{card?.name}</p>
                     </div>
 
                     <div className="bg-white rounded-xl mb-16 pb-8">

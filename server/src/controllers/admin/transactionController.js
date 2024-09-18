@@ -1,4 +1,5 @@
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
+import Donator from "../../models/donatorModel.js";
 import Transaction from "../../models/payment/transactionModel.js";
 import User from "../../models/userModel.js";
 import ErrorHandler from "../../utils/errorHandler.js";
@@ -19,7 +20,7 @@ export const getAllTransactions = catchAsyncErrors(async (req, res, next) => {
         success: true,
         count,
         resultPerPage,
-        filteredTransactions,
+        transactions: filteredTransactions,
         filteredTransactionsCount
     });
 });
@@ -44,7 +45,32 @@ export const getUserTransactions = catchAsyncErrors(async (req, res, next) => {
         success: true,
         count,
         resultPerPage,
-        filteredTransactions,
+        transactions: filteredTransactions,
+        filteredTransactionsCount
+    });
+});
+
+export const getDonatorTransactions = catchAsyncErrors(async (req, res, next) => {
+    const donator = await Donator.findById(req.params.id);
+    if (!donator) {
+        return next(new ErrorHandler(`No User By Id ${req.params.id}`, 404));
+    }
+
+    const resultPerPage = 5;
+    const count = await Transaction.countDocuments({ donator: req.params.id });
+
+    const apiFeatures = new ApiFeatures(Transaction.find({ donator: req.params.id }).sort({ $natural: -1 }), req.query).filter();
+    let filteredTransactions = await apiFeatures.query;
+    let filteredTransactionsCount = filteredTransactions.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredTransactions = await apiFeatures.query.clone();
+
+    return res.status(200).json({
+        success: true,
+        count,
+        resultPerPage,
+        transactions: filteredTransactions,
         filteredTransactionsCount
     });
 });

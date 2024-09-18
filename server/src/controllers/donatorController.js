@@ -12,6 +12,7 @@ import { addDonationToQueue } from "../utils/queue/donationQueue.js";
 import logger from "../config/logger.js";
 import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 import { handleDonation } from "../common/payment.js";
+import ApiFeatures from "../utils/services/apiFeatures.js";
 
 export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
     const { email } = req.body;
@@ -325,7 +326,7 @@ export const getDonatorSubscription = catchAsyncErrors(async (req, res, next) =>
 
     let subscription;
     if (donator?.activeDonation) {
-        subscription = await Subscription.findById(donator?.activeDonation).populate("planId", "_id name amount");;
+        subscription = await Subscription.findById(donator.activeDonation).populate("planId", "_id name amount");;
     }
 
     res.status(200).json({
@@ -335,11 +336,23 @@ export const getDonatorSubscription = catchAsyncErrors(async (req, res, next) =>
 });
 
 export const getDonatorTransaction = catchAsyncErrors(async (req, res, next) => {
-    const transactions = await Transaction.find({ donator: req.donator.id });
 
-    res.status(200).json({
+    const resultPerPage = 5;
+    const count = await Transaction.countDocuments();
+
+    const apiFeatures = new ApiFeatures(Transaction.find({ donator: req.donator.id }).sort({ $natural: -1 }), req.query).filter();
+    let filteredTransaction = await apiFeatures.query;
+    let filteredTransactionCount = filteredTransaction.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredTransaction = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        transactions,
+        count,
+        resultPerPage,
+        filteredTransaction,
+        filteredTransactionCount
     });
 });
 

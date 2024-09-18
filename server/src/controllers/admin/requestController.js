@@ -85,7 +85,7 @@ export const getAllCustomRequests = catchAsyncErrors(async (req, res, next) => {
         success: true,
         count,
         resultPerPage,
-        filteredRequests,
+        requests: filteredRequests,
         filteredRequestsCount
     });
 });
@@ -108,9 +108,14 @@ export const attendCustomRequests = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Request not found", 404));
     }
 
+    const { status, reason } = req.body;
+    if (!status ||!reason) {
+        return next(new ErrorHandler("Status and reason are required", 400));
+    }
+
     await CustomRequest.findByIdAndUpdate(
         req.params.id, 
-        { attended: true, "status.accepted": Boolean(req.body.status), "status.reason": req.body.reason }, 
+        { attended: true, "status.accepted": Boolean(status), "status.reason": reason }, 
         { new: true, runValidators: true, useFindAndModify: false }
     );
 
@@ -121,8 +126,8 @@ export const attendCustomRequests = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
-    const { cards, amount, period, interval, userId } = req.body;
-    if (!cards || !amount || !period || !interval || !userId) {
+    const { cards, amount, period, interval, userId, reason } = req.body;
+    if (!cards || !amount || !period || !interval || !userId || !reason) {
         return next(new ErrorHandler("All fields are required", 404));
     }
 
@@ -137,17 +142,17 @@ export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
     }
 
     const data = {
-        card: req.body.cards,
-        amount: req.body.amount,
-        period: req.body.period,
-        interval: req.body.interval
+        cards,
+        amount,
+        period,
+        interval
     }
     
     try {
         await addEmailToQueue({
             email: user.email,
             subject: `Custom Plan Request Rejected`,
-            message: `Requested Custom Plan is rejected for ${JSON.stringify(data)}. Reason - ${req.body.reason}`,
+            message: `Requested Custom Plan is rejected for ${JSON.stringify(data)}. Reason - ${reason}`,
         });
     } catch (error) {
         console.log(error.message);
@@ -155,7 +160,7 @@ export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
 
     await CustomRequest.findByIdAndUpdate(
         req.params.id, 
-        { attended: true, "status.accepted": false, "status.reason": req.body.reason }, 
+        { attended: true, "status.accepted": false, "status.reason": reason }, 
         { new: true, runValidators: true, useFindAndModify: false }
     );
 

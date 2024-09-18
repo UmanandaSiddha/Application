@@ -86,6 +86,7 @@ export type CustomReuest = {
         email: string;
         name: string;
     }
+    createdAt: Date;
 }
 
 export type Subscription = {
@@ -157,6 +158,7 @@ export type Transaction = {
         upiInfo: string | null;
     },
     donator: string | null;
+    createdAt: Date;
 }
 
 export type Tree = {
@@ -322,4 +324,40 @@ export type Creator = {
         email: string;
     }
     createdAt: Date;
+}
+
+export type Contact = {
+    _id: string;
+    email: string;
+    name: string;
+    message: string;
+    report: boolean;
+    attended: boolean;
+    createdAt: Date;
+}
+
+export type Donator = {
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    address: {
+        street: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+    },
+    pan: string;
+    customerId: string;
+    activeDonation: {
+        _id: string;
+        planId: string;
+        status: string;
+        currentEnd: Date;
+    }
+    oneTimePassword: string;
+    oneTimeExpire: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }

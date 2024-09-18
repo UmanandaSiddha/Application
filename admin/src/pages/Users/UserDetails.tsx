@@ -2,10 +2,21 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { AllTransactionsResponse, UserResponse } from "../../types/api-types";
+import { AllCardsResponse, AllSubscriptionResponse, AllTransactionsResponse, UserResponse } from "../../types/api-types";
 import axios from "axios";
-import { Transaction, User } from "../../types/types";
+import { Animal, Creator, Medical, Personal, Subscription, Transaction, Tree, User } from "../../types/types";
 import CardsChart from "../../components/Charts/CardsChart";
+
+interface CardStatsResponse {
+    success: boolean;
+    count: {
+        botanical: number;
+        individual: number;
+        creator: number;
+        medical: number;
+        animal: number;
+    }
+}
 
 const UserDetails = () => {
 
@@ -13,10 +24,37 @@ const UserDetails = () => {
     const navigate = useNavigate();
     const id = search.get("id");
     const [user, setUser] = useState<User>();
+    const [type, setType] = useState<"botanical" | "individual" | "medical" | "creator" | "animal">("botanical");
+    const [cards, setCards] = useState<Tree[] | Personal[] | Medical[] | Creator[] | Animal[]>();
+    const [stats, setStats] = useState({
+        botanical: 0,
+        individual: 0,
+        creator: 0,
+        medical: 0,
+        animal: 0,
+    });
     const [transactions, setTransactions] = useState<Transaction[]>();
+    const [subscriptions, setSubscriptions] = useState<Subscription[]>();
     const [total, setTotal] = useState<number | null>(0);
     const [selectedOption, setSelectedOption] = useState<string>("");
     const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
+    const [cardsCount, setCardsCount] = useState({
+        currentPage: 1,
+        resultPerPage: 1,
+        totalCards: 1
+    });
+    const [subscriptionCount, setSubscriptionCount] = useState({
+        currentPage: 1,
+        resultPerPage: 1,
+        filteredSubscriptions: 1,
+        totalSubscriptions: 1
+    });
+    const [transactionCount, setTransactionCount] = useState({
+        currentPage: 1,
+        resultPerPage: 1,
+        filteredTransactions: 1,
+        totalTransactions: 1
+    });
 
     const changeTextColor = () => {
         setIsOptionSelected(true);
@@ -24,8 +62,10 @@ const UserDetails = () => {
 
     const gotUser = async () => {
         try {
-            const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/users/${id}`, { withCredentials: true });
+            const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/users/byId/${id}`, { withCredentials: true });
             setUser(data.user);
+            setTotal(data.user.cards.total);
+            setSelectedOption(data.user.role);
             const localUser = {
                 created: Date.now() + 30 * 1000,
                 data: data.user,
@@ -36,10 +76,54 @@ const UserDetails = () => {
         }
     }
 
-    const fetchTrsanctions = async () => {
+    const fetchSubscriptions = async (url: string) => {
         try {
-            const { data }: { data: AllTransactionsResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/transactions/user/${id}`, { withCredentials: true });
+            const { data }: { data: AllSubscriptionResponse } = await axios.get(url, { withCredentials: true });
+            setSubscriptions(data.subscriptions);
+            setSubscriptionCount({
+                ...subscriptionCount,
+                resultPerPage: data.resultPerPage,
+                filteredSubscriptions: data.filteredSubscriptionsCount,
+                totalSubscriptions: data.count
+            });
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
+
+    const fetchTrsanctions = async (url: string) => {
+        try {
+            const { data }: { data: AllTransactionsResponse } = await axios.get(url, { withCredentials: true });
             setTransactions(data.transactions);
+            setTransactionCount({
+                ...transactionCount,
+                resultPerPage: data.resultPerPage,
+                filteredTransactions: data.filteredTransactionsCount,
+                totalTransactions: data.count
+            });
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
+
+    const fetchCards = async (url: string) => {
+        try {
+            const { data }: { data: AllCardsResponse } = await axios.get(url, { withCredentials: true });
+            setCards(data.cards);
+            setCardsCount({
+                ...cardsCount,
+                resultPerPage: data.resultPerPage,
+                totalCards: data.count
+            });
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
+
+    const fetchCardStats = async (url: string) => {
+        try {
+            const { data }: { data: CardStatsResponse } = await axios.get(url, { withCredentials: true });
+            setStats(data.count);
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
@@ -55,7 +139,7 @@ const UserDetails = () => {
             return;
         }
         try {
-            const { data }: { data: { message: string }} = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/${id}`, {role: selectedOption}, { withCredentials: true });
+            const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/${id}`, { role: selectedOption }, { withCredentials: true });
             toast.success(data.message);
             navigate(-1);
         } catch (error: any) {
@@ -69,7 +153,7 @@ const UserDetails = () => {
             return;
         }
         try {
-            const { data }: { data: { message: string }} = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/card/${id}`, {total}, { withCredentials: true });
+            const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/card/${id}`, { total }, { withCredentials: true });
             toast.success(data.message);
             window.localStorage.removeItem("current_user");
             navigate(-1);
@@ -78,9 +162,13 @@ const UserDetails = () => {
         }
     }
 
-    const handleFreeAccess = async () => {
+    const handleFreeAccess = async (factor: boolean) => {
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/free/access/${id}`, {data: "random"}, { withCredentials: true });
+            let link = `${import.meta.env.VITE_BASE_URL}/admin/users/free/access/${id}`;
+            if (factor) {
+                link = `${import.meta.env.VITE_BASE_URL}/admin/users/free/revoke/${id}`
+            }
+            const { data }: { data: UserResponse } = await axios.put(link, {}, { withCredentials: true });
             setUser(data.user);
             window.localStorage.removeItem("current_user");
             const localUser = {
@@ -88,7 +176,35 @@ const UserDetails = () => {
                 data: data.user,
             }
             window.localStorage.setItem("current_user", JSON.stringify(localUser));
-            toast.success("Free Access granted");
+            toast.success(factor ? "Free Access Revoked" : "Free Access Granted");
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
+
+    const handleBlockUser = async (factor: boolean) => {
+        try {
+            let link = `${import.meta.env.VITE_BASE_URL}/admin/users/block/${id}`;
+            if (factor) {
+                link = `${import.meta.env.VITE_BASE_URL}/admin/users/unblock/${id}`
+            }
+            const { data }: { data: { message: string } } = await axios.put(link, {}, { withCredentials: true });
+            window.localStorage.removeItem("current_user");
+            toast.success(data.message);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
+
+    const handleDeactivate = async (factor: boolean) => {
+        try {
+            let link = `${import.meta.env.VITE_BASE_URL}/admin/users/deactivate/${id}`;
+            if (factor) {
+                link = `${import.meta.env.VITE_BASE_URL}/admin/users/reactivate/${id}`
+            }
+            const { data }: { data: { message: string } } = await axios.put(link, {}, { withCredentials: true });
+            window.localStorage.removeItem("current_user");
+            toast.success(data.message);
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
@@ -109,12 +225,27 @@ const UserDetails = () => {
         } else {
             gotUser();
         }
-        fetchTrsanctions();
+        fetchCardStats(`${import.meta.env.VITE_BASE_URL}/admin/cards/stats/${id}`);
     }, [id]);
+
+    useEffect(() => {
+        let link = `${import.meta.env.VITE_BASE_URL}/admin/cards/user/${id}?page=${transactionCount.currentPage}&type=${type}`;
+        fetchCards(link);
+    }, [id, type, cardsCount.currentPage]);
+
+    useEffect(() => {
+        let link = `${import.meta.env.VITE_BASE_URL}/admin/transac/user/${id}?page=${transactionCount.currentPage}`;
+        fetchTrsanctions(link);
+    }, [id, transactionCount.currentPage]);
+
+    useEffect(() => {
+        let link = `${import.meta.env.VITE_BASE_URL}/admin/sub/user/${id}?page=${subscriptionCount.currentPage}`;
+        fetchSubscriptions(link);
+    }, [id, subscriptionCount.currentPage]);
 
     return (
         <DefaultLayout>
-            <div className="flex flex-wrap items-center justify-evenly gap-3">
+            <div className="flex flex-wrap items-center justify-evenly gap-8">
                 <div className="flex flex-col gap-1">
                     {user?.image ? (
                         <img className="h-15 w-15 rounded-full mb-4" src={user.image} alt={user.name} />
@@ -123,30 +254,55 @@ const UserDetails = () => {
                             {user?.name.charAt(0).toUpperCase()}
                         </p>
                     )}
-                    <p>Id: {user?._id}</p>
-                    <p className="text-2xl">billing address and org details later</p>
-                    <p>Name - {user?.name}</p>
-                    <p>Email - {user?.email}</p>
-                    <p>Cards - {user?.cards.created} / {user?.cards.total}</p>
-                    <p>Role - {user?.role.toUpperCase()}</p>
-                    <p>Account Type - {user?.accountType.toUpperCase()}</p>
-                    <p>Free Plan - {user?.freePlan?.status.toString().toUpperCase()}</p>
-                    <p>Verified - {String(user?.isVerified).toUpperCase()}</p>
-                    <p>Blocked - {String(user?.isBlocked).toUpperCase()}</p>
-                    <p>Deactivated - {String(user?.isDeactivated).toUpperCase()}</p>
-                    <p>Login Attempts - {user?.loginAttempt.count}</p>
-                    <p>Last Attempt - {user?.loginAttempt.time ? String(new Date(user?.loginAttempt.time).toDateString()) : "Not Available"}</p>
-                    <p>Active Plan - {user?.activePlan?._id}</p>
-                    <p>Plan Status - {user?.activePlan?.status}</p>
-                    <p>{(user?.activePlan?.status === "cancelled" && (new Date(user?.activePlan?.currentEnd) > new Date(Date.now()))) ? "Valid Till" : "Next Billing"}
+                    <p className="text-white"><span className="font-semibold">Id:</span> {user?._id}</p>
+                    <p className="text-white"><span className="font-semibold">Name</span> - {user?.name}</p>
+                    <p className="text-white"><span className="font-semibold">Email</span> - {user?.email}</p>
+                    <p className="text-white"><span className="font-semibold">Phone</span> - {user?.phone}</p>
+                    <p className="text-white"><span className="font-semibold">Cards</span> - {user?.cards.created} / {user?.cards.total}</p>
+                    <p className="text-white"><span className="font-semibold">Role</span> - {user?.role.toUpperCase()}</p>
+
+                    <p className="text-white font-semibold text-xl">Billing Address</p>
+                    <p className="text-white pl-8"><span className="font-semibold">Street</span> - {user?.billingAddress?.street}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">City</span> - {user?.billingAddress?.city}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">State</span> - {user?.billingAddress?.state}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">Country</span> - {user?.billingAddress?.country}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">Postal Code</span> - {user?.billingAddress?.postalCode}</p>
+
+                    {user?.role === "org" && (
+                        <>
+                            <p className="text-white font-semibold text-xl">Organisation Details</p>
+                            <p className="text-white pl-8"><span className="font-semibold">Phone</span> - {user?.orgDetails?.phone}</p>
+                            <p className="text-white pl-8"><span className="font-semibold">Website</span> - {user?.orgDetails?.website}</p>
+                            <p className="text-white font-semibold pl-8 text-lg">Address</p>
+                            <p className="text-white pl-16"><span className="font-semibold">Street</span> - {user?.orgDetails?.address?.street}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">City</span> - {user?.orgDetails?.address?.city}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">State</span> - {user?.orgDetails?.address?.state}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">Country</span> - {user?.orgDetails?.address?.country}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">Postal Code</span> - {user?.orgDetails?.address?.postalCode}</p>
+                        </>
+                    )}
+
+                    <p className="text-white"><span className="font-semibold">Account Type</span> - {user?.accountType.toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Free Plan</span> - {user?.freePlan?.status.toString().toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Verified</span> - {String(user?.isVerified).toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Blocked</span> - {String(user?.isBlocked).toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Deactivated</span> - {String(user?.isDeactivated).toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Login Attempts</span> - {user?.loginAttempt.count}</p>
+                    <p className="text-white"><span className="font-semibold">Last Attempt</span> - {user?.loginAttempt.time ? String(new Date(user?.loginAttempt.time).toDateString()) : "Not Available"}</p>
+                    <p className="text-white"><span className="font-semibold">Active Plan</span> - {user?.freePlan.status ? "FREE PLAN ( " + user.freePlan.type.toUpperCase() + " )" : user?.activePlan?._id}</p>
+                    <p className="text-white"><span className="font-semibold">Plan Status</span> - {user?.activePlan?.status}</p>
+                    <p className="text-white">
+                        <span className="font-semibold">
+                            {(user?.activePlan?.status === "cancelled" && (new Date(user?.activePlan?.currentEnd) > new Date(Date.now()))) ? "Valid Till" : "Next Billing"}
+                        </span>
                         - {user?.activePlan?.currentEnd ? String(new Date(user?.activePlan?.currentEnd).toDateString()) : "Not Available"}</p>
-                    <p>Google Id - {user?.googleId === "GoogleID" ? "Not Set Yet" : user?.googleId}</p>
-                    <p>Account Created - {String(new Date(user?.createdAt!).toDateString())}</p>
-                    <p>Account Upadated - {String(new Date(user?.updatedAt!).toDateString())}</p>
+                    <p className="text-white"><span className="font-semibold">Google Id</span> - {user?.googleId === "GoogleID" ? "Not Set Yet" : user?.googleId}</p>
+                    <p className="text-white"><span className="font-semibold">Account Created</span> - {String(new Date(user?.createdAt!).toDateString())}</p>
+                    <p className="text-white"><span className="font-semibold">Account Upadated</span> - {String(new Date(user?.updatedAt!).toDateString())}</p>
                 </div>
                 <div className="flex flex-col gap-4">
 
-                    <CardsChart />
+                    <CardsChart stats={stats} total={user?.cards.total!} />
 
                     <div className="flex flex-row gap-2 bg-transparent dark:bg-form-input">
                         <select
@@ -182,11 +338,199 @@ const UserDetails = () => {
                         </button>
                     </div>
 
-                    <button onClick={handleFreeAccess} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                        Give Free Access
+                    <button onClick={() => handleFreeAccess(user?.freePlan.status && user.freePlan.type === "custom" ? true : false)} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                        {(user?.freePlan.status && user.freePlan.type === "custom") ? "Revoke Free Access" : "Grant Free Access"}
+                    </button>
+
+                    <button onClick={() => handleBlockUser(user?.isBlocked ? true : false)} className="flex w-full justify-center rounded bg-slate-500 p-3 font-medium text-gray hover:bg-opacity-90">
+                        {user?.isBlocked ? "Unblock User" : "Block User"}
+                    </button>
+
+                    <button onClick={() => handleDeactivate(user?.isDeactivated ? true : false)} className="flex w-full justify-center rounded bg-red-500 p-3 font-medium text-gray hover:bg-opacity-90">
+                        {user?.isDeactivated ? "Reactivate User" : "Deactivate User"}
                     </button>
                 </div>
             </div>
+
+            <div className="flex flex-col gap-10 my-10">
+                <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div className="flex justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
+                        <h4 className="text-xl font-semibold text-black dark:text-white capitalize">
+                            {type} Cards
+                        </h4>
+                        <div className="flex items-center justify-center">
+                            <select className="text-black px-3 py-2 rounded-md" value={type} onChange={(e) => setType(e.target.value as "botanical" | "individual" | "medical" | "creator" | "animal")}>
+                                <option value="botanical">Botanical</option>
+                                <option value="animal">Animal</option>
+                                <option value="medical">Medical</option>
+                                <option value="creator">Creator</option>
+                                <option value="individual">Individual</option>
+                            </select>
+                        </div>
+                        <div className="flex justify-center items-center space-x-4">
+                            <button
+                                onClick={() => setCardsCount({ ...cardsCount, currentPage: cardsCount.currentPage - 1 })}
+                                disabled={cardsCount.currentPage === 1}
+                                className="bg-slate-600 text-white py-2 px-4 rounded-md"
+                            >
+                                Prev
+                            </button>
+                            <p className="text-md font-semibold truncate">
+                                {cardsCount.currentPage} / {Math.ceil(cardsCount.totalCards / cardsCount.resultPerPage)}
+                            </p>
+                            <button
+                                onClick={() => setCardsCount({ ...cardsCount, currentPage: cardsCount.currentPage + 1 })}
+                                disabled={cardsCount.currentPage === Math.ceil(cardsCount.totalCards / cardsCount.resultPerPage)}
+                                className="bg-slate-600 text-white py-2 px-4 rounded-md"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+                        <div className="col-span-2 flex items-center">
+                            <p className="font-medium">Name</p>
+                        </div>
+                        <div className="col-span-2 hidden items-center sm:flex">
+                            <p className="font-medium">Card Type</p>
+                        </div>
+                        <div className="col-span-2 hidden items-center sm:flex">
+                            <p className="font-medium">Created</p>
+                        </div>
+                        <div className="col-span-2 flex items-center">
+                            <p className="font-medium">Creator</p>
+                        </div>
+                    </div>
+
+                    {cards?.map((card, key) => (
+                        <div
+                            className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
+                            key={key}
+                            onClick={() => navigate(`/cards/details?id=${card._id}&type=${type}`)}
+                        >
+                            <div className="col-span-2 flex items-center">
+                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                                    <p className="text-sm text-black dark:text-white">
+                                        {card.name}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="col-span-2 hidden items-center sm:flex">
+                                <p className="text-sm text-black dark:text-white">
+                                    {type.toUpperCase()}
+                                </p>
+                            </div>
+                            <div className="col-span-2 hidden items-center sm:flex">
+                                <p className="text-sm text-black dark:text-white">
+                                    {String(new Date(card.createdAt).toLocaleDateString())}
+                                </p>
+                            </div>
+                            <div className="col-span-2 flex items-center">
+                                <p
+                                    className="text-sm text-meta-3 cursor-pointer"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/card-details?id=${card.user._id}`);
+                                    }}
+                                >
+                                    {card.user?._id}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {(subscriptions?.length! > 0) ? (
+                <div className="flex flex-col gap-10 my-10">
+                    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                        <div className="flex justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
+                            <h4 className="text-xl font-semibold text-black dark:text-white">
+                                Subscriptions
+                            </h4>
+                            <div className="flex justify-center items-center space-x-4">
+                                <button
+                                    onClick={() => setSubscriptionCount({ ...subscriptionCount, currentPage: subscriptionCount.currentPage - 1 })}
+                                    disabled={subscriptionCount.currentPage === 1}
+                                    className="bg-slate-600 text-white py-2 px-4 rounded-md"
+                                >
+                                    Prev
+                                </button>
+                                <p className="text-md font-semibold truncate">
+                                    {subscriptionCount.currentPage} / {Math.ceil(subscriptionCount.filteredSubscriptions / subscriptionCount.resultPerPage)}
+                                </p>
+                                <button
+                                    onClick={() => setSubscriptionCount({ ...subscriptionCount, currentPage: subscriptionCount.currentPage + 1 })}
+                                    disabled={subscriptionCount.currentPage === Math.ceil(subscriptionCount.filteredSubscriptions / subscriptionCount.resultPerPage)}
+                                    className="bg-slate-600 text-white py-2 px-4 rounded-md"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+                            <div className="col-span-2 flex items-center">
+                                <p className="font-medium">Period</p>
+                            </div>
+                            <div className="col-span-2 flex items-center">
+                                <p className="font-medium">Billing Cycle</p>
+                            </div>
+                            <div className="col-span-1 hidden items-center sm:flex">
+                                <p className="font-medium">Next Billing</p>
+                            </div>
+                            <div className="col-span-1 hidden items-center sm:flex">
+                                <p className="font-medium">Method</p>
+                            </div>
+                            <div className="col-span-1 flex items-center">
+                                <p className="font-medium">Status</p>
+                            </div>
+                            <div className="col-span-1 hidden items-center sm:flex">
+                                <p className="font-medium">Type</p>
+                            </div>
+                        </div>
+
+                        {subscriptions?.map((sub, key) => (
+                            <div
+                                className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
+                                key={key}
+                                onClick={() => navigate(`/subscriptions/details?id=${sub._id}`)}
+                            >
+                                <div className="col-span-2 flex items-center">
+                                    <p className="text-sm text-black dark:text-white">
+                                        {String(new Date(sub.start).toLocaleDateString())} - {String(new Date(sub.end).toLocaleDateString())} 
+                                        {sub._id === user?.activePlan._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null}
+                                    </p>
+                                </div>
+                                <div className="col-span-2 flex items-center">
+                                    <p className="text-sm text-black dark:text-white">{String(new Date(sub.currentStart).toLocaleDateString())} - {String(new Date(sub.currentEnd).toLocaleDateString())}</p>
+                                </div>
+                                <div className="col-span-1 hidden items-center sm:flex">
+                                    <p className="text-sm text-black dark:text-white">
+                                        {String(new Date(sub.nextBilling).toLocaleDateString())}
+                                    </p>
+                                </div>
+                                <div className="col-span-1 hidden items-center sm:flex">
+                                    <p className="text-sm text-black dark:text-white">
+                                        {sub?.paymentMethod?.methodType?.toUpperCase()}
+                                    </p>
+                                </div>
+                                <div className="col-span-1 flex items-center">
+                                    <p className="text-sm text-black dark:text-white">{sub.status.toUpperCase()}</p>
+                                </div>
+                                <div className="col-span-1 hidden items-center sm:flex">
+                                    <p className="text-sm text-meta-3">
+                                        {sub.subscriptionType.toUpperCase()}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <p className="text-2xl font-semibold my-10 text-center">No Subscriptions yet!</p>
+            )}
 
             {(transactions?.length! > 0) ? (
                 <div className="flex flex-col gap-10 my-10">
@@ -196,59 +540,82 @@ const UserDetails = () => {
                                 Transactions
                             </h4>
                             <div className="flex justify-center items-center space-x-4">
-                                <button onClick={() => { }} className="bg-slate-600 text-white py-2 px-4 rounded-md">Prev</button>
-                                <p className="text-md font-semibold">1 / 10</p>
-                                <button onClick={() => { }} className="bg-slate-600 text-white py-2 px-4 rounded-md">Next</button>
+                                <button
+                                    onClick={() => setTransactionCount({ ...transactionCount, currentPage: transactionCount.currentPage - 1 })}
+                                    disabled={transactionCount.currentPage === 1}
+                                    className="bg-slate-600 text-white py-2 px-4 rounded-md"
+                                >
+                                    Prev
+                                </button>
+                                <p className="text-md font-semibold truncate">
+                                    {transactionCount.currentPage} / {Math.ceil(transactionCount.filteredTransactions / transactionCount.resultPerPage)}
+                                </p>
+                                <button
+                                    onClick={() => setTransactionCount({ ...transactionCount, currentPage: transactionCount.currentPage + 1 })}
+                                    disabled={transactionCount.currentPage === Math.ceil(transactionCount.filteredTransactions / transactionCount.resultPerPage)}
+                                    className="bg-slate-600 text-white py-2 px-4 rounded-md"
+                                >
+                                    Next
+                                </button>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-                            <div className="col-span-2 hidden items-center sm:flex">
-                                <p className="font-medium">Payment Id</p>
-                            </div>
-                            <div className="col-span-2 hidden items-center sm:flex">
-                                <p className="font-medium">Amount</p>
-                            </div>
                             <div className="col-span-2 flex items-center">
                                 <p className="font-medium">Period</p>
                             </div>
-                            <div className="col-span-2 flex items-center">
+                            <div className="col-span-1 hidden items-center sm:flex">
+                                <p className="font-medium">Date</p>
+                            </div>
+                            <div className="col-span-1 hidden items-center sm:flex">
+                                <p className="font-medium">For</p>
+                            </div>
+                            <div className="col-span-1 flex items-center">
+                                <p className="font-medium">Amount</p>
+                            </div>
+                            <div className="col-span-1 flex items-center">
                                 <p className="font-medium">Status</p>
+                            </div>
+                            <div className="col-span-1 flex items-center">
+                                <p className="font-medium">Method</p>
+                            </div>
+                            <div className="col-span-1 hidden items-center sm:flex">
+                                <p className="font-medium">Type</p>
                             </div>
                         </div>
 
-                        {transactions?.map((transaction, key) => (
+                        {transactions?.map((transac, key) => (
                             <div
                                 className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
                                 key={key}
+                                onClick={() => navigate(`/transactions/details?id=${transac._id}`)}
                             >
                                 <div className="col-span-2 flex items-center">
-                                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                                        <p className="text-sm text-black dark:text-white">
-                                            {transaction?.razorpayPaymentId}
-                                        </p>
-                                    </div>
+                                    <p className="text-sm text-black dark:text-white">{String(new Date(transac.start).toLocaleDateString())} - {String(new Date(transac.end).toLocaleDateString())}</p>
                                 </div>
-                                <div className="col-span-2 flex items-center">
-                                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                                        <p className="text-sm text-black dark:text-white">
-                                            {transaction?.amount}
-                                        </p>
-                                    </div>
+                                <div className="col-span-1 hidden items-center sm:flex">
+                                    <p className="text-sm text-black dark:text-white">
+                                        {String(new Date(transac.createdAt).toLocaleDateString())}
+                                    </p>
                                 </div>
-                                <div className="col-span-2 flex items-center">
-                                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                                        <p className="text-sm text-black dark:text-white">
-                                            {String(new Date(transaction.end).toDateString())} - {String(new Date(transaction.start).toDateString())}
-                                        </p>
-                                    </div>
+                                <div className="col-span-1 hidden items-center sm:flex">
+                                    <p className="text-sm text-black dark:text-white">
+                                        {transac.transactionFor.toUpperCase()}
+                                    </p>
                                 </div>
-                                <div className="col-span-2 flex items-center">
-                                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                                        <p className="text-sm text-black dark:text-white">
-                                            {transaction.status}
-                                        </p>
-                                    </div>
+                                <div className="col-span-1 flex items-center">
+                                    <p className="text-sm text-black dark:text-white">{transac.currency === "INR" ? "₹" : "$"} {transac.amount}</p>
+                                </div>
+                                <div className="col-span-1 flex items-center">
+                                    <p className="text-sm text-black dark:text-white">{transac.status.toUpperCase()}</p>
+                                </div>
+                                <div className="col-span-1 flex items-center">
+                                    <p className="text-sm text-black dark:text-white">{transac?.paymentMethod?.methodType?.toUpperCase()}</p>
+                                </div>
+                                <div className="col-span-1 hidden items-center sm:flex">
+                                    <p className="text-sm text-meta-3">
+                                        {transac.transactionType.toUpperCase()}
+                                    </p>
                                 </div>
                             </div>
                         ))}

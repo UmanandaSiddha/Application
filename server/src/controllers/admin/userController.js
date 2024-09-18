@@ -249,6 +249,52 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+export const blockUser = catchAsyncErrors(async (req, res, next) => {
+    if (req.user.id === req.params.id) {
+        return next(new ErrorHandler(`You cannot block your account`, 400));
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
+    }
+
+    if (user.isBlocked) {
+        return next(new ErrorHandler(`User with Id: ${req.params.id} is already blocked`, 400));
+    }
+
+    user.isBlocked = true;
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+        message: `User Blocked successfully`,
+    });
+});
+
+export const unBlockUser = catchAsyncErrors(async (req, res, next) => {
+    if (req.user.id === req.params.id) {
+        return next(new ErrorHandler(`You cannot unblock your account`, 400));
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
+    }
+
+    if (!user.isBlocked) {
+        return next(new ErrorHandler(`User with Id: ${req.params.id} is already unblocked`, 400));
+    }
+
+    user.isBlocked = false;
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+        message: `User UnBlocked successfully`,
+    });
+});
+
 export const reActivateUser = catchAsyncErrors(async (req, res, next) => {
     if (req.user.id === req.params.id) {
         return next(new ErrorHandler(`You cannot reactivate your account`, 400));
@@ -268,6 +314,6 @@ export const reActivateUser = catchAsyncErrors(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: `User reActivated successfully`,
+        message: `User Reactivated successfully`,
     });
 });

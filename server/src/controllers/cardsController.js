@@ -59,6 +59,14 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const user = await User.findById(req.user.id);
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+    if (!vCard.user.equals(user._id)) {
+        return next(new ErrorHandler("Unauthorized to update this vCard", 401));
+    }
+
+
     if (user.freePlan.type === freeEnum.PLAN && user.cards.total <= user.cards.created) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
@@ -90,6 +98,12 @@ export const deleteCard = catchAsyncErrors(async (req, res, next) => {
     }
 
     const user = await User.findById(req.user.id);
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+    if (!vCard.user.equals(user._id)) {
+        return next(new ErrorHandler("Unauthorized to delete this vCard", 401));
+    }
     
     await Model.findByIdAndDelete(req.params.id);
     user.cards.created--;
@@ -159,6 +173,14 @@ export const getGeneralCard = catchAsyncErrors(async (req, res, next) => {
     const vCard = await Model.findById(req.params.id);
     if (!vCard) {
         return next(new ErrorHandler("VCard Not Found", 400));
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+    if (!vCard.user.equals(user._id)) {
+        return next(new ErrorHandler("Unauthorized to fetch this vCard", 401));
     }
 
     res.status(200).json({

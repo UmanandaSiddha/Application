@@ -323,7 +323,7 @@ const Profile = () => {
                     <div className="flex w-full min-h-[80vh] px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                         <div className="flex w-full flex-col justify-between mt-6">
                             <nav className="flex flex-col justify-center gap-4">
-                                <h1 className="mx-4 text-2xl font-bold capitalize">Welcome, {user?.name}</h1>
+                                <h1 className="mx-4 text-2xl font-bold capitalize">Welcome, <span className="text-xl font-semibold">{user?.name}</span></h1>
 
                                 <hr className="my-2 border-gray-400 " />
 

@@ -31,8 +31,8 @@ const BillingPage = () => {
 
     const fetchTransactions = async () => {
         try {
-            const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/transactions/all`, { withCredentials: true });
-            setTransactions(data.transactions);
+            const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/transactions/all?page=1`, { withCredentials: true });
+            setTransactions(data.filteredTransaction);
             const chachedTransaction = {
                 created: Date.now() + 30 * 1000,
                 data: data.transactions,
@@ -48,7 +48,7 @@ const BillingPage = () => {
         const transactionData = window.sessionStorage.getItem("transactions");
         if (subData) {
             if (JSON.parse(subData)?.created < Date.now()) {
-                window.localStorage.removeItem("latest_sub");
+                window.sessionStorage.removeItem("latest_sub");
                 fetchSubscription();
             } else {
                 setSubscription(JSON.parse(subData).data);
@@ -58,7 +58,7 @@ const BillingPage = () => {
         }
         if (transactionData) {
             if (JSON.parse(transactionData)?.created < Date.now()) {
-                window.localStorage.removeItem("transactions");
+                window.sessionStorage.removeItem("transactions");
                 fetchTransactions();
             } else {
                 setTransactions(JSON.parse(transactionData).data);
@@ -71,6 +71,7 @@ const BillingPage = () => {
     const handleSubscription = async (id: string) => {
         try {
             await axios.get(`${import.meta.env.VITE_BASE_URL}/sub/cancel/${id}`, { withCredentials: true });
+            window.sessionStorage.removeItem("latest_sub");
             toast.success("Subscription Cencelled Successfully");
         } catch (error: any) {
             console.log(error);

@@ -8,14 +8,32 @@ export const getInfoLogs = catchAsyncErrors( async (req, res, next) => {
         return next(new ErrorHandler("Logs File is empty", 404));
     }
 
-    // const logLines = data.split('\n');
-    // logLines.forEach((line, index) => {
-    //     console.log(`Log Line ${index + 1}: ${line}`);
-    // });
+    let logs = [];
+
+    const logLines = data.split('\n');
+    logLines.forEach((line, index) => {
+        if (line.trim() !== '') {
+            const logParts = line.match(/(.*?)\s\[(.*?)\]\s(.*?):\s(.*)/);
+            
+            if (logParts && logParts.length === 5) {
+                const [_, timestamp, tag, level, description] = logParts;
+
+                logs.push({
+                    id: index + 1,
+                    data: {
+                        timestamp,
+                        tag,
+                        level,
+                        description
+                    }
+                });
+            }
+        }
+    });
 
     res.status(200).json({
         status:'success',
-        data,
+        data: logs,
     });
 });
 
@@ -25,9 +43,32 @@ export const getErrorLogs = catchAsyncErrors( async (req, res, next) => {
         return next(new ErrorHandler("Error File is empty", 404));
     }
 
+    let logs = [];
+
+    const logLines = data.split('\n');
+    logLines.forEach((line, index) => {
+        if (line.trim() !== '') {
+            const logParts = line.match(/(.*?)\s\[(.*?)\]\s(.*?):\s(.*)/);
+            
+            if (logParts && logParts.length === 5) {
+                const [_, timestamp, tag, level, description] = logParts;
+
+                logs.push({
+                    id: index + 1,
+                    data: {
+                        timestamp,
+                        tag,
+                        level,
+                        description
+                    }
+                });
+            }
+        }
+    });
+
     res.status(200).json({
         status:'success',
-        data,
+        data: logs,
     });
 });
 

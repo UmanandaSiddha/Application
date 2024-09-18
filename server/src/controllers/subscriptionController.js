@@ -9,6 +9,7 @@ import User, { freeEnum, roleEnum } from "../models/userModel.js";
 import logger from "../config/logger.js";
 import { handleSubscription, handleTransaction } from "../common/payment.js";
 import { addSubscriptionToQueue } from "../utils/queue/subscriptionQueue.js";
+import ApiFeatures from "../utils/services/apiFeatures.js";
 
 export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id);
@@ -221,6 +222,7 @@ export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
     if (!cancelSubscription) {
         return next(new ErrorHandler("Failed to cancel subscription", 403));
     }
+    console.log(cancelSubscription)
     if (subscription.currentEnd <= Date.now()) {
         await User.findByIdAndUpdate(req.user.id,
             { "cards.total": 0 },
@@ -246,11 +248,23 @@ export const getLatestSubscription = catchAsyncErrors(async (req, res, next) => 
 });
 
 export const getUserTransactions = catchAsyncErrors(async (req, res, next) => {
-    const transactions = await Transaction.find({ user: req.user.id });
 
-    res.status(200).json({
+    const resultPerPage = 5;
+    const count = await Transaction.countDocuments();
+
+    const apiFeatures = new ApiFeatures(Transaction.find({ user: req.user.id }).sort({ $natural: -1 }), req.query).filter();
+    let filteredTransaction = await apiFeatures.query;
+    let filteredTransactionCount = filteredTransaction.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredTransaction = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        transactions,
+        count,
+        resultPerPage,
+        filteredTransaction,
+        filteredTransactionCount
     });
 });
 

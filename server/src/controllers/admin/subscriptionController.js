@@ -42,7 +42,7 @@ export const getUserSubscriptions = catchAsyncErrors(async (req, res, next) => {
         success: true,
         count,
         resultPerPage,
-        filteredSubscriptions,
+        subscriptions: filteredSubscriptions,
         filteredSubscriptionsCount
     });
 });
@@ -62,7 +62,7 @@ export const getAllUserSubscriptions = catchAsyncErrors(async (req, res, next) =
         success: true,
         count,
         resultPerPage,
-        filteredSubscriptions,
+        subscriptions: filteredSubscriptions,
         filteredSubscriptionsCount
     });
 });
@@ -156,7 +156,7 @@ export const getDonatorSubscriptions = catchAsyncErrors(async (req, res, next) =
         success: true,
         count,
         resultPerPage,
-        filteredSubscriptions,
+        subscriptions: filteredSubscriptions,
         filteredSubscriptionsCount
     });
 });

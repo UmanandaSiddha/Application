@@ -34,7 +34,7 @@ const CreatorComponent = ({ card }: PropsType) => {
                 <div className='flex flex-col justify-center w-[80%]'>
                     <div className="flex flex-col gap-y-2 py-2">
                         <p className="text-lg font-semibold">Name:</p>
-                        <p className="bg-white border-2 border-slate-200 w-full rounded-lg pl-3 py-1 text-lg shadow-lg">{card?.name}</p>
+                        <p className="bg-white border-2 border-slate-200 w-full rounded-lg px-3 py-1 text-lg shadow-lg">{card?.name}</p>
                     </div>
 
                     <div className='mt-4'>

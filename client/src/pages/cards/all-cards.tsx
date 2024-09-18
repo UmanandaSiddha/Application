@@ -50,7 +50,7 @@ export const createQRCode = (type: string, cardId: string) => {
     return new QRCodeStyling({
         width: 300,
         height: 300,
-        margin: 0,
+        margin: 5,
         data: `${window.location.protocol}//${window.location.host}/display?id=${cardId}&type=${type}`,
         qrOptions: {
             typeNumber: 0,
@@ -101,7 +101,7 @@ const GenerateQRCode = ({ type, card, way }: {
     if (way && way === "qr-group") {
         return (
             <div className="h-full w-full">
-                <div className="bg-white p-2 rounded-xl">
+                <div className="bg-white rounded-xl">
                     {qrCodeDataUrl ? (
                         <img src={qrCodeDataUrl} alt={card._id} className="rounded-lg object-cover" />
                     ) : (
@@ -159,7 +159,7 @@ const AllCards = () => {
         const cardData = localStorage.getItem("all_card");
         const cardType = localStorage.getItem("card_type");
         const currentCardPage = localStorage.getItem("current_page");
-        if ( cardData && cardType === type && Number(currentCardPage ? JSON.parse(currentCardPage) : 1) === currentPage) {
+        if (cardData && cardType === type && Number(currentCardPage ? JSON.parse(currentCardPage) : 1) === currentPage) {
             setCards(JSON.parse(cardData));
             setCountData(JSON.parse(cardData).length);
         } else {
@@ -177,7 +177,7 @@ const AllCards = () => {
             }
         }
     };
-    
+
     const handlePrev = () => {
         if (cards) {
             if (currentIndex > 0) {
@@ -204,16 +204,21 @@ const AllCards = () => {
         if (cards?.[currentIndex]._id && type) {
             const qrCode = createQRCode(type, cards?.[currentIndex]._id);
 
-            qrCode.getRawData("png").then((data) => {
-                if (data) {
-                    const element = document.createElement("a");
-                    element.href = URL.createObjectURL(new Blob([data], { type: "image/png" }));
-                    element.download = `${cards?.[currentIndex]._id}.png`;
-                    document.body.appendChild(element);
-                    element.click();
-                    document.body.removeChild(element);
-                }
+            qrCode.download({
+                name: cards?.[currentIndex]._id,
+                extension: "png"
             });
+
+            // qrCode.getRawData("png").then((data) => {
+            //     if (data) {
+            //         const element = document.createElement("a");
+            //         element.href = URL.createObjectURL(new Blob([data], { type: "image/png" }));
+            //         element.download = `${cards?.[currentIndex]._id}.png`;
+            //         document.body.appendChild(element);
+            //         element.click();
+            //         document.body.removeChild(element);
+            //     }
+            // });
         }
     }
 
@@ -328,11 +333,11 @@ const AllCards = () => {
                 <div className="basis-1/3 lg:basis-1/4 hidden md:block">
                     <div className='flex flex-col justify-center items-center mt-6'>
                         <div className='flex justify-center items-center gap-6'>
-                            <button onClick={() => setCurrentPage(currentPage => currentPage-1)} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
+                            <button onClick={() => setCurrentPage(currentPage => currentPage - 1)} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
                                 <HiMiniArrowSmallLeft size={25} />
                             </button>
                             <p className="text-lg font-semibold">{currentPage} / {Math.ceil(countData / 5)}</p>
-                            <button onClick={() => setCurrentPage(currentPage => currentPage+1)} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
+                            <button onClick={() => setCurrentPage(currentPage => currentPage + 1)} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
                                 <HiMiniArrowSmallRight size={25} />
                             </button>
                         </div>

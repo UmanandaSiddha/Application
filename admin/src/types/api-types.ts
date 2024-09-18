@@ -1,18 +1,67 @@
-import { Animal, Creator, CustomReuest, Medical, Personal, Plan, Subscription, Transaction, Tree, User } from "./types";
+import { 
+    Animal, 
+    Contact, 
+    Creator, 
+    CustomReuest, 
+    Donator, 
+    Medical, 
+    Personal, 
+    Plan, 
+    Subscription, 
+    Transaction, 
+    Tree, 
+    User 
+} from "./types";
 
 export type UserResponse = {
     success: boolean;
     user: User;
 };
 
+export type AllUsersResponse = {
+    success: boolean;
+    count: number;
+    resultPerPage: number;
+    filteredUsersCount: number;
+    users: User[];
+}
+
+export type DonatorResponse = {
+    success: boolean;
+    donator: Donator;
+}
+
+export type AllDonatorsResponse = {
+    success: boolean;
+    count: number;
+    resultPerPage: number;
+    filteredDonatorsCount: number;
+    donators: Donator[];
+}
+
 export type PlanResponse = {
     success: boolean;
     plan: Plan;
 }
 
+export type AllPlansResponse = {
+    success: boolean;
+    count: number;
+    resultPerPage: number;
+    filteredPlanCount: number;
+    plans: Plan[];
+}
+
+export type TransactionResponse = {
+    success: boolean;
+    transaction: Transaction;
+}
+
 export type AllTransactionsResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
+    filteredTransactionsCount: number;
     transactions: Transaction[];
 }
 
@@ -21,12 +70,12 @@ export type SubscriptionResponse = {
     subscription: Subscription;
 }
 
-export type AllUsersResponse = {
+export type AllSubscriptionResponse = {
     success: boolean;
     count: number;
     resultPerPage: number;
-    filteredUsersCount: number;
-    users: User[];
+    filteredSubscriptionsCount: number;
+    subscriptions: Subscription[];
 }
 
 export type CustomRequestResponse = {
@@ -37,13 +86,22 @@ export type CustomRequestResponse = {
 export type AllCustomReuestResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
+    filteredRequestsCount: number;
     requests: CustomReuest[];
 }
 
-export type AllPlansResponse = {
+export type ContactResponse = {
+    success: boolean;
+    contact: Contact;
+}
+
+export type AllContactResponse = {
     success: boolean;
     count: number;
-    plans: Plan[];
+    resultPerPage: number;
+    filteredContactsCount: number;
+    contacts: Contact[];
 }
 
 export type TreeResponse = {

@@ -176,7 +176,7 @@ const PlanPage = () => {
                                 </div>
                             ))}
 
-                            {role.includes("org") && (
+                            {user?.role.includes("org") && (
                                 <div className="max-w-sm mx-auto border rounded-lg md:mx-4 dark:border-gray-700">
                                     <div className="p-6">
                                         <h1 className="text-xl font-medium text-gray-700 capitalize lg:text-2xl dark:text-white">Custom Plan</h1>

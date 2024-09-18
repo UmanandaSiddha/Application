@@ -18,7 +18,7 @@ export const getAllContacts = catchAsyncErrors(async (req, res, next) => {
         success: true,
         count,
         resultPerPage,
-        filteredContacts,
+        contacts: filteredContacts,
         filteredContactsCount
     });
 });
