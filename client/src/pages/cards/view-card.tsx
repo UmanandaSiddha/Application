@@ -65,7 +65,7 @@ const ViewCard = () => {
 
             qrCode.download({
                 name: card?._id,
-                extension: "png"
+                extension: "svg"
             });
 
             // qrCode.getRawData("png").then((data) => {

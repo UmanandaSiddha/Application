@@ -100,7 +100,7 @@ const PlanPage = () => {
                             <span className="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
                         </div>
 
-                        {(!user || user?.role === "admin") && (
+                        {(user && user?.role === "admin") && (
                             <div className="flex justify-center items-center h-full w-full mt-3">
                                 <div className="inline-flex justify-center items-center border-2 border-blue-500 shadow-x rounded-lg">
                                     <button

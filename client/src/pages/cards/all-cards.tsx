@@ -206,7 +206,7 @@ const AllCards = () => {
 
             qrCode.download({
                 name: cards?.[currentIndex]._id,
-                extension: "png"
+                extension: "svg"
             });
         }
     }

@@ -142,7 +142,7 @@ const CardDetails = () => {
 
             qrCode.download({
                 name: card._id,
-                extension: "png"
+                extension: "svg"
             });
         }
     }
