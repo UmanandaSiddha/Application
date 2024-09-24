@@ -32,7 +32,7 @@ const SubscriptionDetail = lazy(() => import("./pages/Subscriptions/Subscription
 const Transactions = lazy(() => import("./pages/Transactions/Transactions"));
 const Contacts = lazy(() => import("./pages/Contacts/Contacts"));
 const ContactDetails = lazy(() => import("./pages/Contacts/ContactDetails"));
-const Logs = lazy(() => import("./pages/Logs/Logs"));
+const Logs = lazy(() => import("./pages/Logz/Logs"));
 const DonatorDetails = lazy(() => import("./pages/Donators/DonatorDetails"));
 const TransactionDetails = lazy(() => import("./pages/Transactions/TransactionDetails"));
 
