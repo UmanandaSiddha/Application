@@ -208,17 +208,6 @@ const AllCards = () => {
                 name: cards?.[currentIndex]._id,
                 extension: "png"
             });
-
-            // qrCode.getRawData("png").then((data) => {
-            //     if (data) {
-            //         const element = document.createElement("a");
-            //         element.href = URL.createObjectURL(new Blob([data], { type: "image/png" }));
-            //         element.download = `${cards?.[currentIndex]._id}.png`;
-            //         document.body.appendChild(element);
-            //         element.click();
-            //         document.body.removeChild(element);
-            //     }
-            // });
         }
     }
 

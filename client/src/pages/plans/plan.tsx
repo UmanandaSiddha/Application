@@ -1,11 +1,12 @@
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plan } from "@/types/plan_types";
-import { PlanResponse } from "@/types/api-types";
+import { PlanResponse, UserResponse } from "@/types/api-types";
 import { toast } from "react-toastify";
+import { togglePaid, userExist } from "@/redux/reducer/userReducer";
 
 export const periodEnum = {
     DAILY: "daily",
@@ -15,10 +16,12 @@ export const periodEnum = {
 };
 
 const PlanPage = () => {
+
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [plans, setPlans] = useState<Plan[] | null>();
-    const [role, setRole] = useState<string[]>(["user", "free"]);
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
+    const [role, setRole] = useState<string[]>((user && user.role === "org") ? ["org"] : ["user", "free"]);
 
     const periodToDays = (period: string) => {
         switch (period) {
@@ -72,6 +75,17 @@ const PlanPage = () => {
             fetchPlans();
         }
     }, []);
+
+    const handleFreePlan = async (id: string) => {
+        try {
+            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new/free/${id}`, { data: "null" }, { withCredentials: true });
+            dispatch(userExist(data.user));
+            dispatch(togglePaid(true));
+            toast.success("Free plan activated successfully");
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+    }
 
     return (
         <div className="bg-white dark:bg-gray-900">
@@ -132,7 +146,11 @@ const PlanPage = () => {
                                                             toast.warning("You already have a plan");
                                                             return;
                                                         }
-                                                        navigate(`/checkout?id=${plan?._id}`)
+                                                        if (plan.planType === "free") {
+                                                            handleFreePlan(plan._id)
+                                                        } else {
+                                                            navigate(`/checkout?id=${plan?._id}`)
+                                                        }
                                                     }}
                                                     className="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:bg-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-80"
                                                 >
@@ -176,7 +194,7 @@ const PlanPage = () => {
                                 </div>
                             ))}
 
-                            {user?.role.includes("org") && (
+                            {["org", "admin"].includes(user?.role!) && role.includes("org") && (
                                 <div className="max-w-sm mx-auto border rounded-lg md:mx-4 dark:border-gray-700">
                                     <div className="p-6">
                                         <h1 className="text-xl font-medium text-gray-700 capitalize lg:text-2xl dark:text-white">Custom Plan</h1>
@@ -192,8 +210,14 @@ const PlanPage = () => {
                                         </p>
 
                                         <button
-                                            disabled={isPaid}
-                                            onClick={() => navigate(`/request-custom`)}
+                                            onClick={() => {
+                                                if (isPaid) {
+                                                    toast.warning("You already have a plan");
+                                                    return;
+                                                } else {
+                                                    navigate(`/request-custom`);
+                                                }
+                                            }}
                                             className="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-600 rounded-md hover:bg-slate-500 focus:outline-none focus:bg-slate-500 focus:ring focus:ring-slate-300 focus:ring-opacity-80"
                                         >
                                             Request Custom Plan

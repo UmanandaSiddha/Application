@@ -12,7 +12,7 @@ const animalSchema = new mongoose.Schema(
         color: String,
         location: String,
         owner: String,
-        phone: Number,
+        phone: String,
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",

@@ -26,6 +26,10 @@ export const isUserVerified = catchAsyncErrors( async (req, res, next) => {
 export const isUserPaid = catchAsyncErrors( async (req, res, next) => {
     if (req.user.role !== "admin") {
 
+        if (req.user.role !== "org" && !req.user?.freePlan?.status && !req.user?.activePlan && req.user?.cards?.total <= 10 && (req.user?.cards?.total > req.user?.cards?.created)) {
+            return next();
+        }    
+
         const { type, end, status } = req.user?.freePlan;
         if (status) {
             if (type === freeEnum.CUSTOM || end > Date.now()) {

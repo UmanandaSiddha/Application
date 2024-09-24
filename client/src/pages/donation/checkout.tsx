@@ -322,9 +322,6 @@ const DonationCheckout = () => {
             razor.on("payment.failed", function (response: any) {
                 setOpen(false);
                 setLoadingStates([]);
-                console.log(response.error.description);
-                console.log(response.error.metadata.order_id);
-                console.log(response.error.metadata.payment_id);
                 toast.info(response.error.description);
             });
             razor.open();

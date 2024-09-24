@@ -2,14 +2,14 @@ import ErrorHandler from "../../utils/errorHandler.js";
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
 import { CLIENT_URL, instance } from "../../server.js";
 import Plan, { planEnum } from "../../models/payment/planModel.js";
-import CustomRequest from "../../models/messages/customRequestModel.js";
+import CustomRequest, { acceptedEnum } from "../../models/messages/customRequestModel.js";
 import User from "../../models/userModel.js";
 import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {
     const { period, interval, userId, amount, cards } = req.body;
-    if (!period || !interval || amount || cards || userId) {
+    if (!period || !interval || !amount || !cards || !userId) {
         return next(new ErrorHandler("All fields are required", 400));
     }
 
@@ -52,21 +52,21 @@ export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {
         await addEmailToQueue({
             email: user.email,
             subject: `Custom Plan Request Accepted`,
-            message: `http://${CLIENT_URL}/custom-plan?id=${plan._id}&user=${user._id}`,
+            message: `${CLIENT_URL}/view-custom?id=${plan._id}&user=${user._id}`,
         });
     } catch (error) {
         console.log(error.message);
     }
 
-    await CustomRequest.findByIdAndUpdate(
+    const newRequest = await CustomRequest.findByIdAndUpdate(
         req.params.id, 
-        { attended: true, "status.accepted": true }, 
+        { attended: true, accepted: acceptedEnum.ACCEPTED, reason: plan._id }, 
         { new: true, runValidators: true, useFindAndModify: false }
     );
 
     res.status(200).json({
         success: true,
-        plan
+        request: newRequest,
     });
 });
 
@@ -91,7 +91,7 @@ export const getAllCustomRequests = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getParticularRequest = catchAsyncErrors(async (req, res, next) => {
-    const request = await CustomRequest.findById(req.params.id);
+    const request = await CustomRequest.findById(req.params.id).populate("user", "name email");
     if (!request) {
         return next(new ErrorHandler("Request not found", 404));
     }
@@ -102,6 +102,20 @@ export const getParticularRequest = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+export const deleteRequest = catchAsyncErrors(async (req, res, next) => {
+    const request = await CustomRequest.findById(req.params.id);
+    if (!request) {
+        return next(new ErrorHandler("Request not found", 404));
+    }
+
+    await CustomRequest.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+        success: true,
+        message: "Request deleted successfully"
+    });
+});
+
 export const attendCustomRequests = catchAsyncErrors(async (req, res, next) => {
     const request = await CustomRequest.findById(req.params.id);
     if (!request) {
@@ -109,25 +123,30 @@ export const attendCustomRequests = catchAsyncErrors(async (req, res, next) => {
     }
 
     const { status, reason } = req.body;
-    if (!status ||!reason) {
+    if (!status || !reason) {
         return next(new ErrorHandler("Status and reason are required", 400));
     }
 
-    await CustomRequest.findByIdAndUpdate(
+    if (!Object.values(acceptedEnum).includes(status)) {
+        return next(new ErrorHandler("Invalid Status", 400));
+    }
+
+    const newRequest = await CustomRequest.findByIdAndUpdate(
         req.params.id, 
-        { attended: true, "status.accepted": Boolean(status), "status.reason": reason }, 
+        { attended: true, accepted: status, reason }, 
         { new: true, runValidators: true, useFindAndModify: false }
-    );
+    ).populate("user", "name email");
 
     res.status(200).json({
         success: true,
+        request: newRequest,
         message: `Request successfully attended`
     });
 });
 
 export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
-    const { cards, amount, period, interval, userId, reason } = req.body;
-    if (!cards || !amount || !period || !interval || !userId || !reason) {
+    const { userId, reason } = req.body;
+    if (!userId || !reason) {
         return next(new ErrorHandler("All fields are required", 404));
     }
 
@@ -141,31 +160,29 @@ export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`Custom Request does not exist with Id: ${req.params.id}`, 404));
     }
 
-    const data = {
-        cards,
-        amount,
-        period,
-        interval
+    if (customRequest.accepted === acceptedEnum.ACCEPTED) {
+        return next(new ErrorHandler("Custom Request already accepted cannot be rejected", 400));
     }
-    
+
     try {
         await addEmailToQueue({
             email: user.email,
             subject: `Custom Plan Request Rejected`,
-            message: `Requested Custom Plan is rejected for ${JSON.stringify(data)}. Reason - ${reason}`,
+            message: `Requested Custom Plan is rejected for. Reason - ${reason}`,
         });
     } catch (error) {
         console.log(error.message);
     }
 
-    await CustomRequest.findByIdAndUpdate(
+    const newRequest = await CustomRequest.findByIdAndUpdate(
         req.params.id, 
-        { attended: true, "status.accepted": false, "status.reason": reason }, 
+        { attended: true, accepted: acceptedEnum.REJECTED, reason }, 
         { new: true, runValidators: true, useFindAndModify: false }
-    );
+    ).populate("user", "name email");
 
     res.status(200).json({
         success: true,
-        message: `Email Sent for Rejection`
+        request: newRequest,
+        message: "Request rejected successfully"
     });
 });

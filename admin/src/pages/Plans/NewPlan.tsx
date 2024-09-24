@@ -1,25 +1,82 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DefaultLayout from "../../layout/DefaultLayout";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { PlanResponse } from "../../types/api-types";
+import Loader from "../../components/Loader";
 
 const NewPlan = () => {
 
     const [search] = useSearchParams();
     const navigate = useNavigate();
+    const id = search.get("id");
     const type = search.get('type');
     const [planData, setPlanData] = useState({
         name: "",
-        amount: null,
-        cards: null,
+        amount: 0,
+        cards: 0,
         description: "",
         planType: "",
         period: "",
-        interval: null
+        interval: 0
     });
     const [planLoading, setPlanLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
+
+    const fetchPlan = async () => {
+        setLoading(true);
+
+        const cachedPlanById = window.sessionStorage.getItem('plan_byId');
+        if (cachedPlanById) {
+            const { data: cachedPlan, expires, id: cachedId } = JSON.parse(cachedPlanById);
+
+            if (Date.now() < expires && cachedId === id) {
+                setPlanData({
+                    name: cachedPlan.name,
+                    description: cachedPlan.description,
+                    planType: cachedPlan.planType,
+                    cards: cachedPlan.cards,
+                    amount: cachedPlan.amount,
+                    period: cachedPlan.period,
+                    interval: cachedPlan.interval
+                });
+                setLoading(false);
+                return;
+            }
+        }
+
+        window.sessionStorage.removeItem('plan_byId');
+
+        try {
+            const { data }: { data: PlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, { withCredentials: true });
+            setPlanData({
+                name: data.plan.name,
+                description: data.plan.description,
+                planType: data.plan.planType,
+                cards: data.plan.cards,
+                amount: data.plan.amount,
+                period: data.plan.period,
+                interval: data.plan.interval
+            });
+            const payload = {
+                id,
+                data: data.plan,
+                expires: Date.now() + 60 * 1000
+            }
+            window.sessionStorage.setItem('plan_byId', JSON.stringify(payload));
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        if (id) {
+            fetchPlan();
+        }
+    }, [id]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -38,12 +95,21 @@ const NewPlan = () => {
             return;
         };
         try {
-            if (type === "free") {
-                await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/plans/free/new`, planData, { withCredentials: true });
+            if (id) {
+                if (type === "free") {
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/plans/free/${id}`, planData, { withCredentials: true });
+                } else {
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, planData, { withCredentials: true });
+                }
             } else {
-                await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/plans/new`, planData, { withCredentials: true });
+                if (type === "free") {
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/plans/free/new`, planData, { withCredentials: true });
+                } else {
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/plans/new`, planData, { withCredentials: true });
+                }
+
             }
-            toast.success("Plan created successfully");
+            toast.success(`${type === "free" ? "Free " : ""}Plan ${id ? "upadated" : "created"} successfully`);
             const localPlan = window.localStorage.getItem("all_plans");
             if (localPlan) {
                 window.localStorage.removeItem("all_plans");
@@ -63,14 +129,16 @@ const NewPlan = () => {
         }));
     };
 
-    return (
+    return loading ? (
+        <Loader />
+    ) : (    
         <DefaultLayout>
             <div className="grid grid-cols-1 gap-9 sm:grid-cols-2">
                 <div className="flex flex-col gap-4 px-16">
                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                            <h2 className="font-medium text-2xl text-black dark:text-white">
-                                New {["free", "custom"].includes(type!) && type?.toUpperCase()} Plan
+                            <h2 className="font-medium text-2xl text-black dark:text-white capitalize">
+                                {id ? "Update" : "New"} {type} Plan
                             </h2>
                         </div>
                         <form onSubmit={handleSubmit}>
@@ -114,6 +182,7 @@ const NewPlan = () => {
                                             <input
                                                 type="number"
                                                 name="amount"
+                                                disabled={id ? true : false}
                                                 placeholder="Enter plan amount"
                                                 value={planData.amount !== null ? planData.amount : ''}
                                                 onChange={handleChange}
@@ -126,10 +195,10 @@ const NewPlan = () => {
                                                 Plan Type
                                             </label>
                                             <div className="relative z-20 bg-transparent dark:bg-form-input">
-
                                                 <select
                                                     name="planType"
                                                     value={planData.planType}
+                                                    disabled={id ? true : false}
                                                     onChange={handleChange}
                                                     className={`w-full rounded appearance-none border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary`}
                                                 >
@@ -142,6 +211,11 @@ const NewPlan = () => {
                                                     <option value="org" className="text-body dark:text-bodydark">
                                                         ORG
                                                     </option>
+                                                    {type === "donator" && (
+                                                        <option value="donator" className="text-body dark:text-bodydark">
+                                                            DONATOR
+                                                        </option>
+                                                    )}
                                                     {type !== "usual" && (
                                                         <>
                                                             <option value="free" className="text-body dark:text-bodydark">
@@ -186,6 +260,7 @@ const NewPlan = () => {
                                         <input
                                             type="number"
                                             name="interval"
+                                            disabled={(type!=="free" && id) ? true : false}
                                             value={planData.interval !== null ? planData.interval : ''}
                                             onChange={handleChange}
                                             placeholder="Enter plan interval"
@@ -202,6 +277,7 @@ const NewPlan = () => {
                                             <select
                                                 name="period"
                                                 value={planData.period}
+                                                disabled={(type!=="free" && id) ? true : false}
                                                 onChange={handleChange}
                                                 className={`w-full rounded appearance-none border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary`}
                                             >
@@ -260,7 +336,7 @@ const NewPlan = () => {
                                 </div>
 
                                 <button type="submit" disabled={planLoading || !type} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                                    {planLoading ? "Hold on..." : "Create Plan"}
+                                    {planLoading ? "Hold on..." : id ? "Update Plan" : "Create Plan"}
                                 </button>
                             </div>
                         </form>

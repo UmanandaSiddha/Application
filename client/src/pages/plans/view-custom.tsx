@@ -13,14 +13,14 @@ const ViewCustom = () => {
     const [search] = useSearchParams();
     const navigate = useNavigate();
     const id = search.get("id");
+    const userId = search.get("user");
     const [plan, setPlan] = useState<Plan>();
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
 
     const fetchCustomPlan = async () => {
         try {
-            const { data }: { data: SinglePlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/request/${id}`, { withCredentials: true });
+            const { data }: { data: SinglePlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/custom/view/${id}?user=${userId}`, { withCredentials: true });
             setPlan(data.plan);
-            toast.success("Request Submitted!");
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
@@ -65,7 +65,7 @@ const ViewCustom = () => {
                                         <h1 className="text-xl font-medium text-gray-700 capitalize lg:text-2xl dark:text-white">{plan?.name}</h1>
 
                                         <p className="mt-4 text-gray-500 dark:text-gray-300">
-                                            {plan?.description} Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, blanditiis?
+                                            {plan?.description}
                                         </p>
 
                                         <h2 className="mt-4 text-2xl font-semibold text-gray-700 sm:text-3xl dark:text-gray-300">Rs. {plan?.amount} <span className="text-sm text-gray-400">Once in {plan?.interval} {periodToDays(plan ? plan?.period : "weekly")}{plan?.interval && plan?.interval > 1 && "s"}</span></h2>

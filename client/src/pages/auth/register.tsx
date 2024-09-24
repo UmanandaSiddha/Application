@@ -87,6 +87,7 @@ const Register = () => {
                 config
             );
             dispatch(userExist(data.user));
+            toast.success(`OTP sent ${userData.email}, please verify yourself`);
             navigate("/verify")
         } catch (error: any) {
             dispatch(userNotExist());

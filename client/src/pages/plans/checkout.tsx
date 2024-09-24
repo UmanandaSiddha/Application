@@ -241,10 +241,6 @@ const Checkout = () => {
             razor.on("payment.failed", function (response: any) {
                 setOpen(false);
                 setLoadingStates([]);
-                console.log(response.error.description);
-                console.log(response.error.metadata.order_id);
-                console.log(response.error.metadata.payment_id);
-                console.log(response);
                 toast.info(response.error.description);
             });
         } catch (error: any) {
@@ -256,17 +252,6 @@ const Checkout = () => {
         setOpen(false);
         setLoadingStates([]);
     };
-
-    const handleFreePlan = async (id: string) => {
-        try {
-            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new/free/${id}`, { data: "null" }, { withCredentials: true });
-            dispatch(userExist(data.user));
-            dispatch(togglePaid(true));
-            toast.success("Free plan activated successfully");
-        } catch (error: any) {
-            toast.error(error.response.data.message);
-        }
-    }
 
     return (
         <div className="w-[80%] mx-auto mt-8 mb-12">
@@ -405,11 +390,7 @@ const Checkout = () => {
                             disabled={!user || !id || plan?._id !== id || open}
                             onClick={(e) => {
                                 e.preventDefault();
-                                if (plan.planType === "free") {
-                                    handleFreePlan(plan._id)
-                                } else {
-                                    handleCheckout(plan?.razorPlanId!);
-                                }
+                                handleCheckout(plan?.razorPlanId!);
                             }}
                             className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                         >

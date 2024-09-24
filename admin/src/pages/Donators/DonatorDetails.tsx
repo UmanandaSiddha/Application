@@ -5,6 +5,7 @@ import { Donator, Subscription, Transaction } from "../../types/types";
 import { AllSubscriptionResponse, AllTransactionsResponse, DonatorResponse } from "../../types/api-types";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Loader from "../../components/Loader";
 
 const DonatorDetails = () => {
 
@@ -26,14 +27,39 @@ const DonatorDetails = () => {
         filteredTransactions: 1,
         totalTransactions: 1
     });
+    const [loading, setLoading] = useState(false);
+    const [transacLoading, setTransacLoading] = useState(false);
+    const [subLoading, setSubLoading] = useState(false);
 
     const fetchDonator = async () => {
+        setLoading(true);
+
+        const cachedDonatorById = window.sessionStorage.getItem('donator_byId');
+        if (cachedDonatorById) {
+            const { data: cachedDonator, expires, id: cachedId } = JSON.parse(cachedDonatorById);
+
+            if (Date.now() < expires && cachedId === id) {
+                setDonator(cachedDonator);
+                setLoading(false);
+                return;
+            }
+        }
+
+        window.sessionStorage.removeItem('donator_byId');
+
         try {
             const { data }: { data: DonatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/donator/byId/${id}`, { withCredentials: true });
             setDonator(data.donator);
+            const payload = {
+                id,
+                data: data.donator,
+                expires: Date.now() + 60 * 1000
+            }
+            window.sessionStorage.setItem('donator_byId', JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
+        setLoading(false);
     }
 
     const fetchTrsanctions = async (url: string) => {
@@ -48,6 +74,7 @@ const DonatorDetails = () => {
             });
         } catch (error: any) {
             toast.error(error.response.data.message);
+            setTransactions([]);
         }
     }
 
@@ -63,6 +90,7 @@ const DonatorDetails = () => {
             });
         } catch (error: any) {
             toast.error(error.response.data.message);
+            setSubscriptions([]);
         }
     }
 
@@ -72,17 +100,38 @@ const DonatorDetails = () => {
     }, [id]);
 
     useEffect(() => {
-        let link = `${import.meta.env.VITE_BASE_URL}/admin/transac/donator/${id}?page=${transactionCount.currentPage}`;
-        fetchTrsanctions(link);
+        setTransacLoading(true);
+
+        const delayDebounce = setTimeout(() => {
+            let link = `${import.meta.env.VITE_BASE_URL}/admin/transac/donator/${id}?page=${transactionCount.currentPage}`;
+            fetchTrsanctions(link);
+
+            setTransacLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+
     }, [id, transactionCount.currentPage]);
 
     useEffect(() => {
-        let link = `${import.meta.env.VITE_BASE_URL}/admin/sub/donator/${id}?page=${subscriptionCount.currentPage}`;
-        fetchSubscriptions(link);
+
+        setSubLoading(true);
+
+        const delayDebounce = setTimeout(() => {
+            let link = `${import.meta.env.VITE_BASE_URL}/admin/sub/donator/${id}?page=${subscriptionCount.currentPage}`;
+            fetchSubscriptions(link);
+
+            setSubLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+
     }, [id, subscriptionCount.currentPage]);
 
 
-    return (
+    return loading ? (
+        <Loader />
+    ) : (
         <DefaultLayout>
             <div className="flex flex-wrap items-center justify-evenly gap-8">
                 <div className="flex flex-col md:flex-row justify-center gap-12">
@@ -92,7 +141,7 @@ const DonatorDetails = () => {
                         <p className="text-white"><span className="font-semibold">Name</span> - {donator?.name}</p>
                         <p className="text-white"><span className="font-semibold">Email</span> - {donator?.email}</p>
                         <p className="text-white"><span className="font-semibold">Phone</span> - {donator?.phone}</p>
-                        <p className="text-white"><span className="font-semibold">Active Donation</span> - {donator?.activeDonation._id}</p>
+                        <p className="text-white"><span className="font-semibold">Active Donation</span> - {donator?.activeDonation?._id}</p>
                         <p className="text-white"><span className="font-semibold">Pan</span> - {donator?.pan}</p>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -155,43 +204,51 @@ const DonatorDetails = () => {
                             </div>
                         </div>
 
-                        {subscriptions?.map((sub, key) => (
-                            <div
-                                className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-                                key={key}
-                                onClick={() => navigate(`/subscription-details?id=${sub._id}`)}
-                            >
-                                <div className="col-span-2 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {String(new Date(sub.start).toLocaleDateString())} - {String(new Date(sub.end).toLocaleDateString())} 
-                                        {sub._id === donator?.activeDonation._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null }
-                                    </p>
-                                </div>
-                                <div className="col-span-2 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {String(new Date(sub.currentStart).toLocaleDateString())} - {String(new Date(sub.currentEnd).toLocaleDateString())}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {String(new Date(sub.nextBilling).toLocaleDateString())}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {sub?.paymentMethod?.methodType?.toUpperCase()}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{sub.status.toUpperCase()}</p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-meta-3">
-                                        {sub.subscriptionType.toUpperCase()}
-                                    </p>
-                                </div>
+                        {subLoading ? (
+                            <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
+                                <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                             </div>
-                        ))}
+                        ) : (
+                            <>
+                                {subscriptions?.map((sub, key) => (
+                                    <div
+                                        className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
+                                        key={key}
+                                        onClick={() => navigate(`/subscriptions/details?id=${sub._id}`)}
+                                    >
+                                        <div className="col-span-2 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {String(new Date(sub.start).toLocaleDateString())} - {String(new Date(sub.end).toLocaleDateString())}
+                                                {sub._id === donator?.activeDonation._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-2 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {String(new Date(sub.currentStart).toLocaleDateString())} - {String(new Date(sub.currentEnd).toLocaleDateString())}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {String(new Date(sub.nextBilling).toLocaleDateString())}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {sub?.paymentMethod?.methodType?.toUpperCase()}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{sub.status.toUpperCase()}</p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-meta-3">
+                                                {sub.subscriptionType.toUpperCase()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </div>
                 </div>
             ) : (
@@ -250,41 +307,49 @@ const DonatorDetails = () => {
                             </div>
                         </div>
 
-                        {transactions?.map((transac, key) => (
-                            <div
-                                className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-                                key={key}
-                                onClick={() => navigate(`/transaction-details?id=${transac._id}`)}
-                            >
-                                <div className="col-span-2 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{String(new Date(transac.start).toLocaleDateString())} - {String(new Date(transac.end).toLocaleDateString())}</p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {String(new Date(transac.createdAt).toLocaleDateString())}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {transac.transactionFor.toUpperCase()}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{transac.currency === "INR" ? "₹" : "$"} {transac.amount}</p>
-                                </div>
-                                <div className="col-span-1 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{transac.status.toUpperCase()}</p>
-                                </div>
-                                <div className="col-span-1 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{transac?.paymentMethod?.methodType?.toUpperCase()}</p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-meta-3">
-                                        {transac.transactionType.toUpperCase()}
-                                    </p>
-                                </div>
+                        {transacLoading ? (
+                            <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
+                                <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                             </div>
-                        ))}
+                        ) : (
+                            <>
+                                {transactions?.map((transac, key) => (
+                                    <div
+                                        className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
+                                        key={key}
+                                        onClick={() => navigate(`/transactions/details?id=${transac._id}`)}
+                                    >
+                                        <div className="col-span-2 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{String(new Date(transac.start).toLocaleDateString())} - {String(new Date(transac.end).toLocaleDateString())}</p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {String(new Date(transac.createdAt).toLocaleDateString())}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {transac.transactionFor.toUpperCase()}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{transac.currency === "INR" ? "₹" : "$"} {transac.amount}</p>
+                                        </div>
+                                        <div className="col-span-1 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{transac.status.toUpperCase()}</p>
+                                        </div>
+                                        <div className="col-span-1 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{transac?.paymentMethod?.methodType?.toUpperCase()}</p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-meta-3">
+                                                {transac.transactionType.toUpperCase()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </div>
                 </div>
             ) : (

@@ -89,20 +89,21 @@ const CreateTree = () => {
             user: user?._id,
         };
 
-        if (!isPaid && user?.role !== "admin") {
+        if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
             try {
                 if (isTree) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=botanical`, treeData, { withCredentials: true });
-                    toast.success("Tree VCard Updated");
+                    // toast.success("Tree VCard Updated");
                 } else {
                     await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=botanical`, treeData, { withCredentials: true });
-                    toast.success("Tree VCard Created");
+                    // toast.success("Tree VCard Created");
                 }
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
+                navigate("/plans");
             }
         }
         setTreeLoading(false);

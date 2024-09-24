@@ -1,7 +1,7 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import Plan, { planEnum } from "../models/payment/planModel.js";
-import CustomRequest from "../models/messages/customRequestModel.js";
+import CustomRequest, { acceptedEnum } from "../models/messages/customRequestModel.js";
 import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 
 export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
@@ -15,6 +15,7 @@ export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
         email,
         cards: Number(cards),
         amount: Number(amount),
+        accepted: acceptedEnum.PENDING,
         comment,
         period,
         interval: Number(interval),
@@ -49,7 +50,7 @@ export const getCustomPlan = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`Plan ${req.params.id} is not a Custom Plan`, 403));
     }
 
-    if (plan.name !== req.params.user) {
+    if (plan.name !== req.query.user) {
         return next(new ErrorHandler(`Plan mismatch`, 403));
     }
     

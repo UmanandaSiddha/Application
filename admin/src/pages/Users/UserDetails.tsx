@@ -6,6 +6,8 @@ import { AllCardsResponse, AllSubscriptionResponse, AllTransactionsResponse, Use
 import axios from "axios";
 import { Animal, Creator, Medical, Personal, Subscription, Transaction, Tree, User } from "../../types/types";
 import CardsChart from "../../components/Charts/CardsChart";
+import Loader from "../../components/Loader";
+import { Loader2 } from "lucide-react";
 
 interface CardStatsResponse {
     success: boolean;
@@ -18,13 +20,21 @@ interface CardStatsResponse {
     }
 }
 
+type TypeOptions = "botanical" | "individual" | "medical" | "creator" | "animal";
+
+const validTypes: TypeOptions[] = ["botanical", "individual", "medical", "creator", "animal"];
+
 const UserDetails = () => {
 
-    const [search] = useSearchParams();
+    const [search, setSearch] = useSearchParams();
     const navigate = useNavigate();
     const id = search.get("id");
+    const typeParams = search.get('type');
     const [user, setUser] = useState<User>();
-    const [type, setType] = useState<"botanical" | "individual" | "medical" | "creator" | "animal">("botanical");
+    const [type, setType] = useState<TypeOptions>(
+        validTypes.includes(typeParams as TypeOptions) ? (typeParams as TypeOptions) : "botanical"
+    );
+    // const [type, setType] = useState<"botanical" | "individual" | "medical" | "creator" | "animal">((typeParams as "botanical" | "individual" | "medical" | "creator" | "animal") || "botanical");
     const [cards, setCards] = useState<Tree[] | Personal[] | Medical[] | Creator[] | Animal[]>();
     const [stats, setStats] = useState({
         botanical: 0,
@@ -38,6 +48,7 @@ const UserDetails = () => {
     const [total, setTotal] = useState<number | null>(0);
     const [selectedOption, setSelectedOption] = useState<string>("");
     const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
     const [cardsCount, setCardsCount] = useState({
         currentPage: 1,
         resultPerPage: 1,
@@ -55,25 +66,49 @@ const UserDetails = () => {
         filteredTransactions: 1,
         totalTransactions: 1
     });
+    const [loading, setLoading] = useState(false);
+    const [statsLoading, setStatsLoading] = useState(false);
+    const [cardLoading, setCardLoading] = useState(false);
+    const [subLoading, setSubLoading] = useState(false);
+    const [transacLoading, setTransacLoading] = useState(false);
 
     const changeTextColor = () => {
         setIsOptionSelected(true);
     };
 
     const gotUser = async () => {
+        setLoading(true);
+
+        const cachedUserById = window.sessionStorage.getItem('donator_byId');
+        if (cachedUserById) {
+            const { data: cachedUser, expires, id: cachedId } = JSON.parse(cachedUserById);
+
+            if (Date.now() < expires && cachedId === id) {
+                setUser(cachedUser);
+                setTotal(cachedUser.cards.total);
+                setSelectedOption(cachedUser.role);
+                setLoading(false);
+                return;
+            }
+        }
+
+        window.sessionStorage.removeItem('user_byId');
+
         try {
             const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/users/byId/${id}`, { withCredentials: true });
             setUser(data.user);
             setTotal(data.user.cards.total);
             setSelectedOption(data.user.role);
-            const localUser = {
-                created: Date.now() + 30 * 1000,
+            const payload = {
+                id,
                 data: data.user,
+                expires: Date.now() + 60 * 1000
             }
-            window.localStorage.setItem("current_user", JSON.stringify(localUser));
+            window.sessionStorage.setItem("user_byId", JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
+        setLoading(false);
     }
 
     const fetchSubscriptions = async (url: string) => {
@@ -121,12 +156,15 @@ const UserDetails = () => {
     }
 
     const fetchCardStats = async (url: string) => {
+        setStatsLoading(true);
+
         try {
             const { data }: { data: CardStatsResponse } = await axios.get(url, { withCredentials: true });
             setStats(data.count);
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
+        setStatsLoading(false);
     }
 
     const handleRoleChange = async () => {
@@ -140,6 +178,7 @@ const UserDetails = () => {
         }
         try {
             const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/${id}`, { role: selectedOption }, { withCredentials: true });
+            window.sessionStorage.removeItem('user_byId');
             toast.success(data.message);
             navigate(-1);
         } catch (error: any) {
@@ -154,8 +193,8 @@ const UserDetails = () => {
         }
         try {
             const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/card/${id}`, { total }, { withCredentials: true });
+            window.sessionStorage.removeItem('user_byId');
             toast.success(data.message);
-            window.localStorage.removeItem("current_user");
             navigate(-1);
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -168,14 +207,19 @@ const UserDetails = () => {
             if (factor) {
                 link = `${import.meta.env.VITE_BASE_URL}/admin/users/free/revoke/${id}`
             }
+
+            window.sessionStorage.removeItem('user_byId');
+
             const { data }: { data: UserResponse } = await axios.put(link, {}, { withCredentials: true });
             setUser(data.user);
-            window.localStorage.removeItem("current_user");
-            const localUser = {
-                created: Date.now() + 30 * 1000,
+            setTotal(data.user.cards.total);
+            setSelectedOption(data.user.role);
+            const payload = {
+                id,
                 data: data.user,
+                expires: Date.now() + 60 * 1000
             }
-            window.localStorage.setItem("current_user", JSON.stringify(localUser));
+            window.sessionStorage.setItem("user_byId", JSON.stringify(payload));
             toast.success(factor ? "Free Access Revoked" : "Free Access Granted");
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -189,7 +233,7 @@ const UserDetails = () => {
                 link = `${import.meta.env.VITE_BASE_URL}/admin/users/unblock/${id}`
             }
             const { data }: { data: { message: string } } = await axios.put(link, {}, { withCredentials: true });
-            window.localStorage.removeItem("current_user");
+            window.sessionStorage.removeItem('user_byId');
             toast.success(data.message);
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -203,47 +247,64 @@ const UserDetails = () => {
                 link = `${import.meta.env.VITE_BASE_URL}/admin/users/reactivate/${id}`
             }
             const { data }: { data: { message: string } } = await axios.put(link, {}, { withCredentials: true });
-            window.localStorage.removeItem("current_user");
+            window.sessionStorage.removeItem('user_byId');
             toast.success(data.message);
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
+        setOpen(true);
     }
 
     useEffect(() => {
-        const userData = window.localStorage.getItem("current_user");
-        if (userData) {
-            if (JSON.parse(userData)?.created < Date.now()) {
-                window.localStorage.removeItem("current_user");
-                gotUser();
-            } else {
-                setUser(JSON.parse(userData).data);
-                if (JSON.parse(userData).data?._id !== id) {
-                    gotUser();
-                }
-            }
-        } else {
-            gotUser();
-        }
+        gotUser();
         fetchCardStats(`${import.meta.env.VITE_BASE_URL}/admin/cards/stats/${id}`);
     }, [id]);
 
     useEffect(() => {
-        let link = `${import.meta.env.VITE_BASE_URL}/admin/cards/user/${id}?page=${transactionCount.currentPage}&type=${type}`;
-        fetchCards(link);
+        setCardLoading(true);
+
+        const delayDebounce = setTimeout(() => {
+            let link = `${import.meta.env.VITE_BASE_URL}/admin/cards/user/${id}?page=${transactionCount.currentPage}&type=${type}`;
+            fetchCards(link);
+
+            setCardLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+
     }, [id, type, cardsCount.currentPage]);
 
     useEffect(() => {
-        let link = `${import.meta.env.VITE_BASE_URL}/admin/transac/user/${id}?page=${transactionCount.currentPage}`;
-        fetchTrsanctions(link);
+        setTransacLoading(true);
+
+        const delayDebounce = setTimeout(() => {
+            let link = `${import.meta.env.VITE_BASE_URL}/admin/transac/user/${id}?page=${transactionCount.currentPage}`;
+            fetchTrsanctions(link);
+
+            setTransacLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+
     }, [id, transactionCount.currentPage]);
 
     useEffect(() => {
-        let link = `${import.meta.env.VITE_BASE_URL}/admin/sub/user/${id}?page=${subscriptionCount.currentPage}`;
-        fetchSubscriptions(link);
+        setSubLoading(true);
+
+        const delayDebounce = setTimeout(() => {
+            let link = `${import.meta.env.VITE_BASE_URL}/admin/sub/user/${id}?page=${subscriptionCount.currentPage}`;
+            fetchSubscriptions(link);
+
+            setSubLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+
     }, [id, subscriptionCount.currentPage]);
 
-    return (
+    return loading ? (
+        <Loader />
+    ) : (
         <DefaultLayout>
             <div className="flex flex-wrap items-center justify-evenly gap-8">
                 <div className="flex flex-col gap-1">
@@ -300,9 +361,30 @@ const UserDetails = () => {
                     <p className="text-white"><span className="font-semibold">Account Created</span> - {String(new Date(user?.createdAt!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Account Upadated</span> - {String(new Date(user?.updatedAt!).toDateString())}</p>
                 </div>
+                {open && (
+                    <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
+                        <div className="rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-8 w-[90%] md:w-[50%] lg:w-[30%]">
+                            <h2 className="text-2xl font-bold mb-4 text-center text-black dark:text-white">Are you sure you want to deactivate this user?</h2>
+                            <div className="w-full mt-8 flex justify-between items-center gap-8">
+                                <button className="w-1/2 px-3 py-2 border-2 border-red-500 rounded-lg bg-red-500 text-white" onClick={() => handleDeactivate(user?.isDeactivated ? true : false)}>
+                                    Yes, I am sure!!
+                                </button>
+                                <button className="w-1/2 px-3 py-2 border-2 text-white rounded-lg" onClick={() => setOpen(false)}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <div className="flex flex-col gap-4">
 
-                    <CardsChart stats={stats} total={user?.cards.total!} />
+                    {statsLoading ? (
+                        <div className="flex justify-center items-center w-full h-full">
+                            <Loader2 size={60} />
+                        </div>
+                    ) : (
+                        <CardsChart stats={stats} total={user?.cards.total!} />
+                    )}
 
                     <div className="flex flex-row gap-2 bg-transparent dark:bg-form-input">
                         <select
@@ -346,7 +428,16 @@ const UserDetails = () => {
                         {user?.isBlocked ? "Unblock User" : "Block User"}
                     </button>
 
-                    <button onClick={() => handleDeactivate(user?.isDeactivated ? true : false)} className="flex w-full justify-center rounded bg-red-500 p-3 font-medium text-gray hover:bg-opacity-90">
+                    <button
+                        onClick={() => {
+                            if (user?.isDeactivated) {
+                                handleDeactivate(true)
+                            } else {
+                                setOpen(true);
+                            }
+                        }}
+                        className={`flex w-full justify-center rounded ${user?.isDeactivated ? "bg-green-500" : "bg-red-500"} p-3 font-medium text-gray hover:bg-opacity-90`}
+                    >
                         {user?.isDeactivated ? "Reactivate User" : "Deactivate User"}
                     </button>
                 </div>
@@ -359,7 +450,14 @@ const UserDetails = () => {
                             {type} Cards
                         </h4>
                         <div className="flex items-center justify-center">
-                            <select className="text-black px-3 py-2 rounded-md" value={type} onChange={(e) => setType(e.target.value as "botanical" | "individual" | "medical" | "creator" | "animal")}>
+                            <select
+                                className="text-black px-3 py-2 rounded-md"
+                                value={type}
+                                onChange={(e) => {
+                                    setType(e.target.value as "botanical" | "individual" | "medical" | "creator" | "animal");
+                                    setSearch({ type: e.target.value as "botanical" | "individual" | "medical" | "creator" | "animal" }, { replace: true });
+                                }}
+                            >
                                 <option value="botanical">Botanical</option>
                                 <option value="animal">Animal</option>
                                 <option value="medical">Medical</option>
@@ -403,42 +501,50 @@ const UserDetails = () => {
                         </div>
                     </div>
 
-                    {cards?.map((card, key) => (
-                        <div
-                            className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-                            key={key}
-                            onClick={() => navigate(`/cards/details?id=${card._id}&type=${type}`)}
-                        >
-                            <div className="col-span-2 flex items-center">
-                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {card.name}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="col-span-2 hidden items-center sm:flex">
-                                <p className="text-sm text-black dark:text-white">
-                                    {type.toUpperCase()}
-                                </p>
-                            </div>
-                            <div className="col-span-2 hidden items-center sm:flex">
-                                <p className="text-sm text-black dark:text-white">
-                                    {String(new Date(card.createdAt).toLocaleDateString())}
-                                </p>
-                            </div>
-                            <div className="col-span-2 flex items-center">
-                                <p
-                                    className="text-sm text-meta-3 cursor-pointer"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/card-details?id=${card.user._id}`);
-                                    }}
-                                >
-                                    {card.user?._id}
-                                </p>
-                            </div>
+                    {cardLoading ? (
+                        <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
+                            <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                         </div>
-                    ))}
+                    ) : (
+                        <>
+                            {cards?.map((card, key) => (
+                                <div
+                                    className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
+                                    key={key}
+                                    onClick={() => navigate(`/cards/details?id=${card._id}&type=${type}`)}
+                                >
+                                    <div className="col-span-2 flex items-center">
+                                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {card.name}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="col-span-2 hidden items-center sm:flex">
+                                        <p className="text-sm text-black dark:text-white">
+                                            {type.toUpperCase()}
+                                        </p>
+                                    </div>
+                                    <div className="col-span-2 hidden items-center sm:flex">
+                                        <p className="text-sm text-black dark:text-white">
+                                            {String(new Date(card.createdAt).toLocaleDateString())}
+                                        </p>
+                                    </div>
+                                    <div className="col-span-2 flex items-center">
+                                        <p
+                                            className="text-sm text-meta-3 cursor-pointer"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/card-details?id=${card.user._id}`);
+                                            }}
+                                        >
+                                            {card.user?._id}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -491,41 +597,49 @@ const UserDetails = () => {
                             </div>
                         </div>
 
-                        {subscriptions?.map((sub, key) => (
-                            <div
-                                className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-                                key={key}
-                                onClick={() => navigate(`/subscriptions/details?id=${sub._id}`)}
-                            >
-                                <div className="col-span-2 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {String(new Date(sub.start).toLocaleDateString())} - {String(new Date(sub.end).toLocaleDateString())} 
-                                        {sub._id === user?.activePlan._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null}
-                                    </p>
-                                </div>
-                                <div className="col-span-2 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{String(new Date(sub.currentStart).toLocaleDateString())} - {String(new Date(sub.currentEnd).toLocaleDateString())}</p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {String(new Date(sub.nextBilling).toLocaleDateString())}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {sub?.paymentMethod?.methodType?.toUpperCase()}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{sub.status.toUpperCase()}</p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-meta-3">
-                                        {sub.subscriptionType.toUpperCase()}
-                                    </p>
-                                </div>
+                        {subLoading ? (
+                            <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
+                                <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                             </div>
-                        ))}
+                        ) : (
+                            <>
+                                {subscriptions?.map((sub, key) => (
+                                    <div
+                                        className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
+                                        key={key}
+                                        onClick={() => navigate(`/subscriptions/details?id=${sub._id}`)}
+                                    >
+                                        <div className="col-span-2 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {String(new Date(sub.start).toLocaleDateString())} - {String(new Date(sub.end).toLocaleDateString())}
+                                                {sub._id === user?.activePlan._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-2 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{String(new Date(sub.currentStart).toLocaleDateString())} - {String(new Date(sub.currentEnd).toLocaleDateString())}</p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {String(new Date(sub.nextBilling).toLocaleDateString())}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {sub?.paymentMethod?.methodType?.toUpperCase()}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{sub.status.toUpperCase()}</p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-meta-3">
+                                                {sub.subscriptionType.toUpperCase()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </div>
                 </div>
             ) : (
@@ -584,41 +698,49 @@ const UserDetails = () => {
                             </div>
                         </div>
 
-                        {transactions?.map((transac, key) => (
-                            <div
-                                className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-                                key={key}
-                                onClick={() => navigate(`/transactions/details?id=${transac._id}`)}
-                            >
-                                <div className="col-span-2 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{String(new Date(transac.start).toLocaleDateString())} - {String(new Date(transac.end).toLocaleDateString())}</p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {String(new Date(transac.createdAt).toLocaleDateString())}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-black dark:text-white">
-                                        {transac.transactionFor.toUpperCase()}
-                                    </p>
-                                </div>
-                                <div className="col-span-1 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{transac.currency === "INR" ? "₹" : "$"} {transac.amount}</p>
-                                </div>
-                                <div className="col-span-1 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{transac.status.toUpperCase()}</p>
-                                </div>
-                                <div className="col-span-1 flex items-center">
-                                    <p className="text-sm text-black dark:text-white">{transac?.paymentMethod?.methodType?.toUpperCase()}</p>
-                                </div>
-                                <div className="col-span-1 hidden items-center sm:flex">
-                                    <p className="text-sm text-meta-3">
-                                        {transac.transactionType.toUpperCase()}
-                                    </p>
-                                </div>
+                        {transacLoading ? (
+                            <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
+                                <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                             </div>
-                        ))}
+                        ) : (
+                            <>
+                                {transactions?.map((transac, key) => (
+                                    <div
+                                        className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
+                                        key={key}
+                                        onClick={() => navigate(`/transactions/details?id=${transac._id}`)}
+                                    >
+                                        <div className="col-span-2 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{String(new Date(transac.start).toLocaleDateString())} - {String(new Date(transac.end).toLocaleDateString())}</p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {String(new Date(transac.createdAt).toLocaleDateString())}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-black dark:text-white">
+                                                {transac.transactionFor.toUpperCase()}
+                                            </p>
+                                        </div>
+                                        <div className="col-span-1 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{transac.currency === "INR" ? "₹" : "$"} {transac.amount}</p>
+                                        </div>
+                                        <div className="col-span-1 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{transac.status.toUpperCase()}</p>
+                                        </div>
+                                        <div className="col-span-1 flex items-center">
+                                            <p className="text-sm text-black dark:text-white">{transac?.paymentMethod?.methodType?.toUpperCase()}</p>
+                                        </div>
+                                        <div className="col-span-1 hidden items-center sm:flex">
+                                            <p className="text-sm text-meta-3">
+                                                {transac.transactionType.toUpperCase()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </div>
                 </div>
             ) : (

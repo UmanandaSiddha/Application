@@ -99,7 +99,7 @@ const userSchema = new mongoose.Schema(
             total: {
                 type: Number,
                 required: true,
-                default: 0
+                default: 10
             },
             created: {
                 type: Number,

@@ -72,10 +72,8 @@ export type CustomReuest = {
     _id: string;
     email: string;
     attended: boolean;
-    status: {
-        accepted: boolean;
-        reason: string;
-    }
+    accepted: string;
+    reason: string;
     cards: number;
     amount: number;
     comment: string;
@@ -123,6 +121,8 @@ export type Subscription = {
         upiInfo: string | null;
     },
     donator: string | null;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export type Transaction = {
@@ -159,6 +159,7 @@ export type Transaction = {
     },
     donator: string | null;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 export type Tree = {
@@ -178,6 +179,7 @@ export type Tree = {
         email: string;
     }
     createdAt: Date;
+    updatedAt: Date;
 };
 
 export type Animal = {
@@ -196,6 +198,7 @@ export type Animal = {
         email: string;
     }
     createdAt: Date;
+    updatedAt: Date;
 }
 
 export type Personal = {
@@ -271,12 +274,18 @@ export type Personal = {
     current: string,
     unusualExperinece: string,
     strangeHabits: string,
-    socialMedia: any,
+    socialMedia: [
+        {
+            name: string;
+            label: string;
+        }
+    ]
     user: {
         _id: string;
         email: string;
     }
     createdAt: Date;
+    updatedAt: Date;
 }
 
 export type Medical = {
@@ -312,18 +321,25 @@ export type Medical = {
         email: string;
     }
     createdAt: Date;
+    updatedAt: Date;
 }
 
 export type Creator = {
     _id: string;
     type: string;
     name: string;
-    links: any;
+    links: [
+        {
+            name: string;
+            label: string;
+        }
+    ]
     user: {
         _id: string;
         email: string;
     }
     createdAt: Date;
+    updatedAt: Date;
 }
 
 export type Contact = {
@@ -334,6 +350,7 @@ export type Contact = {
     report: boolean;
     attended: boolean;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 export type Donator = {

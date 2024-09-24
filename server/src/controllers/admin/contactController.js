@@ -55,7 +55,7 @@ export const switchAttendedContact = catchAsyncErrors(async (req, res, next) => 
         next(new ErrorHandler("Contact not found", 404));
     }
 
-    await Contact.findByIdAndUpdate(
+    const newContact = await Contact.findByIdAndUpdate(
         req.params.id, 
         { attended: !contact.attended }, 
         { new: true, runValidators: true, useFindAndModify: false }
@@ -63,6 +63,7 @@ export const switchAttendedContact = catchAsyncErrors(async (req, res, next) => 
 
     res.status(200).json({
         success: true,
+        contact: newContact,
         message: "Contact attended switched successfully"
     });
 });

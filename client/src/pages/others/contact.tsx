@@ -15,7 +15,7 @@ const ContactUs = () => {
         e.preventDefault();
         setContactLoading(true);
         try {
-            await axios.post(`${import.meta.env.VITE_BASE_URL}/contact/con/new`, contactData, { withCredentials: true });
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/contact/new`, contactData, { withCredentials: true });
             toast.success("Request Submitted!");
         } catch (error: any) {
             console.log(error);

@@ -141,20 +141,21 @@ const MedicalInput = () => {
             user: user?._id,
         };
 
-        if (!isPaid && user?.role !== "admin") {
+        if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
             try {
                 if (isMedical) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=medical`, medicalData, { withCredentials: true });
-                    toast.success("Medical VCards updated!");
+                    // toast.success("Medical VCards updated!");
                 } else {
                     await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=medical`, medicalData, { withCredentials: true });
-                    toast.success("Medical VCards created!");
+                    // toast.success("Medical VCards created!");
                 }
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
+                navigate("/plans");
             }
         }
 

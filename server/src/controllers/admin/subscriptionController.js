@@ -68,7 +68,7 @@ export const getAllUserSubscriptions = catchAsyncErrors(async (req, res, next) =
 });
 
 export const getParticularSubscription = catchAsyncErrors(async (req, res, next) => {
-    const subscription = await Subscription.findById(req.params.id);
+    const subscription = await Subscription.findById(req.params.id).populate("planId", "_id name amount");
     if (!subscription) {
         return next(new ErrorHandler(`Subscription does not exist with Id: ${req.params.id}`, 404));
     }
@@ -93,7 +93,7 @@ export const updateSubscription = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Status cannot be the same as the current status", 400));
     }
 
-    await Subscription.findByIdAndUpdate(
+    const updatedSubscription = await Subscription.findByIdAndUpdate(
         req.params.id,
         { status },
         { new: true, runValidators: true, useFindAndModify: false }
@@ -101,6 +101,7 @@ export const updateSubscription = catchAsyncErrors(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
+        subscription: updatedSubscription,
         message: "Subscription status updated successfully",
     });
 });

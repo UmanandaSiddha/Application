@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 import validator from "validator";
 import { periodEnum } from "../payment/planModel.js";
 
+export const acceptedEnum = {
+    PENDING: "pending",
+    ACCEPTED: "accepted",
+    REJECTED: "rejected",
+}
+
 const customRequestSchema = new mongoose.Schema(
     {
         email: {
@@ -14,10 +20,11 @@ const customRequestSchema = new mongoose.Schema(
             required: true,
             default: false
         },
-        status: {
-            accepted: Boolean,
-            reason: String,
-        }, 
+        accepted: {
+            type: String,
+            enum: Object.values(acceptedEnum),
+        },
+        reason: String,
         cards: {
             type: Number,
             required: true

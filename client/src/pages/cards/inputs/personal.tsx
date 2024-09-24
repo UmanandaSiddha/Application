@@ -251,20 +251,21 @@ const InputVCard = () => {
             socialMedia: final,
             user: user?._id,
         };
-        if (!isPaid && user?.role !== "admin") {
+        if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
             try {
                 if (isPersonal) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=individual`, personalData, { withCredentials: true });
-                    toast.success("Personal VCards updated!");
+                    // toast.success("Personal VCards updated!");
                 } else {
                     await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=individual`, personalData, { withCredentials: true });
-                    toast.success("Personal VCards created!");
+                    // toast.success("Personal VCards created!");
                 }
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
+                navigate("/plans");
             }
         }
         setPersonalLoading(false);

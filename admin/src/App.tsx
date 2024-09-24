@@ -28,10 +28,13 @@ const CustomDetails = lazy(() => import("./pages/CustomRequest/CustomDetails"));
 const Users = lazy(() => import("./pages/Users/Users"));
 const Donators = lazy(() => import("./pages/Donators/Donators"));
 const Subscriptions = lazy(() => import("./pages/Subscriptions/Subscriptions"));
+const SubscriptionDetail = lazy(() => import("./pages/Subscriptions/SubscriptionDetail"));
 const Transactions = lazy(() => import("./pages/Transactions/Transactions"));
 const Contacts = lazy(() => import("./pages/Contacts/Contacts"));
+const ContactDetails = lazy(() => import("./pages/Contacts/ContactDetails"));
 const Logs = lazy(() => import("./pages/Logs/Logs"));
 const DonatorDetails = lazy(() => import("./pages/Donators/DonatorDetails"));
+const TransactionDetails = lazy(() => import("./pages/Transactions/TransactionDetails"));
 
 const App = () => {
 
@@ -121,7 +124,7 @@ const App = () => {
                                     path='/donators/details'
                                     element={
                                         <>
-                                            <PageTitle title="Donators Details | Voolata" />
+                                            <PageTitle title="Donator Details | Voolata" />
                                             <DonatorDetails />
                                         </>
                                     }
@@ -135,6 +138,15 @@ const App = () => {
                                         </>
                                     }
                                 />
+                                 <Route
+                                    path='/subscriptions/details'
+                                    element={
+                                        <>
+                                            <PageTitle title="Subscription Details | Voolata" />
+                                            <SubscriptionDetail />
+                                        </>
+                                    }
+                                />
                                 <Route
                                     path='/transactions'
                                     element={
@@ -145,11 +157,29 @@ const App = () => {
                                     }
                                 />
                                 <Route
+                                    path='/transactions/details'
+                                    element={
+                                        <>
+                                            <PageTitle title="Transaction Details | Voolata" />
+                                            <TransactionDetails />
+                                        </>
+                                    }
+                                />
+                                <Route
                                     path='/contacts'
                                     element={
                                         <>
                                             <PageTitle title="All Contacts | Voolata" />
                                             <Contacts />
+                                        </>
+                                    }
+                                />
+                                 <Route
+                                    path='/contacts/details'
+                                    element={
+                                        <>
+                                            <PageTitle title="Contact Details | Voolata" />
+                                            <ContactDetails />
                                         </>
                                     }
                                 />

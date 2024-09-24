@@ -1,5 +1,5 @@
 import { Personal } from "@/types/card_types";
-import { FcAbout, FcBriefcase } from "react-icons/fc";
+import { FcAbout, FcBriefcase, FcFeedback } from "react-icons/fc";
 import { FcBusinessContact } from "react-icons/fc";
 import { FcCloth } from "react-icons/fc";
 import { FcComboChart } from "react-icons/fc";
@@ -25,145 +25,102 @@ const PersonalComponent = ({ card }: PropsType) => {
             label: "Lifestyle",
             icon: FcBriefcase as IconType,
             data: [
-                {
-                    label: "Date of Birth",
-                    value: formattedDate ?? "",
-                }, {
-                    label: "Home Town",
-                    value: card?.homeTown,
-                }, {
-                    label: "Current City",
-                    value: card?.currentCity,
-                }, {
-                    label: "Languages",
-                    value: card?.languages,
-                },
+                { label: "Date of Birth", value: formattedDate ?? "" },
+                { label: "Home Town", value: card?.homeTown },
+                { label: "Current City", value: card?.currentCity },
+                { label: "Languages", value: card?.languages },
+                { label: "Mobile Number", value: card?.mobileNumer },
+                { label: "Home Number", value: card?.homeNumber },
+                { label: "Work Number", value: card?.workNumber },
+                { label: "Other Number", value: card?.otherNumber },
+                { label: "Personal Email", value: card?.personalEmail },
+                { label: "Work Email", value: card?.workEmail },
+                { label: "Other Email", value: card?.otherEmail },
+                { label: "About Me", value: card?.aboutMe },
             ]
-        }, {
+        },
+        {
             label: "Professional",
             icon: FcDataProtection as IconType,
             data: [
-                {
-                    label: "Current Occupation",
-                    value: card?.currentOcupation,
-                }, {
-                    label: "Career Goals",
-                    value: card?.careerAspiation,
-                }
+                { label: "Current Occupation", value: card?.currentOcupation === "Other" ? card.currentOcupation_Other : card?.currentOcupation },
+                { label: "Career Goals", value: card?.careerAspiation === "Other" ? card.careerAspiation_Other : card?.careerAspiation },
+                { label: "Education", value: card?.education === "Other" ? card.education_Other : card?.education },
+                { label: "Skills", value: card?.skills === "Other" ? card.skills_Other : card?.skills },
             ]
-        }, {
+        },
+        {
             label: "Favourites",
             icon: FcBusinessContact as IconType,
             data: [
-                {
-                    label: "Fav Music",
-                    value: card?.music,
-                }, {
-                    label: "Fav Colour",
-                    value: card?.color
-                }, {
-                    label: "Fav City",
-                    value: card?.city,
-                }, {
-                    label: "Fav-Destination",
-                    value: card?.travelDestination,
-                }, {
-                    label: "Fav Season",
-                    value: card?.season,
-                }, {
-                    label: "Unique Skills",
-                    value: card?.uniqueSkills,
-                }, {
-                    label: "Fav-Cuisine",
-                    value: card?.cuisine,
-                }
+                { label: "Fav Music", value: card?.music },
+                { label: "Fav Colour", value: card?.color },
+                { label: "Fav City", value: card?.city },
+                { label: "Fav-Destination", value: card?.travelDestination },
+                { label: "Fav Season", value: card?.season },
+                { label: "Unique Skills", value: card?.uniqueSkills },
+                { label: "Fav-Cuisine", value: card?.cuisine },
+                { label: "Fav Beverage", value: card?.beverage }
             ]
-        }, {
+        },
+        {
+            label: "Quotes & Beliefs",
+            icon: FcFeedback as IconType,
+            data: [
+                { label: "Inspirational Quotes", value: card?.inspirationalQuotes },
+                { label: "Funny Quotes", value: card?.funnyQuotes },
+                { label: "Motivational Quotes", value: card?.motivationalQuotes },
+                { label: "Other Quotes", value: card?.otherQuotes },
+                { label: "Spiritual Beliefs", value: card?.spiritual },
+                { label: "Core Beliefs", value: card?.core },
+                { label: "Philosophy", value: card?.philosophy },
+                { label: "Weird Beliefs", value: card?.weirdBelief },
+                { label: "Social Causes", value: card?.socialCause },
+                { label: "Global Issues", value: card?.globalIssues }
+            ]
+        },
+        {
             label: "Miscellaneous",
             icon: FcCloth as IconType,
             data: [
-                {
-                    label: "Pet Lover?",
-                    value: card?.petLover,
-                }, {
-                    label: "Party Enthusiast?",
-                    value: card?.partyEnthusiast,
-                }, {
-                    label: "Smoker?",
-                    value: card?.smoker,
-                }, {
-                    label: "Marital Status?",
-                    value: card?.maritalStatus,
-                }, {
-                    label: "Relationship?",
-                    value: card?.relationshipStatus,
-                }, {
-                    label: "Morning/Night Person?",
-                    value: card?.morningPerson,
-                }, {
-                    label: "Sleeping Habits?",
-                    value: card?.sleepingHabit,
-                }, {
-                    label: "Dietary Preferences",
-                    value: card?.diet,
-                }, {
-                    label: "Fitness Routine",
-                    value: card?.fitnessRoutine,
-                }
+                { label: "Pet Lover?", value: card?.petLover },
+                { label: "Party Enthusiast?", value: card?.partyEnthusiast },
+                { label: "Smoker?", value: card?.smoker },
+                { label: "Marital Status?", value: card?.maritalStatus },
+                { label: "Relationship?", value: card?.relationshipStatus },
+                { label: "Morning/Night Person?", value: card?.morningPerson },
+                { label: "Sleeping Habits?", value: card?.sleepingHabit },
+                { label: "Dietary Preferences", value: card?.diet === "Other" ?  card?.diet_Other : card?.diet },
+                { label: "Fitness Routine", value: card?.fitnessRoutine }
             ]
-        }, {
+        },
+        {
             label: "Interests",
             icon: FcComboChart as IconType,
             data: [
-                {
-                    label: "Preferred Mode of Travel",
-                    value: card?.travelMode
-                }, {
-                    label: "Fav Movies/TV Shows",
-                    value: card?.genre
-                }, {
-                    label: "Sports Activites",
-                    value: card?.sports,
-                }, {
-                    label: "Artistic Hobbies",
-                    value: card?.artistisPursuits,
-                }, {
-                    label: "Gaming Preferences",
-                    value: card?.gaming,
-                }, {
-                    label: "Collecting Hobby/Interest",
-                    value: card?.collectignHobby,
-                }, {
-                    label: "Coffee or Tea?",
-                    value: card?.coffee,
-                }, {
-                    label: "Cooking Skills",
-                    value: card?.cookingSkills,
-                }
+                { label: "Preferred Mode of Travel", value: card?.travelMode === "Other" ? card?.travelMode_Other : card?.travelMode },
+                { label: "Fav Movies/TV Shows", value: card?.genre === "Other" ? card.genre_Other : card?.genre },
+                { label: "Sports Activities", value: card?.sports === "Other" ? card?.sports_Other : card?.sports },
+                { label: "Artistic Hobbies", value: card?.artistisPursuits === "Other" ? card.artistisPursuits_Other : card?.artistisPursuits },
+                { label: "Gaming Preferences", value: card?.gaming === "Other" ? card.gaming_Other : card?.gaming },
+                { label: "Collecting Hobby/Interest", value: card?.collectignHobby === "Other" ? card.collectignHobby_Other : card?.collectignHobby },
+                { label: "Coffee or Tea?", value: card?.coffee === "Other" ? card.coffee_Other : card?.coffee },
+                { label: "Cooking Skills", value: card?.cookingSkills === "Other" ? card.cookingSkills_Other : card?.cookingSkills }
             ]
-        }, {
+        },
+        {
             label: "Additional",
             icon: FcAbout as IconType,
             data: [
-                {
-                    label: "Other Interests",
-                    value: card?.otherInterests,
-                }, {
-                    label: "Future Goals",
-                    value: card?.futureGoals,
-                }, {
-                    label: "Currently Learning",
-                    value: card?.current,
-                }, {
-                    label: "Most Unusual Experience",
-                    value: card?.unusualExperinece,
-                }, {
-                    label: "Strangest Habit I Have",
-                    value: card?.strangeHabits,
-                }
+                { label: "Other Interests", value: card?.otherInterests },
+                { label: "Future Goals", value: card?.futureGoals },
+                { label: "Currently Learning", value: card?.current },
+                { label: "Most Unusual Experience", value: card?.unusualExperinece },
+                { label: "Strangest Habit I Have", value: card?.strangeHabits }
             ]
         }
     ];
+
 
     const [expandedSections, setExpandedSections] = useState<boolean[]>(new Array(data.length).fill(false));
 

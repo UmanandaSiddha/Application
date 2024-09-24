@@ -95,20 +95,21 @@ const CreateAnimal = () => {
             user: user?._id,
         };
 
-        if (!isPaid && user?.role !== "admin") {
+        if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
             try {
                 if (isAnimal) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=animal`, animalData, { withCredentials: true });
-                    toast.success("Animal VCard Updated");
+                    // toast.success("Animal VCard Updated");
                 } else {
                     await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=animal`, animalData, { withCredentials: true });
-                    toast.success("Animal VCard Created");
+                    // toast.success("Animal VCard Created");
                 }
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
+                navigate("/plans");
             }
         }
 

@@ -79,13 +79,13 @@ export const getUserCards = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
-export const getSingleTreeCard = catchAsyncErrors(async (req, res, next) => {
+export const getSingleCard = catchAsyncErrors(async (req, res, next) => {
     const Model = selectModelByType(req.query.type);
     if (!Model) {
         return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
     }
 
-    const card = await Model.findById(req.params.id)
+    const card = await Model.findById(req.params.id).populate("user", "email");
     if (!card) {
         return next(new ErrorHandler("Card Not Found", 404));
     }
@@ -115,6 +115,6 @@ export const deleteCard = catchAsyncErrors(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        card
+        message: "Successfully deleted card"
     });
 });

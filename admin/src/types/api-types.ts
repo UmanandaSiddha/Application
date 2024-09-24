@@ -109,6 +109,11 @@ export type TreeResponse = {
     tree: Tree;
 };
 
+export type CardResponse = {
+    success: boolean;
+    card: Tree | Personal | Medical | Creator | Animal;
+}
+
 export type AllCardsResponse = {
     success: boolean;
     count: number;

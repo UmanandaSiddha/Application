@@ -86,3 +86,44 @@ export const getParticularTransaction = catchAsyncErrors(async (req, res, next) 
         transaction,
     });
 });
+
+export const updateTransaction = catchAsyncErrors(async (req, res, next) => {
+    const transaction = await Transaction.findById(req.params.id);
+    if (!transaction) {
+        return next(new ErrorHandler(`No Transaction By Id ${req.params.id}`, 404));
+    }
+
+    const { status } = req.body;
+    if (!status) {
+        return next(new ErrorHandler("Please provide the status", 400));
+    }
+    if (status === transaction.status) {
+        return next(new ErrorHandler("Status cannot be the same as the current status", 400));
+    }
+
+    const updatedTransaction = await Transaction.findByIdAndUpdate(
+        req.params.id,
+        { status },
+        { new: true, runValidators: true, useFindAndModify: false }
+    );
+
+    res.status(200).json({
+        success: true,
+        transaction: updatedTransaction,
+        message: "Subscription status updated successfully",
+    });
+});
+
+export const deleteTransaction = catchAsyncErrors(async (req, res, next) => {
+    const transaction = await Transaction.findById(req.params.id);
+    if (!transaction) {
+        return next(new ErrorHandler(`No Transaction By Id ${req.params.id}`, 404));
+    }
+
+    await Transaction.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+        success: true,
+        message: "Transaction deleted successfully",
+    });
+});
