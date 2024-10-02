@@ -8,6 +8,7 @@ import Subscription from "../models/payment/subscriptionModel.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import ApiFeatures from "../utils/services/apiFeatures.js";
+import ShortUrl from "../models/cards/shortUrlModel.js";
 
 export const selectModelByType = (type) => {
     switch (type) {
@@ -26,6 +27,20 @@ export const selectModelByType = (type) => {
     }
 };
 
+export const getCardIdByShortCode = catchAsyncErrors(async (req, res, next) => {
+    const shortCode = req.params.id;
+    const shortUrl = await ShortUrl.findOne({ shortCode });
+    if (!shortUrl) {
+        return next(new ErrorHandler("Short URL not found", 404));
+    }
+
+    res.status(201).json({
+        success: true,
+        cardId: shortUrl.cardId,
+        cardType: shortUrl.cardType
+    });
+});
+
 export const createCard = catchAsyncErrors(async (req, res, next) => {
     const Model = selectModelByType(req.query.type);
     if (!Model) {
@@ -37,7 +52,25 @@ export const createCard = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
 
-    const vCard = await Model.create(req.body);
+    let shortId = `sh${Date.now().toString(36)}`;
+
+    let exists = await ShortUrl.findOne({ shortCode: shortId });
+    while (exists) {
+        shortId = `sh${Date.now().toString(36)}`;
+        exists = await ShortUrl.findOne({ shortCode: shortId });
+    }
+
+    const vCard = await Model.create({
+        ...req.body,
+        shortCode: shortId
+    });
+
+    await ShortUrl.create({
+        shortCode: shortId,
+        cardType: req.query.type,
+        cardId: vCard._id,
+    });
+
     user.cards.created++;
     await user.save();
 
@@ -105,7 +138,13 @@ export const deleteCard = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Unauthorized to delete this vCard", 401));
     }
     
+    const shortUrl = await ShortUrl.findOne({ shortCode: vCard.shortCode });
+    if (shortUrl) {
+        await ShortUrl.deleteOne({ shortCode: vCard.shortCode });
+    }
+
     await Model.findByIdAndDelete(req.params.id);
+
     user.cards.created--;
     await user.save();
 

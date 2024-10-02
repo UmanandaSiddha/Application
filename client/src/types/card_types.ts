@@ -1,5 +1,6 @@
 export type Tree = {
     _id: string;
+    shortCode: string;
     name: string
     scientificName: string;
     treeType: string;
@@ -14,6 +15,7 @@ export type Tree = {
 
 export type Animal = {
     _id: string;
+    shortCode: string;
     species: string;
     name: string;
     age: number;
@@ -27,6 +29,7 @@ export type Animal = {
 
 export type Personal = {
     _id: string;
+    shortCode: string;
     name: string,
     mobileNumer: string,
     homeNumber: string,
@@ -103,6 +106,7 @@ export type Personal = {
 
 export type MedicalType = {
     _id: string;
+    shortCode: string;
     name: string,
     dateOfBirth: string,
     gender: string,
@@ -133,6 +137,7 @@ export type MedicalType = {
 
 export type Creator = {
     _id: string;
+    shortCode: string;
     name: string;
     links: any;
     user: string;

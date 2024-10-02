@@ -50,8 +50,8 @@ export const createQRCode = (type: string, cardId: string) => {
     return new QRCodeStyling({
         width: 300,
         height: 300,
-        margin: 5,
-        data: `${window.location.protocol}//${window.location.host}/display?id=${cardId}&type=${type}`,
+        margin: 10,
+        data: `${window.location.protocol}//${window.location.host}/d/${cardId}`,
         qrOptions: {
             typeNumber: 0,
             mode: "Byte",
@@ -88,7 +88,7 @@ const GenerateQRCode = ({ type, card, way }: {
     const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
 
     useEffect(() => {
-        const qrCode = createQRCode(type, card._id);
+        const qrCode = createQRCode(type, card.shortCode);
 
         qrCode.getRawData("png").then((data) => {
             if (data) {
@@ -139,30 +139,20 @@ const AllCards = () => {
 
     const fetchData = async (page: number) => {
         setLoading(true);
-        if (["botanical", "individual", "medical", "creator", "animal"].includes(type!)) {
-            try {
-                const { data }: { data: CardType } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/user?page=${page}&type=${type}`, { withCredentials: true });
-                setCards(data.vCards);
-                setCountData(data.count);
-                setCurrentPage(page);
-                localStorage.setItem("all_card", JSON.stringify(data.vCards));
-                localStorage.setItem("current_page", JSON.stringify(page));
-                localStorage.setItem("card_type", JSON.stringify(type));
-            } catch (error: any) {
-                toast.error(error.response.data.message);
-            }
+        try {
+            const { data }: { data: CardType } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/user?page=${page}&type=${type}`, { withCredentials: true });
+            setCards(data.vCards);
+            setCountData(data.count);
+            setCurrentPage(page);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     useEffect(() => {
-        const cardData = localStorage.getItem("all_card");
-        const cardType = localStorage.getItem("card_type");
-        const currentCardPage = localStorage.getItem("current_page");
-        if (cardData && cardType === type && Number(currentCardPage ? JSON.parse(currentCardPage) : 1) === currentPage) {
-            setCards(JSON.parse(cardData));
-            setCountData(JSON.parse(cardData).length);
-        } else {
+        if (type && ["botanical", "individual", "medical", "creator", "animal"].includes(type)) {
             fetchData(currentPage);
         }
     }, [currentPage, type]);
@@ -201,8 +191,8 @@ const AllCards = () => {
     const styles = type && typeStyles[type] ? typeStyles[type] : typeStyles.default;
 
     const handleDownload = () => {
-        if (cards?.[currentIndex]._id && type) {
-            const qrCode = createQRCode(type, cards?.[currentIndex]._id);
+        if (cards && cards?.[currentIndex].shortCode && type) {
+            const qrCode = createQRCode(type, cards?.[currentIndex].shortCode);
 
             qrCode.download({
                 name: cards?.[currentIndex]._id,
@@ -212,8 +202,8 @@ const AllCards = () => {
     }
 
     const handleShare = () => {
-        if (cards?.[currentIndex]._id && type) {
-            window.navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/display?id=${cards?.[currentIndex]._id}&type=${type}`);
+        if (cards && cards?.[currentIndex].shortCode && type) {
+            window.navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/d/${cards?.[currentIndex].shortCode}`);
             toast.success("Link has been copied to clipboard");
         } else {
             toast.error("Something went wrong");
@@ -266,7 +256,7 @@ const AllCards = () => {
                                                 {cards?.map((card, index) => (
                                                     <div
                                                         key={card._id}
-                                                        className={`flex h-66 w-56 flex-col transition-transform duration-300 ease-in-out ${index === currentIndex ? 'block' : 'hidden'}`}
+                                                        className={`flex h-66 w-48 md:w-56 flex-col transition-transform duration-300 ease-in-out ${index === currentIndex ? 'block' : 'hidden'}`}
                                                         onClick={() => navigate(`/dashboard/cards/card?id=${card._id}&type=${type}`)}
                                                     >
                                                         <GenerateQRCode way="qr-group" card={card} type={type || "botanical"} />
@@ -295,11 +285,11 @@ const AllCards = () => {
                                 {cards && cards?.length > 0 && (
                                     <div className='flex flow-row justify-evenly space-x-4 w-full'>
                                         <button onClick={handleShare} className={`flex md:flex-row flex-col justify-center items-center space-x-2 md:space-y-0 space-y-4 ${styles.mdBackgroundColor} shadow-lg bg-white text-slate-500 px-5 py-4 md:rounded-md rounded-3xl text-lg font-semibold md:text-white w-1/2`}>
-                                            <IoShareOutline className={`md:text-white ${styles.iconColor} text-lg`} />
+                                            <IoShareOutline size={25} className={`md:text-white ${styles.iconColor} text-lg`} />
                                             <p>Share</p>
                                         </button>
                                         <button onClick={handleDownload} className={`flex md:flex-row flex-col justify-center items-center space-x-2 md:space-y-0 space-y-4 ${styles.mdBackgroundColor} shadow-lg bg-white text-slate-500 px-5 py-4 md:rounded-md rounded-3xl text-lg font-semibold md:text-white w-1/2`}>
-                                            <IoDownloadOutline className={`md:text-white ${styles.iconColor} text-lg`} />
+                                            <IoDownloadOutline size={25} className={`md:text-white ${styles.iconColor} text-lg`} />
                                             <p>Download</p>
                                         </button>
                                     </div>

@@ -5,12 +5,14 @@ import {
     getUserCards,
     deleteCard,
     updateCard,
-    getGeneralCard
+    getGeneralCard,
+    getCardIdByShortCode
 } from "../controllers/cardsController.js";
 import { isAuthenticatedUser, isUserPaid, isUserVerified } from "../middleware/auth.js";
 
 const router = express.Router();
 
+router.route("/short/:id").get(getCardIdByShortCode);
 router.route("/new").post(isAuthenticatedUser, isUserVerified, isUserPaid, createCard);
 router.route("/details/:id").get(getDisplayCard);
 router.route("/detailed/:id").get(isAuthenticatedUser,  isUserVerified, getGeneralCard);

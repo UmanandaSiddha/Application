@@ -30,6 +30,11 @@ const medicalSchema = new mongoose.Schema(
         insuranceProvider: String,
         insurancePolicyNumber: Number,
         insuranceGrpNumber: Number,
+        shortCode : {
+            type: String,
+            required: true,
+            unique: true,
+        },
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",

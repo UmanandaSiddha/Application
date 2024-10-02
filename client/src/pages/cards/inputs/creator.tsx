@@ -8,11 +8,19 @@ import axios from "axios";
 import SideBar from "@/components/rest/sidebar";
 import * as icons from 'simple-icons';
 import { IoMdLink } from "react-icons/io";
+import { MdEdit } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
+
+type ArrayInput = {
+    name: string;
+    label: string;
+    text: string;
+}
 
 const inputs = [
     { name: "", label: "Instagram", text: "Enter Your Instagram Profile" },
     { name: "", label: "Youtube", text: "Enter Your Youtube Profile" },
-    { name: "", label: "Spotify", text: "Enter Your Spotify Profile" },
+    { name: "", label: "Facebook", text: "Enter Your Facebook Profile" },
     { name: "", label: "Discord", text: "Enter Your Discord Profile" },
     { name: "", label: "X", text: "Enter Your X Profile" },
 ]
@@ -31,52 +39,61 @@ const CreatorInput = () => {
     const [otherLink, setOtherLink] = useState("");
     const [otherName, setOtherName] = useState("");
     const [open, setOpen] = useState<boolean>(false);
-    const [arrData, setArrData] = useState<any | null>(inputs);
+    const [arrData, setArrData] = useState<ArrayInput[] | []>(inputs);
     const [creatorLoading, setCreatorLoading] = useState<boolean>(false);
     const [isCreator, setIsCreator] = useState<boolean>(id ? true : false);
+    const [isEditable, setIsEditable] = useState(false);
 
     const { user, isPaid } = useSelector(
         (state: RootState) => state.userReducer
     );
 
-    useEffect(() => {
-        const fetchCreator = async () => {
-            if (id) {
-                try {
-                    const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=creator`, { withCredentials: true });
-                    setIsCreator(true);
-                    setName(data.vCard.name);
-                    setArrData(data.vCard.links);
-                } catch (error: any) {
-                    toast.error(error.response.data.message);
-                }
-            }
-        };
-
-        const cardData = localStorage.getItem("current_card");
-        if (cardData && id) {
-            const cardDataParsed = JSON.parse(cardData);
-            if (cardDataParsed?._id !== id) {
-                fetchCreator();
-            } else {
+    const fetchCreator = async () => {
+        if (id) {
+            try {
+                const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=creator`, { withCredentials: true });
                 setIsCreator(true);
-                setName(cardDataParsed.name);
-                setArrData(cardDataParsed.links);
+                setName(data.vCard.name);
+                setArrData(data.vCard.links);
+            } catch (error: any) {
+                toast.error(error.response.data.message);
             }
-        } else {
-            fetchCreator();
         }
+    };
+
+    useEffect(() => {
+        fetchCreator();
     }, [id]);
 
     const handleAdd = () => {
-        setArrData([
-            ...arrData,
-            {
-                name: otherLink,
-                label: otherName,
-                text: `Enter Your ${otherName} Profile`,
-            },
-        ]);
+        if (!isEditable && Array.isArray(arrData) && arrData.find((arr: ArrayInput) => arr.label.trim().toLowerCase() === otherName.trim().toLowerCase())) {
+            toast.warning("Platform already exists!");
+            return;
+        }
+        if (isEditable) {
+            const normalizedOtherName = otherName.trim().toLowerCase();
+            const index = arrData.findIndex((arr: ArrayInput) => arr.label.trim().toLowerCase() === normalizedOtherName);
+            if (index !== -1) {
+                const updatedArr = [...arrData];
+                updatedArr[index] = {
+                    ...updatedArr[index],
+                    // label: normalizedOtherName,
+                    name: otherLink,
+                    text: `Enter Your ${otherName} Profile`,
+                };
+                setArrData(updatedArr);
+                setIsEditable(false);
+            }
+        } else {
+            setArrData([
+                ...arrData,
+                {
+                    name: otherLink,
+                    label: otherName,
+                    text: `Enter Your ${otherName} Profile`,
+                },
+            ]);
+        }
         setOpen(false);
         setOtherLink("");
         setOtherName("");
@@ -136,6 +153,8 @@ const CreatorInput = () => {
 
     function handleCloseForm(e: React.MouseEvent<HTMLInputElement>) {
         if ((e.target as Element).id === "popupform") {
+            setOtherName("");
+            setOtherLink("");
             setOpen(false);
         }
     }
@@ -148,6 +167,12 @@ const CreatorInput = () => {
         } else {
             return "";
         }
+    }
+
+    const handleDeleteSocial = (label: string) => {
+        const normalizedLabel = label.trim().toLowerCase();
+        const updatedArr = arrData.filter((arr: ArrayInput) => arr.label.trim().toLowerCase() != normalizedLabel);
+        setArrData(updatedArr);
     }
 
     return (
@@ -220,18 +245,43 @@ const CreatorInput = () => {
                                                     </svg>
                                                 )}
                                             </label>
-                                            <div className="relative h-11 w-full min-w-44">
-                                                <input
-                                                    type="text"
-                                                    id={`name-${index}`}
-                                                    name="name"
-                                                    value={arr.name}
-                                                    onChange={(e) => handleChange(e, index)}
-                                                    placeholder={arr.text}
-                                                    autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                            <div className="flex space-x-4">
+                                                <div className="relative h-11 w-full min-w-44">
+                                                    <input
+                                                        type="text"
+                                                        id={`name-${index}`}
+                                                        name="name"
+                                                        value={arr.name}
+                                                        onChange={(e) => handleChange(e, index)}
+                                                        placeholder={arr.text}
+                                                        autoComplete="off"
+                                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                                    />
+                                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                                </div>
+                                                {arr.name != "" && (
+                                                    <>
+                                                        <button
+                                                            type="button"
+                                                            className="p-2"
+                                                            onClick={() => {
+                                                                setIsEditable(true);
+                                                                setOtherLink(arr.name);
+                                                                setOtherName(arr.label);
+                                                                setOpen(true);
+                                                            }}
+                                                        >
+                                                            <MdEdit size={20} />
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="p-2 text-red-500"
+                                                            onClick={() => handleDeleteSocial(arr.label)}
+                                                        >
+                                                            <MdDelete size={20} />
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
@@ -252,18 +302,19 @@ const CreatorInput = () => {
                                             >
                                                 <div className="bg-white p-8 rounded shadow-lg max-w-[425px]">
                                                     <div className="space-y-6 lg:w-full">
-                                                        <h1 className="text-2xl font-bold">Add Another Social Profile</h1>
+                                                        <h1 className="text-2xl font-bold">{isEditable ? "Edit" : "Add"} Social Profile</h1>
                                                         <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
                                                             <label
                                                                 htmlFor="name"
                                                                 className="text-md font-semibold text-gray-700 min-w-14"
                                                             >
-                                                                Name:
+                                                                Platform:
                                                             </label>
                                                             <div className="relative h-11 w-full min-w-56">
                                                                 <input
                                                                     type="text"
                                                                     id="name"
+                                                                    disabled={isEditable}
                                                                     value={otherName}
                                                                     onChange={(e) => setOtherName(e.target.value)}
                                                                     placeholder="Enter Social Media Platform"
@@ -301,14 +352,21 @@ const CreatorInput = () => {
                                                                 type="button"
                                                                 onClick={handleAdd}
                                                             >
-                                                                ADD PROFILE
+                                                                {isEditable ? "Update" : "Create"} Social
                                                             </button>
                                                             <button
                                                                 className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded ml-2"
                                                                 type="button"
-                                                                onClick={() => setOpen(false)}
+                                                                onClick={() => {
+                                                                    if (isEditable) {
+                                                                        setIsEditable(false);
+                                                                        setOtherName("");
+                                                                        setOtherLink("");
+                                                                    }
+                                                                    setOpen(false);
+                                                                }}
                                                             >
-                                                                CANCEL
+                                                                Cancel
                                                             </button>
                                                         </div>
                                                     </div>

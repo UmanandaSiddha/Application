@@ -14,6 +14,11 @@ const treeSchema = new mongoose.Schema(
         maintenance: String,
         benefits: String,
         funFact: String,
+        shortCode : {
+            type: String,
+            required: true,
+            unique: true,
+        },
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",

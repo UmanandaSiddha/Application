@@ -9,6 +9,8 @@ import { SinglePersonalResponse } from "@/types/api-types";
 import SideBar from "@/components/rest/sidebar";
 import { IoMdLink } from "react-icons/io";
 import * as icons from 'simple-icons';
+import { MdEdit } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 
 type LinkType = {
     name: string;
@@ -36,7 +38,7 @@ const emailInfo = [
 const socials = [
     { name: "", label: "Instagram", text: "Enter Your Instagram Profile" },
     { name: "", label: "Youtube", text: "Enter Your Youtube Profile" },
-    { name: "", label: "Spotify", text: "Enter Your Spotify Profile" },
+    { name: "", label: "Facebook", text: "Enter Your Facebook Profile" },
     { name: "", label: "Discord", text: "Enter Your Discord Profile" },
     { name: "", label: "X", text: "Enter Your X Profile" },
 ];
@@ -156,7 +158,8 @@ const InputVCard = () => {
     const [otherLink, setOtherLink] = useState("");
     const [otherName, setOtherName] = useState("");
     const [open, setOpen] = useState<boolean>(false);
-    const [socialData, setSocialData] = useState<any | null>(socials);
+    const [socialData, setSocialData] = useState<LinkType[]>(socials);
+    const [isEditable, setIsEditable] = useState(false);
 
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
 
@@ -194,30 +197,38 @@ const InputVCard = () => {
     };
 
     useEffect(() => {
-        const cardData = localStorage.getItem("current_card");
-        if (cardData && id) {
-            const cardDataParsed = JSON.parse(cardData);
-            if (cardDataParsed?._id !== id) {
-                fetchPersonal();
-            } else {
-                setIsPersonal(true);
-                setSocialData(cardDataParsed.socialMedia);
-                reset(convertToStrings(cardDataParsed));
-            }
-        } else {
-            fetchPersonal();
-        }
+        fetchPersonal();
     }, [id, reset]);
 
     const handleAdd = () => {
-        setSocialData([
-            ...socialData,
-            {
-                name: otherLink,
-                label: otherName,
-                text: "",
-            },
-        ]);
+        if (!isEditable && Array.isArray(socialData) && socialData.find((arr: LinkType) => arr.label.trim().toLowerCase() === otherName.trim().toLowerCase())) {
+            toast.warning("Platform already exists!");
+            return;
+        }
+        if (isEditable) {
+            const normalizedOtherName = otherName.trim().toLowerCase();
+            const index = socialData.findIndex((arr: LinkType) => arr.label.trim().toLowerCase() === normalizedOtherName);
+            if (index !== -1) {
+                const updatedArr = [...socialData];
+                updatedArr[index] = {
+                    ...updatedArr[index],
+                    // label: normalizedOtherName,
+                    name: otherLink,
+                    text: `Enter Your ${otherName} Profile`,
+                };
+                setSocialData(updatedArr);
+                setIsEditable(false);
+            }
+        } else {
+            setSocialData([
+                ...socialData,
+                {
+                    name: otherLink,
+                    label: otherName,
+                    text: `Enter Your ${otherName} Profile`,
+                },
+            ]);
+        }
         setOpen(false);
         setOtherLink("");
         setOtherName("");
@@ -273,6 +284,8 @@ const InputVCard = () => {
 
     function handleCloseForm(e: React.MouseEvent<HTMLInputElement>) {
         if ((e.target as Element).id === "popupform") {
+            setOtherName("");
+            setOtherLink("");
             setOpen(false);
         }
     }
@@ -285,6 +298,12 @@ const InputVCard = () => {
         } else {
             return "";
         }
+    }
+
+    const handleDeleteSocial = (label: string) => {
+        const normalizedLabel = label.trim().toLowerCase();
+        const updatedArr = socialData.filter((arr: LinkType) => arr.label.trim().toLowerCase() != normalizedLabel);
+        setSocialData(updatedArr);
     }
 
     const formParts = () => {
@@ -339,18 +358,43 @@ const InputVCard = () => {
                                         </svg>
                                     )}
                                 </label>
-                                <div className="relative h-11 w-full min-w-44">
-                                    <input
-                                        type="text"
-                                        id={`name-${index}`}
-                                        name="name"
-                                        value={arr.name}
-                                        onChange={(e) => handleChange(e, index)}
-                                        placeholder={arr.text}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                <div className="flex space-x-4">
+                                    <div className="relative h-11 w-full min-w-44">
+                                        <input
+                                            type="text"
+                                            id={`name-${index}`}
+                                            name="name"
+                                            value={arr.name}
+                                            onChange={(e) => handleChange(e, index)}
+                                            placeholder={arr.text}
+                                            autoComplete="off"
+                                            className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                        />
+                                        <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                    </div>
+                                    {arr.name != "" && (
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="p-2"
+                                                onClick={() => {
+                                                    setIsEditable(true);
+                                                    setOtherLink(arr.name);
+                                                    setOtherName(arr.label);
+                                                    setOpen(true);
+                                                }}
+                                            >
+                                                <MdEdit size={20} />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="p-2 text-red-500"
+                                                onClick={() => handleDeleteSocial(arr.label)}
+                                            >
+                                                <MdDelete size={20} />
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -371,19 +415,20 @@ const InputVCard = () => {
                                 >
                                     <div className="bg-white p-8 rounded shadow-lg max-w-[425px]">
                                         <div className="space-y-6 lg:w-full">
-                                            <h1 className="text-2xl font-bold">Add Another Social Profile</h1>
+                                            <h1 className="text-2xl font-bold">{isEditable ? "Edit" : "Add"} Social Profile</h1>
                                             <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
                                                 <label
                                                     htmlFor="name"
                                                     className="text-md font-semibold text-gray-700 min-w-14"
                                                 >
-                                                    Name:
+                                                    Platform:
                                                 </label>
                                                 <div className="relative h-11 w-full min-w-56">
                                                     <input
                                                         type="text"
                                                         id="name"
                                                         value={otherName}
+                                                        disabled={isEditable}
                                                         onChange={(e) => setOtherName(e.target.value)}
                                                         placeholder="Enter Social Media Platform"
                                                         autoComplete="off"
@@ -420,14 +465,21 @@ const InputVCard = () => {
                                                     type="button"
                                                     onClick={handleAdd}
                                                 >
-                                                    ADD PROFILE
+                                                    {isEditable ? "Update" : "Create"} Social
                                                 </button>
                                                 <button
                                                     className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded ml-2"
                                                     type="button"
-                                                    onClick={() => setOpen(false)}
+                                                    onClick={() => {
+                                                        if (isEditable) {
+                                                            setIsEditable(false);
+                                                            setOtherName("");
+                                                            setOtherLink("");
+                                                        }
+                                                        setOpen(false);
+                                                    }}
                                                 >
-                                                    CANCEL
+                                                    Cancel
                                                 </button>
                                             </div>
                                         </div>
@@ -816,7 +868,7 @@ const InputVCard = () => {
                                         ></div>
                                     </div>
                                 </div>
-                                
+
                                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
                                     {formParts()}
                                     <div className="flex justify-center space-x-4">

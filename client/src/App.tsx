@@ -121,7 +121,7 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Home user={user!} />} />
                         <Route path="/plans" element={<PlanPage />} />
-                        <Route path="/display" element={<DisplayCard />} />
+                        <Route path="/d/:shortId" element={<DisplayCard />} />
                         <Route path="/onboarding" element={<Onboarding />} />
                         <Route path="/donation/login" element={<DonationLogin />} />
                         <Route path="/contact" element={<ContactUs />} />

@@ -445,7 +445,7 @@ const UserDetails = () => {
 
             <div className="flex flex-col gap-10 my-10">
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    <div className="flex justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
+                    <div className="flex flex-col md:flex-row justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
                         <h4 className="text-xl font-semibold text-black dark:text-white capitalize">
                             {type} Cards
                         </h4>
@@ -551,7 +551,7 @@ const UserDetails = () => {
             {(subscriptions?.length! > 0) ? (
                 <div className="flex flex-col gap-10 my-10">
                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                        <div className="flex justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
+                        <div className="flex flex-col md:flex-row justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
                             <h4 className="text-xl font-semibold text-black dark:text-white">
                                 Subscriptions
                             </h4>
@@ -649,7 +649,7 @@ const UserDetails = () => {
             {(transactions?.length! > 0) ? (
                 <div className="flex flex-col gap-10 my-10">
                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                        <div className="flex justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
+                        <div className="flex flex-col md:flex-row justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
                             <h4 className="text-xl font-semibold text-black dark:text-white">
                                 Transactions
                             </h4>

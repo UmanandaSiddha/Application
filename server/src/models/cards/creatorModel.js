@@ -7,6 +7,11 @@ const creatorSchema = new mongoose.Schema(
             required: [true, "Please Enter Creator Name"],
         },
         links: [Object],
+        shortCode : {
+            type: String,
+            required: true,
+            unique: true,
+        },
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",

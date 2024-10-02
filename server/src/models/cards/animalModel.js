@@ -13,6 +13,11 @@ const animalSchema = new mongoose.Schema(
         location: String,
         owner: String,
         phone: String,
+        shortCode : {
+            type: String,
+            required: true,
+            unique: true,
+        },
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",

@@ -23,6 +23,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
 import SideBar from "@/components/rest/sidebar";
 import { createQRCode } from "./all-cards";
+import { IoShareSocialOutline } from "react-icons/io5";
 
 const ViewCard = () => {
     const navigate = useNavigate();
@@ -33,51 +34,40 @@ const ViewCard = () => {
     const [loading, setLoading] = useState(false);
     const { isPaid, user } = useSelector((state: RootState) => state.userReducer);
 
-    const fetchData = async () => {
+    const fetchData = async (id: string, type: string) => {
         setLoading(true);
-        if (["botanical", "individual", "medical", "creator", "animal"].includes(type!) && id) {
-            try {
-                const { data }: { data: SingleTreeResponse | SinglePersonalResponse | SingleMedicalResponse | SingleCreatorResponse | SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id!}?type=${type}`, { withCredentials: true });
-                setCard(data.vCard);
-                window.sessionStorage.setItem("current_card", JSON.stringify(data.vCard));
-            } catch (error: any) {
-                toast.error(error.response.data.message);
-            }
+        try {
+            const { data }: { data: SingleTreeResponse | SinglePersonalResponse | SingleMedicalResponse | SingleCreatorResponse | SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=${type}`, { withCredentials: true });
+            setCard(data.vCard);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
         }
         setLoading(false);
     };
 
     useEffect(() => {
-        const cardData = window.sessionStorage.getItem("current_card");
-        if (cardData) {
-            setCard(JSON.parse(cardData));
-            if (card?._id !== id) {
-                fetchData();
-            }
-        } else {
-            fetchData();
+        if (type && ["botanical", "individual", "medical", "creator", "animal"].includes(type) && id) {
+            fetchData(id, type);
         }
-    }, [type]);
+    }, [type, id]);
 
     const handleDownload = () => {
-        if (card?._id && type) {
-            const qrCode = createQRCode(type, card?._id);
+        if (card && card?.shortCode && type) {
+            const qrCode = createQRCode(type, card?.shortCode);
 
             qrCode.download({
                 name: card?._id,
                 extension: "svg"
             });
+        }
+    }
 
-            // qrCode.getRawData("png").then((data) => {
-            //     if (data) {
-            //         const element = document.createElement("a");
-            //         element.href = URL.createObjectURL(new Blob([data], { type: "image/png" }));
-            //         element.download = `${card?._id}.png`;
-            //         document.body.appendChild(element);
-            //         element.click();
-            //         document.body.removeChild(element);
-            //     }
-            // });
+    const handleShare = () => {
+        if (card && card?.shortCode && type) {
+            window.navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/d/${card?.shortCode}`);
+            toast.success("Link has been copied to clipboard");
+        } else {
+            toast.error("Something went wrong");
         }
     }
 
@@ -130,6 +120,17 @@ const ViewCard = () => {
                                         </div>
                                     </div>
                                 </button>
+                                {/* <button
+                                    className="py-4 px-4 bg-blue-200 rounded-full hover:cursor-pointer shadow-xl"
+                                    disabled={!isPaid && user?.role !== "admin"}
+                                    onClick={handleShare}
+                                >
+                                    <div className="flex">
+                                        <div className="flex justify-center">
+                                            <IoShareSocialOutline className="w-[1.5rem] h-[1.5rem]" />
+                                        </div>
+                                    </div>
+                                </button> */}
                                 <button
                                     className="py-4 px-4 bg-slate-300 rounded-full hover:cursor-pointer shadow-xl"
                                     disabled={!isPaid && user?.role !== "admin"}
@@ -165,6 +166,17 @@ const ViewCard = () => {
                                 <div className="flex">
                                     <div className="flex justify-center">
                                         <FaDownload className="w-[1.5rem] h-[1.5rem]" />
+                                    </div>
+                                </div>
+                            </button>
+                            <button
+                                className="py-4 px-4 bg-blue-200 rounded-full hover:cursor-pointer shadow-xl"
+                                disabled={!isPaid && user?.role !== "admin"}
+                                onClick={handleShare}
+                            >
+                                <div className="flex">
+                                    <div className="flex justify-center">
+                                        <IoShareSocialOutline className="w-[1.5rem] h-[1.5rem]" />
                                     </div>
                                 </div>
                             </button>

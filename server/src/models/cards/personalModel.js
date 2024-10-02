@@ -76,6 +76,11 @@ const personalSchema = new mongoose.Schema(
         unusualExperinece: String,
         strangeHabits: String,
         socialMedia: [Object],
+        shortCode : {
+            type: String,
+            required: true,
+            unique: true,
+        },
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",
