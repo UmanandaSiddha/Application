@@ -164,6 +164,7 @@ export type Transaction = {
 
 export type Tree = {
     _id: string;
+    shortCode: string;
     type: string;
     name: string
     scientificName: string;
@@ -184,6 +185,7 @@ export type Tree = {
 
 export type Animal = {
     _id: string;
+    shortCode: string;
     type: string;
     species: string;
     name: string;
@@ -203,6 +205,7 @@ export type Animal = {
 
 export type Personal = {
     _id: string;
+    shortCode: string;
     name: string,
     type: string;
     mobileNumer: string,
@@ -290,6 +293,7 @@ export type Personal = {
 
 export type Medical = {
     _id: string;
+    shortCode: string;
     type: string;
     name: string,
     dateOfBirth: string,
@@ -326,6 +330,7 @@ export type Medical = {
 
 export type Creator = {
     _id: string;
+    shortCode: string;
     type: string;
     name: string;
     links: [

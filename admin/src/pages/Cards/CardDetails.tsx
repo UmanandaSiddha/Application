@@ -25,7 +25,7 @@ export const createQRCode = (type: string, cardId: string) => {
         width: 300,
         height: 300,
         margin: 5,
-        data: `${import.meta.env.VITE_CLIENT_URL}/display?id=${cardId}&type=${type}`,
+        data: `${import.meta.env.VITE_CLIENT_URL}/d/${cardId}`,
         qrOptions: {
             typeNumber: 0,
             mode: "Byte",
@@ -125,7 +125,7 @@ const CardDetails = () => {
 
     useEffect(() => {
         if (type && card) {
-            const qrCode = createQRCode(type, card._id);
+            const qrCode = createQRCode(type, card.shortCode);
 
             qrCode.getRawData("png").then((data) => {
                 if (data) {
@@ -138,7 +138,7 @@ const CardDetails = () => {
 
     const handleDownload = () => {
         if (card && type) {
-            const qrCode = createQRCode(type, card._id);
+            const qrCode = createQRCode(type, card.shortCode);
 
             qrCode.download({
                 name: card._id,
@@ -149,7 +149,7 @@ const CardDetails = () => {
 
     const handleShare = () => {
         if (card && type) {
-            window.navigator.clipboard.writeText(`${import.meta.env.VITE_CLIENT_URL}/display?id=${card._id}&type=${type}`);
+            window.navigator.clipboard.writeText(`${import.meta.env.VITE_CLIENT_URL}/d/${card.shortCode}`);
             toast.success("Link has been copied to clipboard");
         } else {
             toast.error("Something went wrong");
