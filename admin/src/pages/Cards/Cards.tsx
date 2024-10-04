@@ -177,7 +177,7 @@ const Cards = () => {
                                             className="text-sm text-meta-3 cursor-pointer"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                navigate(`/card-details?id=${card.user._id}`);
+                                                navigate(`/users/details?id=${card.user._id}`);
                                             }}
                                         >
                                             {card.user?._id}

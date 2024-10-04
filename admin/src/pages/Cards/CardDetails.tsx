@@ -31,7 +31,7 @@ export const createQRCode = (type: string, cardId: string) => {
             mode: "Byte",
             errorCorrectionLevel: "H",
         },
-        image: `${import.meta.env.VITE_CLIENT_URL}/${type}.svg`,
+        image: `/assets/${type}.svg`,
         imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,
