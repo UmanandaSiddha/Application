@@ -79,7 +79,7 @@ const UserDetails = () => {
     const gotUser = async () => {
         setLoading(true);
 
-        const cachedUserById = window.sessionStorage.getItem('donator_byId');
+        const cachedUserById = window.sessionStorage.getItem('user_byId');
         if (cachedUserById) {
             const { data: cachedUser, expires, id: cachedId } = JSON.parse(cachedUserById);
 

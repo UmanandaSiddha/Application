@@ -54,7 +54,7 @@ const AnimalComponent = ({ card }: PropsType) => {
 
             <div className="py-6 flex justify-center w-full">
                 <div className="w-[90%]">
-                   {data.map((item, index) => (
+                    {data.map((item, index) => (
                         <div key={index} className="flex flex-col gap-y-2 py-2">
                             <p className="text-lg font-semibold">{item.title}:</p>
                             <p className="bg-white border-2 border-slate-200 w-full rounded-lg px-3 py-1 text-lg shadow-lg">{item.value}</p>

@@ -57,7 +57,7 @@ const ViewCard = () => {
 
             qrCode.download({
                 name: card?._id,
-                extension: "svg"
+                extension: "png"
             });
         }
     }

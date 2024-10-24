@@ -120,7 +120,7 @@ const App = () => {
                                         </>
                                     }
                                 />
-                                 <Route
+                                <Route
                                     path='/donators/details'
                                     element={
                                         <>

@@ -48,8 +48,8 @@ export const createQRCode = (type: string, cardId: string) => {
     const styles = type && qrStyles[type] ? qrStyles[type] : qrStyles.default;
 
     return new QRCodeStyling({
-        width: 300,
-        height: 300,
+        width: 1000,
+        height: 1000,
         margin: 10,
         data: `${window.location.protocol}//${window.location.host}/d/${cardId}`,
         qrOptions: {
@@ -196,7 +196,7 @@ const AllCards = () => {
 
             qrCode.download({
                 name: cards?.[currentIndex]._id,
-                extension: "svg"
+                extension: "png"
             });
         }
     }
