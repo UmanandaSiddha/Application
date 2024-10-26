@@ -50,7 +50,7 @@ export const createQRCode = (type: string, cardId: string) => {
     return new QRCodeStyling({
         width: 1000,
         height: 1000,
-        margin: 10,
+        margin: 50,
         data: `${window.location.protocol}//${window.location.host}/d/${cardId}`,
         qrOptions: {
             typeNumber: 0,
@@ -196,7 +196,7 @@ const AllCards = () => {
 
             qrCode.download({
                 name: cards?.[currentIndex]._id,
-                extension: "png"
+                extension: "png" // jpeg //svg
             });
         }
     }

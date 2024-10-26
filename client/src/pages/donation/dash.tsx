@@ -66,7 +66,7 @@ const DonatorDashboard = () => {
                         </div>
 
                         <div className="border w-[90%] lg:w-[60%] px-6 py-2 shadow-xl rounded-xl bg-white">
-                            <Link to="/contact-us" className="inline-flex items-center text-sm text-blue-500 gap-x-2 dark:text-blue-400 hover:underline">
+                            <Link to="/contact" className="inline-flex items-center text-sm text-blue-500 gap-x-2 dark:text-blue-400 hover:underline">
                                 <span className="text-xl font-semibold underline">Contact Us</span>
 
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:rotate-180">

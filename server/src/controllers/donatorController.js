@@ -27,6 +27,7 @@ export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
     }
 
     const otp = donator.getOneTimePassword();
+    console.log(otp);
 
     await donator.save({ validateBeforeSave: false });
 
