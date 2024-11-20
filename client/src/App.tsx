@@ -100,7 +100,7 @@ const App = () => {
 
     useEffect(() => {
         if (user) {
-            const newSocket = io(`ws://localhost:7070`, {
+            const newSocket = io(`ws://${import.meta.env.VITE_SERVER_URL}`, {
                 query: {
                     userId: user._id,
                 },
