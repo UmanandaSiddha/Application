@@ -50,3 +50,7 @@ body {
 body.no-scroll {
     overflow: hidden;
 }
+
+.tilted-top {
+    clip-path: polygon(0 0, 100% 10%, 100% 100%, 0% 100%);
+}

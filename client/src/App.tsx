@@ -30,7 +30,7 @@ import BillingPage from "./pages/plans/billing";
 import Dashboard from "./pages/root/dash";
 import AllCards from "./pages/cards/all-cards";
 import ViewCard from "./pages/cards/view-card";
-import Home from "./pages/root/home";
+import HomePage from "./pages/root/home";
 import PlanPage from "./pages/plans/plan";
 import DonationCheckout from "./pages/donation/checkout";
 import DonatorDashboard from "./pages/donation/dash";
@@ -51,6 +51,7 @@ import { io } from "socket.io-client";
 import ReFundPolicyPage from "./pages/others/refund";
 import PrivacyPolicyPage from "./pages/others/privacy";
 import TermsAndConditions from "./pages/others/terms";
+import Footer from "./components/rest/footer";
 
 const App = () => {
     const location = useLocation();
@@ -128,7 +129,7 @@ const App = () => {
             <ErrorBoundary>
                 {!["/login", "/register", "/org/register"].includes(location.pathname) && (<Header />)}
                 <Routes>
-                    <Route path="/" element={<Home user={user!} />} />
+                    <Route path="/" element={<HomePage />} />
                     <Route path="/plans" element={<PlanPage />} />
                     <Route path="/d/:shortId" element={<DisplayCard />} />
                     <Route path="/onboarding" element={<OnBoarding />} />
@@ -189,6 +190,7 @@ const App = () => {
 
                     <Route path="*" element={<NotFound />} />
                 </Routes>
+                {!["/login", "/register", "/org/register"].includes(location.pathname) && (<Footer />)}
             </ErrorBoundary>
         </div>
     );

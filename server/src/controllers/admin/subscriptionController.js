@@ -28,7 +28,7 @@ export const getUserSubscriptions = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Subscription.countDocuments({ user: user._id });
 
     const apiFeatures = new ApiFeatures(Subscription.find({ user: user._id }).sort({ $natural: -1 }), req.query).filter();
@@ -48,7 +48,7 @@ export const getUserSubscriptions = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getAllUserSubscriptions = catchAsyncErrors(async (req, res, next) => {
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Subscription.countDocuments();
 
     const apiFeatures = new ApiFeatures(Subscription.find().sort({ $natural: -1 }), req.query).filter();
@@ -143,7 +143,7 @@ export const getDonatorSubscriptions = catchAsyncErrors(async (req, res, next) =
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
 
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Subscription.countDocuments({ donator: donator._id });
 
     const apiFeatures = new ApiFeatures(Subscription.find({ donator: donator._id }).sort({ $natural: -1 }), req.query).filter();

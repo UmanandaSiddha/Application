@@ -7,7 +7,6 @@ import { IoIosLogOut } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Compressor from "compressorjs";
 import Loader from "@/components/rest/loader";
 
 const Profile = () => {
@@ -26,7 +25,6 @@ const Profile = () => {
     const [profileData, setProfileData] = useState({
         name: user?.name || "",
         phone: user?.phone || "",
-        image: ""
     });
     const [billingAddress, setBillingAddress] = useState({
         street: user?.billingAddress?.street || "",
@@ -121,49 +119,6 @@ const Profile = () => {
         }
     }, [dispatch]);
 
-    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file: File | null = e.target.files![0];
-        if (file instanceof Blob) {
-            const compressImage = async (file: File) => {
-                try {
-                    return await new Promise((resolve, reject) => {
-                        new Compressor(file, {
-                            quality: 0.6,
-                            maxWidth: 800,
-                            maxHeight: 600,
-                            success(result) {
-                                resolve(result);
-                            },
-                            error(err) {
-                                reject(err);
-                            },
-                        });
-                    });
-                } catch (error) {
-                    console.error("Error compressing image:", error);
-                    throw error;
-                }
-            };
-
-            try {
-                const compressedFile = await compressImage(file);
-                const reader = new FileReader();
-                reader.onload = () => {
-                    if (typeof reader.result === "string") {
-                        setProfileData({ ...profileData, image: reader.result });
-                    } else {
-                        console.error("Failed to read the compressed file.");
-                    }
-                };
-                reader.readAsDataURL(compressedFile as Blob);
-            } catch (error) {
-                console.error("Error compressing image:", error);
-            }
-        } else {
-            console.error("The selected file is not a Blob.");
-        }
-    };
-
     const logout = async () => {
         try {
             await axios.get(`${import.meta.env.VITE_BASE_URL}/user/logout`, { withCredentials: true });
@@ -187,10 +142,6 @@ const Profile = () => {
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenProfile(false)}>Close</button>
                         </div>
                         <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-4">
-                                <label htmlFor="avatar" className="text-lg font-semibold">Avatar</label>
-                                <input type="file" onChange={handleChange} placeholder="Enter you avatar" className="border-2 px-3 py-2 rounded-lg" />
-                            </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="name" className="text-lg font-semibold">Name</label>
                                 <input type="text" value={profileData.name} onChange={(e) => setProfileData({ ...profileData, name: e.target.value })} placeholder="Enter you Name" className="border-2 px-3 py-2 rounded-lg" />

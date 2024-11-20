@@ -4,7 +4,7 @@ import ErrorHandler from "../../utils/errorHandler.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const getAllDonators = catchAsyncErrors(async (req, res, next) => {
-    const resultPerPage = 10;
+    const resultPerPage = 20;
     const count = await Donator.countDocuments();
 
     const apiFeatures = new ApiFeatures(Donator.find().sort({ $natural: -1 }), req.query).search().filter();

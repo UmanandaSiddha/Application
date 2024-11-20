@@ -4,7 +4,7 @@ import Contact from "../../models/messages/contactModel.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const getAllContacts = catchAsyncErrors(async (req, res, next) => {
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Contact.countDocuments();
 
     const apiFeatures = new ApiFeatures(Contact.find().sort({ $natural: -1 }), req.query).filter();

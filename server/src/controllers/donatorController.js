@@ -19,15 +19,12 @@ export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
     if (!email) {
         return next(new ErrorHandler("Please enter Email", 400));
     }
-
     let donator = await Donator.findOne({ email });
-
     if (!donator) {
         donator = await Donator.create({ email })
     }
 
     const otp = donator.getOneTimePassword();
-    console.log(otp);
 
     await donator.save({ validateBeforeSave: false });
 
@@ -186,14 +183,16 @@ export const createDonationPlan = catchAsyncErrors(async (req, res, next) => {
 
 export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     const donator = await Donator.findById(req.donator.id);
-
     if (donator?.activeDonation) {
-        const subscription = await Subscription.findById(donator?.activeDonation);
-        if (subscription) {
-            if (subscription?.status === "just_created") {
-                await Subscription.findByIdAndDelete(donator?.activeDonation);
-            } else if (!["completed", "cancelled"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd > Date.now())) {
-                return next(new ErrorHandler("You already have active recurring Donation", 403));
+        const existingSubscription = await Subscription.findById(donator.activeDonation);
+        if (existingSubscription) {
+            if (existingSubscription.status === "just_created") {
+                await Subscription.findByIdAndDelete(donator.activeDonation);
+            } else if (
+                !["completed", "cancelled"].includes(existingSubscription.status) ||
+                (existingSubscription.status === "cancelled" && existingSubscription.currentEnd > Date.now())
+            ) {
+                return next(new ErrorHandler("You already have an active recurring Donation", 403));
             }
         }
     }
@@ -203,28 +202,20 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Invalid Plan", 404));
     }
 
-    const subscriptions = await instance.subscriptions.create({
+    const razorSubscription = await instance.subscriptions.create({
         plan_id: req.body.id,
         total_count: 12,
         quantity: 1,
         customer_notify: 0,
     });
-    if (!subscriptions) {
+    if (!razorSubscription) {
         return next(new ErrorHandler("Failed to create subscription", 404));
     }
 
     const subscription = await Subscription.create({
         planId: plan._id,
-        razorSubscriptionId: subscriptions.id,
-        start: 0,
-        end: 0,
-        currentStart: 0,
-        currentEnd: 0,
-        nextBilling: 0,
-        totalCount: 0,
-        paidCount: 0,
-        remainingCount: 0,
-        shortUrl: subscriptions.short_url,
+        razorSubscriptionId: razorSubscription.id,
+        shortUrl: razorSubscription.short_url,
         status: "just_created",
         subscriptionType: subscriptionEnum.DONATOR,
         donator: req.donator.id,
@@ -238,12 +229,11 @@ export const createSubscription = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         key: process.env.RAZORPAY_KEY_ID,
-        subscriptions_id: subscriptions.id,
+        subscriptions_id: razorSubscription.id,
     });
 });
 
 export const createDonation = catchAsyncErrors(async (req, res, next) => {
-
     const { amount, currency} = req.body;
     if (!amount || !currency) {
         return next(new ErrorHandler("All fields are required", 404));
@@ -262,7 +252,7 @@ export const createDonation = catchAsyncErrors(async (req, res, next) => {
         amount: amount,
         status: "just_created",
         razorpayOrderId: order.id,
-        razorpayPaymentId: "12",
+        razorpayPaymentId: "pending",
         transactionFor: subscriptionEnum.DONATOR,
         transactionType: transactionEnum.ONETIME,
         currency: req.body.currency,
@@ -277,7 +267,6 @@ export const createDonation = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const capturePayment = async (req, res, next) => {
-
     const webhookPayload = {
         header: req.headers['x-razorpay-signature'],
         dataPay: req.body
@@ -293,7 +282,6 @@ export const capturePayment = async (req, res, next) => {
 };
 
 export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
-
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
     const toBe = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -308,9 +296,11 @@ export const verifyPayment = catchAsyncErrors(async (req, res, next) => {
     }
 
     if (expectedSigntaure === razorpay_signature) {
-        const donation = await Transaction.findOne({ razorpayOrderId: payment.order_id });
-        if (donation) {
-            await handleDonation(payment);
+        if (payment.status === "captured") {
+            const donation = await Transaction.findOne({ razorpayOrderId: payment.order_id });
+            if (donation) {
+                await handleDonation(payment);
+            }
         }
     } else {
         return next(new ErrorHandler("Payment Not Verified", 403));
@@ -337,11 +327,10 @@ export const getDonatorSubscription = catchAsyncErrors(async (req, res, next) =>
 });
 
 export const getDonatorTransaction = catchAsyncErrors(async (req, res, next) => {
-
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Transaction.countDocuments();
 
-    const apiFeatures = new ApiFeatures(Transaction.find({ donator: req.donator.id }).sort({ $natural: -1 }), req.query).filter();
+    const apiFeatures = new ApiFeatures(Transaction.find({ donator: req.donator.id }).select("createdAt end paymentMethod razorpayPaymentId amount status").sort({ $natural: -1 }), req.query).filter();
     let filteredTransaction = await apiFeatures.query;
     let filteredTransactionCount = filteredTransaction.length;
 
@@ -359,7 +348,6 @@ export const getDonatorTransaction = catchAsyncErrors(async (req, res, next) => 
 
 export const getParticularDonatorTransaction = catchAsyncErrors(async (req, res, next) => {
     const transaction = await Transaction.findById(req.params.id);
-
     if (transaction.transactionFor !== subscriptionEnum.DONATOR) {
         return next(new ErrorHandler("Transaction not found", 403));
     }

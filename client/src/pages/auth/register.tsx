@@ -4,7 +4,6 @@ import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
 import React, { useState } from "react";
 import { getGoogleAuthUrl } from "@/lib/google";
-import Compressor from "compressorjs";
 import { UserResponse } from "@/types/api-types";
 import axios from "axios";
 
@@ -12,56 +11,12 @@ const Register = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [avatar, setAvatar] = useState<any>();
     const [userData, setUserData] = useState({
         name: "",
         email: "",
         password: "",
     });
     const [registerLoading, setRegisterLoading] = useState<boolean>(false);
-
-    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file: File | null = e.target.files![0];
-        if (file instanceof Blob) {
-            const compressImage = async (file: File) => {
-                try {
-                    return await new Promise((resolve, reject) => {
-                        new Compressor(file, {
-                            quality: 0.6,
-                            maxWidth: 800,
-                            maxHeight: 600,
-                            success(result) {
-                                resolve(result);
-                            },
-                            error(err) {
-                                reject(err);
-                            },
-                        });
-                    });
-                } catch (error) {
-                    console.error("Error compressing image:", error);
-                    throw error;
-                }
-            };
-
-            try {
-                const compressedFile = await compressImage(file);
-                const reader = new FileReader();
-                reader.onload = () => {
-                    if (typeof reader.result === "string") {
-                        setAvatar(reader.result);
-                    } else {
-                        console.error("Failed to read the compressed file.");
-                    }
-                };
-                reader.readAsDataURL(compressedFile as Blob);
-            } catch (error) {
-                console.error("Error compressing image:", error);
-            }
-        } else {
-            console.error("The selected file is not a Blob.");
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -74,7 +29,6 @@ const Register = () => {
             name: userData.name,
             email: userData.email,
             password: userData.password,
-            image: avatar,
         };
         try {
             const config = {
@@ -107,7 +61,7 @@ const Register = () => {
                 >
                     <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
                         <div>
-                            <h2 className="text-2xl font-bold text-white sm:text-3xl">VCARDS APP</h2>
+                            <h2 className="text-2xl font-bold text-white sm:text-3xl">VOOLATA</h2>
                             <p className="max-w-xl mt-3 text-gray-300">
                                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. In
                                 autem ipsa, nulla laboriosam dolores, repellendus perferendis libero suscipit nam temporibus
@@ -121,7 +75,7 @@ const Register = () => {
                     <div className="flex-1 hide-scrollbar overflow-auto h-full">
                         <div className="text-center mt-5">
                             <div className="flex justify-center mx-auto">
-                                <img className="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" />
+                                <img className="w-auto h-24 sm:h-16" src="/VOOLATA.png" alt="" />
                             </div>
 
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign up to access your account</p>
@@ -161,23 +115,6 @@ const Register = () => {
                                         onChange={(e) =>
                                             setUserData({ ...userData, email: e.target.value })
                                         }
-                                    />
-                                </div>
-
-                                <div className="mt-6">
-                                    <div className="flex justify-between mb-2">
-                                        <label htmlFor="avatar" className="text-sm text-gray-600 dark:text-gray-200">
-                                            Profile Photo
-                                        </label>
-                                    </div>
-
-                                    <input
-                                        id="avatar"
-                                        className="block w-full px-3 py-2 mt-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-700 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-800 dark:file:text-gray-200 dark:text-gray-300 placeholder-gray-400/70 dark:placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:focus:border-blue-300"
-                                        type="file"
-                                        name="avatar"
-                                        accept="image/*"
-                                        onChange={handleChange}
                                     />
                                 </div>
 

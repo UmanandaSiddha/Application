@@ -109,8 +109,7 @@ export const switchPlanVisibility = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getAllPlans = catchAsyncErrors( async (req, res, next) => {
-    
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count  = await Plan.countDocuments();
 
     const apiFeatures = new ApiFeatures(Plan.find().sort({ $natural: -1 }), req.query).search().filter();

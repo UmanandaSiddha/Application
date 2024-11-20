@@ -5,14 +5,12 @@ import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
 import { UserResponse } from "@/types/api-types";
 import axios from "axios";
-import Compressor from "compressorjs";
 
 const OrgRegister = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [registerLoading, setRegisterLoading] = useState(false);
-    const [avatar, setAvatar] = useState<any>();
     const [organisationInfo, setOrganisationInfo] = useState({
         name: "",
         website: "",
@@ -26,50 +24,6 @@ const OrgRegister = () => {
         postalCode: "",
         country: "",
     });
-
-
-    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file: File | null = e.target.files![0];
-        if (file instanceof Blob) {
-            const compressImage = async (file: File) => {
-                try {
-                    return await new Promise((resolve, reject) => {
-                        new Compressor(file, {
-                            quality: 0.6,
-                            maxWidth: 800,
-                            maxHeight: 600,
-                            success(result) {
-                                resolve(result);
-                            },
-                            error(err) {
-                                reject(err);
-                            },
-                        });
-                    });
-                } catch (error) {
-                    console.error("Error compressing image:", error);
-                    throw error;
-                }
-            };
-
-            try {
-                const compressedFile = await compressImage(file);
-                const reader = new FileReader();
-                reader.onload = () => {
-                    if (typeof reader.result === "string") {
-                        setAvatar(reader.result);
-                    } else {
-                        console.error("Failed to read the compressed file.");
-                    }
-                };
-                reader.readAsDataURL(compressedFile as Blob);
-            } catch (error) {
-                console.error("Error compressing image:", error);
-            }
-        } else {
-            console.error("The selected file is not a Blob.");
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -88,7 +42,6 @@ const OrgRegister = () => {
         setRegisterLoading(true);
         const registerData = {
             ...organisationInfo,
-            avatar
         };
         try {
             const config = { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true };
@@ -114,7 +67,7 @@ const OrgRegister = () => {
                 >
                     <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
                         <div>
-                            <h2 className="text-2xl font-bold text-white sm:text-3xl">VCARDS APP</h2>
+                            <h2 className="text-2xl font-bold text-white sm:text-3xl">VOOLATA</h2>
                             <p className="max-w-xl mt-3 text-gray-300">
                                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. In
                                 autem ipsa, nulla laboriosam dolores, repellendus perferendis libero suscipit nam temporibus
@@ -132,7 +85,7 @@ const OrgRegister = () => {
 
                         <div className="text-center mt-5">
                             <div className="flex justify-center mx-auto">
-                                <img className="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" />
+                                <img className="w-auto h-24 sm:h-16" src="/VOOLATA.png" alt="" />
                             </div>
 
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign up as an Organisation</p>
@@ -226,20 +179,6 @@ const OrgRegister = () => {
                                                 onChange={(e) => setOrganisationInfo({ ...organisationInfo, cfmPassword: e.target.value })}
                                             />
                                         </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block mb-2 text-md font-semibold text-gray-600 dark:text-gray-200">
-                                            Logo
-                                        </label>
-                                        <input
-                                            className="block w-full px-3 py-2 mt-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-700 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full focus:border-blue-500 focus:ring-blue-500 dark:file:bg-gray-800 dark:file:text-gray-200 dark:text-gray-300 placeholder-gray-400/70 dark:placeholder-gray-500 dark:border-gray-600 dark:bg-gray-900"
-                                            id="avatar"
-                                            type="file"
-                                            name="avatar"
-                                            accept="image/*"
-                                            onChange={handleChange}
-                                        />
                                     </div>
 
                                     <div>

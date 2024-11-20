@@ -43,25 +43,17 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Access Denied", 500));
     }
 
-    if (user.loginAttempt?.count < 5 && user.loginAttempt?.count !== 0 && (user.loginAttempt?.time + 60 * 1000) > Date.now()) {
+    if (user.loginAttempt?.count > 0 && user.loginAttempt.time + 60 * 1000 <= Date.now()) {
         user.loginAttempt.count = 0;
         user.loginAttempt.time = undefined;
         await user.save();
     }
 
     const isPasswordMatched = await user.comparePassword(password);
-
     if (!isPasswordMatched) {
-        await User.findOneAndUpdate(
-            { email },
-            {
-                loginAttempt: {
-                    count: user.loginAttempt.count + 1,
-                    time: Date.now(),
-                },
-            },
-            { new: true, runValidators: true, useFindAndModify: false }
-        );
+        user.loginAttempt.count++;
+        user.loginAttempt.time = Date.now();
+        await user.save();
         return next(new ErrorHandler("Invalid Credentials", 401));
     }
 
@@ -83,7 +75,6 @@ export const freeAccess = catchAsyncErrors(async (req, res, next) => {
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
-
     if (user.freePlan.status) {
         return next(new ErrorHandler(`User with Id: ${req.params.id} already has free access`, 400));
     }
@@ -140,10 +131,10 @@ export const revokeFreeAccess = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
-    const resultPerPage = 3;
+    const resultPerPage = 20;
     const count = await User.countDocuments();
 
-    const apiFeatures = new ApiFeatures(User.find().sort({ $natural: -1 }), req.query).search().filter();
+    const apiFeatures = new ApiFeatures(User.find().select("name email image role accountType").sort({ $natural: -1 }), req.query).search().filter();
 
     // let link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
 
@@ -179,11 +170,9 @@ export const getSingleUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const updateRole = catchAsyncErrors(async (req, res, next) => {
-
     if (req.user.id === req.params.id) {
         return next(new ErrorHandler(`You cannot update your own role`, 400));
     }
-
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
@@ -220,16 +209,13 @@ export const updateCard = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const deleteUser = catchAsyncErrors(async (req, res, next) => {
-
     if (req.user.id === req.params.id) {
         return next(new ErrorHandler(`You cannot deactivate your account`, 400));
     }
-
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
-
     if (user.isDeactivated) {
         return next(new ErrorHandler(`User with Id: ${req.params.id} is already deactivated`, 400));
     }
@@ -253,12 +239,10 @@ export const blockUser = catchAsyncErrors(async (req, res, next) => {
     if (req.user.id === req.params.id) {
         return next(new ErrorHandler(`You cannot block your account`, 400));
     }
-
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
-
     if (user.isBlocked) {
         return next(new ErrorHandler(`User with Id: ${req.params.id} is already blocked`, 400));
     }
@@ -276,12 +260,10 @@ export const unBlockUser = catchAsyncErrors(async (req, res, next) => {
     if (req.user.id === req.params.id) {
         return next(new ErrorHandler(`You cannot unblock your account`, 400));
     }
-
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
-
     if (!user.isBlocked) {
         return next(new ErrorHandler(`User with Id: ${req.params.id} is already unblocked`, 400));
     }
@@ -299,12 +281,10 @@ export const reActivateUser = catchAsyncErrors(async (req, res, next) => {
     if (req.user.id === req.params.id) {
         return next(new ErrorHandler(`You cannot reactivate your account`, 400));
     }
-
     const user = await User.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404));
     }
-
     if (!user.isDeactivated) {
         return next(new ErrorHandler(`User with Id: ${req.params.id} is already active`, 400));
     }

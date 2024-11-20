@@ -76,7 +76,7 @@ const Login = () => {
                 >
                     <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
                         <div>
-                            <h2 className="text-2xl font-bold text-white sm:text-3xl">VCARDS APP</h2>
+                            <h2 className="text-2xl font-bold text-white sm:text-3xl">VOOLATA</h2>
                             <p className="max-w-xl mt-3 text-gray-300">
                                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. In
                                 autem ipsa, nulla laboriosam dolores, repellendus perferendis libero suscipit nam temporibus
@@ -132,7 +132,7 @@ const Login = () => {
                     <div className="flex-1">
                         <div className="text-center">
                             <div className="flex justify-center mx-auto">
-                                <img className="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" />
+                                <img className="w-auto h-24 sm:h-16" src="/VOOLATA.png" alt="" />
                             </div>
 
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign in to access your account</p>

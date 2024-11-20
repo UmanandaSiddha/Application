@@ -41,12 +41,12 @@ export default function Header() {
     }, [mobileMenuOpen]);
 
     return (
-        <header className="bg-white border-b-2 fixed top-0 left-0 right-0 z-50">
+        <header className="bg-white border-b-2 fixed top-0 left-0 right-0 z-50 ">
             <nav className="mx-auto flex w-full md:max-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
-                        <img className="w-auto h-6 sm:h-7" src="https://merakiui.com/images/logo.svg" alt="" />
-                        <span className="font-semibold text-xl">VOOLATA</span>
+                        <img className="w-12 " src="VOOLATA.png" alt="" />
+                        {/* <span className="font-semibold text-xl">VOOLATA</span> */}
                     </Link>
                 </div>
                 <div className="flex lg:hidden">
@@ -69,9 +69,9 @@ export default function Header() {
                     <Link to='/plans' className="text-md font-semibold leading-6">
                         Pricing
                     </Link>
-                    <Link to='/about' className="text-md font-semibold leading-6">
+                    <a href='#about-us' className="text-md font-semibold leading-6">
                         About Us
-                    </Link>
+                    </a>
                     <Link to='/contact' className="text-md font-semibold leading-6">
                         Contact
                     </Link>
@@ -164,7 +164,7 @@ export default function Header() {
                                     </>
                                 )}
                             </nav>
-                            
+
                             <div className='pb-10'>
                                 {user ? (
                                     <div className="flex items-center justify-between px-4 -mx-2">

@@ -64,7 +64,7 @@ export const getUserCards = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("User not found", 404));
     }
 
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Model.countDocuments({ user: user._id });
 
     const apiFeatures = new ApiFeatures(Model.find({ user: user._id }).populate("user", "email").sort({ $natural: -1 }), req.query).pagination(resultPerPage);

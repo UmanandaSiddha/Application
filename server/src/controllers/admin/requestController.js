@@ -71,7 +71,7 @@ export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getAllCustomRequests = catchAsyncErrors(async (req, res, next) => {
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await CustomRequest.countDocuments();
 
     const apiFeatures = new ApiFeatures(CustomRequest.find().sort({ $natural: -1 }), req.query).filter();
@@ -159,7 +159,6 @@ export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
     if (!customRequest) {
         return next(new ErrorHandler(`Custom Request does not exist with Id: ${req.params.id}`, 404));
     }
-
     if (customRequest.accepted === acceptedEnum.ACCEPTED) {
         return next(new ErrorHandler("Custom Request already accepted cannot be rejected", 400));
     }

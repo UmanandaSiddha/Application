@@ -6,7 +6,7 @@ import ErrorHandler from "../../utils/errorHandler.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const getAllTransactions = catchAsyncErrors(async (req, res, next) => {
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Transaction.countDocuments();
 
     const apiFeatures = new ApiFeatures(Transaction.find().sort({ $natural: -1 }), req.query).filter();
@@ -31,7 +31,7 @@ export const getUserTransactions = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(`No User By Id ${req.params.id}`, 404));
     }
 
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Transaction.countDocuments({ user: req.params.id });
 
     const apiFeatures = new ApiFeatures(Transaction.find({ user: req.params.id }).sort({ $natural: -1 }), req.query).filter();
@@ -56,7 +56,7 @@ export const getDonatorTransactions = catchAsyncErrors(async (req, res, next) =>
         return next(new ErrorHandler(`No User By Id ${req.params.id}`, 404));
     }
 
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Transaction.countDocuments({ donator: req.params.id });
 
     const apiFeatures = new ApiFeatures(Transaction.find({ donator: req.params.id }).sort({ $natural: -1 }), req.query).filter();

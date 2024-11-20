@@ -136,9 +136,8 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
     const payment = await instance.payments.fetch(razorpay_payment_id);
     const subscription = await instance.subscriptions.fetch(razorpay_subscription_id);
 
-    // if (["active", "created", "authenticated", "activated"].includes(subscription.status) && ["authorized", "captured", "created"].includes(payment.status)) {
     if (expectedSigntaure === razorpay_signature) {
-        if (["active"].includes(subscription.status) && ["captured"].includes(payment.status)) {
+        if (subscription.status === "active" && payment.status === "captured") {
             const subscriptionx = await Subscription.findOne({ razorSubscriptionId: subscription.id });
 
             await handleSubscription(subscription, subscriptionx);
@@ -160,7 +159,6 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const verifySubscription = async (req, res) => {
-
     const webhookPayload = {
         header: req.headers['x-razorpay-signature'],
         dataSub: req.body
@@ -180,22 +178,14 @@ export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
     if (!subscription) {
         return next(new ErrorHandler("No Subscription is found", 404));
     }
-
     if (["completed", "cancelled"].includes(subscription.status)) {
         return next(new ErrorHandler("This subscription cannot be cancelled", 403));
     }
-
-    // instance.subscriptions.cancel(subscriptionId,options)
-    // cancel_at_cycle_end
-    // Possible values:
-    // 0 (default): Cancel the subscription immediately.
-    // 1: Cancel the subscription at the end of the current billing cycle.
 
     const cancelSubscription = await instance.subscriptions.cancel(subscription.razorSubscriptionId);
     if (!cancelSubscription) {
         return next(new ErrorHandler("Failed to cancel subscription", 403));
     }
-    console.log(cancelSubscription)
     if (subscription.currentEnd <= Date.now()) {
         await User.findByIdAndUpdate(req.user.id,
             { "cards.total": 0 },
@@ -210,7 +200,6 @@ export const cancelSubscription = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getLatestSubscription = catchAsyncErrors(async (req, res, next) => {
-
     const user = await User.findById(req.user.id);
     const subscription = await Subscription.findById(user.activePlan).populate("planId", "_id name amount");
 
@@ -221,11 +210,10 @@ export const getLatestSubscription = catchAsyncErrors(async (req, res, next) => 
 });
 
 export const getUserTransactions = catchAsyncErrors(async (req, res, next) => {
-
-    const resultPerPage = 5;
+    const resultPerPage = 20;
     const count = await Transaction.countDocuments();
 
-    const apiFeatures = new ApiFeatures(Transaction.find({ user: req.user.id }).sort({ $natural: -1 }), req.query).filter();
+    const apiFeatures = new ApiFeatures(Transaction.find({ user: req.user.id }).select("createdAt end paymentMethod razorpayPaymentId amount status").sort({ $natural: -1 }), req.query).filter();
     let filteredTransaction = await apiFeatures.query;
     let filteredTransactionCount = filteredTransaction.length;
 
@@ -246,7 +234,6 @@ export const getParticularTransaction = catchAsyncErrors(async (req, res, next) 
     if (!transaction) {
         return next(new ErrorHandler(`No Transaction By Id ${req.params.id}`, 404));
     }
-
     if (transaction.transactionFor !== subscriptionEnum.USER) {
         return next(new ErrorHandler("Transaction not found", 403));
     }
