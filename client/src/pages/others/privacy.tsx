@@ -1,8 +1,10 @@
-
+import privacy from '/assets/privacy.svg';
 
 const PrivacyPolicyPage = () => {
     return (
-        <div>PrivacypolicyPage</div>
+        <div>
+            <img src={privacy} alt="" />
+        </div>
     )
 }
 
