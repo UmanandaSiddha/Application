@@ -1,0 +1,52 @@
+.spin-button-none::-webkit-outer-spin-button,
+.spin-button-none::-webkit-inner-spin-button {
+    appearance: none;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+
+@media (max-width: 730px) {
+    .mobile-curve {
+        height: 70vh;
+        transform: scaleX(1.9);
+        border-bottom-left-radius: 50%;
+        border-bottom-right-radius: 50%;
+    }
+}
+
+@layer base {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
+.custom-padding {
+    padding-top: 4.5rem;
+}
+
+.toggle-checkbox:checked+.toggle-bg+.toggle-dot {
+    transform: translateX(1.5rem);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body.no-scroll {
+    overflow: hidden;
+}
