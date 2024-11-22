@@ -190,7 +190,7 @@ const App = () => {
 
                     <Route path="*" element={<NotFound />} />
                 </Routes>
-                {!["/login", "/register", "/org/register"].includes(location.pathname) && (<Footer />)}
+                {["/"].includes(location.pathname) && (<Footer />)}
             </ErrorBoundary>
         </div>
     );
