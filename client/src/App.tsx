@@ -154,7 +154,7 @@ const App = () => {
                         element={lod2 ? (
                             <Loader />
                         ) : (
-                            <ProtectedRoute isAuthenticated={!!donator} redirect="/donation/login" />
+                            <ProtectedRoute isAuthenticated={true} redirect="/donation/login" />
                         )}
                     >
                         <Route path="/donation/checkout" element={<DonationCheckout />} />
