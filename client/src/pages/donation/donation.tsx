@@ -12,16 +12,16 @@ const DonatePage: React.FC = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="h-full bg-white shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl p-10 m-8">
-                {/* Donation Button at the Top */}
+               
                 <div className="flex justify-center mb-6">
                     <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700">
                         Donate Now 🥺
                     </button>
                 </div>
 
-                {/* Title and Image Section */}
+                
                 <div className="flex items-center justify-between p-8 mb-4">
-                    {/* Heading Section */}
+                   
                     <div className="flex items-start flex-col">
                         <div className="flex items-center">
                             <img
@@ -33,7 +33,6 @@ const DonatePage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Image Section */}
                     <div className="flex-shrink-0">
                         <img
                             src={donationimg}
