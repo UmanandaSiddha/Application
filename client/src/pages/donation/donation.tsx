@@ -1,5 +1,5 @@
 import React from "react";
-import donationimg from '/assets/donationimg.jpeg'; // Replace with the actual path to your image
+import donationimg from '/assets/donationimg.jpeg'; 
 import DonateSvg from '/assets/donatesvg.svg'; // Added donation SVG
 import ResearchSvg from '/assets/researchsvg.svg';
 import ServerSvg from '/assets/serversvg.svg';
