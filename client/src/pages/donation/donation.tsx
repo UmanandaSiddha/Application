@@ -42,12 +42,10 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Why We Need Your Support Section */}
                 <div className="p-8 mb-8">
                     <h1 className="text-4xl font-bold">Why We Need Your Support:-</h1>
                 </div>
 
-                {/* Research and Development */}
                 <div className="p-8 flex items-center">
                     <img src={ResearchSvg} alt="Research Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -59,7 +57,6 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Server and Maintenance Costs */}
                 <div className="p-8 flex items-center">
                     <img src={ServerSvg} alt="Server Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -71,7 +68,6 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Team Support */}
                 <div className="p-8 flex items-center">
                     <img src={TeamSvg} alt="Team Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -83,12 +79,10 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* How Your Donation Makes a Difference Section */}
                 <div className="p-8 mb-8">
                     <h1 className="text-4xl font-bold">How Your Donation Makes a Difference:-</h1>
                 </div>
 
-                {/* Empowering Communities */}
                 <div className="p-8 flex items-center">
                     <img src={CommunitySvg} alt="Community Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -100,7 +94,6 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Creating Job Opportunities */}
                 <div className="p-8 flex items-center">
                     <img src={JobSvg} alt="Job Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -112,7 +105,6 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Promoting Sustainability */}
                 <div className="p-8 flex items-center">
                     <img src={SustainabilitySvg} alt="Sustainability Icon" className="w-12 h-12 mr-4" />
                     <div>
