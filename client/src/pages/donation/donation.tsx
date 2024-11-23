@@ -1,6 +1,6 @@
 import React from "react";
-import donationimg from '/assets/donationimg.jpeg'; // Replace with the actual path to your image
-import DonateSvg from '/assets/donatesvg.svg'; // Added donation SVG
+import donationimg from '/assets/donationimg.jpeg'; 
+import DonateSvg from '/assets/donatesvg.svg'; 
 import ResearchSvg from '/assets/researchsvg.svg';
 import ServerSvg from '/assets/serversvg.svg';
 import TeamSvg from '/assets/teamsvg.svg';
@@ -12,16 +12,16 @@ const DonatePage: React.FC = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="h-full bg-white shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl p-10 m-8">
-                {/* Donation Button at the Top */}
+               
                 <div className="flex justify-center mb-6">
                     <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700">
                         Donate Now 🥺
                     </button>
                 </div>
 
-                {/* Title and Image Section */}
+                
                 <div className="flex items-center justify-between p-8 mb-4">
-                    {/* Heading Section */}
+                   
                     <div className="flex items-start flex-col">
                         <div className="flex items-center">
                             <img
@@ -33,7 +33,6 @@ const DonatePage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Image Section */}
                     <div className="flex-shrink-0">
                         <img
                             src={donationimg}
@@ -43,12 +42,10 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Why We Need Your Support Section */}
                 <div className="p-8 mb-8">
                     <h1 className="text-4xl font-bold">Why We Need Your Support:-</h1>
                 </div>
 
-                {/* Research and Development */}
                 <div className="p-8 flex items-center">
                     <img src={ResearchSvg} alt="Research Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -60,7 +57,6 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Server and Maintenance Costs */}
                 <div className="p-8 flex items-center">
                     <img src={ServerSvg} alt="Server Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -72,7 +68,6 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Team Support */}
                 <div className="p-8 flex items-center">
                     <img src={TeamSvg} alt="Team Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -84,12 +79,10 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* How Your Donation Makes a Difference Section */}
                 <div className="p-8 mb-8">
                     <h1 className="text-4xl font-bold">How Your Donation Makes a Difference:-</h1>
                 </div>
 
-                {/* Empowering Communities */}
                 <div className="p-8 flex items-center">
                     <img src={CommunitySvg} alt="Community Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -101,7 +94,6 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Creating Job Opportunities */}
                 <div className="p-8 flex items-center">
                     <img src={JobSvg} alt="Job Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -113,7 +105,6 @@ const DonatePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Promoting Sustainability */}
                 <div className="p-8 flex items-center">
                     <img src={SustainabilitySvg} alt="Sustainability Icon" className="w-12 h-12 mr-4" />
                     <div>
@@ -134,7 +125,6 @@ const DonatePage: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Call to Action */}
                 <div className="text-center p-8">
                     <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700">
                         Donate Now 🥺
