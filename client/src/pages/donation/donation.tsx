@@ -45,7 +45,7 @@ const DonatePage: React.FC = () => {
 
                 {/* Why We Need Your Support Section */}
                 <div className="p-8 mb-8">
-                    <h1 className="text-4xl font-bold">Why We Need Your Support</h1>
+                    <h1 className="text-4xl font-bold">Why We Need Your Support:-</h1>
                 </div>
 
                 {/* Research and Development */}
@@ -86,7 +86,7 @@ const DonatePage: React.FC = () => {
 
                 {/* How Your Donation Makes a Difference Section */}
                 <div className="p-8 mb-8">
-                    <h1 className="text-4xl font-bold">How Your Donation Makes a Difference</h1>
+                    <h1 className="text-4xl font-bold">How Your Donation Makes a Difference:-</h1>
                 </div>
 
                 {/* Empowering Communities */}
