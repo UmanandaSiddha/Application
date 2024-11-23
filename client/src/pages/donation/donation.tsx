@@ -1,6 +1,6 @@
 import React from "react";
 import donationimg from '/assets/donationimg.jpeg'; 
-import DonateSvg from '/assets/donatesvg.svg'; // Added donation SVG
+import DonateSvg from '/assets/donatesvg.svg'; 
 import ResearchSvg from '/assets/researchsvg.svg';
 import ServerSvg from '/assets/serversvg.svg';
 import TeamSvg from '/assets/teamsvg.svg';
