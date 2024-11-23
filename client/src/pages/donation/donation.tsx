@@ -125,7 +125,6 @@ const DonatePage: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Call to Action */}
                 <div className="text-center p-8">
                     <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700">
                         Donate Now 🥺
