@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { SingleMedicalResponse } from "@/types/api-types";
 import SideBar from "@/components/rest/sidebar";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const perInfo = [
     { name: "name", label: "Name", text: "Enter your name", type: "text" },
@@ -347,60 +348,66 @@ const MedicalInput = () => {
                 <div className="basis-1/4 hidden lg:block xl:block">
                     <SideBar />
                 </div>
-                <div className="basis-full lg:basis-3/4 lg:max-h-screen">
-                    <div className="h-[85vh] overflow-y-scroll mb-4 hide-scrollbar">
-                        <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Medical</h1>
-                        <div className="flex flex-col justify-center items-center lg:w-full">
-                            <div className="flex flex-col justify-center pb-10">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-10 lg:w-full">
+                    <div className="basis-full gap-20 flex justify-center items-center lg:basis-3/4  lg:max-h-screen">
+                        <button
+                            className="px-4 py-2 mt-4 flex justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
+                            type="button"
+                            disabled={progressBar === 1}
+                            onClick={() => {
+                                setProgressBar((currPage) => currPage - 1);
+                            }}
+                        >
+                            <FaArrowLeft className="text-3xl" />
 
-                                <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                    <div className="w-full h-4 bg-blue-100 rounded-full">
-                                        <div
-                                            className="h-4 bg-blue-500 rounded-full"
-                                            style={{ width: `${(progressBar / 4) * 100}%` }}
-                                        ></div>
+                        </button>
+                        <div className="h-[85vh] flex flex-col overflow-y-scroll mb-4 hide-scrollbar">
+                            <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Medical</h1>
+                            <div className="flex flex-col  justify-center items-center lg:w-full">
+                                <div className="flex flex-col gap-6 justify-center pb-10">
+                                    <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
+                                        <div className="w-full h-4 bg-blue-100 rounded-full">
+                                            <div
+                                                className="h-4 bg-blue-500 rounded-full"
+                                                style={{ width: `${(progressBar / 4) * 100}%` }}
+                                            ></div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
                                     {formParts()}
                                     <div className="flex justify-center space-x-4">
-                                        <button
-                                            className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-1/2 max-w-2xl text-white bg-blue-500 text-lg"
-                                            type="button"
-                                            disabled={progressBar === 1}
-                                            onClick={() => {
-                                                setProgressBar((currPage) => currPage - 1);
-                                            }}
-                                        >
-                                            PREV
-                                        </button>
-                                        {progressBar === 4 ? (
-                                            <button
-                                                className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-1/2 max-w-2xl text-white bg-[#3FA398] text-lg"
-                                                type="submit"
-                                                disabled={medicalLoading}
-                                            >
-                                                {medicalLoading ? "APPLYING..." : "APPLY CHANGES"}
-                                            </button>
-                                        ) : (
-                                            <button
-                                                className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-1/2 max-w-2xl text-white bg-blue-500 text-lg"
-                                                type="button"
-                                                disabled={progressBar === 4}
-                                                onClick={() => {
-                                                    setProgressBar((currPage) => currPage + 1);
-                                                }}
-                                            >
-                                                NEXT
-                                            </button>
-                                        )}
                                     </div>
-                                </form>
+                                </div>
                             </div>
+                            {progressBar === 4?
+
+                                <button
+                                    className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w- max-w-2xl text-white bg-[#3FA398] text-lg"
+                                    type="submit"
+                                    disabled={medicalLoading}
+                                >
+                                    {medicalLoading ? "APPLYING..." : "APPLY CHANGES"}
+                                </button>
+                                :
+                                <></>
+                            }
                         </div>
+                        {progressBar === 4 ? (
+                            <></>
+                        ) : (
+                            <button
+                                className="px-4 py-2 mt-4 rounded-full flex justify-center items-center h-20 w-20 hover:cursor-pointer text-white bg-blue-500 text-lg"
+                                type="button"
+                                disabled={progressBar === 4}
+                                onClick={() => {
+                                    setProgressBar((currPage) => currPage + 1);
+                                }}
+                            >
+                                <FaArrowRight className="text-3xl" />
+                            </button>
+                        )}
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     );

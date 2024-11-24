@@ -90,7 +90,7 @@ const PersonalComponent = ({ card }: PropsType) => {
                 { label: "Relationship?", value: card?.relationshipStatus },
                 { label: "Morning/Night Person?", value: card?.morningPerson },
                 { label: "Sleeping Habits?", value: card?.sleepingHabit },
-                { label: "Dietary Preferences", value: card?.diet === "Other" ?  card?.diet_Other : card?.diet },
+                { label: "Dietary Preferences", value: card?.diet === "Other" ? card?.diet_Other : card?.diet },
                 { label: "Fitness Routine", value: card?.fitnessRoutine }
             ]
         },
@@ -139,38 +139,42 @@ const PersonalComponent = ({ card }: PropsType) => {
             return "";
         }
     }
-
+    // bg-[#346CD9] shape-container
     return (
-        <div className="bg-slate-300 pb-16 md:pb-6">
-            <div className="bg-slate-400 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
-                <div className="flex justify-start pl-6 py-4">
-                    <p className="text-white">INDIVIDUAL DATA</p>
-                </div>
-                <div className="text-white text-3xl md:text-5xl font-semibold mb-10">
-                    <h1 className="pl-6">{card?.name}</h1>
+        <div className="bg-[#ACC5F5] bg-[url('/personal_bg.png')] overflow-x-hidden relative bg-auto bg-center pb-16 md:pb-6">
+            <img src="/personal_curve.png" alt="" className="absolute md:right-10 md:top-10 md:rotate-6 z-10 " />
+            <div className="relative rounded-[10px] mb-10">
+                <img src="/card_header_bg.png" alt="" className="w-full h-80"/>
+                <div className="p-10 absolute top-5">
+                    <div className="flex justify-start pl-6 py-4">
+                        <p className="text-white font-semibold">Individual Data</p>
+                    </div>
+                    <div className="text-white text-5xl lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">
+                        <h1 className="pl-6">{card?.name}</h1>
+                    </div>
                 </div>
             </div>
 
             <div className="flex justify-center w-full">
                 <div className="w-[90%]">
-                    <div className="my-8 flex flex-col gap-y-2 py-2">
+                    {/* <div className="my-8 flex flex-col gap-y-2 py-2">
                         <p className="text-lg font-semibold">Name:</p>
                         <p className="bg-white border-2 border-slate-200 w-full rounded-lg px-3 py-2 text-lg shadow-lg">{card?.name}</p>
-                    </div>
+                    </div> */}
 
                     <div className="bg-white rounded-xl mb-16 pb-8">
 
                         <div className="flex justify-center">
-                            <div className="w-[80%] flex flex-wrap justify-between gap-2 mt-6">
+                            <div className="w-[80%] flex flex-nowrap justify-between md:gap-2 gap-5 pb-6 mt-6">
                                 {card?.socialMedia.map((item: any, index: number) => (
-                                    <Link key={index} to={item.name} target="blank" className="flex justify-center border-2 rounded-full px-5 py-2.5 items-center">
+                                    <Link key={index} to={item.name} target="blank" className="flex w-20 h-14 md:w-16 md:h-16 shadow-lg justify-center border-2 rounded-full py-2.5 items-center">
                                         {setSvg(item.label) === "" ? (
-                                            <IoMdLink size={25} />
+                                            <IoMdLink size={30} />
                                         ) : (
                                             <svg
                                                 className="fill-current"
-                                                width="20"
-                                                height="20"
+                                                width="25"
+                                                height="25"
                                                 viewBox="0 0 24 24"
                                                 fill="none"
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -190,10 +194,10 @@ const PersonalComponent = ({ card }: PropsType) => {
 
                         {data.map((item, index) => (
                             <div key={index} className="flex flex-col justify-center">
-                                <div className="flex justify-center">
-                                    <div className="w-[80%] border-2 border-slate-200 mt-6  py-2 rounded-full shadow-lg">
+                                <div className="flex justify-center ">
+                                    <div className="w-[80%] flex items-center border-2 h-16 border-black mt-6 rounded-full">
                                         <button
-                                            className="w-full px-4 border-none flex flex-row"
+                                            className="w-full border-2 border-black px-4 border-none flex flex-row"
                                             onClick={() => toggleSection(index)}
                                             type="button"
                                         >

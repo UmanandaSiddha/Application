@@ -1,7 +1,10 @@
 import { Server } from "socket.io";
+import { redis } from "./server.js";
+
+let io;
 
 export function initWs(httpServer) {
-    const io = new Server(httpServer, {
+    io = new Server(httpServer, {
         cors: {
             origin: "*",
             methods: ["GET", "POST"],
@@ -9,30 +12,24 @@ export function initWs(httpServer) {
     });
 
     io.on("connection", async (socket) => {
-        // Auth checks should happen here
-        const host = socket.handshake.headers.host;
-        console.log(`host is ${host}`);
-        // Split the host by '.' and take the first part as replId
-        const replId = host?.split('.')[0];
-    
-        if (!replId) {
+        const userId = socket.handshake.query.userId;
+        const socketId = socket.id;
+
+        if (!userId) {
+            console.log("No userId provided, disconnecting socket.");
             socket.disconnect();
             return;
         }
 
-        console.log("socket_id", socket.id);
+        console.log(`User connected: userId=${userId}, socketId=${socketId}`);
 
-        const userId = socket.handshake.query.userId;
-        console.log("User connected with ID:", userId);
+        await redis.hset("userSockets", userId, socketId);
 
-
-        initHandlers(socket, replId);
+        socket.on("disconnect", async () => {
+            console.log(`User disconnected: userId=${userId}`);
+            await redis.hdel("userSockets", userId);
+        });
     });
 }
 
-function initHandlers(socket, replId) {
-
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
-    });
-}
+export { io };

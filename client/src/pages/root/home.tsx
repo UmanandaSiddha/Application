@@ -2,34 +2,34 @@ import { Link } from "react-router-dom";
 
 const HomePage = () => {
     return (
-        <div className="flex flex-col h-[100%] relative items-center overflow-x- hide-scrollbar gap-24 bg-[url('/background2')]">
-            <div className="flex flex-col  z-10 justify-center items-center pt-10 mx-auto gap-12 w-[80%]">
+        <div className="flex flex-col h-[100%] relative items-center hide-scrollbar gap-24 bg-[url('/background2')]">
+            <div className="flex flex-col pt-20 max-sm:pt-24 z-10 justify-center items-center  mx-auto gap-14 sm:w-[80%]">
                 <h1 className="text-5xl md:text-7xl font-semibold text-center">
-                    Where <span className="text-purple-900">work</span> happens
+                    Where <span className="text-purple-900">Work</span> Happens
                 </h1>
                 <div className='flex items-center gap-4'>
-                    <button className="uppercase bg-purple-800 text-sm sm:text-lg text-white h-16 md:w-48 w-28 font-semibold rounded-lg">
+                    <button className="uppercase bg-purple-800 text-sm sm:text-lg text-white sm:h-16 md:w-48 w-28 h-14 font-semibold rounded-lg">
                         <Link to={'/dashboard'}>Get Started</Link>
                     </button>
-                    <button className='uppercase bg-white border-2 text-sm sm:text-lg border-purple-800 text-purple-800 h-16 md:w-48 w-28 font-semibold rounded-lg'>
+                    <button className='uppercase bg-white border-2 text-sm sm:text-lg border-purple-800 text-purple-800 sm:h-16 md:w-48 w-28 h-14 font-semibold rounded-lg'>
                         <Link to={'/donation'}>donate</Link>
                     </button>
                 </div>
-                <p className='text-center md:text-xl font-normal '>
+                <p className='text-center md:text-xl font-normal max-sm:w-[90%] max-sm:mb-36'>
                     Welcome to Voolata, your go-to platform for creating versatile QR codes and links. Whether you need detailed medical cards, identity cards for plants and animals, or personalized profiles, Voolata has you covered. Our user-friendly platform ensures that all your essential information is just a scan away, promoting both convenience and sustainability.
                 </p>
-                <div className="border-2h-screen flex flex-col items-center">
-                    <img src="/image.jpg" alt="" className="bg-contain bg-center sm:w-[90%] max-sm:w-[400px] rounded-2xl" />
+                <div className="border-2h-screen flex flex-col max-sm:mt-24 items-center">
+                    <img src="/image.jpg" alt="" className="bg-contain bg-center sm:w-[90%] max-sm:w-[23rem] rounded-2xl" />
                 </div>
             </div>
 
-            <div id='about-us' className='bg-pink-100 tilted-top absolute sm:top-[700px] top-[700px] lg:top-[850px] '>
-                <div className='flex flex-col justify-between w-[85%] mx-auto mb-24 mt-64' >
+            <div id='about-us' className='bg-pink-100 max-sm:mt-56 tilted-top absolute sm:top-[700px] top-[650px] lg:top-[950px] '>
+                <div className='flex flex-col justify-between w-[85%] mx-auto mb-24 mt-72' >
                     <h1 className='text-5xl max-lg:mx-auto max-lg:pb-10 font-semibold '>
                         ABOUT US
                     </h1>
                     <div className='flex items-center gap-10 sm:gap-20 max-lg:flex-col '>
-                        <img src="about_us_final.png" alt="" className='w-72 lg:hidden' />
+                        <img src="about_us_final.png" alt="" className='w-96 lg:hidden' />
                         <p className='md:text-xl text-lg max-sm:p-5 text-justify pt-10 lg:w-[55%]'>
                             Voolata is an innovative initiative by Evool Foundation, designed to simplify your life and contribute to environmental sustainability. Our platform allows you to generate QR codes and links for various purposes, reducing the need for paper and promoting eco-friendly practices. With Voolata, managing and sharing information has never been easier.
                         </p>
@@ -39,7 +39,7 @@ const HomePage = () => {
             </div>
             <div className='mt-[700px] sm:mt-[600px] md:mt-[600px] lg:mt-[500px] flex items-center gap-10 w-[80%]'>
                 <div className='flex flex-col gap-6 mt-36 max-sm:w-[95%] max-sm:mx-auto'>
-                    <h1 className='text-4xl max-sm:text-center max-lg:mx-auto font-semibold mb-10'>HOW IT WORKS</h1>
+                    <h1 className='text-5xl max-sm:text-center max-lg:mx-auto font-semibold mb-10'>HOW IT WORKS</h1>
                     <img src="./project_final.png " alt="" className='w-96 lg:hidden mx-auto' />
 
                     <p className='text-xl'>
@@ -96,7 +96,6 @@ const HomePage = () => {
                             {/* <h1 className='text-lg font-medium'>PROJECT MANAGEMENT</h1> */}
                             <h1 className='text-4xl font-semibold'>
                                 Identity Cards for Plants and Animals
-
                             </h1>
                             <p className='text-xl'>
                                 Create comprehensive identity cards for your pets and plants. Document species, care instructions, and other important details to ensure their well-being. This feature helps in better management and care of your beloved pets and plants.
@@ -180,7 +179,7 @@ const HomePage = () => {
                 <div className='flex gap-6 max-lg:flex-col lg:text-sm '>
                     <div className='relative flex flex-col lg:w-1/3  '>
                         <img src="./no-1.svg" alt="" className='w-20 left-5 absolute z-10 ' />
-                        <div className='border-2 mt-8 flex flex-col gap-5 pt-16 p-10 rounded-[30px] h-72 bg-[#f1bfdb] shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)]'>
+                        <div className='mt-8 flex flex-col gap-5 pt-16 p-10 rounded-[30px] h-72 bg-[#f1bfdb] shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)]'>
                             <h1 className='text-lg font-bold'>Empowering Communities</h1>
                             <p>
                                 By supporting our projects, you help us create user-friendly platforms that make life easier and more efficient for individuals and businesses
@@ -189,7 +188,7 @@ const HomePage = () => {
                     </div>
                     <div className='relative flex flex-col lg:w-1/3 '>
                         <img src="./no-2.svg" alt="" className='w-20 left-5 absolute z-10' />
-                        <div className='border-2 mt-8  flex flex-col gap-5 pt-16  p-10 rounded-[30px] h-72 bg-[#f1bfdb] shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)] '>
+                        <div className=' mt-8  flex flex-col gap-5 pt-16  p-10 rounded-[30px] h-72 bg-[#f1bfdb] shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)] '>
                             <h1 className='text-lg font-bold'>Creating Job Opportunities</h1>
                             <p>
                                 Your donations enable us to generate employment through the platforms we develop, fostering financial independence and long-term growth.
@@ -198,7 +197,7 @@ const HomePage = () => {
                     </div>
                     <div className='relative flex flex-col lg:w-1/3 '>
                         <img src="./no-3.svg" alt="" className='w-20 left-5 absolute z-10 ' />
-                        <div className='border-2 mt-8  flex flex-col gap-5 pt-16  p-10 rounded-[30px] h-72 shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)] bg-[#f1bfdb]'>
+                        <div className=' mt-8  flex flex-col gap-5 pt-16  p-10 rounded-[30px] h-72 shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)] bg-[#f1bfdb]'>
                             <h1 className='text-lg font-bold'>Promoting Sustainability</h1>
                             <p className='max-sm:text-sm'>
                                 We design eco-friendly solutions that encourage sustainable living practices. Our initiatives help conserve natural resources, reduce waste, and contribute to a healthier environment overall. By promoting digital solutions, we aim to create a more sustainable future for everyone.

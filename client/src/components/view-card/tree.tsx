@@ -7,7 +7,7 @@ interface PropsType {
 const TreeComponent = ({ card }: PropsType) => {
 
     const data = [
-        { 
+        {
             title: "Tree Name",
             value: card?.name
         },
@@ -46,22 +46,26 @@ const TreeComponent = ({ card }: PropsType) => {
     ]
 
     return (
-        <div className="bg-green-100 pb-32 md:pb-6">
-            <div className="bg-green-400 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
-                <div className="flex justify-start pl-6 py-4">
-                    <p className="text-white">BOTANICAL DATA</p>
-                </div>
-                <div className="text-5xl font-semibold mb-10">
-                    <h1 className="pl-6 text-3xl md:text-5xl text-white">{card?.name}</h1>
+        <div className="bg-[#F5EDA8] relative bg-opacity-45 pb-32 md:pb-6 overflow-x-hidden">
+            <img src="/botany_bg.png" alt="" className="absolute md:left-16 max-sm:top-20 rotate-6 z-10" />
+            <div className="relative rounded-[10px]">
+                <img src="/botany_header.png" alt="" className="w-full h-80" />
+                <div className=" pt-10 pl-5 absolute top-5">
+                    <div className="flex justify-start pl-6 py-4">
+                        <p className="text-black font-bold text-lg">Botanical Data</p>
+                    </div>
+                    <div className="text-black text-5xl  lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">
+                        <h1 className="pl-6">{card?.name}</h1>
+                    </div>
                 </div>
             </div>
 
             <div className="py-6 flex justify-center w-full">
                 <div className="w-[90%]">
                     {data.map((item, index) => (
-                        <div key={index} className="flex flex-col gap-y-2 py-2">
+                        <div key={index} className="flex flex-col  gap-y-2 py-2">
                             <p className="text-lg font-semibold">{item.title}:</p>
-                            <p className="bg-white border-2 border-slate-200 w-full rounded-lg px-3 py-1 text-lg shadow-lg">{item.value}</p>
+                            <p className="bg-white border-2 border-slate-200 w-full h-12 rounded-lg px-3 py-1 text-lg">{item.value}</p>
                         </div>
                     ))}
                 </div>

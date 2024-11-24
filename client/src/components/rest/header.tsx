@@ -45,7 +45,7 @@ export default function Header() {
             <nav className="mx-auto flex w-full md:max-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
-                        <img className="h-10 w-full" src="/v_logo.png" alt="" />
+                        <img className="h-10 w-full" src="/voolata_r.png" alt="" />
                         {/* <span className="font-semibold text-xl">VOOLATA</span> */}
                     </Link>
                 </div>
@@ -102,13 +102,12 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     className="hide-scrollbar h-screen lg:hidden fixed inset-0 bg-opacity-30 backdrop-blur z-10"
                 >
-                    <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
-                        <Link to='/' className="flex items-center space-x-2">
-                            <img className="w-auto h-6 sm:h-6" src="https://merakiui.com/images/logo.svg" alt="" />
-                            <span className="font-semibold text-xl">VOOLATA</span>
+                    <aside className="flex flex-col w-64 h-screen px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
+                        <Link to='/'>
+                            <img className="h-10" src="/voolata_r.png" alt="" />
                         </Link>
 
-                        <div className="flex flex-col justify-between flex-1 mt-6">
+                        <div className="flex flex-col justify-between flex-1 mt-2">
                             <nav>
                                 <hr className="my-4 border-gray-200 " />
                                 <Link to="/donation" className={`flex items-center px-4 py-2 rounded-md ${location.pathname === "/" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>

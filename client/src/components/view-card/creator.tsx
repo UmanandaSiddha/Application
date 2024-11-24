@@ -1,7 +1,7 @@
 import { Creator } from '@/types/card_types';
 import { Link } from 'react-router-dom';
-import * as icons from 'simple-icons';
-import { IoMdLink } from "react-icons/io";
+// import * as icons from 'simple-icons';
+// import { IoMdLink } from "react-icons/io";
 
 interface PropsType {
     card: Creator | null;
@@ -9,45 +9,48 @@ interface PropsType {
 
 const CreatorComponent = ({ card }: PropsType) => {
 
-    const setSvg = (input: string) => {
-        const platformKey = `si${input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()}`;
-        const icon = icons[platformKey as keyof typeof icons];
-        if (icon) {
-            return icon.path;
-        } else {
-            return "";
-        }
-    }
+    // const setSvg = (input: string) => {
+    //     const platformKey = `si${input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()}`;
+    //     const icon = icons[platformKey as keyof typeof icons];
+    //     if (icon) {
+    //         return icon.path;
+    //     } else {
+    //         return "";
+    //     }
+    // }
 
     return (
-        <div className='bg-cyan-100 pb-32 md:pb-6'>
-            <div className="bg-cyan-400 py-4 rounded-br-[4rem] rounded-bl-[3rem] z-10 shadow-lg">
-                <div className="flex justify-start pl-6 py-4">
-                    <p className='text-white'>CREATOR DATA</p>
-                </div>
-                <div className="text-5xl font-semibold mb-10">
-                    <h1 className="pl-6 text-3xl md:text-5xl text-white">{card?.name}</h1>
+        <div className='bg-[#A383FF] overflow-x-hidden pb-32 relative md:pb-6'>
+            <img src="/personal_curve.png" alt="" className="absolute md:right-10 md:top-10 md:rotate-6 z-10 " />
+            <div className="relative mb-20 rounded-[10px]">
+                <img src="/card_header_bg.png" alt="" className="w-full h-80" />
+                <div className='pt-10 pl-5 absolute top-5 '>
+                    <div className="flex justify-start pl-6 py-4">
+                        <p className='text-white font-bold text-lg'>Creator's Data</p>
+                    </div>
+                    <div className="text-white text-5xl lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">
+                        <h1 className="pl-6">{card?.name}</h1>
+                    </div>
                 </div>
             </div>
 
-            <div className='mt-6 flex justify-center w-full pb-8'>
+            <div className='mt-6 mb-10 flex justify-center rounded-3xl bg-[#F7F7F7] border-2 md:w-[550px] w-[370px] mx-auto pb-20'>
                 <div className='flex flex-col justify-center w-[80%]'>
-                    <div className="flex flex-col gap-y-2 py-2">
+                    {/* <div className="flex flex-col gap-y-2 py-2">
                         <p className="text-lg font-semibold">Name:</p>
                         <p className="bg-white border-2 border-slate-200 w-full rounded-lg px-3 py-1 text-lg shadow-lg">{card?.name}</p>
-                    </div>
+                    </div> */}
 
                     <div className='mt-4'>
-                        <h2 className='text-3xl flex justify-center'>Social Links:</h2>
                         <div className='w-full py-6'>
                             {card?.links?.map((link: any, index: number) => (
                                 <Link
                                     to={link.name} target="blank"
-                                    className="w-full flex flex-col justify-center items-center py-3"
+                                    className="w-full flex flex-col justify-center items-center py-5"
                                     key={index}
                                 >
-                                    <div className="w-full flex justify-center items-center px-4 py-2 text-lg bg-cyan-300 rounded-lg hover:cursor-pointer border-2 border-black shadow-xl">
-                                        <div className='p-2'>
+                                    <div className="w-full flex justify-center items-center px-4 py-2 text-lg bg-[#5674DC] rounded-2xl hover:cursor-pointer border-[3px] h-14 border-black shadow-[4px_17px_16px_3px_rgba(0,_0,_0,_0.1)]">
+                                        {/* <div className='p-2'>
                                             {setSvg(link.label) === "" ? (
                                                 <IoMdLink size={25} className='text-black' />
                                             ) : (
@@ -67,8 +70,8 @@ const CreatorComponent = ({ card }: PropsType) => {
                                                     />
                                                 </svg>
                                             )}
-                                        </div>
-                                        <p className='text-lg font-normal italic'>{link.label}</p>
+                                        </div> */}
+                                        <p className='text-lg font-medium text-white'>{link.label}</p>
                                     </div>
                                 </Link>
                             ))}

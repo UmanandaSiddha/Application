@@ -47,7 +47,7 @@ import DisplayCard from "./pages/cards/display-card";
 import OnBoarding from "./pages/auth/onboarding";
 import ContactUs from "./pages/others/contact";
 import DonationLogin from "./pages/donation/login";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import ReFundPolicyPage from "./pages/others/refund";
 import PrivacyPolicyPage from "./pages/others/privacy";
 import TermsAndConditions from "./pages/others/terms";
@@ -98,24 +98,24 @@ const App = () => {
         fetchDonator();
     }, []);
 
-    useEffect(() => {
-        if (user) {
-            const newSocket = io(`${import.meta.env.VITE_SOCKET_URL}`, {
-                query: {
-                    userId: user._id,
-                },
-            });
+    // useEffect(() => {
+    //     if (user) {
+    //         const newSocket = io(`${import.meta.env.VITE_SOCKET_URL}`, {
+    //             query: {
+    //                 userId: user._id,
+    //             },
+    //         });
     
-            return () => {
-                newSocket.disconnect();
-            };
-        }
-    }, [user]);
+    //         return () => {
+    //             newSocket.disconnect();
+    //         };
+    //     }
+    // }, [user]);
 
     return (
         <div className={containerClass}>
             <ToastContainer
-                position="top-center"
+                position="top-right"
                 autoClose={5000}
                 hideProgressBar={false}
                 newestOnTop={false}

@@ -106,7 +106,7 @@ const ViewCard = () => {
                 </div>
                 <div className="basis-full lg:basis-3/4 flex lg:max-h-screen md:my-2 rounded-md">
                     <div className="basis-full lg:basis-3/4 flex justify-center items-center">
-                        <div className="w-full overflow-auto h-full md:max-h-[83vh] md:rounded-b-xl md:rounded-tl-xl hide-scrollbar">
+                        <div className="w-full overflow-auto h-full md:h-[800px] md:mb-10 md:rounded-xl md:mr-5 hide-scrollbar">
                             {loading ? <Loader /> : <>{renderCard()}</>}
                             <div className="w-full py-4 fixed bottom-0 flex md:hidden justify-center rounded-t-3xl items-center gap-6 bg-slate-100">
                                 <button
@@ -157,7 +157,7 @@ const ViewCard = () => {
                         </div>
                     </div>
                     <div className="basis-1/4 hidden md:block">
-                        <div className="mt-6 md:mt-0 pt-8 pb-16 flex flex-col justify-center items-center gap-6 bg-slate-100 rounded-r-3xl">
+                        <div className="mt-6 md:mt-0 pt-8 pb-16 flex flex-col justify-center items-center gap-6 bg-slate-100 rounded-b-3xl">
                             <button
                                 className="py-4 px-4 bg-green-200 rounded-full hover:cursor-pointer shadow-xl"
                                 disabled={!isPaid && user?.role !== "admin"}

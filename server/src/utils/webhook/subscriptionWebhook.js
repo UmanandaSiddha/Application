@@ -7,7 +7,7 @@ import crypto from "crypto";
 
 const subscriptionwebhook = async (webhookData) => {
 
-    const { header, dataSub } = webhookData;
+    const { header, dataSub, reqHandle } = webhookData;
 
     const expectedSigntaure = crypto
         .createHmac("sha256", process.env.SUBSCRIPTION_WEBHOOK)
@@ -23,7 +23,7 @@ const subscriptionwebhook = async (webhookData) => {
                 console.log("Invalid Subscription, Wrong database");
                 logger.error("Invalid Subscription, Wrong database");
             } else {
-                await handleSubscription(payload.subscription?.entity, subscription);
+                await handleSubscription(payload.subscription?.entity, subscription, reqHandle);
 
                 const user = await User.findOne({ activePlan: subscription._id });
 

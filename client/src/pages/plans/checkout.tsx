@@ -10,6 +10,7 @@ import { SinglePlanResponse, UserResponse } from "@/types/api-types";
 import { togglePaid, userExist } from "@/redux/reducer/userReducer";
 import { FaCheckCircle } from "react-icons/fa";
 import { RxCrossCircled } from "react-icons/rx";
+import { io } from "socket.io-client";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -252,6 +253,30 @@ const Checkout = () => {
         setOpen(false);
         setLoadingStates([]);
     };
+
+    useEffect(() => {
+        if (user) {
+            const newSocket = io(`${import.meta.env.VITE_SOCKET_URL}`, {
+                query: {
+                    userId: user._id,
+                },
+            });
+
+            if (newSocket) {
+                newSocket.on("payment_Socket", (data) => {
+                    toast.info(`Received message: ${data}`)
+                });
+    
+                // return () => {
+                //     newSocket.off("message");
+                // };
+            }
+
+            return () => {
+                newSocket.disconnect();
+            };
+        }
+    }, [user]);
 
     return (
         <div className="w-[80%] mx-auto mt-8 mb-12">

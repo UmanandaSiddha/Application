@@ -211,12 +211,12 @@ const AllCards = () => {
     }
 
     return (
-        <div className="flex justify-center bg-white">
+        <div className="flex justify-center bg-white ">
             <div className="flex flex-row w-full md:w-[90%] lg:w-[80%] md:space-x-4 lg:space-x-4">
                 <div className="basis-1/4 hidden lg:block">
                     <SideBar />
                 </div>
-                <div className="basis-full md:basis-2/3 lg:basis-2/4 flex justify-center items-center lg:max-h-screen md:my-2 bg-slate-100 rounded-md">
+                <div className="basis-full  md:basis-2/3 lg:basis-2/4 flex justify-center items-center lg:max-h-screen md:my-2 bg-slate-100 rounded-md">
                     <div className="relative w-full h-screen md:max-h-[87vh] overflow-hidden">
                         <div className={`absolute w-full h-full ${styles.backgroundColor} mobile-curve rounded-lg`}></div>
                         <div className="absolute w-full h-full flex flex-col justify-evenly space-y-2 items-center z-10 md:overflow-y-auto hide-scrollbar md:p-4">

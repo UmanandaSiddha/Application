@@ -161,7 +161,8 @@ export const captureSubscription = catchAsyncErrors(async (req, res, next) => {
 export const verifySubscription = async (req, res) => {
     const webhookPayload = {
         header: req.headers['x-razorpay-signature'],
-        dataSub: req.body
+        dataSub: req.body,
+        reqHandle: req
     }
 
     try {
