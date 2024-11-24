@@ -87,7 +87,7 @@ const DisplayCard = () => {
 
     return (
         <div className="m-auto p-auto lg:w-2/3">
-            <div className="border border-primary p-2 md:p-6 gap-4 items-center mx-0 my-8 md:mx-8 lg:mx-16 xl:mx-32">
+            <div className="border border-primary p-2 md:p-6 gap-4 items-center mx-0 my-0 md:mx-8 lg:mx-16 xl:mx-32">
                 {loading ? <Loader /> : renderCard()}
             </div>
         </div>

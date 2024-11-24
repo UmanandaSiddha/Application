@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const HomePage = () => {
     return (
         <div className="flex flex-col h-[100%] relative items-center hide-scrollbar gap-24 bg-[url('/background2')]">
-            <div className="flex flex-col pt-20 max-sm:pt-24 z-10 justify-center items-center  mx-auto gap-14 sm:w-[80%]">
+            <div className="flex flex-col pt-20 md:pt-10 max-sm:pt-24 z-10 justify-center items-center  mx-auto gap-14 md:gap-10 sm:w-[80%]">
                 <h1 className="text-5xl md:text-7xl font-semibold text-center">
                     Where <span className="text-purple-900">Work</span> Happens
                 </h1>
@@ -39,7 +39,7 @@ const HomePage = () => {
             </div>
             <div className='mt-[700px] sm:mt-[600px] md:mt-[600px] lg:mt-[500px] flex items-center gap-10 w-[80%]'>
                 <div className='flex flex-col gap-6 mt-36 max-sm:w-[95%] max-sm:mx-auto'>
-                    <h1 className='text-5xl max-sm:text-center max-lg:mx-auto font-semibold mb-10'>HOW IT WORKS</h1>
+                    <h1 className='text-4xl max-sm:text-center max-lg:mx-auto font-semibold mb-10'>HOW IT WORKS</h1>
                     <img src="./project_final.png " alt="" className='w-96 lg:hidden mx-auto' />
 
                     <p className='text-xl'>
@@ -62,7 +62,7 @@ const HomePage = () => {
             </div>
 
             <div className="flex flex-col w-full bg-[#f7fafc] items-center sm:gap-10 mt-20">
-                <h1 className="pt-20 lg:pt-20 text-center sm:p-5  md:text-6xl md:font-semibold text-3xl font-bold">
+                <h1 className="pt-20 lg:pt-20 text-center sm:p-5 md:text-6xl md:font-semibold text-4xl font-bold">
                     OUR FEATURES
                 </h1>
 
@@ -73,9 +73,9 @@ const HomePage = () => {
                                 <img src="/features.jpg" alt="" width={600} className='rounded-xl mx-auto max-sm:hidden ' />
                             </div>
                         </div>
-                        <div className='flex flex-col gap-7 md:pr-20 md:pt-24 p-10'>
+                        <div className='flex flex-col gap-7 md:pr-20 md:pt-24 md:py-10 px-10'>
                             {/* <h1 className='text-lg font-medium'>COLLABORATION</h1> */}
-                            <h1 className='text-4xl font-semibold'>
+                            <h1 className='text-3xl md:text-4xl font-semibold'>
                                 Medical Cards for Humans
                             </h1>
                             <p className='text-xl'>
@@ -92,9 +92,9 @@ const HomePage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className='flex flex-col gap-7 md:pr-20 pt-24 p-10'>
+                        <div className='flex flex-col gap-7 md:pr-20 pt-24 md:py-10 px-10'>
                             {/* <h1 className='text-lg font-medium'>PROJECT MANAGEMENT</h1> */}
-                            <h1 className='text-4xl font-semibold'>
+                            <h1 className='text-3xl md:text-4xl font-semibold'>
                                 Identity Cards for Plants and Animals
                             </h1>
                             <p className='text-xl'>
@@ -111,9 +111,9 @@ const HomePage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className='flex flex-col gap-7 md:pr-20 pt-24 p-10'>
+                        <div className='flex flex-col gap-7 md:pr-20 pt-24 md:py-10 px-10'>
                             {/* <h1 className='text-lg font-medium'>Integrations</h1> */}
-                            <h1 className='text-4xl font-semibold'>
+                            <h1 className='text-3xl md:text-4xl font-semibold'>
                                 Artist Cards
 
                             </h1>
@@ -131,9 +131,9 @@ const HomePage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className='flex flex-col gap-7 md:pr-20 pt-24 p-10'>
+                        <div className='flex flex-col gap-7 md:pr-20 pt-24 md:py-10 px-10'>
                             {/* <h1 className='text-lg font-medium'>Slack AI</h1> */}
-                            <h1 className='text-4xl font-semibold'>
+                            <h1 className='text-3xl md:text-4xl font-semibold'>
                                 Individual Profiles
                             </h1>
                             <p className='text-xl'>
