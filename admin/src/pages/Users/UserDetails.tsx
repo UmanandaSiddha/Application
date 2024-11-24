@@ -177,7 +177,7 @@ const UserDetails = () => {
             return;
         }
         try {
-            const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/${id}`, { role: selectedOption }, { withCredentials: true });
+            const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/byId/${id}`, { role: selectedOption }, { withCredentials: true });
             window.sessionStorage.removeItem('user_byId');
             toast.success(data.message);
             navigate(-1);
