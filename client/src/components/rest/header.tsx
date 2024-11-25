@@ -45,7 +45,7 @@ export default function Header() {
             <nav className="mx-auto flex w-full md:max-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
-                        <img className="h-10 w-full" src="/voolata_r.png" alt="" />
+                        <img className="h-10 w-full" src="/voolata_long_r.png" alt="" />
                         {/* <span className="font-semibold text-xl">VOOLATA</span> */}
                     </Link>
                 </div>
@@ -104,7 +104,7 @@ export default function Header() {
                 >
                     <aside className="flex flex-col w-64 h-screen px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
                         <Link to='/'>
-                            <img className="h-10" src="/voolata_r.png" alt="" />
+                            <img className="h-10" src="/voolata_long_r.png" alt="" />
                         </Link>
 
                         <div className="flex flex-col justify-between flex-1 mt-2">
