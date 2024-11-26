@@ -120,7 +120,7 @@ const ViewCard = () => {
                                         </div>
                                     </div>
                                 </button>
-                                {/* <button
+                                <button
                                     className="py-4 px-4 bg-blue-200 rounded-full hover:cursor-pointer shadow-xl"
                                     disabled={!isPaid && user?.role !== "admin"}
                                     onClick={handleShare}
@@ -130,7 +130,7 @@ const ViewCard = () => {
                                             <IoShareSocialOutline className="w-[1.5rem] h-[1.5rem]" />
                                         </div>
                                     </div>
-                                </button> */}
+                                </button>
                                 <button
                                     className="py-4 px-4 bg-slate-300 rounded-full hover:cursor-pointer shadow-xl"
                                     disabled={!isPaid && user?.role !== "admin"}

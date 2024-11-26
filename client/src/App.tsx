@@ -105,7 +105,7 @@ const App = () => {
     //                 userId: user._id,
     //             },
     //         });
-    
+
     //         return () => {
     //             newSocket.disconnect();
     //         };
@@ -130,6 +130,7 @@ const App = () => {
                 {!["/login", "/register", "/org/register"].includes(location.pathname) && (<Header />)}
                 <Routes>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/about-us" element={<HomePage />} />
                     <Route path="/plans" element={<PlanPage />} />
                     <Route path="/d/:shortId" element={<DisplayCard />} />
                     <Route path="/onboarding" element={<OnBoarding />} />
@@ -190,7 +191,7 @@ const App = () => {
 
                     <Route path="*" element={<NotFound />} />
                 </Routes>
-                {["/"].includes(location.pathname) && (<Footer />)}
+                {["/", "/about-us"].includes(location.pathname) && (<Footer />)}
             </ErrorBoundary>
         </div>
     );

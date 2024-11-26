@@ -4,13 +4,9 @@ import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Loader2 } from "lucide-react";
 import { Plan } from "@/types/plan_types";
 import { SinglePlanResponse, UserResponse } from "@/types/api-types";
 import { togglePaid, userExist } from "@/redux/reducer/userReducer";
-import { FaCheckCircle } from "react-icons/fa";
-import { RxCrossCircled } from "react-icons/rx";
-import { io } from "socket.io-client";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -32,12 +28,6 @@ interface SubscriptionCatpureResponse {
     paymentStatus: string;
 }
 
-interface LoadingStateType {
-    id: number;
-    loading: string;
-    data: string;
-}
-
 const Checkout = () => {
 
     const [search] = useSearchParams();
@@ -55,8 +45,6 @@ const Checkout = () => {
         country: user?.billingAddress?.country,
     });
     const [updateLoading, setUpdateLoading] = useState<boolean>(false);
-    const [open, setOpen] = useState<boolean>(false);
-    const [loadingStates, setLoadingStates] = useState<LoadingStateType[]>([]);
 
     const location = useLocation();
     const from = location.state?.from?.pathname || "/dashboard";
@@ -100,12 +88,10 @@ const Checkout = () => {
             city === updateData.city &&
             postalCode === updateData.postalCode &&
             country === updateData.country;
-
         if (isDataSame) {
             toast.warning("Make changes to update");
             return;
         }
-
         for (const [field, value] of Object.entries(updateData)) {
             if (!value) {
                 toast.warning(`${field} is required`);
@@ -123,97 +109,34 @@ const Checkout = () => {
         setUpdateLoading(false);
     }
 
-    const handlePaymentVerifcation = async (response: string, count: number) => {
-        try {
-            if (count === 0) {
-                setOpen(true);
-                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3, loading: "started", data: "Verifying Payment..." }]);
-            }
-            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: SubscriptionCatpureResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
-            if (!data) {
-                setOpen(false);
-                setLoadingStates([]);
-                toast.error("Failed to Verify Payment");
-                return;
-            }
-
-            if (["active"].includes(data.subscriptionStatus) && ["captured"].includes(data.paymentStatus)) {
-                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === count ? { ...state, loading: "success", data: "Payment verification success" } : state));
-                // toast.success("All set");
-                setTimeout(() => {
-                    setOpen(false);
-                    dispatch(togglePaid(true));
-                    navigate(from, { replace: true });
-                }, 3000);
-            } else if (count < 3) {
-                setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 3 + count ? { ...state, loading: "failed", data: "Payment verification failed" } : state));
-                setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 3 + count + 1, loading: "started", data: `Verifying Payment... ${count + 1}` }]);
-                setTimeout(async () => {
-                    await handlePaymentVerifcation(response, count + 1);
-                }, 3000);
-            } else {
-                toast.info("If the amount was debited from your account, please don't pay again. We are looking into this matter");
-                setLoadingStates([]);
-                setTimeout(() => {
-                    setOpen(false);
-                    navigate(from, { replace: true });
-                }, 3000);
-            }
-        } catch (error: any) {
-            setOpen(false);
-            setLoadingStates([]);
-            toast.error(error.response.data.message);
-        }
-    }
-
     const handleCheckout = async (razId: string) => {
-
         if (isPaid) {
             toast.info("You are already a paid subscriber");
             navigate(from, { replace: true });
             return;
         }
-
-        setOpen(true);
-        setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 1, loading: "started", data: "SDK Loading..." }]);
-        
         if (!id || plan?._id !== id) {
-            setOpen(false);
-            setLoadingStates([]);
             toast.error("This is a broken link");
             return;
         }
-
         const { phone, billingAddress } = user || {};
         if (!phone || !billingAddress) {
-            setOpen(false);
-            setLoadingStates([]);
             toast.warning("Please update your billing details");
             return;
         }
-
         const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
         if (!res) {
-            setOpen(false);
-            setLoadingStates([]);
             toast.warning("Razorpay SDK failed to load. Are you online?");
             return;
         }
-
-        setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 1 ? { ...state, loading: "success", data: "SDK successfully loaded" } : state));
-
         try {
-            setLoadingStates(prevLoadingStates => [...prevLoadingStates, { id: 2, loading: "started", data: "Creating new subscription..." }]);
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
             const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, { id: razId }, config);
             if (!data) {
-                setOpen(false);
-                setLoadingStates([]);
                 toast.error("Failed to Execute Payment");
                 return;
             }
-            setLoadingStates(prevLoadingStates => prevLoadingStates.map((state) => state.id === 2 ? { ...state, loading: "success", data: "Subscription created successfuly" } : state));
+            toast.info("Successfully created subscription")
             const options = {
                 key: data.key,
                 currency: "INR",
@@ -221,7 +144,25 @@ const Checkout = () => {
                 description: "just fine",
                 subscription_id: data.subscriptions_id,
                 handler: async function (response: any) {
-                    await handlePaymentVerifcation(response, 0);
+                    try {
+                        const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
+                        const { data }: { data: SubscriptionCatpureResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, config);
+                        if (!data) {
+                            toast.error("Failed to Verify Payment");
+                            return;
+                        }
+                        if (data.subscriptionStatus === "active" && data.paymentStatus === "captured") {
+                            toast.success("All set");
+                            dispatch(togglePaid(true));
+                        } else {
+                            toast.info("If the amount was debited from your account, please don't pay again. We are looking into this matter");
+                        }
+                        setTimeout(() => {
+                            navigate(from, { replace: true });
+                        }, 3000);
+                    } catch (error: any) {
+                        toast.error(error.response.data.message);
+                    }
                 },
                 prefill: {
                     name: user?.name,
@@ -240,47 +181,16 @@ const Checkout = () => {
             const razor = new (window as any).Razorpay(options);
             razor.open();
             razor.on("payment.failed", function (response: any) {
-                setOpen(false);
-                setLoadingStates([]);
                 toast.info(response.error.description);
             });
         } catch (error: any) {
-            setOpen(false);
-            setLoadingStates([]);
             toast.error(error.response.data.message);
         }
-
-        setOpen(false);
-        setLoadingStates([]);
     };
-
-    useEffect(() => {
-        if (user) {
-            const newSocket = io(`${import.meta.env.VITE_SOCKET_URL}`, {
-                query: {
-                    userId: user._id,
-                },
-            });
-
-            if (newSocket) {
-                newSocket.on("payment_Socket", (data) => {
-                    toast.info(`Received message: ${data}`)
-                });
-    
-                // return () => {
-                //     newSocket.off("message");
-                // };
-            }
-
-            return () => {
-                newSocket.disconnect();
-            };
-        }
-    }, [user]);
 
     return (
         <div className="w-[80%] mx-auto mt-8 mb-12">
-            <div className="flex justify-center items-center gap-4">
+            {/* <div className="flex justify-center items-center gap-4">
                 {open && (
                     <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex flex-col justify-center items-center z-10">
                         {loadingStates && loadingStates.map(state => (
@@ -297,7 +207,7 @@ const Checkout = () => {
                         ))}
                     </div>
                 )}
-            </div>
+            </div> */}
             <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
                 <div className="px-4 pt-2">
                     <p className="text-xl font-medium">User Details</p>
@@ -373,10 +283,10 @@ const Checkout = () => {
                             </div>
                             <button
                                 type="submit"
-                                disabled={open || updateLoading}
+                                disabled={updateLoading}
                                 className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                             >
-                                {open || updateLoading ? "Hold on..." : "Update Changes"}
+                                {updateLoading ? "Hold on..." : "Update Changes"}
                             </button>
                         </form>
                     </div>
@@ -412,14 +322,14 @@ const Checkout = () => {
                         </div>
 
                         <button
-                            disabled={!user || !id || plan?._id !== id || open}
+                            disabled={!user || !id || plan?._id !== id}
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleCheckout(plan?.razorPlanId!);
                             }}
                             className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                         >
-                            {open ? "Hold on..." : "Buy Now"}
+                            Buy Now
                         </button>
 
                         <div className="mt-4 flex items-center justify-center space-x-2">

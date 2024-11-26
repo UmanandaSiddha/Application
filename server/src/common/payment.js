@@ -1,8 +1,5 @@
-// import app from "../app.js";
 import Subscription from "../models/payment/subscriptionModel.js";
 import Transaction, { transactionEnum } from "../models/payment/transactionModel.js";
-import { redis } from "../server.js";
-import { io } from "../ws.js";
 
 export const handleDonation = async (paymentData) => {
     const { order_id, status, id, method, card, bank, wallet, vpa, acquirer_data,
@@ -78,7 +75,7 @@ export const handleTransaction = async (paymentData, subscriptionData, subscript
     });
 };
 
-export const handleSubscription = async (subscriptionData, subscription, reqHandle) => {
+export const handleSubscription = async (subscriptionData, subscription) => {
     const { id, start_at, end_at, charge_at, total_count, paid_count, remaining_count, status, current_start, current_end } = subscriptionData;
     const sub = await Subscription.findOneAndUpdate(
         { razorSubscriptionId: id },
@@ -95,12 +92,4 @@ export const handleSubscription = async (subscriptionData, subscription, reqHand
         },
         { new: true, runValidators: true, useFindAndModify: false }
     )
-
-    if (sub.user) {
-        const socketId = await redis.hget("userSockets", sub.user);
-        if (socketId) {
-            // const ioInstance = app.get("io");
-            io.to(socketId).emit("payment_Socket", "some message");
-        }
-    }
 };

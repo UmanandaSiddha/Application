@@ -9,7 +9,7 @@ import Personal from "../models/cards/personalModel.js";
 import Medical from "../models/cards/medicalModel.js";
 import Creator from "../models/cards/creatorModel.js";
 import Animal from "../models/cards/animalModel.js";
-import { addEmailToQueue } from "../utils/queue/emailQueue.js";
+// import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 import { getGravatarUrl } from "../common/gravtar.js";
 
 // User Registration

@@ -2,12 +2,10 @@ import app from "./app.js";
 import dotenv from "dotenv";
 import connectDatabase from "./config/database.js";
 import Razorpay from "razorpay";
-import "./utils/queue/emailQueue.js";
 import "./utils/queue/donationQueue.js";
 import "./utils/queue/subscriptionQueue.js";
 import Redis from "ioredis";
 import { createServer } from "http";
-import { initWs } from "./ws.js";
 
 // Handling Uncaught Exception
 process.on("uncaughtException", (err) => {
@@ -28,8 +26,6 @@ export const CLIENT_URL = process.env.NODE_ENV === "production" ? "https://voola
 export const SERVER_URL = process.env.NODE_ENV === "production" ? "https://api.voolata.com" : "http://localhost:7070";
 
 const httpServer = createServer(app);
-
-initWs(httpServer);
 
 export const instance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,

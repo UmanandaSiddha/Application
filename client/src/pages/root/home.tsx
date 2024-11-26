@@ -1,9 +1,22 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const HomePage = () => {
+
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.pathname === "/about-us") {
+            const aboutUsSection = document.getElementById("about-us");
+            if (aboutUsSection) {
+                aboutUsSection.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }, [location]);
+
     return (
-        <div className="flex flex-col h-[100%] relative items-center hide-scrollbar gap-24 bg-[url('/background2')]">
-            <div className="flex flex-col pt-20 max-sm:pt-24 z-10 justify-center items-center  mx-auto gap-14 sm:w-[80%]">
+        <div className="flex flex-col relative items-center hide-scrollbar gap-24 bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
+            <div className="flex flex-col pt-20 max-sm:pt-24 z-10 justify-center items-center mx-auto gap-14 sm:w-[80%]">
                 <h1 className="text-5xl md:text-7xl font-semibold text-center">
                     Where <span className="text-purple-900">Work</span> Happens
                 </h1>
@@ -37,6 +50,7 @@ const HomePage = () => {
                     </div>
                 </div>
             </div>
+
             <div className='mt-[800px] sm:mt-[600px] md:mt-[600px] lg:mt-[700px] flex items-center gap-10 w-[80%]'>
                 <div className='flex flex-col gap-6 mt-36 max-sm:w-[95%] max-sm:mx-auto'>
                     <h1 className='sm:text-5xl max-sm:text-4xl max-sm:text-center max-lg:mx-auto font-semibold mb-10'>HOW IT WORKS</h1>
@@ -152,6 +166,7 @@ const HomePage = () => {
                     </div>
                 </div>
             </div>
+
             <div className='w-[85%] mx-auto' >
                 <h1 className='text-3xl md:text-6xl font-semibold pb-20 pt-16'>WHY WE NEED YOUR <span className='text-purple-500'>SUPPORT</span> </h1>
                 <div className='flex max-lg:flex-col lg:gap-10'>

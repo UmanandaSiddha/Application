@@ -2,7 +2,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import Plan, { planEnum } from "../models/payment/planModel.js";
 import CustomRequest, { acceptedEnum } from "../models/messages/customRequestModel.js";
-import { addEmailToQueue } from "../utils/queue/emailQueue.js";
+// import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 
 export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
     const { email, cards, amount, comment, period, interval } = req.body;

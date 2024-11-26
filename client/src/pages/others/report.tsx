@@ -30,7 +30,7 @@ const ReportPage = () => {
     }
 
     return (
-        <section className="min-h-screen bg-white dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 ">
+        <section className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 ">
             <div className="container flex flex-col min-h-screen px-6 py-12 mx-auto">
                 <div className="flex-1 lg:flex lg:items-center lg:-mx-6">
                     <div className="t lg:w-1/2 lg:mx-6">
@@ -45,9 +45,9 @@ const ReportPage = () => {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
 
-                                <span className="mx-2 truncate text-wrap">
-                                105, P-17, Omkar CHS Ltd, Noopur Nagar Mataji Mandir, Mira Road, Thane,
-                                Thane- 401107 
+                                <span className="mx-2 text-wrap">
+                                    105, P-17, Omkar CHS Ltd, Noopur Nagar Mataji Mandir, Mira Road, Thane,
+                                    Thane- 401107
                                 </span>
                             </p>
 
@@ -56,7 +56,7 @@ const ReportPage = () => {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
 
-                                <span className="mx-2  truncate w-72"> +91 91368 95794</span>
+                                <span className="mx-2 w-72"> +91 91368 95794</span>
                             </p>
 
                             <p className="flex items-start -mx-2">
@@ -64,7 +64,7 @@ const ReportPage = () => {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
 
-                                <span className="mx-2  truncate w-72">contactus@evoolfoundation.org</span>
+                                <span className="mx-2 w-72">contactus@evoolfoundation.org</span>
                             </p>
                         </div>
 
@@ -158,7 +158,7 @@ const ReportPage = () => {
                                 <button
                                     type="submit"
                                     disabled={contactLoading}
-                                    className="w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-400 focus:ring-opacity-50"
+                                    className="w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-800 rounded-md hover:bg-purple-700 focus:outline-none focus:ring focus:ring-purple-500 focus:ring-opacity-50"
                                 >
                                     {contactLoading ? "Hold on..." : "Report"}
                                 </button>

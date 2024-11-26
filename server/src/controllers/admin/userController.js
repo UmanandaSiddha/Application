@@ -5,7 +5,7 @@ import Medical from "../../models/cards/medicalModel.js";
 import Creator from "../../models/cards/creatorModel.js";
 import Animal from "../../models/cards/animalModel.js";
 import Personal from "../../models/cards/personalModel.js";
-import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
+// import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
 import User, { freeEnum, roleEnum } from "../../models/userModel.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";

@@ -10,7 +10,7 @@ import Subscription, { subscriptionEnum } from "../models/payment/subscriptionMo
 import Plan, { planEnum } from "../models/payment/planModel.js";
 import { addDonationToQueue } from "../utils/queue/donationQueue.js";
 import logger from "../config/logger.js";
-import { addEmailToQueue } from "../utils/queue/emailQueue.js";
+// import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 import { handleDonation } from "../common/payment.js";
 import ApiFeatures from "../utils/services/apiFeatures.js";
 

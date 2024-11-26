@@ -42,10 +42,10 @@ export default function Header() {
 
     return (
         <header className="bg-white border-b-2 fixed top-0 left-0 right-0 z-50 ">
-            <nav className="mx-auto flex w-full md:max-w-[80%] items-center justify-between py-4 " aria-label="Global">
+            <nav className="mx-auto flex w-full md:max-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
-                        <img className="w-12 " src="VOOLATA.png" alt="" />
+                        <img className="h-10 w-full" src="/voolata_long_r.png" alt="" />
                         {/* <span className="font-semibold text-xl">VOOLATA</span> */}
                     </Link>
                 </div>
@@ -69,7 +69,7 @@ export default function Header() {
                     <Link to='/plans' className="text-md font-semibold leading-6">
                         Pricing
                     </Link>
-                    <a href='#about-us' className="text-md font-semibold leading-6">
+                    <a href='/about-us' className="text-md font-semibold leading-6">
                         About Us
                     </a>
                     <Link to='/contact' className="text-md font-semibold leading-6">
@@ -102,13 +102,12 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     className="hide-scrollbar h-screen lg:hidden fixed inset-0 bg-opacity-30 backdrop-blur z-10"
                 >
-                    <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
-                        <Link to='/' className="flex items-center space-x-2">
-                            <img className="w-auto h-6 sm:h-6" src="https://merakiui.com/images/logo.svg" alt="" />
-                            <span className="font-semibold text-xl">VOOLATA</span>
+                    <aside className="flex flex-col w-64 h-screen px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
+                        <Link to='/'>
+                            <img className="h-10" src="/voolata_long_r.png" alt="" />
                         </Link>
 
-                        <div className="flex flex-col justify-between flex-1 mt-6">
+                        <div className="flex flex-col justify-between flex-1 mt-2">
                             <nav>
                                 <hr className="my-4 border-gray-200 " />
                                 <Link to="/donation" className={`flex items-center px-4 py-2 rounded-md ${location.pathname === "/" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
@@ -128,7 +127,7 @@ export default function Header() {
 
                                     <span className="mx-4 font-medium">Pricing</span>
                                 </Link>
-                                <Link to="/about" className={`flex items-center px-4 py-2 mt-5 rounded-md ${location.pathname === "/about" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                <Link to="/about-us" className={`flex items-center px-4 py-2 mt-5 rounded-md ${location.pathname === "/about" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M15 5V7M15 11V13M15 17V19M5 5C3.89543 5 3 5.89543 3 7V10C4.10457 10 5 10.8954 5 12C5 13.1046 4.10457 14 3 14V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V14C19.8954 14 19 13.1046 19 12C19 10.8954 19.8954 10 21 10V7C21 5.89543 20.1046 5 19 5H5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>

@@ -4,7 +4,7 @@ import { CLIENT_URL, instance } from "../../server.js";
 import Plan, { planEnum } from "../../models/payment/planModel.js";
 import CustomRequest, { acceptedEnum } from "../../models/messages/customRequestModel.js";
 import User from "../../models/userModel.js";
-import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
+// import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";
 
 export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {

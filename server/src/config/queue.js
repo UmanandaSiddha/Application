@@ -1,5 +1,3 @@
-export const emailQueueName = "email-queue";
-export const socketQueueName = "socket-queue";
 export const subscriptionQueueName = "subscription-queue";
 export const donationQueueName = "donation-queue";
 
