@@ -77,7 +77,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
                 onClick={handleSubmit}
                 disabled={disabled}
                 type="button"
-                className="text-white tracking-wide text-md font-bold px-6 py-3 capitalize transition-colors duration-300 transform bg-blue-500  md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 mt-10 rounded-md "
+                className="text-white tracking-wide text-md font-bold px-6 py-3 capitalize transition-colors duration-300 transform bg-blue-500 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 mt-10 rounded-md"
             >
                 Verify & Proceed
             </button>

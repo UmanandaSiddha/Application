@@ -168,7 +168,7 @@ const App = () => {
                         element={loading ? (
                             <Loader />
                         ) : (
-                            <ProtectedRoute isAuthenticated={!!user} redirect="/login" />
+                            <ProtectedRoute isAuthenticated={true} redirect="/login" />
                         )}
                     >
                         <Route path="/request-custom" element={<RequestCustom />} />

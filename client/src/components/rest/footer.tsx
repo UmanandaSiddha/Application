@@ -1,15 +1,15 @@
 const Footer = () => {
     return (
-        <div className="bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
-            <div className="flex justify-center items-center mt-16 bg-purple-800 tilted-top">
-                <div className="flex flex-col md:flex-row justify-center md:p-24 mb-10 pt-32 px-10 mx-auto w-[90%] gap-10">
+        <div className="lg:mt-36">
+            <div className="flex lg:pt-56 lg:pb-10 pt-20 justify-center items-center  bg-purple-800 tilted-top">
+                <div className="flex flex-col max-sm:pb-36 md:flex-row justify-center md:p-24 mb-10 pt-32 px-10 mx-auto w-[90%] lg:gap-24 gap-10">
                     <div className="flex flex-col items-center md:items-start">
                         <h2 className="text-white text-2xl font-medium">
                             <div className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
                                 <img className="h-12 w-full" src="/voolata_long_w_r.png" alt="" />
                             </div>
                         </h2>
-                        <p className="text-white text-sm mt-4 text-center md:text-left">
+                        <p className="text-white lg:w-96 max-lg:pb-20 text-sm mt-4 text-justify md:text-left">
                             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis officiis illo optio excepturi doloremque eaque. Adipisci vitae tempora consequuntur praesentium.
                         </p>
                         <div className="flex justify-center md:justify-start gap-4 mt-4">
@@ -30,9 +30,9 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col text-center md:text-left mt-10 md:mt-0">
-                        <h2 className="text-white text-xl font-medium">Company</h2>
-                        <ul className="text-white mt-4 space-y-2">
+                    <div className="flex flex-col text-center md:text-left items-center md:mt-0 ">
+                        <h2 className="text-white text-xl font-medium lg:pr-14">Company</h2>
+                        <ul className="text-white mt-4 space-y-2 w-36">
                             <li>About Us</li>
                             <li>Our Services</li>
                             <li>Our Projects</li>
