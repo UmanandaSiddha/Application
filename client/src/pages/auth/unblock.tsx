@@ -40,16 +40,17 @@ const UnBlockPage = () => {
     }
 
     return (
-        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 p-4">
+        <div className=" flex flex-col justify-center items-center ">
             {id ? (
-                <>
-                    <h1 className="text-xl font-semibold mb-6 text-center">You Are Blocked due to failed login attempts</h1>
+                <div className="flex flex-col justify-center items-center ">
+                    <img src="./blocked_img.jpg" alt="" className="lg:w-[800px] max-lg:w-[500px]" />
+                    <h1 className="text-xl font-semibold mb-2 text-center">You Are Blocked due to failed login attempts</h1>
                     <form className="flex flex-col justify-center items-center gap-4 p-6 w-full max-w-md" onSubmit={handleSubmit}>
                         <div className="relative flex gap-x-3">
                             <div className="flex h-6 items-center">
                                 <input
                                     id="offers"
-                                    checked={isMe} 
+                                    checked={isMe}
                                     onChange={() => setIsMe(!isMe)}
                                     name="offers"
                                     type="checkbox"
@@ -65,9 +66,14 @@ const UnBlockPage = () => {
                         <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300" type="submit">Submit</button>
                     </form>
                     <Link to="/report" className="text-lg mt-6 text-center text-blue-500 hover:underline">Report if it was not you</Link>
-                </>
+                </div>
+
+
             ) : (
-                <p className="text-xl text-center text-red-500">Seems you have entered a broken link</p>
+                <div className="flex flex-col justify-center mt-20">
+                    <img src="./broken_link.jpg" alt="" className="lg:w-[600px] max-lg:w-[400px]" />
+                    <p className="text-xl text-center text-red-500">Seems you have entered a broken link</p>
+                </div>
             )}
         </div>
     )

@@ -856,22 +856,21 @@ const CreatePersonal = () => {
                     <SideBar />
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
-                    <div className="basis-full border-2 flex items-center justify-center gap-20 lg:basis-3/4 lg:max-h-screen">
+                    <div className="basis-full  flex items-center justify-center gap-20 lg:basis-3/4 lg:max-h-screen">
                         <button
-                            className="px-4 py-2 mt-4 flex justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
+                            className="px-4 sm:flex hidden py-2 mt-4  justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
                             type="button"
                             disabled={progressBar === 1}
                             onClick={() => setProgressBar((currPage) => currPage - 1)}
                         >
-                            <FaArrowLeft className="text-3xl" />
+                            <FaArrowLeft className="sm:text-3xl" />
                         </button>
-                        <div className="h-[85vh] flex flex-col overflow-y-scroll mb-4 hide-scrollbar">
+                        <div className="h-[85vh] p-3 flex flex-col  items-center overflow-y-scroll mb-4 hide-scrollbar">
                             <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Individual</h1>
                             <div className="flex flex-col justify-center items-center lg:w-full">
-                                <div className="flex flex-col gap-6 justify-center pb-10">
-
+                                <div className="flex flex-col gap-6 justify-center  pb-10">
                                     <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                        <div className="w-full h-4 bg-blue-100 rounded-full">
+                                        <div className="w-full h-4  bg-blue-100 rounded-full">
                                             <div
                                                 className="h-4 bg-blue-500 rounded-full"
                                                 style={{ width: `${(progressBar / 5) * 100}%` }}
@@ -884,24 +883,53 @@ const CreatePersonal = () => {
                                     </div>
                                 </div>
                             </div>
-                            {progressBar === 5 ?
-
+                            <div className="flex gap-5 justify-center">
                                 <button
-                                    className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer   text-white bg-slate-500 text-lg"
-                                    type="submit"
-                                    disabled={personalLoading}
+                                    className="sm:hidden py-2 mt-4 justify-center items-center hover:cursor-pointer rounded-lg h-14 w-36 text-white bg-blue-500 text-lg"
+                                    type="button"
+                                    disabled={progressBar === 1}
+                                    onClick={() => {
+                                        setProgressBar((currPage) => currPage - 1);
+                                    }}
                                 >
-                                    {personalLoading ? "APPLYING..." : "APPLY CHANGES"}
+                                    Prev
+
                                 </button>
-                                :
-                                <></>
-                            }
+                                {progressBar === 5 ? (
+                                    <></>
+                                ) : (
+                                    <button
+                                        className="py-2 mt-4 mr-10 sm:hidden rounded-lg flex justify-center items-center h-14 w-36 hover:cursor-pointer text-white bg-blue-500 text-lg"
+                                        type="button"
+                                        disabled={progressBar === 5}
+                                        onClick={() => {
+                                            setProgressBar((currPage) => currPage + 1);
+                                        }}
+                                    >
+                                        Next
+                                    </button>
+                                )}
+
+                                {progressBar === 5 ?
+
+                                    <button
+                                        className="py-2 mt-4 w-36 flex sm:w-96 justify-center items-center rounded-lg hover:cursor-pointer   text-white bg-slate-500 sm:text-lg"
+                                        type="submit"
+                                        disabled={personalLoading}
+                                    >
+                                        {personalLoading ? "APPLYING..." : "APPLY CHANGES"}
+                                    </button>
+                                    :
+                                    <></>
+                                }
+                            </div>
                         </div>
                         {progressBar === 5 ? (
                             <></>
                         ) : (
+
                             <button
-                                className="px-4 py-2 mt-4 rounded-full flex justify-center items-center h-20 w-20 hover:cursor-pointer text-white bg-blue-500 text-lg"
+                                className=" sm:flex hidden py-2 mt-4 rounded-full justify-center items-center h-20 w-20 hover:cursor-pointer text-white bg-blue-500 text-lg"
                                 type="button"
                                 disabled={progressBar === 5}
                                 onClick={() => setProgressBar((currPage) => currPage + 1)}

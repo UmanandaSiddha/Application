@@ -133,7 +133,7 @@ const Profile = () => {
     return loading ? (
         <Loader />
     ) : (
-        <div className="w-full md:w-[80%] mx-auto px-4">
+        <div className="w-full md:w-[80%] h-screen mx-auto px-4">
             {openProfile && (
                 <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
                     <div className="bg-white p-8 rounded-2xl shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
@@ -212,15 +212,15 @@ const Profile = () => {
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="address" className="text-lg font-semibold">Address</label>
-                                <input type="text" value={orgDetails.address.street} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, street: e.target.value }})} placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.street} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, street: e.target.value } })} placeholder="Enter you street" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
-                                <input type="text" value={orgDetails.address.city} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, city: e.target.value }})} placeholder="Enter you city" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
-                                <input type="text" value={orgDetails.address.state} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, state: e.target.value }})} placeholder="Enter you state" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.city} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, city: e.target.value } })} placeholder="Enter you city" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.state} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, state: e.target.value } })} placeholder="Enter you state" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2">
-                                <input type="text" value={orgDetails.address.country} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, country: e.target.value }})} placeholder="Enter you country" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
-                                <input type="text" value={orgDetails.address.postalCode} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, postalCode: e.target.value }})} placeholder="Enter you postal code" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.country} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, country: e.target.value } })} placeholder="Enter you country" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={orgDetails.address.postalCode} onChange={(e) => setOrgDetails({ ...orgDetails, address: { ...orgDetails.address, postalCode: e.target.value } })} placeholder="Enter you postal code" className="w-1/2 border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
                         </form>
@@ -269,50 +269,64 @@ const Profile = () => {
                     </div>
                 </div>
             )}
-            <div className="flex justify-center items-center gap-6">
+            <div className="pt-5 flex justify-center items-center gap-6">
                 <div className="sidebar basis-1/4 hidden lg:block">
-                    <div className="flex w-full min-h-[80vh] px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
-                        <div className="flex w-full flex-col justify-between mt-6">
+                    <div className="flex bg-[#9483eb] w-full min-h-[80vh] px-8 py-4 mt-4 rounded-lg shadow-lg">
+                        <div className="flex  w-full flex-col justify-between mt-6">
                             <nav className="flex flex-col justify-center gap-4">
-                                <h1 className="mx-4 text-2xl font-bold capitalize">Welcome, <span className="text-xl font-semibold">{user?.name}</span></h1>
+                                <h1 className="mx-4 text-2xl text-white font-bold capitalize">Welcome, <span className="text-xl font-semibold">{user?.name}</span></h1>
 
                                 <hr className="my-2 border-gray-400 " />
 
                                 <Link
-                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                                    className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md group"
                                     to="/dashboard"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth="1.5"
+                                        stroke="currentColor"
+                                        className="w-6 h-6 text-white group-hover:text-[#6750d9]"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                                        />
                                     </svg>
-                                    <span className="mx-4 font-medium">Dashboard</span>
+                                    <span className="mx-4 font-medium text-white group-hover:text-[#6750d9]">
+                                        Dashboard
+                                    </span>
                                 </Link>
+
                                 <Link
-                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                                    className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md group"
                                     to="/billing"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 text-white group-hover:text-[#6750d9] ">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
                                     </svg>
-                                    <span className="mx-4 font-medium">Billing</span>
+                                    <span className="mx-4 font-medium text-white group-hover:text-[#6750d9]">Billing</span>
                                 </Link>
                                 <Link
-                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                                    className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md group "
                                     to="/report"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 text-white group-hover:text-[#6750d9]">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
                                     </svg>
-                                    <span className="mx-4 font-medium">Report</span>
+                                    <span className="mx-4 font-medium text-white group-hover:text-[#6750d9]">Report</span>
                                 </Link>
                                 <Link
-                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                                    className="flex items-center px-4 py-2 hover:text-gray-700 hover:bg-gray-100 rounded-md group"
                                     to="/donation"
                                 >
-                                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" strokeWidth="1.5" stroke="currentColor">
+                                    <svg className="w-6 h-6 text-white group-hover:text-[#6750d9]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" strokeWidth="1.5" stroke="currentColor">
                                         <path d="M15 5V7M15 11V13M15 17V19M5 5C3.89543 5 3 5.89543 3 7V10C4.10457 10 5 10.8954 5 12C5 13.1046 4.10457 14 3 14V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V14C19.8954 14 19 13.1046 19 12C19 10.8954 19.8954 10 21 10V7C21 5.89543 20.1046 5 19 5H5Z" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
-                                    <span className="mx-4 font-medium">Donate</span>
+                                    <span className="mx-4 font-medium text-white group-hover:text-[#6750d9]">Donate</span>
                                 </Link>
                             </nav>
                             <button onClick={logout} className='flex justify-center items-center gap-4 px-4 py-2 bg-black hover:bg-gray-700 rounded-md'>
@@ -324,7 +338,7 @@ const Profile = () => {
                 </div>
                 <div className="main basis-full md:basis-3/4">
                     <div className="max-h-[85vh] overflow-auto hide-scrollbar pt-24 pb-12">
-                        <div className="w-full px-8 py-4 lg:mt-2 bg-white rounded-lg shadow-lg">
+                        <div className="w-full bg-white px-8 py-4 lg:mt-2  rounded-3xl shadow-md">
                             <div className="flex -mt-16 justify-end">
                                 {user?.image ? (
                                     <img
@@ -342,13 +356,13 @@ const Profile = () => {
                                 User ID: <span className="text-md">{user?._id}</span>
                             </h2>
                             <hr className="my-2 border-gray-400 " />
-                            <div className="flex flex-col md:flex-row justify-between mt-2">
+                            <div className="flex  flex-col md:flex-row justify-between mt-2">
                                 <div>
                                     <p className="mt-2 text-md font-semibold">Name: <span className="mt-2 text-sm text-gray-600">{user?.name}</span></p>
                                     <p className="mt-2 text-md font-semibold">Email: <span className="mt-2 text-sm text-gray-600">{user?.email}</span></p>
                                     <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.phone}</span></p>
                                 </div>
-                                <button onClick={() => setOpenProfile(true)} className="text-md mt-4 md:mt-0 bg-white underline">Edit Profile</button>
+                                <button onClick={() => setOpenProfile(true)} className="text-md mt-4 md:mt-0  underline">Edit Profile</button>
                             </div>
                         </div>
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">

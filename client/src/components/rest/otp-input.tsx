@@ -68,7 +68,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
                             onChange={(e) => handleChange(index, e)}
                             onClick={() => handleClick(index)}
                             onKeyDown={(e) => handleKeyDown(index, e)}
-                            className="w-10 h-10 m-1 border border-slate-500 rounded-md text-center text-lg md:w-12 md:h-12 md:text-xl lg:w-14 lg:h-14 lg:text-2xl"
+                            className="w-10 mr-3 h-10 m-1 border border-slate-500 rounded-md text-center text-lg md:w-12 md:h-12 md:text-xl lg:w-14 lg:h-14 lg:text-2xl"
                         />
                     );
                 })}
@@ -77,9 +77,9 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
                 onClick={handleSubmit}
                 disabled={disabled}
                 type="button"
-                className="text-white tracking-wide text-md font-medium px-6 py-3 capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                className="text-white tracking-wide text-md font-bold px-6 py-3 capitalize transition-colors duration-300 transform bg-blue-500  md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 mt-10 rounded-md "
             >
-                Submit
+                Verify & Proceed
             </button>
         </div>
     );

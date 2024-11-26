@@ -15,13 +15,18 @@ const Register = () => {
         name: "",
         email: "",
         password: "",
+        confirmPassword: ""
     });
     const [registerLoading, setRegisterLoading] = useState<boolean>(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!userData.name || !userData.email || !userData.password) {
+        if (!userData.name || !userData.email || !userData.password || !userData.confirmPassword) {
             toast.warning("All fields are required");
+            return;
+        }
+        if (userData.password !== userData.confirmPassword) {
+            toast.warning("Password dont match");
             return;
         }
         setRegisterLoading(true);
@@ -134,6 +139,26 @@ const Register = () => {
                                         value={userData.password}
                                         onChange={(e) =>
                                             setUserData({ ...userData, password: e.target.value })
+                                        }
+                                    />
+                                </div>
+
+                                <div className="mt-6">
+                                    <div className="flex justify-between mb-2">
+                                        <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">
+                                            Confirm Password
+                                        </label>
+                                    </div>
+
+                                    <input
+                                        type="text"
+                                        name="password"
+                                        id="password"
+                                        placeholder="Your Password"
+                                        className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                        value={userData.confirmPassword}
+                                        onChange={(e) =>
+                                            setUserData({ ...userData, confirmPassword: e.target.value })
                                         }
                                     />
                                 </div>

@@ -349,9 +349,9 @@ const MedicalInput = () => {
                     <SideBar />
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-10 lg:w-full">
-                    <div className="basis-full gap-20 flex justify-center items-center lg:basis-3/4  lg:max-h-screen">
+                    <div className="basis-full gap-20 max-sm:gap-5 flex max-sm:flex-col justify-center items-center lg:basis-3/4  lg:max-h-screen">
                         <button
-                            className="px-4 py-2 mt-4 flex justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
+                            className="px-4 sm:flex hidden  py-2 mt-4 justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
                             type="button"
                             disabled={progressBar === 1}
                             onClick={() => {
@@ -378,25 +378,52 @@ const MedicalInput = () => {
                                     <div className="flex justify-center space-x-4">
                                     </div>
                                 </div>
-                            </div>
-                            {progressBar === 4?
+                                <div className="flex gap-5 mx-auto ">
+                                    <button
+                                        className="px-4 sm:hidden py-2 mt-4 justify-center items-center hover:cursor-pointer rounded-lg h-14 w-36 text-white bg-blue-500 text-lg"
+                                        type="button"
+                                        disabled={progressBar === 1}
+                                        onClick={() => {
+                                            setProgressBar((currPage) => currPage - 1);
+                                        }}
+                                    >
+                                        Prev
 
-                                <button
-                                    className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w- max-w-2xl text-white bg-[#3FA398] text-lg"
-                                    type="submit"
-                                    disabled={medicalLoading}
-                                >
-                                    {medicalLoading ? "APPLYING..." : "APPLY CHANGES"}
-                                </button>
-                                :
-                                <></>
-                            }
+                                    </button>
+                                    {progressBar === 4 ? (
+                                        <></>
+                                    ) : (
+                                        <button
+                                            className="px-4 py-2 mt-4 sm:hidden rounded-lg flex justify-center items-center h-14 w-36 hover:cursor-pointer text-white bg-blue-500 text-lg"
+                                            type="button"
+                                            disabled={progressBar === 4}
+                                            onClick={() => {
+                                                setProgressBar((currPage) => currPage + 1);
+                                            }}
+                                        >
+                                            Next
+                                        </button>
+                                    )}
+                                    {progressBar === 4 ?
+
+                                        <button
+                                            className="justify-center items-center flex py-2 mt-4 rounded-lg hover:cursor-pointer sm:w-96 text-white bg-[#3FA398] w-36 sm:text-lg"
+                                            type="submit"
+                                            disabled={medicalLoading}
+                                        >
+                                            {medicalLoading ? "APPLYING..." : "APPLY CHANGES"}
+                                        </button>
+                                        :
+                                        <></>
+                                    }
+                                </div>
+                            </div>
                         </div>
                         {progressBar === 4 ? (
                             <></>
                         ) : (
                             <button
-                                className="px-4 py-2 mt-4 rounded-full flex justify-center items-center h-20 w-20 hover:cursor-pointer text-white bg-blue-500 text-lg"
+                                className="px-4 py-2 mt-4 hidden sm:flex rounded-full  justify-center items-center h-20 w-20 hover:cursor-pointer text-white bg-blue-500 text-lg"
                                 type="button"
                                 disabled={progressBar === 4}
                                 onClick={() => {
