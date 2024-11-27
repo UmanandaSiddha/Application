@@ -144,7 +144,8 @@ const PersonalComponent = ({ card }: PropsType) => {
         <div className="bg-[#ACC5F5] bg-[url('/personal_bg.png')] overflow-x-hidden relative bg-auto bg-center pb-16 md:pb-6">
             <img src="/personal_curve.png" alt="" className="absolute md:right-10 md:top-10 md:rotate-6 z-10 " />
             <div className="relative rounded-[10px] mb-10">
-                <img src="/card_header_bg.png" alt="" className="w-full h-80"/>
+                <img src="/card_header_bg.png" alt="" className="hidden sm:block w-full h-80"/>
+                <img src="/individual_header_mobile.png" alt="" className="w-full sm:hidden"/>
                 <div className="p-10 absolute top-5">
                     <div className="flex justify-start pl-6 py-4">
                         <p className="text-white font-semibold">Individual Data</p>

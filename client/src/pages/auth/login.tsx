@@ -135,6 +135,7 @@ const Login = () => {
                                 <img className="w-auto h-24 sm:h-16" src="/VOOLATA.png" alt="" />
                             </div>
 
+                            <img src="/voolata_long_r.png" alt="" className="w-36 mx-auto pb-5" />
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign in to access your account</p>
                         </div>
 
@@ -168,11 +169,11 @@ const Login = () => {
                                     </div>
 
                                     <div className="relative flex items-center mt-2">
-                                        <button 
-                                            type="button" 
+                                        <button
+                                            type="button"
                                             onClick={() => {
                                                 passwordType === "password" ? setPasswordType("text") : setPasswordType("password");
-                                            }} 
+                                            }}
                                             className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">

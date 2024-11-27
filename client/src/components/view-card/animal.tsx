@@ -38,7 +38,9 @@ const AnimalComponent = ({ card }: PropsType) => {
         <div className="bg-[#F2EAE8] relative pb-32 md:pb-6">
             <img src="/botany_bg.png" alt="" className="absolute md:left-16 max-sm:top-24 rotate-6 z-10 " />
             <div className="rounded-[10px] relative">
-                <img src="/animal_header.png" alt="" className="w-full h-80" />
+                <img src="/animal_header.png" alt="" className="w-full h-80 hidden sm:block" />
+                <img src="/animal_header_mobile.png" alt="" className="w-full sm:hidden"/>
+
                 <div className='pt-10 pl-5 absolute top-5'>
                     <div className="flex justify-start pl-6 py-4">
                         <p className="text-white font-bold text-lg">Animal Data</p>

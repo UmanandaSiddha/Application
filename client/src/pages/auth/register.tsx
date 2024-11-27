@@ -10,6 +10,8 @@ import axios from "axios";
 const Register = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [passwordType, setPasswordType] = useState<string>("password");
+    const [confirmPasswordType, setConfirmPasswordType] = useState<string>("password");
 
     const [userData, setUserData] = useState({
         name: "",
@@ -82,7 +84,7 @@ const Register = () => {
                             <div className="flex justify-center mx-auto">
                                 <img className="w-auto h-24 sm:h-16" src="/VOOLATA.png" alt="" />
                             </div>
-
+                            <img src="/voolata_long_r.png" alt="" className="w-36 mx-auto pb-5" />
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign up to access your account</p>
                         </div>
 
@@ -115,54 +117,79 @@ const Register = () => {
                                         name="email"
                                         id="email"
                                         placeholder="example@example.com"
-                                        className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                        className="block w-full  px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                                         value={userData.email}
                                         onChange={(e) =>
                                             setUserData({ ...userData, email: e.target.value })
                                         }
                                     />
                                 </div>
-
                                 <div className="mt-6">
                                     <div className="flex justify-between mb-2">
                                         <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">
                                             Password
                                         </label>
                                     </div>
+                                    <div className="relative flex items-center mt-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                passwordType === "password" ? setPasswordType("text") : setPasswordType("password");
+                                            }}
+                                            className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
+                                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                                                <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clipRule="evenodd" />
+                                            </svg>
+                                        </button>
 
-                                    <input
-                                        type="text"
-                                        name="password"
-                                        id="password"
-                                        placeholder="Your Password"
-                                        className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
-                                        value={userData.password}
-                                        onChange={(e) =>
-                                            setUserData({ ...userData, password: e.target.value })
-                                        }
-                                    />
+                                        <input
+                                            type={passwordType}
+                                            name="password"
+                                            id="password"
+                                            placeholder="Your Password"
+                                            className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                            value={userData.password}
+                                            onChange={(e) =>
+                                                setUserData({ ...userData, password: e.target.value })
+                                            }
+                                        />
+                                    </div>
                                 </div>
-
                                 <div className="mt-6">
                                     <div className="flex justify-between mb-2">
                                         <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">
                                             Confirm Password
                                         </label>
                                     </div>
+                                    <div className="relative flex items-center mt-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                confirmPasswordType === "password" ? setConfirmPasswordType("text") : setConfirmPasswordType("password");
+                                            }}
+                                            className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
+                                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                                                <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clipRule="evenodd" />
+                                            </svg>
+                                        </button>
 
-                                    <input
-                                        type="text"
-                                        name="password"
-                                        id="password"
-                                        placeholder="Your Password"
-                                        className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
-                                        value={userData.confirmPassword}
-                                        onChange={(e) =>
-                                            setUserData({ ...userData, confirmPassword: e.target.value })
-                                        }
-                                    />
+                                        <input
+                                            type={confirmPasswordType}
+                                            name="password"
+                                            id="password"
+                                            placeholder="Your Password"
+                                            className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                            value={userData.confirmPassword}
+                                            onChange={(e) =>
+                                                setUserData({ ...userData, confirmPassword: e.target.value })
+                                            }
+                                        />
+                                    </div>
                                 </div>
-
                                 <div className="mt-6">
                                     <button
                                         type="submit"

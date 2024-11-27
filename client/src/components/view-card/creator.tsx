@@ -23,7 +23,9 @@ const CreatorComponent = ({ card }: PropsType) => {
         <div className='bg-[#A383FF] overflow-x-hidden pb-32 relative md:pb-6'>
             <img src="/personal_curve.png" alt="" className="absolute md:right-10 md:top-10 md:rotate-6 z-10 " />
             <div className="relative mb-20 rounded-[10px]">
-                <img src="/card_header_bg.png" alt="" className="w-full h-80" />
+                <img src="/card_header_bg.png" alt="" className="w-full h-80 hidden sm:block" />
+                <img src="/creator_header_mobile.png" alt="" className="w-full sm:hidden"/>
+
                 <div className='pt-10 pl-5 absolute top-5 '>
                     <div className="flex justify-start pl-6 py-4">
                         <p className='text-white font-bold text-lg'>Creator's Data</p>
