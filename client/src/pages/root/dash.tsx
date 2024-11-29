@@ -23,7 +23,7 @@ const Dashboard = () => {
                     <SideBar />
                 </div>
                 <div className="basis-3/4 hidden md:flex justify-center items-center lg:max-h-screen">
-                <CardsChart stats={stats} total={10} />
+                <CardsChart stats={stats} total={20} />
                 </div>
             </div>
         </div>
