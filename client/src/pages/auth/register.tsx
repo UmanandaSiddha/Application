@@ -39,7 +39,7 @@ const Register = () => {
         };
         try {
             const config = {
-                headers: { "Content-Type": "multipart/form-data" },
+                headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             };
             const { data }: { data: UserResponse } = await axios.post(

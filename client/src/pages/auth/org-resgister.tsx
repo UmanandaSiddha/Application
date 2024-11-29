@@ -46,7 +46,7 @@ const OrgRegister = () => {
             ...organisationInfo,
         };
         try {
-            const config = { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true };
+            const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
             const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register?type=org`, registerData, config);
             dispatch(userExist(data.user));
             toast.success("User Registered!");
