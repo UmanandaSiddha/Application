@@ -105,10 +105,10 @@ const GenerateQRCode = ({ type, card, way }: {
                     {qrCodeDataUrl ? (
                         <img src={qrCodeDataUrl} alt={card._id} className="rounded-lg object-cover" />
                     ) : (
-                        <Loader2 />
+                        <Loader2 className="text-center animate-spin" />
                     )}
                 </div>
-                <div className="flex items-center justify-center mt-3 text-2xl text-black font-semibold">
+                <div className="flex items-center justify-center mt-3 text-lg text-black font-medium">
                     {card.name}
                 </div>
             </div>
@@ -120,7 +120,7 @@ const GenerateQRCode = ({ type, card, way }: {
             {qrCodeDataUrl ? (
                 <img src={qrCodeDataUrl} alt={card.name} className="h-40 w-40 rounded-lg" />
             ) : (
-                <Loader2 />
+                <Loader2 className="text-center animate-spin" />
             )}
             <p>{card.name}</p>
         </div>
