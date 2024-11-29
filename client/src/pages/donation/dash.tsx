@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { donatorNotExist } from "@/redux/reducer/donatorReducer";
@@ -9,8 +9,22 @@ import { useState } from "react";
 const DonatorDashboard = () => {
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [logoutLoading, setLogoutLoading] = useState<boolean>(false);
+
+    const navigations = [
+        {
+            label: "Donate Now",
+            path: "/donation/checkout"
+        },
+        {
+            label: "Your Donations",
+            path: "/donation/billing"
+        },
+        {
+            label: "Contact Us",
+            path: "/contact"
+        }
+    ];
 
     const { donator } = useSelector(
         (state: RootState) => state.donatorReducer
@@ -20,8 +34,8 @@ const DonatorDashboard = () => {
         setLogoutLoading(true);
         try {
             await axios.get(`${import.meta.env.VITE_BASE_URL}/donate/logout`, { withCredentials: true });
-            toast.success("Logged out successfully");
             dispatch(donatorNotExist());
+            toast.success("Logged out successfully");
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
@@ -29,46 +43,34 @@ const DonatorDashboard = () => {
     }
 
     return (
-        <div className="flex flex-col items-center w-[80%] mx-auto mt-20 pb-10 rounded-3xl shadow-[0px_4px_53px_-8px_rgba(0,_0,_0,_0.2)]">
-            <div className="mt-3 text-4xl   lg:text-5xl font-semibold text-gray-800 dark:text-white">
-                <span className="text-purple-500">Welcome</span> {donator?.name ? donator.name : donator?.email}
-            </div>
-            <p className="mt-4 pb-10 text-sm sm:text-base md:text-lg lg:text-xl text-gray-500 dark:text-gray-400">
-                We are very thankful for your donations.
-            </p>
-            <div className="w-[80%] flex flex-col gap-10 items-center">
-                <div className="border w-[90%] lg:w-[60%] px-6 py-2 shadow-lg rounded-xl bg-white">
-                    <Link to="/donation/checkout" className="inline-flex items-center text-sm text-blue-500 gap-x-2 dark:text-blue-400 hover:underline">
-                        <span className="text-xl font-semibold underline">Donate Now</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                        </svg>
-                    </Link>
-                    <p className="mt-2 text-lg text-gray-500 dark:text-gray-400">Checkout page for Donations.</p>
+        <div className="pt-6 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
+            <div className="w-[95%] md:w-[80%] lg:w-[70%] mx-auto mt-2 rounded-lg bg-white shadow-xl">
+                <div className="p-4 pt-4 sm:pt-6 md:pt-8 mx-auto w-full md:w-[70%] lg:w-[65%]">
+                    <h1 className="text-2xl text-center sm:text-3xl md:text-4xl lg:text-4xl  md:text-center font-bold">
+                        Welcome, {donator?.name ? donator.name : donator?.email}
+                    </h1>
+                    <p className="text-sm text-center sm:text-lg mt-4 leading-tight md:text-center text-slate-500">
+                        We are very thankful for your donations.
+                    </p>
                 </div>
-                <div className="border w-[90%] lg:w-[60%] px-6 py-2 shadow-lg rounded-xl bg-white">
-                    <Link to="/donation/billing" className="inline-flex items-center text-sm text-blue-500 gap-x-2 dark:text-blue-400 hover:underline">
-                        <span className="text-xl font-semibold underline">Your Donations</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                        </svg>
-                    </Link>
-                    <p className="mt-2 text-lg text-gray-500 dark:text-gray-400">Check out your Recurring / OneTime Donations.</p>
-                </div>
-                <div className="border w-[90%] lg:w-[60%] px-6 py-2 shadow-lg rounded-xl bg-white">
-                    <Link to="/contact" className="inline-flex items-center text-sm text-blue-500 gap-x-2 dark:text-blue-400 hover:underline">
-                        <span className="text-xl font-semibold underline">Contact Us</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                        </svg>
-                    </Link>
-                    <p className="mt-2 text-lg text-gray-500 dark:text-gray-400">Tell us what's on your mind</p>
-                </div>
-                <div className="flex items-center  gap-x-4">
-                    <button onClick={() => navigate("/")} className="w-1/7 px-6 py-3 text-lg text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
-                        Home
-                    </button>
-                    <button disabled={logoutLoading} onClick={handleLogout} className="w-1/7 px-6 py-3 text-lg text-white transition-colors duration-200 bg-gray-500 rounded-lg shrink-0 sm:w-auto hover:bg-gray-600 dark:hover:bg-gray-500 dark:bg-gray-600">
+                <div className="p-4 pb-10 sm:pb-16 md:pb-20 flex flex-col justify-center items-center gap-4">
+                    {navigations.map((nav, index) => (
+                        <Link
+                            to={nav.path}
+                            key={index}
+                            className={`w-full flex justify-center items-center gap-4 sm:w-[70%] md:w-[60%] lg:w-[55%] bg-purple-200 hover:bg-purple-500 hover:text-white text-purple-700 border border-purple-200 font-semibold py-3 sm:py-4 rounded-lg text-lg sm:text-xl`}
+                        >
+                            {nav.label}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                            </svg>
+                        </Link>
+                    ))}
+                    <button
+                        onClick={handleLogout}
+                        disabled={logoutLoading}
+                        className="w-full sm:w-[70%] md:w-[60%] lg:w-[55%] border-2 border-black text-black hover:text-white hover:bg-black font-semibold py-3 sm:py-4 rounded-lg text-lg sm:text-xl"
+                    >
                         {logoutLoading ? "Hold on..." : "Logout"}
                     </button>
                 </div>

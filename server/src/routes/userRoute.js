@@ -26,7 +26,7 @@ router.route("/request/verification").get(isAuthenticatedUser, requestVerificati
 router.route("/verify").put(isAuthenticatedUser, verifyUser);
 router.route("/login").post(loginUser);
 router.route("/block/:id").get(fetchBlocked);
-router.route("/unblock/:id").put(unblockUser);
+router.route("/unblock/:id").get(unblockUser);
 router.route("/logout").get(isAuthenticatedUser, logoutUser);
 router.route("/password/forgot").post(forgotPassword);
 router.route("/password/reset/:token").put(resetPassword);

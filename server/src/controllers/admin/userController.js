@@ -35,7 +35,7 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
                     dynamicData: {
                         lastLogin: user.loginAttempt.time.toLocaleDateString(),
                         count: user.loginAttempt.count,
-                        link: `${CLIENT_URL}/unblock?id=${user.id}`
+                        link: `${CLIENT_URL}/unblock/${user.id}`
                     }
                 }
                 await sendMail(options);

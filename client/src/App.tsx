@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
@@ -122,17 +122,17 @@ const App = () => {
                     <Route path="/donation/login" element={<DonationLogin />} />
                     <Route path="/contact" element={<ContactUs />} />
                     <Route path="/report" element={<ReportPage />} />
-                    <Route path="/unblock" element={<UnBlockPage />} />
+                    <Route path="/unblock/:id" element={<UnBlockPage />} />
 
                     <Route path="/refund-policy" element={<ReFundPolicyPage />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                     <Route path="/terms-conditions" element={<TermsAndConditions />} />
 
                     {/* Not logged In Route */}
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/login" element={user === null ? <Login /> : <Navigate to={user?.isVerified ? "/profile" : "/verify"} />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/org/register" element={<OrgRegister />} />
-                    <Route path="/reset" element={<ResetPassword />} />
+                    <Route path="/reset/:token/:user" element={<ResetPassword />} />
                     <Route path="/donation" element={<Donation />} />
                     <Route path="/receipt" element={<RecieptPage />} />
 

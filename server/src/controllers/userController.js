@@ -12,6 +12,7 @@ import Animal from "../models/cards/animalModel.js";
 import { getGravatarUrl } from "../common/gravtar.js";
 import { EMAIL_ACCOUNT_BLOCKED, EMAIL_ACCOUNT_CREATED, EMAIL_ACCOUNT_DEACTIVATED, EMAIL_OTP_VERIFICATION, EMAIL_RESET_PASSWORD } from "../constants/index.js";
 import sendMail from "../utils/services/sendMail.js";
+import mongoose from "mongoose";
 
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -179,7 +180,7 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
                     dynamicData: {
                         lastLogin: user.loginAttempt.time.toLocaleDateString(),
                         count: user.loginAttempt.count,
-                        link: `${CLIENT_URL}/unblock?id=${user.id}`
+                        link: `${CLIENT_URL}/unblock/${user.id}`
                     }
                 }
                 await sendMail(options);
@@ -214,7 +215,16 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
 
 // Get Block User
 export const fetchBlocked = catchAsyncErrors(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return next(new ErrorHandler("Invalid ID format", 400));
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+        return next(new ErrorHandler("User not Found", 404));
+    }
     if (!user.isBlocked) {
         return next(new ErrorHandler("User is not Blocked", 401));
     }
@@ -231,13 +241,11 @@ export const unblockUser = catchAsyncErrors(async (req, res, next) => {
     if (!user) {
         return next(new ErrorHandler("User not Found", 404));
     }
-    if (req.body.isMe) {
-        user.isBlocked = false;
-        user.loginAttempt.count = 0;
-        user.loginAttempt.time = undefined;
-        await user.save();
-    }
-
+    user.isBlocked = false;
+    user.loginAttempt.count = 0;
+    user.loginAttempt.time = undefined;
+    await user.save();
+    
     sendToken(user, 200, res);
 });
 
@@ -270,7 +278,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
             templateId: EMAIL_RESET_PASSWORD,
             recieverEmail: user.email,
             dynamicData: {
-                link: `${CLIENT_URL}/reset?token=${resetToken}&user=${user._id}`
+                link: `${CLIENT_URL}/reset/${resetToken}/${user._id}`
             }
         }
         await sendMail(options);

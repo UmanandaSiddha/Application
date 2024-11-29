@@ -2,8 +2,8 @@ import React from 'react';
 
 const RefundPolicyPage: React.FC = () => {
     return (
-        <div className="min-h-screen mt-16 flex items-center justify-center bg-white px-4">
-            <div className="h-full bg-white shadow-2xl w-full max-w-[1000px] rounded-3xl p-6 md:p-10 m-8">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] px-4">
+            <div className="h-full bg-white shadow-2xl w-full max-w-[1000px] rounded-lg p-6 md:p-10 m-8">
                 {/* Title and Image Section */}
                 <div className="flex flex-col md:flex-row items-center justify-between p-4 md:p-8 mb-4 gap-4 md:gap-0">
                     <div className="text-3xl md:text-4xl font-bold text-center md:text-left">Refund Policy for Donations</div>

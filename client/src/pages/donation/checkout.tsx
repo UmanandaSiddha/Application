@@ -51,7 +51,6 @@ const DonationCheckout = () => {
     const [updateData, setUpdateData] = useState({
         name: donator?.name || "",
         phone: donator?.phone || "",
-        pan: donator?.pan || "",
         street: donator?.address?.street || "",
         state: donator?.address?.state || "",
         city: donator?.address?.city || "",
@@ -64,7 +63,7 @@ const DonationCheckout = () => {
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { name, phone, address, pan } = donator || {};
+        const { name, phone, address } = donator || {};
         const { street, state, city, postalCode, country } = address || {};
         const isDataSame =
             name === updateData.name &&
@@ -73,8 +72,7 @@ const DonationCheckout = () => {
             state === updateData.state &&
             city === updateData.city &&
             postalCode === updateData.postalCode &&
-            country === updateData.country &&
-            pan === updateData.pan
+            country === updateData.country
         if (isDataSame) {
             toast.warning("Make changes to update");
             return;
@@ -287,18 +285,6 @@ const DonationCheckout = () => {
                                     placeholder="123-456-7890"
                                     value={updateData.phone}
                                     onChange={(e) => setUpdateData({ ...updateData, phone: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="pan" className="block text-sm font-medium">PAN Card Number</label>
-                                <input
-                                    type="text"
-                                    id="pan"
-                                    name="pan"
-                                    className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
-                                    placeholder="PAN Card Number"
-                                    value={updateData.pan}
-                                    onChange={(e) => setUpdateData({ ...updateData, pan: e.target.value })}
                                 />
                             </div>
                             <div>

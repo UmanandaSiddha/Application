@@ -11,17 +11,15 @@ import SustainabilitySvg from '/sustainabilitysvg.svg';
 const Donation = () => {
     const navigate = useNavigate();
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
             <div className="h-full bg-white shadow-xl w-full max-w-4xl rounded-lg p-6 sm:p-8 m-4">
 
-                {/* Donate Now Button at Top */}
                 <div className="flex justify-center mb-8">
-                    <button onClick={() => navigate("/donation/dashboard")} className="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full hover:bg-indigo-700 transition-all">
+                    <button onClick={() => navigate("/donation/dashboard")} className="bg-purple-600 text-white font-semibold py-3 px-6 rounded-full hover:bg-indigo-700 transition-all">
                         Donate Now 🥺
                     </button>
                 </div>
 
-                {/* Donation Heading with Image */}
                 <div className="flex flex-col md:flex-row items-center justify-between p-6 mb-8 space-y-6 md:space-y-0">
                     <div className="flex items-start flex-col text-center md:text-left">
                         <div className="flex items-center">
@@ -42,7 +40,6 @@ const Donation = () => {
                     </div>
                 </div>
 
-                {/* Why We Need Your Support Section */}
                 <div className="px-6 mb-8">
                     <h1 className="text-3xl font-bold mb-4">Why We Need Your Support</h1>
                     <div className="space-y-6">
@@ -74,7 +71,6 @@ const Donation = () => {
                     </div>
                 </div>
 
-                {/* How Your Donation Makes a Difference Section */}
                 <div className="px-6 mb-8">
                     <h1 className="text-3xl font-bold mb-4">How Your Donation Makes a Difference</h1>
                     <div className="space-y-6">
@@ -106,7 +102,6 @@ const Donation = () => {
                     </div>
                 </div>
 
-                {/* Closing Statement */}
                 <div className="px-6 mb-8 text-center">
                     <h2 className="text-2xl font-bold">Together, We Can Make a Difference</h2>
                     <p className="mt-4 text-base leading-relaxed">
@@ -114,9 +109,8 @@ const Donation = () => {
                     </p>
                 </div>
 
-                {/* Donate Now Button at Bottom */}
                 <div className="text-center mb-4">
-                    <button onClick={() => navigate("/donation/dashboard")} className="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full hover:bg-indigo-700 transition-all">
+                    <button onClick={() => navigate("/donation/dashboard")} className="bg-purple-600 text-white font-semibold py-3 px-6 rounded-full hover:bg-indigo-700 transition-all">
                         Donate Now 🥺
                     </button>
                     <p className="mt-4 text-gray-600 italic">Be a part of the change!</p>
