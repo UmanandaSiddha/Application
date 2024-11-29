@@ -15,17 +15,15 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     }
 
     static getDerivedStateFromError(_: Error): ErrorBoundaryState {
-        // Update state to indicate error
         return { hasError: true };
     }
 
     componentDidCatch(_: Error, __: ErrorInfo) {
-        // You can log the error to an error reporting service
         console.error('Error caught in error boundary');
 
-        // setTimeout(() => {
-        //     window.location.reload();
-        // }, 3000);  // Adjust timeout as needed
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);  // Adjust timeout as needed
     }
 
     render() {
@@ -33,7 +31,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         const { children } = this.props;
 
         if (hasError) {
-            // Render fallback UI when an error occurs
             return (
                 <div className='flex flex-col justify-center gap-8 items-center mt-8'>
                     <h1 className='text-3xl font-semibold'>Something Went Wrong!!</h1>
@@ -41,8 +38,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 </div>
             );
         }
-
-        // Render children if no error occurred
         return children;
     }
 }
