@@ -344,7 +344,7 @@ const MedicalInput = () => {
 
     return (
         <div className="flex justify-center">
-            <div className="flex flex-row w-[80%] md:space-x-4 lg:space-x-4">
+            <div className="flex flex-row sm:w-[80%] md:space-x-4 lg:space-x-4">
                 <div className="basis-1/4 hidden lg:block xl:block">
                     <SideBar />
                 </div>
@@ -361,7 +361,7 @@ const MedicalInput = () => {
                             <FaArrowLeft className="text-3xl" />
 
                         </button>
-                        <div className="h-[85vh] flex flex-col overflow-y-scroll mb-4 hide-scrollbar">
+                        <div className="sm:h-[85vh] flex flex-col overflow-y-scroll mb-4 hide-scrollbar">
                             <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Medical</h1>
                             <div className="flex flex-col  justify-center items-center lg:w-full">
                                 <div className="flex flex-col gap-6 justify-center pb-10">

@@ -6,12 +6,13 @@ const HomePage = () => {
     const location = useLocation();
 
     useEffect(() => {
-        if (location.pathname === "/about-us") {
+        if (location.pathname === "/about-us" ) {
             const aboutUsSection = document.getElementById("about-us");
             if (aboutUsSection) {
                 aboutUsSection.scrollIntoView({ behavior: "smooth" });
             }
         }
+
     }, [location]);
 
     return (
@@ -29,8 +30,11 @@ const HomePage = () => {
                         <Link to={'/donation'}>donate</Link>
                     </button>
                 </div>
-                <p className='text-center md:text-xl font-normal max-sm:w-[90%] max-sm:mb-36'>
+                <p className='text-center md:text-xl font-normal max-sm:w-[90%] '>
                     Welcome to Voolata, your go-to platform for creating versatile QR codes and links. Whether you need detailed medical cards, identity cards for plants and animals, or personalized profiles, Voolata has you covered. Our user-friendly platform ensures that all your essential information is just a scan away, promoting both convenience and sustainability.
+                    <Link to='/about-us' className="text-md font-semibold leading-6">
+                        <img src="/arrow_down.svg" alt="" className="w-48 mx-auto sm:hidden" />
+                    </Link>
                 </p>
                 <div className="border-2h-screen flex flex-col max-sm:mt-24 items-center">
                     <img src="/image.jpg" alt="" className="bg-contain bg-center sm:w-[90%] max-sm:w-[23rem] rounded-2xl" />
@@ -165,11 +169,11 @@ const HomePage = () => {
             </div>
 
             <div className='w-[85%] mx-auto' >
-                <h1 className='text-3xl md:text-6xl font-semibold pb-20 pt-16'>WHY WE NEED YOUR <span className='text-purple-500'>SUPPORT</span> </h1>
+                <h1 className='text-3xl md:text-6xl font-semibold sm:pb-20 sm:pt-16'>WHY WE NEED YOUR <span className='text-purple-500'>SUPPORT</span> </h1>
                 <div className='flex max-lg:flex-col lg:gap-10'>
                     <div className='flex flex-col h-96 max-lg:pt-20 lg:pt-16 lg:shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.3)] lg:w-1/3 gap-5 lg:rounded-xl max-lg:border-b-black max-lg:border-b-[3px] border-dotted lg:border-red-400 lg:border-2 lg:p-5'>
                         <div className="flex gap-3 pl-2">
-                            <img src="./research.png" alt="" className="sm:w-10 w-8" />
+                            <img src="./research.png" alt="" className="sm:w-10 w-8 h-8" />
                             <h1 className='text-2xl font-semibold'>Research and Development</h1>
                         </div>
                         <p className='px-16'>

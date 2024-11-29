@@ -41,19 +41,18 @@ export default function Header() {
     }, [mobileMenuOpen]);
 
     return (
-        <header className="bg-white border-b-2 fixed top-0 left-0 right-0 z-50 ">
+        <header className="bg-white fixed top-0 left-0 right-0 z-50">
             <nav className="mx-auto flex w-full md:max-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
-                        <img className="h-10 w-full" src="/voolata_long_r.png" alt="" />
-                        {/* <span className="font-semibold text-xl">VOOLATA</span> */}
+                        <img className="h-8 w-full" src="/voolata_long_r.png" alt="" />
                     </Link>
                 </div>
                 <div className="flex lg:hidden">
                     {user ? (
                         <button
                             type="button"
-                            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                            className=" inline-flex items-center justify-center rounded-md text-gray-700"
                             onClick={() => setMobileMenuOpen(true)}
                         >
                             <RiMenu3Line className="h-6 w-6" aria-hidden="true" />
@@ -69,9 +68,9 @@ export default function Header() {
                     <Link to='/plans' className="text-md font-semibold leading-6">
                         Pricing
                     </Link>
-                    <a href='/about-us' className="text-md font-semibold leading-6">
+                    <Link to='/about-us' className="text-md font-semibold leading-6">
                         About Us
-                    </a>
+                    </Link>
                     <Link to='/contact' className="text-md font-semibold leading-6">
                         Contact
                     </Link>
@@ -164,7 +163,7 @@ export default function Header() {
                                 )}
                             </nav>
 
-                            <div className='pb-10'>
+                            <div className='pb-20'>
                                 {user ? (
                                     <div className="flex items-center justify-between px-4 -mx-2">
                                         <Link to="/profile" className='flex items-center'>

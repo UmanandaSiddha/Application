@@ -144,10 +144,9 @@ const PersonalComponent = ({ card }: PropsType) => {
         <div className="bg-[#ACC5F5] bg-[url('/personal_bg.png')] overflow-x-hidden relative bg-auto bg-center pb-16 md:pb-6">
             <img src="/personal_curve.png" alt="" className="absolute md:right-10 md:top-10 md:rotate-6 z-10 " />
             <div className="relative rounded-[10px] mb-10">
-                {/* <img src="/card_header_bg.png" alt="" className="w-full h-80"/> */}
-                <img src="/card_header_bg.png" alt="" className="hidden sm:block w-full h-80"/>
-                <img src="/individual_header_mobile.png" alt="" className="w-full sm:hidden"/>
-                <div className="p-10 absolute top-5">
+                <img src="/card_header_bg.png" alt="" className="hidden sm:block w-full h-80" />
+                <img src="/individual_header_mobile.png" alt="" className="sm:hidden w-full h-64" />
+                <div className="sm:p-10 p-5 absolute top-5">
                     <div className="flex justify-start pl-6 py-4">
                         <p className="text-white font-semibold">Individual Data</p>
                     </div>
@@ -169,7 +168,7 @@ const PersonalComponent = ({ card }: PropsType) => {
                         <div className="flex justify-center">
                             <div className="w-[80%] flex flex-nowrap justify-between md:gap-2 gap-5 pb-6 mt-6">
                                 {card?.socialMedia.map((item: any, index: number) => (
-                                    <Link key={index} to={item.name} target="blank" className="flex w-20 h-14 md:w-16 md:h-16 shadow-lg justify-center border-2 rounded-full py-2.5 items-center">
+                                    <Link key={index} to={item.name} target="blank" className="flex w-14 h-14 md:w-16 md:h-16 shadow-lg justify-center border-2 rounded-full py-2.5 items-center">
                                         {setSvg(item.label) === "" ? (
                                             <IoMdLink size={30} />
                                         ) : (
