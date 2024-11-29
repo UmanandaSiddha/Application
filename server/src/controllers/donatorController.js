@@ -10,9 +10,10 @@ import Subscription, { subscriptionEnum } from "../models/payment/subscriptionMo
 import Plan, { planEnum } from "../models/payment/planModel.js";
 import { addDonationToQueue } from "../utils/queue/donationQueue.js";
 import logger from "../config/logger.js";
-// import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 import { handleDonation } from "../common/payment.js";
 import ApiFeatures from "../utils/services/apiFeatures.js";
+import sendMail from "../utils/services/sendMail.js";
+import { EMAIL_OTP_VERIFICATION } from "../constants/index.js";
 
 export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
     const { email } = req.body;
@@ -28,14 +29,15 @@ export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
 
     await donator.save({ validateBeforeSave: false });
 
-    const message = `Email verification OTP fro donation ( valid for 15 minutes ) :- \n\n ${otp} \n\n Please ignore if you didn't requested this email.`;
-
     try {
-        await addEmailToQueue({
-            email: donator.email,
-            subject: `Email Veification`,
-            message,
-        });
+        const options= {
+            templateId: EMAIL_OTP_VERIFICATION,
+            recieverEmail: donator.email,
+            dynamicData: {
+                otp: otp,
+            }
+        }
+        await sendMail(options);
 
         res.status(200).json({
             success: true,
@@ -46,6 +48,7 @@ export const sendDonatorOTP = catchAsyncErrors(async (req, res, next) => {
         donator.oneTimeExpire = undefined;
 
         await donator.save({ validateBeforeSave: false });
+        console.log(error);
 
         return next(new ErrorHandler(error.message, 500));
     }
@@ -106,10 +109,6 @@ export const createDonatorDetails = catchAsyncErrors(async (req, res, next) => {
         },
     };
 
-    if (req.body.pan !== null) {
-        updateData.pan = req.body.pan;
-    }
-
     const donator = await Donator.findByIdAndUpdate(
         req.donator.id,
         updateData,
@@ -119,28 +118,6 @@ export const createDonatorDetails = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         donator,
-    });
-});
-
-export const updatePanDetail = catchAsyncErrors(async (req, res, next) => {
-    if (!req.body.pan) {
-        return next(new ErrorHandler("Pan is required", 400));
-    }
-
-    const donator = await Donator.findById(req.donator.id);
-    if (donator.pan) {
-        return next(new ErrorHandler("Pan is already there", 500));
-    }
-
-    const updatedDonator = await Donator.findByIdAndUpdate(
-        req.donator.id,
-        { pan: req.body.pan },
-        { new: true, runValidators: true, useFindAndModify: false }
-    )
-
-    res.status(200).json({
-        success: true,
-        updatedDonator,
     });
 });
 

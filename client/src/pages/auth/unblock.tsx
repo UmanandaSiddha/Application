@@ -13,7 +13,7 @@ const UnBlockPage = () => {
 
     const fetchBlocked = async () => {
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/tofo later/${id}`, { isMe }, { withCredentials: true });
+            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/block/${id}`, { isMe }, { withCredentials: true });
             if (data.user.isBlocked) {
 
             } else {

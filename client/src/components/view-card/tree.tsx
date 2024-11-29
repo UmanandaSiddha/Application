@@ -49,7 +49,9 @@ const TreeComponent = ({ card }: PropsType) => {
         <div className="bg-[#F5EDA8] relative bg-opacity-45 pb-32 md:pb-6 overflow-x-hidden">
             <img src="/botany_bg.png" alt="" className="absolute md:left-16 max-sm:top-20 rotate-6 z-10" />
             <div className="relative rounded-[10px]">
-                <img src="/botany_header.png" alt="" className="w-full h-80" />
+                {/* <img src="/botany_header.png" alt="" className="w-full h-80" /> */}
+                <img src="/botany_header.png" alt="" className="w-full h-80 hidden sm:block" />
+                <img src="/tree_header_mobile.png" alt="" className="w-full sm:hidden"/>
                 <div className=" pt-10 pl-5 absolute top-5">
                     <div className="flex justify-start pl-6 py-4">
                         <p className="text-black font-bold text-lg">Botanical Data</p>

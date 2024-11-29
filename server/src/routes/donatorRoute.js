@@ -1,18 +1,17 @@
 import express from "express";
 import { 
-    capturePayment, 
-    createDonation, 
-    createDonationPlan, 
-    createDonatorDetails, 
-    createSubscription, 
-    getDonator, 
-    getDonatorSubscription, 
-    getDonatorTransaction, 
-    getParticularDonatorTransaction, 
-    loginDonator, 
-    logoutDonator, 
-    sendDonatorOTP, 
-    updatePanDetail, 
+    capturePayment,
+    createDonation,
+    createDonationPlan,
+    createDonatorDetails,
+    createSubscription,
+    getDonator,
+    getDonatorSubscription,
+    getDonatorTransaction,
+    getParticularDonatorTransaction,
+    loginDonator,
+    logoutDonator,
+    sendDonatorOTP,
     verifyPayment 
 } from "../controllers/donatorController.js";
 import { isAuthenticatedDonator } from "../middleware/donatorAuth.js";
@@ -23,7 +22,6 @@ router.route("/send/otp").post(sendDonatorOTP);
 router.route("/login").put(loginDonator);
 router.route("/me").get(isAuthenticatedDonator, getDonator);
 router.route("/new").post(isAuthenticatedDonator, createDonatorDetails);
-router.route("/edit/pan").put(isAuthenticatedDonator, updatePanDetail);
 router.route("/new/plan").post(isAuthenticatedDonator, createDonationPlan);
 router.route("/new/subscription").post(isAuthenticatedDonator, createSubscription);
 router.route("/new/pay").post(isAuthenticatedDonator, createDonation);

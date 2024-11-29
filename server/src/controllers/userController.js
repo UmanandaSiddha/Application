@@ -9,8 +9,9 @@ import Personal from "../models/cards/personalModel.js";
 import Medical from "../models/cards/medicalModel.js";
 import Creator from "../models/cards/creatorModel.js";
 import Animal from "../models/cards/animalModel.js";
-// import { addEmailToQueue } from "../utils/queue/emailQueue.js";
 import { getGravatarUrl } from "../common/gravtar.js";
+import { EMAIL_ACCOUNT_BLOCKED, EMAIL_ACCOUNT_CREATED, EMAIL_ACCOUNT_DEACTIVATED, EMAIL_OTP_VERIFICATION, EMAIL_RESET_PASSWORD } from "../constants/index.js";
+import sendMail from "../utils/services/sendMail.js";
 
 // User Registration
 export const registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -59,14 +60,15 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
     const otp = user.getOneTimePassword();
     await user.save({ validateBeforeSave: false });
 
-    const message = `Email verification OTP (valid for 15 minutes):\n\n${otp}\n\nPlease ignore if you didn't request this email.`;
-
     try {
-        await addEmailToQueue({
-            email: user.email,
-            subject: `Email Verification`,
-            message,
-        });
+        const options= {
+            templateId: EMAIL_OTP_VERIFICATION,
+            recieverEmail: user.email,
+            dynamicData: {
+                otp: otp,
+            }
+        }
+        await sendMail(options);
     } catch (error) {
         user.oneTimePassword = undefined;
         user.oneTimeExpire = undefined;
@@ -84,14 +86,15 @@ export const requestVerification = catchAsyncErrors(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const message = `Email verification OTP ( valid for 15 minutes ) :- \n\n ${otp} \n\n Please ignore if you didn't requested this email.`;
-
     try {
-        await addEmailToQueue({
-            email: user.email,
-            subject: `Email Veification`,
-            message,
-        });
+        const options= {
+            templateId: EMAIL_OTP_VERIFICATION,
+            recieverEmail: user.email,
+            dynamicData: {
+                otp: otp,
+            }
+        }
+        await sendMail(options);
 
         res.status(200).json({
             success: true,
@@ -132,18 +135,17 @@ export const verifyUser = catchAsyncErrors(async (req, res, next) => {
     user.oneTimePassword = undefined;
     user.oneTimeExpire = undefined;
 
-    const savedUser = await user.save();
-
-    const message = savedUser
-        ? "Account Verified Successfully!!"
-        : "Account Verification Failed, Please try again later.";
-
+    await user.save();
+    
     try {
-        await addEmailToQueue({
-            email: user.email,
-            subject: `Account Verification Update`,
-            message,
-        });
+        const options= {
+            templateId: EMAIL_ACCOUNT_CREATED,
+            recieverEmail: user.email,
+            dynamicData: {
+                name: user.name,
+            }
+        }
+        await sendMail(options);
     } catch (error) {
         console.log(error.message);
     }
@@ -171,11 +173,16 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
         if (!user.isBlocked) {
             user.isBlocked = true;
             try {
-                await addEmailToQueue({
-                    email: user.email,
-                    subject: "Suspicious Activity",
-                    message: "Your account has been blocked due to suspicious activity. Please click the link below to unblock your account.",
-                });
+                const options= {
+                    templateId: EMAIL_ACCOUNT_BLOCKED,
+                    recieverEmail: user.email,
+                    dynamicData: {
+                        lastLogin: user.loginAttempt.time.toLocaleDateString(),
+                        count: user.loginAttempt.count,
+                        link: `${CLIENT_URL}/unblock?id=${user.id}`
+                    }
+                }
+                await sendMail(options);
             } catch (error) {
                 console.log(`Error sending email: ${error.message}`);
             }
@@ -243,7 +250,7 @@ export const logoutUser = catchAsyncErrors(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: "Logged Out",
+        message: "Logged Out Successfully",
     });
 });
 
@@ -258,16 +265,15 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetPasswordUrl = `${CLIENT_URL}/reset?token=${resetToken}&user=${user._id}`;
-
-    const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\n Please ignore if you didn't requested this email.`;
-
     try {
-        await addEmailToQueue({
-            email: user.email,
-            subject: `Password Recovery`,
-            message,
-        });
+        const options= {
+            templateId: EMAIL_RESET_PASSWORD,
+            recieverEmail: user.email,
+            dynamicData: {
+                link: `${CLIENT_URL}/reset?token=${resetToken}&user=${user._id}`
+            }
+        }
+        await sendMail(options);
 
         res.status(200).json({
             success: true,
@@ -474,6 +480,19 @@ export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
 
     user.isDeactivated = true;
     await user.save();
+
+    try {
+        const options= {
+            templateId: EMAIL_ACCOUNT_DEACTIVATED,
+            recieverEmail: user.email,
+            dynamicData: {
+                name: user.name,
+            }
+        }
+        await sendMail(options);
+    } catch (error) {
+        console.log(error);
+    }
 
     res.cookie("user_token", null, {
         expires: new Date(Date.now()),

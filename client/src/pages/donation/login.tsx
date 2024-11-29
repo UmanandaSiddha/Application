@@ -56,20 +56,11 @@ const DonationLogin = () => {
     };
 
     return (
-        <section className="bg-white dark:bg-gray-900">
-            <div className="container px-6 py-24 mx-auto lg:py-32">
-                <div className="lg:flex">
-                    <div className="lg:w-1/2">
-                        <img className="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" />
-
-                        <h1 className="mt-4 text-gray-600 dark:text-gray-300 md:text-lg">Welcome back</h1>
-
-                        <h1 className="mt-4 text-2xl font-medium text-gray-800 capitalize lg:text-3xl dark:text-white">
-                            login to your account
-                        </h1>
-                    </div>
-
-                    <div className="mt-8 lg:w-1/2 lg:mt-0">
+        <div className="flex flex-col justify-center items-center">
+            <div className="bg-white w-fit m-6 flex max-lg:flex-col justify-center items-center rounded-2xl ">
+                <img src="/otp_img.jpg" alt="" className="xl:w-[800px] lg:w-[700px] sm:w-[400px]" />
+                <div className="flex flex-col shadow-[2px_4px_100px_0px_rgba(0,_0,_0,_0.2)] lg:h-[600px]  p-10 gap-10 justify-center items-center rounded-2xl max-sm:w-96 ">
+                    <div className="mt-8 lg:mt-0 ">
                         <form onSubmit={handleEmail} className="w-full lg:max-w-xl">
                             <div className="relative flex items-center">
                                 <span className="absolute">
@@ -82,7 +73,7 @@ const DonationLogin = () => {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                                    className="block py-3 text-gray-700 w-96 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
                                     placeholder="Email address"
                                 />
                             </div>
@@ -91,7 +82,7 @@ const DonationLogin = () => {
                                 <button
                                     type="submit"
                                     disabled={emailLoading}
-                                    className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                                    className="w-1/2 mx-auto px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 "
                                 >
                                     {emailLoading ? "Hold on..." : "Send Email"}
                                 </button>
@@ -101,16 +92,13 @@ const DonationLogin = () => {
                         {emailSent && (
                             <p className="italic text-center text-gray-400">OTP sent to your email</p>
                         )}
-
-                        <div className="mt-16">
-                            <p className="text-2xl font-semibold text-center my-4">Enter OTP here</p>
-                            <OtpInput length={6} disabled={!email || !emailSent} onOtpSubmit={onOtpSubmit} />
-                        </div>
                     </div>
+                    <h1 className="lg:text-5xl text-3xl font-bold lg:font-semibold">OTP Verification</h1>
+                    <h2 className="text-lg">Enter the OTP code sent to your email</h2>
+                    <OtpInput length={6} disabled={emailLoading} onOtpSubmit={onOtpSubmit} />
                 </div>
-
             </div>
-        </section>
+        </div >
     )
 }
 

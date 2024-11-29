@@ -4,8 +4,9 @@ import { CLIENT_URL, instance } from "../../server.js";
 import Plan, { planEnum } from "../../models/payment/planModel.js";
 import CustomRequest, { acceptedEnum } from "../../models/messages/customRequestModel.js";
 import User from "../../models/userModel.js";
-// import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";
+import { EMAIL_REPLY_CUSTOM_PLAN } from "../../constants/index.js";
+import sendMail from "../../utils/services/sendMail.js";
 
 export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {
     const { period, interval, userId, amount, cards } = req.body;
@@ -49,11 +50,15 @@ export const createCustomPlan = catchAsyncErrors(async (req, res, next) => {
     });
 
     try {
-        await addEmailToQueue({
-            email: user.email,
-            subject: `Custom Plan Request Accepted`,
-            message: `${CLIENT_URL}/view-custom?id=${plan._id}&user=${user._id}`,
-        });
+        const options= {
+            templateId: EMAIL_REPLY_CUSTOM_PLAN,
+            recieverEmail: user.email,
+            dynamicData: {
+                status: "Accepted",
+                link: `${CLIENT_URL}/view-custom?id=${plan._id}&user=${user._id}`,
+            }
+        }
+        await sendMail(options);
     } catch (error) {
         console.log(error.message);
     }
@@ -164,11 +169,15 @@ export const rejectCustomPlan = catchAsyncErrors(async (req, res, next) => {
     }
 
     try {
-        await addEmailToQueue({
-            email: user.email,
-            subject: `Custom Plan Request Rejected`,
-            message: `Requested Custom Plan is rejected for. Reason - ${reason}`,
-        });
+        const options= {
+            templateId: EMAIL_REPLY_CUSTOM_PLAN,
+            recieverEmail: user.email,
+            dynamicData: {
+                status: "Rejected",
+                reason: reason
+            }
+        }
+        await sendMail(options);
     } catch (error) {
         console.log(error.message);
     }

@@ -138,7 +138,7 @@ const App = () => {
                                         </>
                                     }
                                 />
-                                 <Route
+                                <Route
                                     path='/subscriptions/details'
                                     element={
                                         <>
@@ -174,7 +174,7 @@ const App = () => {
                                         </>
                                     }
                                 />
-                                 <Route
+                                <Route
                                     path='/contacts/details'
                                     element={
                                         <>

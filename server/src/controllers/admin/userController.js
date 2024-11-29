@@ -5,10 +5,11 @@ import Medical from "../../models/cards/medicalModel.js";
 import Creator from "../../models/cards/creatorModel.js";
 import Animal from "../../models/cards/animalModel.js";
 import Personal from "../../models/cards/personalModel.js";
-// import { addEmailToQueue } from "../../utils/queue/emailQueue.js";
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
 import User, { freeEnum, roleEnum } from "../../models/userModel.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";
+import { EMAIL_ACCOUNT_BLOCKED } from "../../constants/index.js";
+import sendMail from "../../utils/services/sendMail.js";
 
 export const adminLogin = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
@@ -28,11 +29,16 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
         if (!user.isBlocked) {
             user.isBlocked = true;
             try {
-                await addEmailToQueue({
-                    email: user.email,
-                    subject: `Suspious Activity`,
-                    message: `${process.env.CLIENT_URL}/unblock?user=${user._id}`,
-                });
+                const options= {
+                    templateId: EMAIL_ACCOUNT_BLOCKED,
+                    recieverEmail: user.email,
+                    dynamicData: {
+                        lastLogin: user.loginAttempt.time.toLocaleDateString(),
+                        count: user.loginAttempt.count,
+                        link: `${CLIENT_URL}/unblock?id=${user.id}`
+                    }
+                }
+                await sendMail(options);
             } catch (error) {
                 console.log(error.message);
             }
@@ -55,16 +61,6 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
         user.loginAttempt.time = Date.now();
         await user.save();
         return next(new ErrorHandler("Invalid Credentials", 401));
-    }
-
-    try {
-        await addEmailToQueue({
-            email: user.email,
-            subject: `Admin Login Email`,
-            message: `Welcome ${user.name}`,
-        });
-    } catch (error) {
-        console.log(error.message);
     }
 
     sendToken(user, 200, res);

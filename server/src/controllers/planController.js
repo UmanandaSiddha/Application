@@ -2,7 +2,8 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import Plan, { planEnum } from "../models/payment/planModel.js";
 import CustomRequest, { acceptedEnum } from "../models/messages/customRequestModel.js";
-// import { addEmailToQueue } from "../utils/queue/emailQueue.js";
+import { EMAIL_REQUEST_CUSTOM_PLAN } from "../constants/index.js";
+import sendMail from "../utils/services/sendMail.js";
 
 export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
     const { email, cards, amount, comment, period, interval } = req.body;
@@ -21,14 +22,21 @@ export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
         user: req.user.id,
     });
 
-    const message = `Request for ${JSON.stringify(newRequest)}`;
-
     try {
-        await addEmailToQueue({
-            email: process.env.ADMIN_EMAIL,
-            subject: `New Custom Plan Request`,
-            message,
-        });
+        const options= {
+            templateId: EMAIL_REQUEST_CUSTOM_PLAN,
+            recieverEmail: process.env.ADMIN_EMAIL,
+            dynamicData: {
+                email: email,
+                cards: cards,
+                amount: amount,
+                comment: comment,
+                period: period,
+                interval: interval,
+                link: `https://admin.voolata.com/requests/details?id=${newRequest._id}`
+            }
+        }
+        await sendMail(options);
     } catch (error) {
         console.log(error.message);
     }

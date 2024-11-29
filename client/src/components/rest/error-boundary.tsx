@@ -23,9 +23,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         // You can log the error to an error reporting service
         console.error('Error caught in error boundary');
 
-        setTimeout(() => {
-            window.location.reload();
-        }, 3000);  // Adjust timeout as needed
+        // setTimeout(() => {
+        //     window.location.reload();
+        // }, 3000);  // Adjust timeout as needed
     }
 
     render() {
