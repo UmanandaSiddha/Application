@@ -196,8 +196,7 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
         user?.cards?.total === 10 &&
         user?.cards?.total > user?.cards?.created
     ) {
-        console.log("hello");
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             vCard,
         });
