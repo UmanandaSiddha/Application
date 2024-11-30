@@ -187,8 +187,22 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
     if (!vCard) {
         return next(new ErrorHandler("VCard Not Found", 404));
     }
-
     const user = await User.findById(vCard.user);
+
+    if (
+        (!user?.freePlan?.status || user?.freePlan?.status === false) &&
+        !user?.activePlan && 
+        user?.cards?.total !== undefined && user?.cards?.created !== undefined &&
+        user?.cards?.total === 10 &&
+        user?.cards?.total > user?.cards?.created
+    ) {
+        console.log("hello");
+        res.status(200).json({
+            success: true,
+            vCard,
+        });
+    }
+
     if (user?.freePlan?.status && user.role !== "admin") {
         const { type, end } = user.freePlan;
         if (type === freeEnum.PLAN && end > Date.now()) {
@@ -198,7 +212,7 @@ export const getDisplayCard = catchAsyncErrors(async (req, res, next) => {
 
     const subscription = await Subscription.findById(user?.activePlan);
     if (user.role !== "admin" && (!subscription || !["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < Date.now()))) {
-        return next(new ErrorHandler("VCard Not Found 2", 404));
+        return next(new ErrorHandler("VCard Not Found", 404));
     }
 
     res.status(200).json({

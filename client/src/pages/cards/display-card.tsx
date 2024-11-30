@@ -39,7 +39,7 @@ const DisplayCard = () => {
             const { data }: { data: SingleTreeResponse | SinglePersonalResponse | SingleMedicalResponse | SingleCreatorResponse | SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/details/${id}?type=${type}`, { withCredentials: true });
             setCard(data.vCard);
         } catch (error: any) {
-            toast.error(error.response.data.message);
+            console.error(error.response.data.message);
         } finally {
             setLoading(false);
         }
@@ -86,9 +86,13 @@ const DisplayCard = () => {
     }
 
     return (
-        <div className="m-auto p-auto lg:w-2/3">
+        <div className="m-auto mt-4 p-auto lg:w-2/3">
             <div className="border border-primary p-2 md:p-6 gap-4 items-center mx-0 my-0 md:mx-8 lg:mx-16 xl:mx-32">
-                {loading ? <Loader /> : renderCard()}
+                {loading ? <Loader /> : card ? renderCard() : (
+                    <div className="flex justify-center items-center">
+                        <p className="text-3xl text-red-500 font-semibold">No Card Found</p>
+                    </div>
+                )}
             </div>
         </div>
     )

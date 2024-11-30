@@ -8,10 +8,8 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { MdEdit } from "react-icons/md";
-import { useSelector } from "react-redux";
 import { MdDelete } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { RootState } from "../../redux/store";
 import Loader from "@/components/rest/loader";
 import { FaDownload } from "react-icons/fa6";
 import TreeComponent from "@/components/view-card/tree";
@@ -32,7 +30,6 @@ const ViewCard = () => {
     const type = search.get("type");
     const [card, setCard] = useState<Tree | Personal | MedicalType | Creator | Animal | null>(null);
     const [loading, setLoading] = useState(false);
-    const { isPaid, user } = useSelector((state: RootState) => state.userReducer);
 
     const fetchData = async (id: string, type: string) => {
         setLoading(true);
@@ -111,7 +108,6 @@ const ViewCard = () => {
                             <div className="w-full py-4 fixed bottom-0 flex md:hidden justify-center rounded-t-3xl items-center gap-6 bg-slate-100">
                                 <button
                                     className="py-4 px-4 bg-green-200 rounded-full hover:cursor-pointer shadow-xl"
-                                    disabled={!isPaid && user?.role !== "admin"}
                                     onClick={handleDownload}
                                 >
                                     <div className="flex">
@@ -122,7 +118,6 @@ const ViewCard = () => {
                                 </button>
                                 <button
                                     className="py-4 px-4 bg-blue-200 rounded-full hover:cursor-pointer shadow-xl"
-                                    disabled={!isPaid && user?.role !== "admin"}
                                     onClick={handleShare}
                                 >
                                     <div className="flex">
@@ -133,7 +128,6 @@ const ViewCard = () => {
                                 </button>
                                 <button
                                     className="py-4 px-4 bg-slate-300 rounded-full hover:cursor-pointer shadow-xl"
-                                    disabled={!isPaid && user?.role !== "admin"}
                                     onClick={() => navigate(`/dashboard/${type}/create?${type}Id=${card?._id}`)}
                                 >
                                     <div className="flex justify-center">
@@ -144,7 +138,6 @@ const ViewCard = () => {
                                 </button>
                                 <button
                                     className=" bg-red-300 px-4 py-4 rounded-full hover:cursor-pointer shadow-xl"
-                                    disabled={!isPaid && user?.role !== "admin"}
                                     onClick={() => deleteCard()}
                                 >
                                     <div className="flex justify-center">
@@ -160,7 +153,6 @@ const ViewCard = () => {
                         <div className="mt-6 md:mt-0 pt-8 pb-16 flex flex-col justify-center items-center gap-6 bg-slate-100 rounded-b-3xl">
                             <button
                                 className="py-4 px-4 bg-green-200 rounded-full hover:cursor-pointer shadow-xl"
-                                disabled={!isPaid && user?.role !== "admin"}
                                 onClick={handleDownload}
                             >
                                 <div className="flex">
@@ -171,7 +163,6 @@ const ViewCard = () => {
                             </button>
                             <button
                                 className="py-4 px-4 bg-blue-200 rounded-full hover:cursor-pointer shadow-xl"
-                                disabled={!isPaid && user?.role !== "admin"}
                                 onClick={handleShare}
                             >
                                 <div className="flex">
@@ -182,7 +173,6 @@ const ViewCard = () => {
                             </button>
                             <button
                                 className="py-4 px-4 bg-slate-300 rounded-full hover:cursor-pointer shadow-xl"
-                                disabled={!isPaid && user?.role !== "admin"}
                                 onClick={() => navigate(`/dashboard/${type}/create?${type}Id=${card?._id}`)}
                             >
                                 <div className="flex justify-center">
@@ -193,7 +183,7 @@ const ViewCard = () => {
                             </button>
                             <button
                                 className=" bg-red-300 px-4 py-4 rounded-full hover:cursor-pointer shadow-xl"
-                                disabled={!isPaid && user?.role !== "admin"}
+
                                 onClick={() => deleteCard()}
                             >
                                 <div className="flex justify-center">
