@@ -7,6 +7,7 @@ import { Plan } from "@/types/plan_types";
 import { PlanResponse, UserResponse } from "@/types/api-types";
 import { toast } from "react-toastify";
 import { togglePaid, userExist } from "@/redux/reducer/userReducer";
+import Loader from "@/components/rest/loader";
 
 export const periodEnum = {
     DAILY: "daily",
@@ -20,7 +21,7 @@ const PlanPage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [plans, setPlans] = useState<Plan[] | null>();
-    const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
+    const { user, isPaid, loading } = useSelector((state: RootState) => state.userReducer);
 
     const periodToDays = (period: string) => {
         switch (period) {
@@ -73,6 +74,8 @@ const PlanPage = () => {
             toast.error(error.response.data.message);
         }
     }
+
+    if (loading) return <Loader />
 
     return (
         <div className="pt-6 pb-16 h-screen bg-gradient-to-br overflow-x-hidden hide-scrollbar from-[#efe8fa] to-[#fcfafd]">
