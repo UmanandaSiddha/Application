@@ -60,11 +60,10 @@ const MedicalComponent = ({ card }: PropsType) => {
     return (
         <div className="bg-[#478AFB] bg-[url('/medical_bg.png')] bg-bottom bg-cover pb-32 md:pb-6">
             <div className="relative mb-20 rounded-[10px]  z-10 ">
-            {/* <img src="/card_header_bg.png" alt="" className="w-full h-80"/> */}
-            <img src="/card_header_bg.png" alt="" className="w-full h-80 hidden sm:block"/>
-            <img src="/medical_header_mobile.png" alt="" className="w-full sm:hidden"/>
+                <img src="/card_header_bg.png" alt="" className="w-full h-80 hidden sm:block" />
+                <img src="/medical_header_mobile.png" alt="" className="w-full h-72 sm:hidden" />
                 <div className="pt-10 pl-5 absolute top-5">
-                    <div className="flex justify-start pl-6 py-6">
+                    <div className="flex justify-start pl-6 sm:py-6">
                         <p className="text-white font-semibold">Medical Data</p>
                     </div>
                     <div className="text-white text-5xl lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">
@@ -73,24 +72,6 @@ const MedicalComponent = ({ card }: PropsType) => {
                 </div>
             </div>
 
-            {/* <div className="my-4 w-full flex flex-col lg:flex-row items-center justify-center gap-4 px-8">
-                <div className="bg-white p-4 rounded-3xl w-full lg:w-1/2">
-                    <p className="text-2xl font-semibold">{card?.name}</p>
-                    <hr className="text-slate-400 my-3" />
-                    <p className="text-md"><span className="font-semibold">Gender:</span> {card?.gender}</p>
-                    <p className="text-md"><span className="font-semibold">DOB:</span> {formattedDate}</p>
-                    <p className="text-md"><span className="font-semibold">Phone:</span> {card?.phone}</p>
-                    <p className="text-md"><span className="font-semibold">Email:</span> {card?.email}</p>
-                </div>
-                <div className="bg-white p-4 rounded-3xl w-full lg:w-1/2">
-                    <p className="text-2xl font-semibold flex items-center gap-2">Address <span><MdLocationOn size={20} className="text-red-500" /></span></p>
-                    <hr className="text-slate-400 my-3" />
-                    <p className="text-md"><span className="font-semibold">Street:</span> {card?.street}</p>
-                    <p className="text-md"><span className="font-semibold">City:</span> {card?.city}</p>
-                    <p className="text-md"><span className="font-semibold">State:</span> {card?.state}</p>
-                    <p className="text-md"><span className="font-semibold">Postal Code:</span> {card?.postalCode}</p>
-                </div>
-            </div> */}
             <div className="md:w-[550px] w-[370px] relative bg-[#ACC1E4] bg-opacity-80 rounded-3xl mb-24 pt-10  mx-auto ">
 
                 <div className="w-full mt-6 flex flex-col items-center justify-start gap-4 px-8">

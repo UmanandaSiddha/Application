@@ -139,16 +139,15 @@ const PersonalComponent = ({ card }: PropsType) => {
             return "";
         }
     }
-    // bg-[#346CD9] shape-container
+
     return (
         <div className="bg-[#ACC5F5] bg-[url('/personal_bg.png')] overflow-x-hidden relative bg-auto bg-center pb-16 md:pb-6">
             <img src="/personal_curve.png" alt="" className="absolute md:right-10 md:top-10 md:rotate-6 z-10 " />
             <div className="relative rounded-[10px] mb-10">
-                {/* <img src="/card_header_bg.png" alt="" className="w-full h-80"/> */}
-                <img src="/card_header_bg.png" alt="" className="hidden sm:block w-full h-80"/>
-                <img src="/individual_header_mobile.png" alt="" className="w-full sm:hidden"/>
-                <div className="p-10 absolute top-5">
-                    <div className="flex justify-start pl-6 py-4">
+                <img src="/card_header_bg.png" alt="" className="hidden sm:block w-full h-80" />
+                <img src="/individual_header_mobile.png" alt="" className="sm:hidden w-full h-64" />
+                <div className="pt-10  pl-5 absolute top-5">
+                    <div className="flex justify-start pl-6 sm:py-4">
                         <p className="text-white font-semibold">Individual Data</p>
                     </div>
                     <div className="text-white text-5xl lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">
@@ -159,17 +158,12 @@ const PersonalComponent = ({ card }: PropsType) => {
 
             <div className="flex justify-center w-full">
                 <div className="w-[90%]">
-                    {/* <div className="my-8 flex flex-col gap-y-2 py-2">
-                        <p className="text-lg font-semibold">Name:</p>
-                        <p className="bg-white border-2 border-slate-200 w-full rounded-lg px-3 py-2 text-lg shadow-lg">{card?.name}</p>
-                    </div> */}
-
                     <div className="bg-white rounded-xl mb-16 pb-8">
 
                         <div className="flex justify-center">
                             <div className="w-[80%] flex flex-nowrap justify-between md:gap-2 gap-5 pb-6 mt-6">
                                 {card?.socialMedia.map((item: any, index: number) => (
-                                    <Link key={index} to={item.name} target="blank" className="flex w-20 h-14 md:w-16 md:h-16 shadow-lg justify-center border-2 rounded-full py-2.5 items-center">
+                                    <Link key={index} to={item.name} target="blank" className="flex w-14 h-14 md:w-16 md:h-16 shadow-lg justify-center border-2 rounded-full py-2.5 items-center">
                                         {setSvg(item.label) === "" ? (
                                             <IoMdLink size={30} />
                                         ) : (

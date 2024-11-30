@@ -98,13 +98,16 @@ const DonationBilling = () => {
                         </div>
                     </div>
                 ) : (
-                    <p className="text-center mt-16 text-2xl font-semibold">No Subscription here</p>
+                    <div className="text-center space-y-4 max-w-4xl px-12 py-6 mx-auto bg-white cursor-pointer shadow-xl rounded-xl">
+                        <p className="text-2xl font-semibold">No Recurring Donation</p>
+                        <Link to="/donation/checkout" className="text-lg text-purple-600 font-semibold hover:underline">Donate Now</Link>
+                    </div>
                 )}
 
                 {transactions && transactions.length > 0 && (
                     <>
                         <div className="flex flex-col md:flex-row justify-between px-16">
-                            <h1 className="text-3xl text-center font-semibold">Transactions</h1>
+                            <h1 className="text-3xl text-center font-semibold">One time Donation</h1>
                             <div className='mt-4 md:mt-0 flex justify-center items-center gap-6'>
                                 <button onClick={() => {}} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
                                     <HiMiniArrowSmallLeft size={25} />

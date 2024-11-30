@@ -88,14 +88,14 @@ const BillingPage = () => {
 
                     {user?.freePlan.status ? (
                         <div className="flex flex-col md:flex-row gap-2 items-center justify-between max-w-4xl px-12 py-6 mx-auto bg-white cursor-pointer shadow-xl rounded-xl">
-                        <div className="flex flex-col justify-center gap-2">
-                            <h1 className="text-xl font-semibold underline">FREE PLAN</h1>
-                            <p className="text-md font-semibold">Period: <span className="text-gray-500">{String(new Date(user.freePlan.start).toDateString())} - {String(new Date(user.freePlan.end).toDateString())}</span></p>
+                            <div className="flex flex-col justify-center gap-2">
+                                <h1 className="text-xl font-semibold underline">FREE PLAN</h1>
+                                <p className="text-md font-semibold">Period: <span className="text-gray-500">{String(new Date(user.freePlan.start).toDateString())} - {String(new Date(user.freePlan.end).toDateString())}</span></p>
+                            </div>
+                            <div className="mt-4 md:mt-0 flex flex-col justify-center items-center gap-4">
+                                <h1 className="text-2xl font-semibold">Status: <span className="text-blue-500">{user.freePlan.status ? "Active" : "Ended"}</span></h1>
+                            </div>
                         </div>
-                        <div className="mt-4 md:mt-0 flex flex-col justify-center items-center gap-4">
-                            <h1 className="text-2xl font-semibold">Status: <span className="text-blue-500">{user.freePlan.status ? "Active" : "Ended"}</span></h1>
-                        </div>
-                    </div>
                     ) : (
                         <>
                             {subscription && !["just_created", "created"].includes(subscription.status) ? (
@@ -114,22 +114,25 @@ const BillingPage = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <p className="text-center mt-16 text-2xl font-semibold">No Subscription here</p>
+                                <div className="text-center space-y-4 max-w-4xl px-12 py-6 mx-auto bg-white cursor-pointer shadow-xl rounded-xl">
+                                    <p className="text-2xl font-semibold">No Subscriptions yet</p>
+                                    <Link to="/plans" className="text-lg text-purple-600 font-semibold hover:underline">Checkout Plans</Link>
+                                </div>
                             )}
                         </>
                     )}
-                    
+
 
                     {transactions && transactions.length > 0 && (
                         <>
                             <div className="flex flex-col md:flex-row justify-between px-16">
                                 <h1 className="text-3xl text-center font-semibold">Transactions</h1>
                                 <div className='mt-4 md:mt-0 flex justify-center items-center gap-6'>
-                                    <button onClick={() => {}} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
+                                    <button onClick={() => { }} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
                                         <HiMiniArrowSmallLeft size={25} />
                                     </button>
                                     <p className="text-lg font-semibold">1 / 10</p>
-                                    <button onClick={() => {}} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
+                                    <button onClick={() => { }} className="flex justify-center items-center bg-slate-300 rounded-full h-8 w-8">
                                         <HiMiniArrowSmallRight size={25} />
                                     </button>
                                 </div>

@@ -136,9 +136,9 @@ const Profile = () => {
         <div className="w-full md:w-[80%] h-screen mx-auto px-4">
             {openProfile && (
                 <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
-                    <div className="bg-white p-8 rounded-2xl shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Profile</h2>
+                            <h2 className="text-2xl font-semibold mb-4 flex justify-center">Update Profile</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenProfile(false)}>Close</button>
                         </div>
                         <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
@@ -157,9 +157,9 @@ const Profile = () => {
             )}
             {openBilling && (
                 <div className="fixed mt-8 inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
-                    <div className="bg-white p-8 rounded-2xl shadow-lg w-[90%] md:w-[70%] lg:w-[50%] max-h-[95%] overflow-auto hide-scrollbar">
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-[90%] md:w-[70%] lg:w-[50%] max-h-[95%] overflow-auto hide-scrollbar">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Billing Address</h2>
+                            <h2 className="text-2xl font-semibold mb-4 flex justify-center">Update Billing Address</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenBilling(false)}>Close</button>
                         </div>
                         <form onSubmit={handleUpdateBillingAddress} className="flex flex-col gap-4">
@@ -194,9 +194,9 @@ const Profile = () => {
             )}
             {openOrg && (
                 <div className="fixed mt-8 inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
-                    <div className="bg-white p-8 rounded-2xl shadow-lg w-[90%] md:w-[70%] lg:w-[50%] max-h-[95%] overflow-auto hide-scrollbar">
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-[90%] md:w-[70%] lg:w-[50%] max-h-[95%] overflow-auto hide-scrollbar">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Organisation Details</h2>
+                            <h2 className="text-2xl font-semibold mb-4 flex justify-center">Update Organisation Details</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenOrg(false)}>Close</button>
                         </div>
                         <form onSubmit={handleUpdateOrgDetails} className="flex flex-col gap-4">
@@ -229,9 +229,9 @@ const Profile = () => {
             )}
             {openPassword && (
                 <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
-                    <div className="bg-white p-8 rounded-2xl shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Password</h2>
+                            <h2 className="text-2xl font-semibold mb-4 flex justify-center">Update Password</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenPassword(false)}>Close</button>
                         </div>
                         <form onSubmit={handleResetPassword} className="flex flex-col gap-4">
@@ -256,9 +256,9 @@ const Profile = () => {
             )}
             {openDelete && (
                 <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
-                    <div className="bg-white p-8 rounded-2xl shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold mb-4 flex justify-center">Update Password</h2>
+                            <h2 className="text-2xl font-semibold mb-4 flex justify-center">Update Password</h2>
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenDelete(false)}>Close</button>
                         </div>
                         <p className="text-lg italic text-gray-500">This will deactivate your account and delete all your cards. You may Reactivate by contacting the admin</p>
@@ -337,7 +337,7 @@ const Profile = () => {
                     </div>
                 </div>
                 <div className="main basis-full md:basis-3/4">
-                    <div className="max-h-[85vh] overflow-auto hide-scrollbar pt-24 pb-12">
+                    <div className="sm:max-h-[85vh] overflow-auto hide-scrollbar pt-24 pb-12">
                         <div className="w-full bg-white px-8 py-4 lg:mt-2 rounded-lg shadow-md">
                             <div className="flex -mt-16 justify-end">
                                 {user?.image ? (

@@ -11,5 +11,5 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['react-apexcharts', 'apexcharts'],
-},
+  },
 })

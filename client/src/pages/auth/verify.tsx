@@ -12,6 +12,7 @@ const Verify = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
+    const [resendLoading, setResendLoading] = useState<boolean>(false);
 
     const onOtpSubmit = async (otp: string) => {
         setVerifyLoading(true);
@@ -22,18 +23,48 @@ const Verify = () => {
             navigate("/dashboard");
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setVerifyLoading(false);
         }
-        setVerifyLoading(false);
+    };
+
+    const resendOtp = async () => {
+        setResendLoading(true);
+        try {
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/user/resend-otp`, {}, { withCredentials: true });
+            toast.success("OTP has been resent!");
+        } catch (error: any) {
+            toast.error("Failed to resend OTP");
+        } finally {
+            setResendLoading(false);
+        }
     };
 
     return (
-        <div className="flex flex-col justify-center items-center">
-            <div className="bg-white w-fit m-6 flex max-lg:flex-col justify-center items-center rounded-2xl ">
-                <img src="otp_img.jpg" alt="" className="xl:w-[800px] lg:w-[700px] sm:w-[400px]" />
-                <div className="flex flex-col shadow-[2px_4px_100px_0px_rgba(0,_0,_0,_0.2)] lg:h-[600px]  p-10 gap-10 justify-center items-center rounded-2xl max-sm:w-96 ">
-                    <h1 className="lg:text-5xl text-3xl font-bold lg:font-semibold">OTP Verification</h1>
-                    <h2 className="text-lg">Enter the OTP code sent to your email</h2>
-                    <OtpInput length={6} disabled={verifyLoading} onOtpSubmit={onOtpSubmit} />
+        <div className="pt-6 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
+            <div className="w-[95%] md:w-[80%] lg:w-[70%] mx-auto mt-2 rounded-lg bg-white shadow-xl">
+                <div className="flex flex-col lg:flex-row justify-center items-center lg:items-stretch rounded-2xl p-6">
+                    <img
+                        src="./otp_img.jpg"
+                        alt="OTP Verification"
+                        className="hidden lg:block lg:w-[500px] xl:w-[600px]"
+                    />
+                    <div className="w-full lg:w-1/2 text-center flex flex-col justify-center items-center space-y-4 lg:text-left p-4">
+                        <h1 className="text-2xl lg:text-3xl font-semibold">Verify your <span className="text-purple-600">Email</span></h1>
+                        <h2 className="text-md lg:text-lg text-gray-500 mb-4">Enter the OTP code sent to your email</h2>
+
+                        <OtpInput length={6} disabled={verifyLoading} onOtpSubmit={onOtpSubmit} />
+                        <div className="mt-4">
+                            <button
+                                onClick={resendOtp}
+                                disabled={resendLoading}
+                                className={`text-purple-600 font-semibold hover:underline ${resendLoading ? "opacity-50 cursor-not-allowed" : ""
+                                    }`}
+                            >
+                                {resendLoading ? "Resending OTP..." : "Resend OTP"}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

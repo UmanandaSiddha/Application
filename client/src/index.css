@@ -31,7 +31,13 @@ body {
 }
 
 .custom-padding {
-    padding-top: 4.5rem;
+    padding-top: 2.5rem;
+}
+
+@media (min-width: 640px) {
+    .custom-padding {
+        padding-top: 4.5rem;
+    }
 }
 
 .toggle-checkbox:checked+.toggle-bg+.toggle-dot {

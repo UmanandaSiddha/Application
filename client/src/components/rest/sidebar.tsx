@@ -26,7 +26,7 @@ const ButtonItem: React.FC<ButtonItemProps> = ({ icon: Icon, title, type, isVeri
             }}
         >
             <div className="w-[100%] text-white">
-                <div className="flex flex-row items-center w-full border-2 border-slate-300 rounded-lg">
+                <div className="flex flex-row items-center w-full border-2 border-slate-300 bg-white rounded-lg">
                     <div className="basis-1/7 pl-2 py-3">
                         <Icon className="w-[1.5rem] h-[1.5rem] text-black" />
                     </div>

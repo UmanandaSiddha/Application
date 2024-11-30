@@ -56,49 +56,46 @@ const DonationLogin = () => {
     };
 
     return (
-        <div className="flex flex-col justify-center items-center">
-            <div className="bg-white w-fit m-6 flex max-lg:flex-col justify-center items-center rounded-2xl ">
-                <img src="/otp_img.jpg" alt="" className="xl:w-[800px] lg:w-[700px] sm:w-[400px]" />
-                <div className="flex flex-col shadow-[2px_4px_100px_0px_rgba(0,_0,_0,_0.2)] lg:h-[600px]  p-10 gap-10 justify-center items-center rounded-2xl max-sm:w-96 ">
-                    <div className="mt-8 lg:mt-0 ">
-                        <form onSubmit={handleEmail} className="w-full lg:max-w-xl">
-                            <div className="relative flex items-center">
-                                <span className="absolute">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                </span>
+        <div className="pt-6 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
+            <div className="w-[95%] md:w-[80%] lg:w-[70%] mx-auto mt-2 rounded-lg bg-white shadow-xl">
+                <div className="flex flex-col lg:flex-row justify-center items-center lg:items-stretch rounded-2xl p-6">
+                    <img
+                        src="/otp_img.jpg"
+                        alt="OTP Verification"
+                        className="hidden lg:block lg:w-[500px] xl:w-[600px]"
+                    />
+                    <div className="w-full lg:w-1/2 text-center flex flex-col justify-center items-center space-y-4 lg:text-left p-4">
+                        <h1 className="text-2xl lg:text-3xl font-semibold">Login to your account</h1>
+                        <h2 className="text-sm lg:text-md text-gray-500 mb-4">An OTP will be sent to your email</h2>
 
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="block py-3 text-gray-700 w-96 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                                    placeholder="Email address"
-                                />
-                            </div>
+                        <form onSubmit={handleEmail} className="w-full flex flex-col justify-center items-center space-y-4 pb-6">
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="py-2 text-gray-700 w-full md:w-[80%] bg-white border rounded-lg px-4 focus:border-purple-400 dark:focus:border-purple-300 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                                placeholder="Email address"
+                            />
 
-                            <div className="mt-8 md:flex md:items-center">
-                                <button
-                                    type="submit"
-                                    disabled={emailLoading}
-                                    className="w-1/2 mx-auto px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 "
-                                >
-                                    {emailLoading ? "Hold on..." : "Send Email"}
-                                </button>
-                            </div>
+                            <button
+                                type="submit"
+                                disabled={emailLoading}
+                                className="px-6 py-3 text-md font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-500 rounded-lg hover:bg-purple-400 focus:outline-none focus:ring focus:ring-purple-300 focus:ring-opacity-50"
+                            >
+                                {emailLoading ? "Hold on..." : "Send Email"}
+                            </button>
                         </form>
 
-                        {emailSent && (
-                            <p className="italic text-center text-gray-400">OTP sent to your email</p>
-                        )}
+                        <hr className="w-full border border-gray-400" />
+
+                        <h1 className="text-2xl lg:text-3xl text-purple-600 font-semibold pb-4">Enter OTP here</h1>
+                        {/* <h2 className="text-md lg:text-lg text-black mb-4">Enter OTP here</h2> */}
+
+                        <OtpInput length={6} disabled={emailLoading} onOtpSubmit={onOtpSubmit} />
                     </div>
-                    <h1 className="lg:text-5xl text-3xl font-bold lg:font-semibold">OTP Verification</h1>
-                    <h2 className="text-lg">Enter the OTP code sent to your email</h2>
-                    <OtpInput length={6} disabled={emailLoading} onOtpSubmit={onOtpSubmit} />
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
 

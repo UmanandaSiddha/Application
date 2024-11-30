@@ -217,16 +217,16 @@ const MedicalInput = () => {
             case 2:
                 return (
                     <>
-                        <h1 className="text-2xl font-bold">Address</h1>
+                        <h1 className="text-2xl font-bold text-center">Address</h1>
                         {medAdd?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label
                                     htmlFor={em.name}
                                     className="text-md font-semibold text-gray-700 min-w-24"
                                 >
                                     {em.label}:
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 sm:w-full min-w-56">
                                     <input
                                         type={em.type}
                                         id={em.name}
@@ -240,12 +240,12 @@ const MedicalInput = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold">Medical History</h1>
+                        <h1 className="text-2xl font-bold text-center">Medical History</h1>
                         {healthHistory?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-md font-semibold text-gray-700 sm:min-w-24"
                                 >
                                     {em.label}:
                                 </label>
@@ -267,13 +267,13 @@ const MedicalInput = () => {
             case 3:
                 return (
                     <>
-                        <h1 className="text-2xl font-bold">Health Habits</h1>
+                        <h1 className="text-2xl font-bold text-center">Health Habits</h1>
                         {healthhabits?.map((sele, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
                                     {sele.label}:
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full sm:min-w-56">
                                     <select
                                         id={sele.name}
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
@@ -293,9 +293,9 @@ const MedicalInput = () => {
             case 4:
                 return (
                     <>
-                        <h1 className="text-2xl font-bold">Medical Conditions</h1>
+                        <h1 className="text-2xl font-bold text-center">Medical Conditions</h1>
                         {medicalCondition?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label
                                     htmlFor={em.name}
                                     className="text-md font-semibold text-gray-700 min-w-24"
@@ -315,9 +315,9 @@ const MedicalInput = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold">Insurance Information</h1>
+                        <h1 className="text-2xl font-bold text-center">Insurance Information</h1>
                         {inSur?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label
                                     htmlFor={em.name}
                                     className="text-md font-semibold text-gray-700 min-w-24"
@@ -344,7 +344,7 @@ const MedicalInput = () => {
 
     return (
         <div className="flex justify-center">
-            <div className="flex flex-row w-[80%] md:space-x-4 lg:space-x-4">
+            <div className="flex flex-row sm:w-[80%] md:space-x-4 lg:space-x-4">
                 <div className="basis-1/4 hidden lg:block xl:block">
                     <SideBar />
                 </div>
@@ -361,14 +361,15 @@ const MedicalInput = () => {
                             <FaArrowLeft className="text-3xl" />
 
                         </button>
-                        <div className="h-[85vh] flex flex-col overflow-y-scroll mb-4 hide-scrollbar">
+                        <div className="sm:h-[85vh] flex flex-col overflow-y-scroll mb-4 hide-scrollbar">
                             <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Medical</h1>
                             <div className="flex flex-col  justify-center items-center lg:w-full">
                                 <div className="flex flex-col gap-6 justify-center pb-10">
-                                    <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                        <div className="w-full h-4 bg-blue-100 rounded-full">
+
+                                    <div className="flex justify-center max-sm:w-[90%] mx-auto lg:mt-4 mb-10 lg:flex lg:justify-center">
+                                        <div className="w-full sm:h-4 h-2 bg-blue-100 rounded-full">
                                             <div
-                                                className="h-4 bg-blue-500 rounded-full"
+                                                className="sm:h-4 h-2 bg-blue-500 rounded-full"
                                                 style={{ width: `${(progressBar / 4) * 100}%` }}
                                             ></div>
                                         </div>

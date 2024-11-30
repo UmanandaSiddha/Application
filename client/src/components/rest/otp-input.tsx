@@ -57,27 +57,25 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
 
     return (
         <div className="flex flex-col items-center">
-            <div className="flex justify-center items-center mb-4">
-                {otp.map((value, index) => {
-                    return (
-                        <input
-                            key={index}
-                            type="number"
-                            ref={(input) => (inputRefs.current[index] = input)}
-                            value={value}
-                            onChange={(e) => handleChange(index, e)}
-                            onClick={() => handleClick(index)}
-                            onKeyDown={(e) => handleKeyDown(index, e)}
-                            className="w-10 mr-3 h-10 m-1 border border-slate-500 rounded-md text-center text-lg md:w-12 md:h-12 md:text-xl lg:w-14 lg:h-14 lg:text-2xl"
-                        />
-                    );
-                })}
+            <div className="flex justify-center items-center gap-2 mb-4">
+                {otp.map((value, index) => (
+                    <input
+                        key={index}
+                        type="number"
+                        ref={(input) => (inputRefs.current[index] = input)}
+                        value={value}
+                        onChange={(e) => handleChange(index, e)}
+                        onClick={() => handleClick(index)}
+                        onKeyDown={(e) => handleKeyDown(index, e)}
+                        disabled={disabled}
+                        className="w-8 h-8 border border-purple-500 rounded-md text-center text-sm lg:w-10 lg:h-10 lg:text-lg"
+                    />
+                ))}
             </div>
             <button
                 onClick={handleSubmit}
                 disabled={disabled}
-                type="button"
-                className="text-white tracking-wide text-md font-bold px-6 py-3 capitalize transition-colors duration-300 transform bg-blue-500 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 mt-10 rounded-md"
+                className="mt-2 text-white tracking-wide text-md lg:text-md font-bold px-5 py-3 capitalize transition-colors duration-300 transform bg-purple-500 hover:bg-purple-400 focus:outline-none focus:ring focus:ring-purple-300 focus:ring-opacity-50 rounded-md"
             >
                 Verify & Proceed
             </button>
