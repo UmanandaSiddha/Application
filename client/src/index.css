@@ -30,8 +30,13 @@ body {
     }
 }
 
+@media (min-width: 640px) {
+    .custom-padding {
+        padding-top: 4.5rem; /* Adjust to the desired value for larger screens */
+    }
+}
 .custom-padding {
-    padding-top: 4.5rem;
+    padding-top: 2.5rem;
 }
 
 .toggle-checkbox:checked+.toggle-bg+.toggle-dot {

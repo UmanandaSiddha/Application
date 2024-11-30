@@ -502,7 +502,7 @@ const CreatePersonal = () => {
                                     {...register("aboutMe", { required: true })}
                                     placeholder="Tell Something About Yourself"
                                     autoComplete="off"
-                                    className="peer h-full min-h-[100px] w-full resize-none border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50"
+                                    className="peer h-full  w-full resize-none border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50"
                                 ></textarea>
                                 <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
                             </div>
@@ -559,7 +559,7 @@ const CreatePersonal = () => {
                 return (
                     <>
                         {lifestyle?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label
                                     htmlFor={em.name}
                                     className="text-md font-semibold text-gray-700 min-w-24"
@@ -580,9 +580,9 @@ const CreatePersonal = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold">Tell us about your Favourites!</h1>
+                        <h1 className="text-2xl font-bold max-sm:text-center">Tell us about your Favourites!</h1>
                         {Favourites?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label
                                     htmlFor={em.name}
                                     className="text-md font-semibold text-gray-700 min-w-24"
@@ -603,12 +603,12 @@ const CreatePersonal = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold">Miscellaneous Details</h1>
+                        <h1 className="text-2xl font-bold text-center">Miscellaneous Details</h1>
                         {miscellaneous?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
                                 <>
-                                    <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                                    <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                         <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
                                             {sele.label}:
                                         </label>
@@ -661,9 +661,9 @@ const CreatePersonal = () => {
             case 3:
                 return (
                     <>
-                        <h1 className="text-2xl font-bold">Quotes</h1>
+                        <h1 className="text-2xl font-bold text-center">Quotes</h1>
                         {motto?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label
                                     htmlFor={em.name}
                                     className="text-md font-semibold text-gray-700 min-w-24"
@@ -684,12 +684,12 @@ const CreatePersonal = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold">Interests & Activities</h1>
+                        <h1 className="text-2xl font-bold text-center">Interests & Activities</h1>
                         {interests?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
                                 <>
-                                    <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                                    <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                         <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
                                             {sele.label}:
                                         </label>
@@ -742,12 +742,12 @@ const CreatePersonal = () => {
             case 4:
                 return (
                     <>
-                        <h1 className="text-2xl font-bold">Professional Details</h1>
+                        <h1 className="text-2xl font-bold text-center">Professional Details</h1>
                         {professional?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
                                 <>
-                                    <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                                    <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                         <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
                                             {sele.label}:
                                         </label>
@@ -773,7 +773,7 @@ const CreatePersonal = () => {
                                         </div>
                                     </div>
                                     {selectedValue === "Other" && (
-                                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
+                                        <div className="relative w-full  min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
                                             <label
                                                 htmlFor={`${sele.name}_Other`}
                                                 className="text-md font-semibold text-gray-700 min-w-24"
@@ -796,9 +796,9 @@ const CreatePersonal = () => {
                             )
                         })}
 
-                        <h1 className="text-2xl font-bold">Personal Values</h1>
+                        <h1 className="text-2xl font-bold text-center">Personal Values</h1>
                         {personalValues?.map((sele, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
                                     {sele.label}:
                                 </label>
@@ -822,9 +822,9 @@ const CreatePersonal = () => {
             case 5:
                 return (
                     <>
-                        <h1 className="text-2xl font-bold">Additional Infomation</h1>
+                        <h1 className="text-2xl font-bold text-center">Additional Infomation</h1>
                         {additionalInfo?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
                                 <label
                                     htmlFor={em.name}
                                     className="text-md font-semibold text-gray-700 min-w-24"
@@ -850,15 +850,15 @@ const CreatePersonal = () => {
     };
 
     return (
-        <div className="flex justify-center ">
+        <div className="flex justify-center items-center">
             <div className="flex flex-row sm:w-[80%] md:space-x-4 lg:space-x-4">
                 <div className="basis-1/4 hidden lg:block xl:block">
                     <SideBar />
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
-                    <div className="basis-full  flex items-center justify-center gap-20 lg:basis-3/4 lg:max-h-screen">
+                    <div className="basis-full flex items-center justify-center gap-20 lg:basis-3/4 lg:max-h-screen">
                         <button
-                            className="px-4 sm:flex hidden py-2 mt-4  justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
+                            className="px-4  sm:flex hidden py-2 mt-4  justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
                             type="button"
                             disabled={progressBar === 1}
                             onClick={() => setProgressBar((currPage) => currPage - 1)}
@@ -883,9 +883,9 @@ const CreatePersonal = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex gap-5 justify-center">
+                            <div className="flex gap-5 justify-center items-center">
                                 <button
-                                    className="sm:hidden py-2 mt-4 justify-center items-center hover:cursor-pointer rounded-lg h-14 w-36 text-white bg-blue-500 text-lg"
+                                    className="sm:hidden  mt-4 justify-center items-center hover:cursor-pointer rounded-lg h-14 w-32 text-white bg-blue-500 text-lg"
                                     type="button"
                                     disabled={progressBar === 1}
                                     onClick={() => {
@@ -899,7 +899,7 @@ const CreatePersonal = () => {
                                     <></>
                                 ) : (
                                     <button
-                                        className="py-2 mt-4 mr-10 sm:hidden rounded-lg flex justify-center items-center h-14 w-36 hover:cursor-pointer text-white bg-blue-500 text-lg"
+                                        className="mt-4 sm:hidden rounded-lg flex justify-center items-center h-14 w-32 hover:cursor-pointer text-white bg-blue-500 text-lg"
                                         type="button"
                                         disabled={progressBar === 5}
                                         onClick={() => {
@@ -913,7 +913,7 @@ const CreatePersonal = () => {
                                 {progressBar === 5 ?
 
                                     <button
-                                        className="py-2 mt-4 w-36 flex sm:w-96 justify-center items-center rounded-lg hover:cursor-pointer   text-white bg-slate-500 sm:text-lg"
+                                        className="py-2 mt-4 w-36 flex sm:w-96 justify-center items-center rounded-lg hover:cursor-pointer h-14 text-white bg-slate-500 sm:text-lg"
                                         type="submit"
                                         disabled={personalLoading}
                                     >

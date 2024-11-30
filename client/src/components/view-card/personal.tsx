@@ -146,8 +146,8 @@ const PersonalComponent = ({ card }: PropsType) => {
             <div className="relative rounded-[10px] mb-10">
                 <img src="/card_header_bg.png" alt="" className="hidden sm:block w-full h-80" />
                 <img src="/individual_header_mobile.png" alt="" className="sm:hidden w-full h-64" />
-                <div className="sm:p-10 p-5 absolute top-5">
-                    <div className="flex justify-start pl-6 py-4">
+                <div className="pt-10  pl-5 absolute top-5">
+                    <div className="flex justify-start pl-6 sm:py-4">
                         <p className="text-white font-semibold">Individual Data</p>
                     </div>
                     <div className="text-white text-5xl lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">

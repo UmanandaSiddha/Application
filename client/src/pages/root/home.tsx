@@ -6,7 +6,7 @@ const HomePage = () => {
     const location = useLocation();
 
     useEffect(() => {
-        if (location.pathname === "/about-us" ) {
+        if (location.pathname === "/about-us") {
             const aboutUsSection = document.getElementById("about-us");
             if (aboutUsSection) {
                 aboutUsSection.scrollIntoView({ behavior: "smooth" });
@@ -16,9 +16,9 @@ const HomePage = () => {
     }, [location]);
 
     return (
-        <div className="flex flex-col relative items-center hide-scrollbar gap-24 ">
+        <div className="flex flex-col relative items-center hide-scrollbar gap-24">
             <div className="bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] w-full h-[150vh] absolute z-[-10]"></div>
-            <div className="flex flex-col  pt-20 max-sm:pt-24 z-10 justify-center items-center mx-auto gap-14 sm:w-[80%]">
+            <div className="flex flex-col sm:pt-20 pt-10 z-10 justify-center items-center mx-auto gap-14 sm:w-[80%]">
                 <h1 className="text-5xl md:text-7xl font-semibold text-center">
                     Where <span className="text-purple-900">Work</span> Happens
                 </h1>
@@ -41,7 +41,7 @@ const HomePage = () => {
                 </div>
             </div>
 
-            <div id='about-us' className='bg-pink-100 max-sm:mt-56 tilted-top absolute sm:top-[700px] top-[650px] lg:top-[1000px] '>
+            <div id='about-us' className='bg-pink-100 max-sm:mt-56 tilted-top absolute sm:top-[700px] top-[680px] lg:top-[1000px] '>
                 <div className='flex flex-col justify-between w-[85%] mx-auto mb-24 xl:mt-96 lg:mt-56 mt-80' >
                     <h1 className='text-5xl max-lg:mx-auto max-lg:pb-10 font-semibold '>
                         ABOUT US
@@ -81,7 +81,7 @@ const HomePage = () => {
             </div>
 
             <div className="flex flex-col w-full bg-[#f7fafc] items-center sm:gap-10 mt-20">
-                <h1 className="pt-20 lg:pt-20 max-sm:pb-20 text-center sm:p-5 md:text-6xl md:font-semibold max-sm:text-4xl font-bold">
+                <h1 className="pt-20 sm:pt-20 max-sm:pb-20 text-center sm:p-5 text-6xl sm:font-semibold max-sm:text-[2.7rem] font-bold">
                     OUR FEATURES
                 </h1>
                 <div className="mx-auto pb-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-y-10">
@@ -170,11 +170,11 @@ const HomePage = () => {
 
             <div className='w-[85%] mx-auto' >
                 <h1 className='text-3xl md:text-6xl font-semibold sm:pb-20 sm:pt-16'>WHY WE NEED YOUR <span className='text-purple-500'>SUPPORT</span> </h1>
-                <div className='flex max-lg:flex-col lg:gap-10'>
+                <div className='flex flex-col lg:flex-row lg:gap-10'>
                     <div className='flex flex-col h-96 max-lg:pt-20 lg:pt-16 lg:shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.3)] lg:w-1/3 gap-5 lg:rounded-xl max-lg:border-b-black max-lg:border-b-[3px] border-dotted lg:border-red-400 lg:border-2 lg:p-5'>
                         <div className="flex gap-3 pl-2">
                             <img src="./research.png" alt="" className="sm:w-10 w-8 h-8" />
-                            <h1 className='text-2xl font-semibold'>Research and Development</h1>
+                            <h1 className='text-2xl font-semibold max-sm:text-nowrap '>Research and Development</h1>
                         </div>
                         <p className='px-16'>
                             Innovation is at the heart of what we do. Your donations will help us invest in cutting-edge research and development to create new technological solutions that address everyday challenges and improve lives.

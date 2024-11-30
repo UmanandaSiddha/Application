@@ -41,11 +41,11 @@ export default function Header() {
     }, [mobileMenuOpen]);
 
     return (
-        <header className="bg-white fixed top-0 left-0 right-0 z-50">
-            <nav className="mx-auto flex w-full md:max-w-[80%] items-center justify-between px-6 py-4 lg:px-8" aria-label="Global">
+        <header className="bg-white fixed top-0 left-0 right-0 z-50 max-sm:h-14 h-20">
+            <nav className="mx-auto flex w-full md:max-w-[80%] items-center justify-between px-6 py-2 sm:py-5 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <Link to='/' className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
-                        <img className="h-8 w-full" src="/voolata_long_r.png" alt="" />
+                        <img className="sm:h-8 h-7 w-full" src="/voolata_long_r.png" alt="" />
                     </Link>
                 </div>
                 <div className="flex lg:hidden">
@@ -58,7 +58,7 @@ export default function Header() {
                             <RiMenu3Line className="h-6 w-6" aria-hidden="true" />
                         </button>
                     ) : (
-                        <button className='px-5 py-2 border-2 border-gray-500 font-semibold rounded-md text-md'><Link to="/login">Login</Link></button>
+                        <button className='px-4 py-0.5 border-2 border-gray-500 font-semibold rounded-md text-md'><Link to="/login">Login</Link></button>
                     )}
                 </div>
                 <div className="hidden lg:flex lg:gap-x-12">
@@ -90,7 +90,7 @@ export default function Header() {
                                 )}
                             </div>
                         ) : (
-                            <button className='px-5 py-2 border-2 border-gray-500 font-semibol rounded-md text-md'><Link to="/login">Login</Link></button>
+                            <button className='px-5 py-2  border-2 border-gray-500 font-semibol rounded-md text-md'><Link to="/login">Login</Link></button>
                         )
                     }
                 </div>

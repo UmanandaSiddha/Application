@@ -62,9 +62,9 @@ const MedicalComponent = ({ card }: PropsType) => {
             <div className="relative mb-20 rounded-[10px]  z-10 ">
             {/* <img src="/card_header_bg.png" alt="" className="w-full h-80"/> */}
             <img src="/card_header_bg.png" alt="" className="w-full h-80 hidden sm:block"/>
-            <img src="/medical_header_mobile.png" alt="" className="w-full sm:hidden"/>
+            <img src="/medical_header_mobile.png" alt="" className="w-full h-72 sm:hidden"/>
                 <div className="pt-10 pl-5 absolute top-5">
-                    <div className="flex justify-start pl-6 py-6">
+                    <div className="flex justify-start pl-6 sm:py-6">
                         <p className="text-white font-semibold">Medical Data</p>
                     </div>
                     <div className="text-white text-5xl lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">

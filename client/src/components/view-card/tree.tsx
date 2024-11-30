@@ -53,7 +53,7 @@ const TreeComponent = ({ card }: PropsType) => {
                 <img src="/botany_header.png" alt="" className="w-full h-80 hidden sm:block" />
                 <img src="/tree_header_mobile.png" alt="" className="w-full sm:hidden"/>
                 <div className=" pt-10 pl-5 absolute top-5">
-                    <div className="flex justify-start pl-6 py-4">
+                    <div className="flex justify-start pl-6 sm:py-4">
                         <p className="text-black font-bold text-lg">Botanical Data</p>
                     </div>
                     <div className="text-black text-5xl  lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">
