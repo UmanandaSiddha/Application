@@ -129,9 +129,9 @@ const CreateAnimal = () => {
                             <div className="flex flex-col justify-center pb-10">
 
                                 <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                    <div className="w-full h-4 bg-blue-100 rounded-full">
+                                    <div className="w-full sm:h-4 h-2 bg-blue-100 rounded-full">
                                         <div
-                                            className="h-4 bg-blue-500 rounded-full"
+                                            className="sm:h-4 h-2 bg-blue-500 rounded-full"
                                             style={{ width: `100%` }}
                                         ></div>
                                     </div>

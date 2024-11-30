@@ -337,7 +337,7 @@ const Profile = () => {
                     </div>
                 </div>
                 <div className="main basis-full md:basis-3/4">
-                    <div className="max-h-[85vh] overflow-auto hide-scrollbar pt-24 pb-12">
+                    <div className="sm:max-h-[85vh] overflow-auto hide-scrollbar pt-24 pb-12">
                         <div className="w-full bg-white px-8 py-4 lg:mt-2 rounded-lg shadow-md">
                             <div className="flex -mt-16 justify-end">
                                 {user?.image ? (

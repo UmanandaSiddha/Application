@@ -365,10 +365,11 @@ const MedicalInput = () => {
                             <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Medical</h1>
                             <div className="flex flex-col  justify-center items-center lg:w-full">
                                 <div className="flex flex-col gap-6 justify-center pb-10">
-                                    <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                        <div className="w-full h-4 bg-blue-100 rounded-full">
+
+                                    <div className="flex justify-center max-sm:w-[90%] mx-auto lg:mt-4 mb-10 lg:flex lg:justify-center">
+                                        <div className="w-full sm:h-4 h-2 bg-blue-100 rounded-full">
                                             <div
-                                                className="h-4 bg-blue-500 rounded-full"
+                                                className="sm:h-4 h-2 bg-blue-500 rounded-full"
                                                 style={{ width: `${(progressBar / 4) * 100}%` }}
                                             ></div>
                                         </div>
