@@ -149,6 +149,7 @@ const App = () => {
                         <Route path="/donation/billing" element={<DonationBilling />} />
                     </Route>
 
+                    <Route path="/request-custom" element={<RequestCustom />} />
                     <Route
                         element={loading ? (
                             <Loader />
@@ -156,7 +157,6 @@ const App = () => {
                             <ProtectedRoute isAuthenticated={!!user} redirect="/login" />
                         )}
                     >
-                        <Route path="/request-custom" element={<RequestCustom />} />
                         <Route path="/view-custom" element={<ViewCustom />} />
 
                         <Route path="/checkout" element={<Checkout />} />

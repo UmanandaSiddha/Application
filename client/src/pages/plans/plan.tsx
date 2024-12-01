@@ -140,14 +140,7 @@ const PlanPage = () => {
                         </ul>
                         <hr />
                         <button
-                            onClick={() => {
-                                if (isPaid) {
-                                    toast.warning("You already have a plan");
-                                    return;
-                                } else {
-                                    navigate(`/request-custom`);
-                                }
-                            }}
+                            onClick={() => navigate(`/request-custom`)}
                             className="w-full h-12 font-semibold rounded-xl mt-5 bg-[#2b233b] text-white"
                         >
                             Get Started
