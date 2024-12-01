@@ -150,7 +150,7 @@ export default function Header() {
                                 )}
                             </nav>
 
-                            <div className="mt-auto">
+                            <div className="mt-auto pb-20">
                                 {user ? (
                                     <div className="flex items-center justify-center gap-2">
                                         <Link to="/profile" className='flex items-center'>
