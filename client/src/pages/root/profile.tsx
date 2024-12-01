@@ -276,7 +276,7 @@ const Profile = () => {
                             <nav className="flex flex-col justify-center gap-4">
                                 <h1 className="mx-4 text-2xl text-white font-bold capitalize">Welcome, <span className="text-xl font-semibold">{user?.name}</span></h1>
 
-                                <hr className="my-2 border-gray-400 " />
+                                <hr className="my-2 border-2 border-white" />
 
                                 <Link
                                     className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md group"

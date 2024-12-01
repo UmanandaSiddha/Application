@@ -110,51 +110,71 @@ const CreateTree = () => {
     }
 
     return (
-        <div className="flex justify-center">
-            <div className="flex flex-row w-[80%] md:space-x-4 lg:space-x-4">
-                <div className="basis-1/4 hidden lg:block xl:block">
+        <div className="flex justify-center h-screen">
+            <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-4 lg:space-y-0 lg:space-x-4">
+                {/* Sidebar Section */}
+                <div className="basis-1/4 hidden lg:block">
                     <SideBar />
                 </div>
-                <div className="basis-full lg:basis-3/4 lg:max-h-screen">
-                    <div className="h-[85vh] overflow-y-scroll mb-4 hide-scrollbar">
-                        <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Botanical</h1>
-                        <div className="flex flex-col justify-center items-center lg:w-full">
-                            <div className="flex flex-col justify-center pb-10">
 
-                                <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                    <div className="w-full sm:h-4 h-2 bg-blue-100 rounded-full">
-                                        <div
-                                            className="sm:h-4 h-2 bg-blue-500 rounded-full"
-                                            style={{ width: `100%` }}
-                                        ></div>
-                                    </div>
-                                </div>
+                {/* Main Content Section */}
+                <div className="flex-1 lg:basis-3/4">
+                    <div className="h-full flex flex-col">
+                        {/* Title */}
+                        <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
+                            Botanical
+                        </h1>
 
-                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
+                        {/* Progress Bar */}
+                        <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
+                            <div className="w-full h-2 bg-blue-100 rounded-full">
+                                <div
+                                    className="h-2 bg-blue-500 rounded-full"
+                                    style={{ width: `100%` }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        {/* Scrollable Content */}
+                        <div className="flex-1">
+                            <div className="flex flex-col items-center">
+                                {/* Form */}
+                                <form
+                                    onSubmit={handleSubmit(onSubmit)}
+                                    className="space-y-6 w-full lg:w-[70%] px-4 md:px-0"
+                                >
                                     {inputs.map((input, index) => (
-                                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                                        <div
+                                            className="relative flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4"
+                                            key={index}
+                                        >
+                                            {/* Label */}
                                             <label
                                                 htmlFor={input.name}
-                                                className="text-md font-semibold text-gray-700 min-w-24"
+                                                className="text-md font-semibold text-gray-700 w-full md:w-auto"
                                             >
                                                 {input.label}:
                                             </label>
-                                            <div className="relative h-11 w-full min-w-44">
+
+                                            {/* Input */}
+                                            <div className="relative w-full md:flex-1">
                                                 <input
                                                     type={input.type}
                                                     id={input.name}
                                                     placeholder={input.text}
                                                     {...register(input.name, { required: true })}
                                                     autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                                    className="peer h-10 w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                                <span className="absolute left-0 bottom-0 h-[2px] w-full bg-transparent scale-x-0 border-gray-500 transition-transform duration-300 peer-focus:scale-x-100 peer-focus:bg-gray-900"></span>
                                             </div>
                                         </div>
                                     ))}
+
+                                    {/* Submit Button */}
                                     <div className="flex justify-center">
                                         <button
-                                            className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full max-w-2xl text-white bg-[#3FA398] text-lg"
+                                            className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-[#dc8873] text-lg"
                                             type="submit"
                                             disabled={treeLoading}
                                         >

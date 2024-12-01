@@ -82,21 +82,21 @@ const motto = [
 ];
 
 const interests = [
-    { name: "travelMode", label: "Preferred Mode of Travel", text: "Enter your Preferred Mode of Travel", options: ["Airplane", "Train", "Cars", "Cruise", "Other"] },
-    { name: "genre", label: "Fav Movies/TV Shows", text: "Favorite Movies/TV Shows/Genres", options: ["Action", "Comedy", "Drama", "Sci-Fi/Fantasy", "Documentary", "Other"] },
+    { name: "travelMode", label: "Travel", text: "Enter your Preferred Mode of Travel", options: ["Airplane", "Train", "Cars", "Cruise", "Other"] },
+    { name: "genre", label: "Movies/ TV Shows", text: "Favorite Movies/TV Shows/Genres", options: ["Action", "Comedy", "Drama", "Sci-Fi/Fantasy", "Documentary", "Other"] },
     { name: "sports", label: "Sports Activites", text: "Sports or Outdoor Activities", options: ["Basketball", "Tennis", "Hiking", "Cycling", "Swimming", "Other"] },
     { name: "artistisPursuits", label: "Artistic Hobbies", text: "Artistic Pursuits/Hobbies", options: ["Drawing/Painting", "Photography", "Writing", "Crafts", "Music", "Other"] },
     { name: "gaming", label: "Gaming Preferences", text: "Gaming Preferences", options: ["Action", "Adventure", "Puzzle", "Role-playing", "Simulation", "Other"] },
-    { name: "collectignHobby", label: "Collecting Hobby/Interest", text: "Collecting Hobby or Interest", options: ["Coins/Stamps", "Comics/Figurines", "Antiques", "Trading cards", "Memorabilia", "Other"] },
+    { name: "collectignHobby", label: "Collecting Hobby /Interest", text: "Collecting Hobby or Interest", options: ["Coins/Stamps", "Comics/Figurines", "Antiques", "Trading cards", "Memorabilia", "Other"] },
     { name: "coffee", label: "Coffee or Tea?", text: "Coffee or Tea Lover", options: ["Coffee addict", "Tea enthusiast", "Both!", "None, prefer other beverages"] },
     { name: "cookingSkills", label: "Cooking Skills", text: "Cooking Skills", options: ["Novice", "Intermediate", "Expert"] },
 ];
 
 const personalValues = [
-    { name: "spiritual", label: "Spiritual or Religious Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic"] },
+    { name: "spiritual", label: "Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic"] },
     { name: "core", label: "Core Values", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity"] },
-    { name: "philosophy", label: "Philosophies I Believe In", text: "Philosophies I Believe In", options: ["Stoicism", "Existentialism", "Humanism", "Nihilism"] },
-    { name: "socialCause", label: "Environmental/Social Causes I Support", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education"] },
+    { name: "philosophy", label: "Philosophies", text: "Philosophies I Believe In", options: ["Stoicism", "Existentialism", "Humanism", "Nihilism"] },
+    { name: "socialCause", label: "Causes I Support", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education"] },
 ];
 
 const professional = [
@@ -112,8 +112,8 @@ const additionalInfo = [
     { name: "otherInterests", label: "Other Interests", text: "Any Other Interests" },
     { name: "futureGoals", label: "Future Goals", text: "Future Goals" },
     { name: "current", label: "Currently Learning", text: "Things I'm Learning" },
-    { name: "unusualExperinece", label: "Most Unusual Experience", text: "Unusual Experience" },
-    { name: "strangeHabits", label: "Strangest Habit I Have", text: "Strangest Habit I Have" },
+    { name: "unusualExperinece", label: "Unusual Experience", text: "Unusual Experience" },
+    { name: "strangeHabits", label: "Strangest Habits", text: "Strangest Habit I Have" },
 ];
 
 const otherInputs = [
@@ -311,16 +311,16 @@ const CreatePersonal = () => {
         switch (progressBar) {
             case 1:
                 return (
-                    <>
-                        <h1 className="text-2xl font-bold">Personal Preferences</h1>
-                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
+                    <div className="space-y-4">
+                        <h1 className="pt-4 text-2xl font-semibold">Personal Preferences</h1>
+                        <div className="relative w-full flex items-center">
                             <label
                                 htmlFor="name"
-                                className="text-md font-semibold text-gray-700 min-w-24"
+                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                             >
-                                Name:
+                                Name
                             </label>
-                            <div className="relative h-11 w-full min-w-56">
+                            <div className="relative h-11 w-full">
                                 <input
                                     type="text"
                                     placeholder="Enter your name"
@@ -332,12 +332,12 @@ const CreatePersonal = () => {
                             </div>
                         </div>
 
-                        <h1 className="text-2xl font-bold">Socials</h1>
+                        <h1 className="py-4 text-2xl font-semibold">Socials</h1>
                         {socialData?.map((arr: LinkType, index: number) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={`name-${index}`}
-                                    className="text-md font-semibold text-gray-700 min-w-10"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-10"
                                 >
                                     {setSvg(arr.label) === "" ? (
                                         <IoMdLink size={25} />
@@ -359,8 +359,8 @@ const CreatePersonal = () => {
                                         </svg>
                                     )}
                                 </label>
-                                <div className="flex space-x-4">
-                                    <div className="relative h-11 w-full min-w-44">
+                                <div className="flex space-x-4 w-full">
+                                    <div className="relative h-11 w-full">
                                         <input
                                             type="text"
                                             id={`name-${index}`}
@@ -402,7 +402,7 @@ const CreatePersonal = () => {
 
                         <div className="flex justify-center">
                             <button
-                                className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full max-w-2xl text-white bg-black text-lg"
+                                className="px-3 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-black text-lg"
                                 type="button"
                                 onClick={() => setOpen(true)}
                             >
@@ -490,14 +490,14 @@ const CreatePersonal = () => {
                             )}
                         </div>
 
-                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
+                        <div className="relative w-full flex items-center">
                             <label
                                 htmlFor="aboutMe"
-                                className="text-md font-semibold text-gray-700 min-w-24"
+                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                             >
-                                About me:
+                                About me
                             </label>
-                            <div className="relative w-full min-w-56">
+                            <div className="relative h-16 w-full">
                                 <textarea
                                     {...register("aboutMe", { required: true })}
                                     placeholder="Tell Something About Yourself"
@@ -508,16 +508,16 @@ const CreatePersonal = () => {
                             </div>
                         </div>
 
-                        <h1 className="text-2xl font-bold">Contact Numbers</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Contact Numbers</h1>
                         {contactInfo?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type={em.type}
                                         id={em.name}
@@ -531,16 +531,16 @@ const CreatePersonal = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold">Email Addresses</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Email Addresses</h1>
                         {emailInfo?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type={em.type}
                                         id={em.name}
@@ -553,20 +553,20 @@ const CreatePersonal = () => {
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 );
             case 2:
                 return (
-                    <>
+                    <div className="space-y-4">
                         {lifestyle?.map((em, index) => (
-                            <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type={em.type}
                                         id={em.name}
@@ -580,16 +580,16 @@ const CreatePersonal = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold max-sm:text-center">Tell us about your Favourites!</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Tell us about your Favourites!</h1>
                         {Favourites?.map((em, index) => (
-                            <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type="text"
                                         id={em.name}
@@ -603,16 +603,16 @@ const CreatePersonal = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold text-center">Miscellaneous Details</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Miscellaneous Details</h1>
                         {miscellaneous?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <>
-                                    <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
-                                        <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}:
+                                <div key={index}>
+                                    <div className="relative w-full flex items-center">
+                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
+                                            {sele.label}
                                         </label>
-                                        <div className="relative h-11 w-full min-w-56">
+                                        <div className="relative h-11 w-full">
                                             <select
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
@@ -634,14 +634,14 @@ const CreatePersonal = () => {
                                         </div>
                                     </div>
                                     {selectedValue === "Other" && (
-                                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
+                                        <div className="relative w-full flex items-center">
                                             <label
                                                 htmlFor={`${sele.name}_Other`}
-                                                className="text-md font-semibold text-gray-700 min-w-24"
+                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                             >
-                                                {sele.label} (Specify):
+                                                {sele.label} (Specify)
                                             </label>
-                                            <div className="relative h-11 w-full min-w-56">
+                                            <div className="relative h-11 w-full">
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
@@ -653,24 +653,24 @@ const CreatePersonal = () => {
                                             </div>
                                         </div>
                                     )}
-                                </>
+                                </div>
                             )
                         })}
-                    </>
+                    </div>
                 );
             case 3:
                 return (
-                    <>
-                        <h1 className="text-2xl font-bold text-center">Quotes</h1>
+                    <div className="space-y-4">
+                        <h1 className="pt-4 text-2xl font-semibold">Quotes</h1>
                         {motto?.map((em, index) => (
-                            <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type="text"
                                         id={em.name}
@@ -684,16 +684,16 @@ const CreatePersonal = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold text-center">Interests & Activities</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Interests & Activities</h1>
                         {interests?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <>
-                                    <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
-                                        <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}:
+                                <div key={index}>
+                                    <div className="relative w-full flex items-center">
+                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
+                                            {sele.label}
                                         </label>
-                                        <div className="relative h-11 w-full min-w-56">
+                                        <div className="relative h-11 w-full">
                                             <select
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
@@ -715,14 +715,14 @@ const CreatePersonal = () => {
                                         </div>
                                     </div>
                                     {selectedValue === "Other" && (
-                                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
+                                        <div className="relative w-full flex items-center">
                                             <label
                                                 htmlFor={`${sele.name}_Other`}
-                                                className="text-md font-semibold text-gray-700 min-w-24"
+                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                             >
-                                                {sele.label} (Specify):
+                                                {sele.label} (Specify)
                                             </label>
-                                            <div className="relative h-11 w-full min-w-56">
+                                            <div className="relative h-11 w-full">
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
@@ -734,24 +734,24 @@ const CreatePersonal = () => {
                                             </div>
                                         </div>
                                     )}
-                                </>
+                                </div>
                             )
                         })}
-                    </>
+                    </div>
                 );
             case 4:
                 return (
-                    <>
-                        <h1 className="text-2xl font-bold text-center">Professional Details</h1>
+                    <div className="space-y-4">
+                        <h1 className="pt-4 text-2xl font-semibold">Professional Details</h1>
                         {professional?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <>
-                                    <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
-                                        <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}:
+                                <div key={index}>
+                                    <div className="relative w-full flex items-center">
+                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
+                                            {sele.label}
                                         </label>
-                                        <div className="relative h-11 w-full min-w-56">
+                                        <div className="relative h-11 w-full">
                                             <select
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
@@ -773,14 +773,14 @@ const CreatePersonal = () => {
                                         </div>
                                     </div>
                                     {selectedValue === "Other" && (
-                                        <div className="relative w-full  min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
+                                        <div className="relative w-full flex items-center">
                                             <label
                                                 htmlFor={`${sele.name}_Other`}
-                                                className="text-md font-semibold text-gray-700 min-w-24"
+                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                             >
-                                                {sele.label} (Specify):
+                                                {sele.label} (Specify)
                                             </label>
-                                            <div className="relative h-11 w-full min-w-56">
+                                            <div className="relative h-11 w-full">
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
@@ -792,17 +792,17 @@ const CreatePersonal = () => {
                                             </div>
                                         </div>
                                     )}
-                                </>
+                                </div>
                             )
                         })}
 
-                        <h1 className="text-2xl font-bold text-center">Personal Values</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Personal Values</h1>
                         {personalValues?.map((sele, index) => (
-                            <div className="relative w-full max-sm:w-[90%] mx-auto min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
-                                <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                    {sele.label}:
+                            <div className="relative w-full flex items-center" key={index}>
+                                <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
+                                    {sele.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <select
                                         id={sele.name}
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
@@ -817,21 +817,21 @@ const CreatePersonal = () => {
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 );
             case 5:
                 return (
-                    <>
-                        <h1 className="text-2xl font-bold text-center">Additional Infomation</h1>
+                    <div className="space-y-4">
+                        <h1 className="pt-4 text-2xl font-semibold">Additional Infomation</h1>
                         {additionalInfo?.map((em, index) => (
-                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type="text"
                                         id={em.name}
@@ -844,104 +844,94 @@ const CreatePersonal = () => {
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 );
         }
     };
 
     return (
-        <div className="flex justify-center items-center">
-            <div className="flex flex-row sm:w-[80%] md:space-x-4 lg:space-x-4">
-                <div className="basis-1/4 hidden lg:block xl:block">
+        <div className="flex justify-center h-screen">
+            <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
+                <div className="basis-1/4 hidden lg:block">
                     <SideBar />
                 </div>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 lg:w-full">
-                    <div className="basis-full flex items-center justify-center gap-20 lg:basis-3/4 lg:max-h-screen">
-                        <button
-                            className="px-4  sm:flex hidden py-2 mt-4  justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
-                            type="button"
-                            disabled={progressBar === 1}
-                            onClick={() => setProgressBar((currPage) => currPage - 1)}
-                        >
-                            <FaArrowLeft className="sm:text-3xl" />
-                        </button>
-                        <div className="sm:h-[85vh] sm:p-3 flex flex-col  items-center overflow-y-scroll mb-4 hide-scrollbar">
-                            <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Individual</h1>
-                            <div className="flex flex-col justify-center items-center lg:w-full">
-                                <div className="flex flex-col gap-6 justify-center  pb-10">
 
-                                    <div className="flex justify-center max-sm:w-[90%] mx-auto lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                        <div className="w-full sm:h-4 h-2 bg-blue-100 rounded-full">
-                                            <div
-                                                className="sm:h-4 h-2 bg-blue-500 rounded-full"
-                                                style={{ width: `${(progressBar / 5) * 100}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
+                <div className="flex-1 flex flex-col">
+                    <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
+                        Individual
+                    </h1>
 
-                                    {formParts()}
-                                    <div className="flex  justify-center space-x-4">
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-5 justify-center items-center">
-                                <button
-                                    className="sm:hidden  mt-4 justify-center items-center hover:cursor-pointer rounded-lg h-14 w-32 text-white bg-blue-500 text-lg"
-                                    type="button"
-                                    disabled={progressBar === 1}
-                                    onClick={() => {
-                                        setProgressBar((currPage) => currPage - 1);
-                                    }}
-                                >
-                                    Prev
-
-                                </button>
-                                {progressBar === 5 ? (
-                                    <></>
-                                ) : (
-                                    <button
-                                        className="mt-4 sm:hidden rounded-lg flex justify-center items-center h-14 w-32 hover:cursor-pointer text-white bg-blue-500 text-lg"
-                                        type="button"
-                                        disabled={progressBar === 5}
-                                        onClick={() => {
-                                            setProgressBar((currPage) => currPage + 1);
-                                        }}
-                                    >
-                                        Next
-                                    </button>
-                                )}
-
-                                {progressBar === 5 ?
-
-                                    <button
-                                        className="py-2 mt-4 w-36 flex sm:w-96 justify-center items-center rounded-lg hover:cursor-pointer h-14 text-white bg-slate-500 sm:text-lg"
-                                        type="submit"
-                                        disabled={personalLoading}
-                                    >
-                                        {personalLoading ? "APPLYING..." : "APPLY CHANGES"}
-                                    </button>
-                                    :
-                                    <></>
-                                }
-                            </div>
+                    <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
+                        <div className="w-full h-2 bg-blue-100 rounded-full">
+                            <div
+                                className="h-2 bg-blue-500 rounded-full"
+                                style={{ width: `${(progressBar / 5) * 100}%` }}
+                            ></div>
                         </div>
-                        {progressBar === 5 ? (
-                            <></>
-                        ) : (
+                    </div>
 
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="flex flex-col space-y-2 w-full lg:w-[90%] mx-auto px-4 md:px-0"
+                    >
+                        <div className="flex gap-10 lg:gap-20 justify-center items-center">
+                            {/* Previous Button for Larger Screens */}
                             <button
-                                className=" sm:flex hidden py-2 mt-4 rounded-full justify-center items-center h-20 w-20 hover:cursor-pointer text-white bg-blue-500 text-lg"
+                                className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-blue-500 text-base"
+                                type="button"
+                                disabled={progressBar === 1}
+                                onClick={() => setProgressBar((currPage) => currPage - 1)}
+                            >
+                                <FaArrowLeft />
+                            </button>
+
+                            {/* Scrollable Form Content */}
+                            <div className="sm:h-[75vh] w-full overflow-y-auto hide-scrollbar flex-1 flex flex-col">
+                                {formParts()}
+                            </div>
+
+                            {/* Next Button for Larger Screens */}
+                            <button
+                                className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-blue-500 text-base"
                                 type="button"
                                 disabled={progressBar === 5}
                                 onClick={() => setProgressBar((currPage) => currPage + 1)}
                             >
-                                <FaArrowRight className="text-3xl" />
+                                <FaArrowRight />
                             </button>
-                        )}
-                    </div>
-                </form>
+                        </div>
+
+                        <div className="flex justify-center w-full lg:w-[70%] mx-auto gap-4 pb-4">
+                            <button
+                                className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                type="button"
+                                disabled={progressBar === 1}
+                                onClick={() => setProgressBar((currPage) => currPage - 1)}
+                            >
+                                Prev
+                            </button>
+                            {progressBar === 5 ? (
+                                <button
+                                    className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                    type="submit"
+                                    disabled={personalLoading}
+                                >
+                                    {personalLoading ? "Hold on..." : "Submit"}
+                                </button>
+                            ) : (
+                                <button
+                                    className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                    type="button"
+                                    onClick={() => setProgressBar((currPage) => currPage + 1)}
+                                >
+                                    Next
+                                </button>
+                            )}
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div >
+        </div>
     );
 };
 

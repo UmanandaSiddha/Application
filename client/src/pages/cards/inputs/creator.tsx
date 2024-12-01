@@ -176,35 +176,48 @@ const CreatorInput = () => {
     }
 
     return (
-        <div className="flex justify-center">
-            <div className="flex flex-row w-[80%] md:space-x-4 lg:space-x-4">
-                <div className="basis-1/4 hidden lg:block xl:block">
+        <div className="flex justify-center h-screen">
+            <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
+                {/* Sidebar Section */}
+                <div className="basis-1/4 hidden lg:block">
                     <SideBar />
                 </div>
-                <div className="basis-full lg:basis-3/4 lg:max-h-screen">
-                    <div className="h-[85vh] overflow-y-scroll mb-4 hide-scrollbar">
-                        <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Creator</h1>
-                        <div className="flex flex-col justify-center items-center lg:w-full">
-                            <div className="flex flex-col justify-center pb-10">
 
-                                <div className="flex justify-center lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                    <div className="w-full sm:h-4 h-2 bg-blue-100 rounded-full">
-                                        <div
-                                            className="sm:h-4 h-2 bg-blue-500 rounded-full"
-                                            style={{ width: `100%` }}
-                                        ></div>
-                                    </div>
-                                </div>
+                {/* Main Content Section */}
+                <div className="flex-1 lg:basis-3/4">
+                    <div className="h-full flex flex-col">
+                        {/* Title */}
+                        <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
+                            Creator
+                        </h1>
 
-                                <form onSubmit={handleSubmit} className="space-y-6 lg:w-full">
-                                    <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
+                        {/* Progress Bar */}
+                        <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
+                            <div className="w-full h-2 bg-blue-100 rounded-full">
+                                <div
+                                    className="h-2 bg-blue-500 rounded-full"
+                                    style={{ width: `100%` }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        {/* Scrollable Content */}
+                        <div className="flex-1">
+                            <div className="flex flex-col items-center">
+                                {/* Form */}
+                                <form
+                                    onSubmit={handleSubmit}
+                                    className="space-y-6 w-full lg:w-[70%] px-4 md:px-0"
+                                >
+                                    {/* Name Field */}
+                                    <div className="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4">
                                         <label
                                             htmlFor="name"
-                                            className="text-md font-semibold text-gray-700 min-w-14"
+                                            className="text-md font-semibold text-gray-700 md:w-auto w-full"
                                         >
                                             Name:
                                         </label>
-                                        <div className="relative h-11 w-full min-w-44">
+                                        <div className="relative w-full">
                                             <input
                                                 type="text"
                                                 id="name"
@@ -212,18 +225,22 @@ const CreatorInput = () => {
                                                 placeholder="Enter your name"
                                                 onChange={(e) => setName(e.target.value)}
                                                 autoComplete="off"
-                                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                                className="peer h-10 w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0"
                                             />
-                                            <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                            <span className="absolute left-0 bottom-0 h-[2px] w-full bg-transparent scale-x-0 border-gray-500 transition-transform duration-300 peer-focus:scale-x-100 peer-focus:bg-gray-900"></span>
                                         </div>
                                     </div>
 
+                                    {/* Socials Section */}
                                     <h1 className="text-2xl font-bold">Socials</h1>
                                     {arrData?.map((arr: LinkType, index: number) => (
-                                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                                        <div
+                                            className="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4"
+                                            key={index}
+                                        >
                                             <label
                                                 htmlFor={`name-${index}`}
-                                                className="text-md font-semibold text-gray-700 min-w-10"
+                                                className="text-md font-semibold text-gray-700 md:w-auto w-full"
                                             >
                                                 {setSvg(arr.label) === "" ? (
                                                     <IoMdLink size={25} />
@@ -245,8 +262,8 @@ const CreatorInput = () => {
                                                     </svg>
                                                 )}
                                             </label>
-                                            <div className="flex space-x-4">
-                                                <div className="relative h-11 w-full min-w-44">
+                                            <div className="flex items-center space-x-4 w-full">
+                                                <div className="relative w-full">
                                                     <input
                                                         type="text"
                                                         id={`name-${index}`}
@@ -255,11 +272,11 @@ const CreatorInput = () => {
                                                         onChange={(e) => handleChange(e, index)}
                                                         placeholder={arr.text}
                                                         autoComplete="off"
-                                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                                        className="peer h-10 w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0"
                                                     />
-                                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                                    <span className="absolute left-0 bottom-0 h-[2px] w-full bg-transparent scale-x-0 border-gray-500 transition-transform duration-300 peer-focus:scale-x-100 peer-focus:bg-gray-900"></span>
                                                 </div>
-                                                {arr.name != "" && (
+                                                {arr.name && (
                                                     <>
                                                         <button
                                                             type="button"
@@ -286,100 +303,96 @@ const CreatorInput = () => {
                                         </div>
                                     ))}
 
+                                    {/* Add More Button */}
                                     <div className="flex justify-center">
                                         <button
-                                            className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full max-w-2xl text-white bg-black text-lg"
+                                            className="px-4 py-2 mt-4 rounded-lg w-full lg:w-[70%] text-white bg-black text-lg"
                                             type="button"
                                             onClick={() => setOpen(true)}
                                         >
                                             ADD MORE
                                         </button>
-                                        {open && (
-                                            <div
-                                                className="fixed inset-0 bg-opacity-30 backdrop-blur lg flex justify-center items-center z-10"
-                                                id="popupform"
-                                                onClick={handleCloseForm}
-                                            >
-                                                <div className="bg-white p-8 rounded shadow-lg max-w-[425px]">
-                                                    <div className="space-y-6 lg:w-full">
-                                                        <h1 className="text-2xl font-bold">{isEditable ? "Edit" : "Add"} Social Profile</h1>
-                                                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
-                                                            <label
-                                                                htmlFor="name"
-                                                                className="text-md font-semibold text-gray-700 min-w-14"
-                                                            >
-                                                                Platform:
-                                                            </label>
-                                                            <div className="relative h-11 w-full min-w-56">
-                                                                <input
-                                                                    type="text"
-                                                                    id="name"
-                                                                    disabled={isEditable}
-                                                                    value={otherName}
-                                                                    onChange={(e) => setOtherName(e.target.value)}
-                                                                    placeholder="Enter Social Media Platform"
-                                                                    autoComplete="off"
-                                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                                />
-                                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
-                                                            <label
-                                                                htmlFor="link"
-                                                                className="text-md font-semibold text-gray-700 min-w-14"
-                                                            >
-                                                                Link:
-                                                            </label>
-                                                            <div className="relative h-11 w-full min-w-56">
-                                                                <input
-                                                                    type="text"
-                                                                    id="link"
-                                                                    value={otherLink}
-                                                                    onChange={(e) => setOtherLink(e.target.value)}
-                                                                    placeholder="Enter Social Media Link"
-                                                                    autoComplete="off"
-                                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                                />
-                                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="flex justify-end mt-4">
-                                                            <button
-                                                                className="bg-black text-white font-bold py-2 px-4 rounded"
-                                                                type="button"
-                                                                onClick={handleAdd}
-                                                            >
-                                                                {isEditable ? "Update" : "Create"} Social
-                                                            </button>
-                                                            <button
-                                                                className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded ml-2"
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    if (isEditable) {
-                                                                        setIsEditable(false);
-                                                                        setOtherName("");
-                                                                        setOtherLink("");
-                                                                    }
-                                                                    setOpen(false);
-                                                                }}
-                                                            >
-                                                                Cancel
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
 
+                                    {open && (
+                                        <div
+                                            className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10"
+                                            id="popupform"
+                                            onClick={handleCloseForm}
+                                        >
+                                            <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
+                                                {/* Popup Form */}
+                                                <h1 className="text-2xl font-bold">
+                                                    {isEditable ? "Edit" : "Add"} Social Profile
+                                                </h1>
+                                                <div className="space-y-4">
+                                                    <div className="flex flex-col space-y-2">
+                                                        <label
+                                                            htmlFor="platform"
+                                                            className="text-md font-semibold text-gray-700"
+                                                        >
+                                                            Platform:
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            id="platform"
+                                                            disabled={isEditable}
+                                                            value={otherName}
+                                                            onChange={(e) => setOtherName(e.target.value)}
+                                                            placeholder="Enter Social Media Platform"
+                                                            autoComplete="off"
+                                                            className="peer h-10 w-full border-b border-blue-gray-200 bg-transparent text-sm font-normal text-blue-gray-700 outline-none transition-all focus:border-gray-900"
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col space-y-2">
+                                                        <label
+                                                            htmlFor="link"
+                                                            className="text-md font-semibold text-gray-700"
+                                                        >
+                                                            Link:
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            id="link"
+                                                            value={otherLink}
+                                                            onChange={(e) => setOtherLink(e.target.value)}
+                                                            placeholder="Enter Social Media Link"
+                                                            autoComplete="off"
+                                                            className="peer h-10 w-full border-b border-blue-gray-200 bg-transparent text-sm font-normal text-blue-gray-700 outline-none transition-all focus:border-gray-900"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-end mt-4">
+                                                    <button
+                                                        className="bg-black text-white py-2 px-4 rounded"
+                                                        type="button"
+                                                        onClick={handleAdd}
+                                                    >
+                                                        {isEditable ? "Update" : "Create"} Social
+                                                    </button>
+                                                    <button
+                                                        className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded ml-2"
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (isEditable) {
+                                                                setIsEditable(false);
+                                                                setOtherName("");
+                                                                setOtherLink("");
+                                                            }
+                                                            setOpen(false);
+                                                        }}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
 
+                                    {/* Submit Button */}
                                     <div className="flex justify-center">
                                         <button
-                                            className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full max-w-2xl text-white bg-[#5674DC] text-lg"
+                                            className="px-4 py-2 mt-4 rounded-lg w-full lg:w-[70%] text-white bg-[#5674DC] text-lg"
                                             type="submit"
                                             disabled={creatorLoading}
                                         >

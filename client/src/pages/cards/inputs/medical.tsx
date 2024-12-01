@@ -35,7 +35,7 @@ const healthHistory = [
         options: ['Medications', 'Foods', 'Insects', 'Latex', 'Pollen']
     },
     {
-        name: "chronicHistory", label: "Chronic Medical Conditions", text: "Enter Chronic Medical Conditions", type: "text",
+        name: "chronicHistory", label: "Chronic Conditions", text: "Enter Chronic Medical Conditions", type: "text",
         options: ['Diabetes', 'Hypertension', 'Asthma', 'Heart Disease', 'Arthritis', 'Thyroid Disorder', 'Chronic Pain', 'Respiratory Issues']
     }
 ];
@@ -167,16 +167,16 @@ const MedicalInput = () => {
         switch (progressBar) {
             case 1:
                 return (
-                    <>
+                    <div className="space-y-4">
                         {perInfo?.map((pIn, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={pIn.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {pIn.label}:
+                                    {pIn.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type={pIn.type}
                                         id={pIn.name}
@@ -190,16 +190,16 @@ const MedicalInput = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold">Emergency Contact</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Emergency Contact</h1>
                         {emCon?.map((em, index) => (
-                            <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type={em.type}
                                         id={em.name}
@@ -212,21 +212,21 @@ const MedicalInput = () => {
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 )
             case 2:
                 return (
-                    <>
-                        <h1 className="text-2xl font-bold text-center">Address</h1>
+                    <div className="space-y-4">
+                        <h1 className="pt-4 text-2xl font-semibold">Address</h1>
                         {medAdd?.map((em, index) => (
-                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 sm:w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type={em.type}
                                         id={em.name}
@@ -240,16 +240,16 @@ const MedicalInput = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold text-center">Medical History</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Medical History</h1>
                         {healthHistory?.map((em, index) => (
-                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 sm:min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 sm:min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type={em.type}
                                         id={em.name}
@@ -262,18 +262,18 @@ const MedicalInput = () => {
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 )
             case 3:
                 return (
-                    <>
-                        <h1 className="text-2xl font-bold text-center">Health Habits</h1>
+                    <div className="space-y-4">
+                        <h1 className="pt-4 text-2xl font-semibold">Health Habits</h1>
                         {healthhabits?.map((sele, index) => (
-                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
-                                <label className="text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                    {sele.label}:
+                            <div className="relative w-full flex items-center" key={index}>
+                                <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
+                                    {sele.label}
                                 </label>
-                                <div className="relative h-11 w-full sm:min-w-56">
+                                <div className="relative h-11 w-full">
                                     <select
                                         id={sele.name}
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
@@ -288,21 +288,21 @@ const MedicalInput = () => {
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 )
             case 4:
                 return (
-                    <>
-                        <h1 className="text-2xl font-bold text-center">Medical Conditions</h1>
+                    <div className="space-y-4">
+                        <h1 className="pt-4 text-2xl font-semibold">Medical Conditions</h1>
                         {medicalCondition?.map((em, index) => (
-                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative w-full min-w-56">
+                                <div className="relative h-16 w-full">
                                     <textarea
                                         {...register(em.name, { required: true })}
                                         placeholder={em.text}
@@ -315,16 +315,16 @@ const MedicalInput = () => {
                             </div>
                         ))}
 
-                        <h1 className="text-2xl font-bold text-center">Insurance Information</h1>
+                        <h1 className="pt-4 text-2xl font-semibold">Insurance Information</h1>
                         {inSur?.map((em, index) => (
-                            <div className="relative w-full min-w-56 max-sm:w-[90%] mx-auto flex items-center space-x-4 md:space-x-8 lg:space-x-16" key={index}>
+                            <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={em.name}
-                                    className="text-md font-semibold text-gray-700 min-w-24"
+                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
                                 >
-                                    {em.label}:
+                                    {em.label}
                                 </label>
-                                <div className="relative h-11 w-full min-w-56">
+                                <div className="relative h-11 w-full">
                                     <input
                                         type={em.type}
                                         id={em.name}
@@ -337,105 +337,92 @@ const MedicalInput = () => {
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 )
         }
     }
 
     return (
-        <div className="flex justify-center">
-            <div className="flex flex-row sm:w-[80%] md:space-x-4 lg:space-x-4">
-                <div className="basis-1/4 hidden lg:block xl:block">
+        <div className="flex justify-center h-screen">
+            <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
+                <div className="basis-1/4 hidden lg:block">
                     <SideBar />
                 </div>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-10 lg:w-full">
-                    <div className="basis-full gap-20 max-sm:gap-5 flex max-sm:flex-col justify-center items-center lg:basis-3/4  lg:max-h-screen">
-                        <button
-                            className="px-4 sm:flex hidden  py-2 mt-4 justify-center items-center hover:cursor-pointer rounded-full h-20 w-20 text-white bg-blue-500 text-lg"
-                            type="button"
-                            disabled={progressBar === 1}
-                            onClick={() => {
-                                setProgressBar((currPage) => currPage - 1);
-                            }}
-                        >
-                            <FaArrowLeft className="text-3xl" />
 
-                        </button>
-                        <div className="sm:h-[85vh] flex flex-col overflow-y-scroll mb-4 hide-scrollbar">
-                            <h1 className="font-bold text-4xl text-center mt-6 mb-16 lg:mb-12">Medical</h1>
-                            <div className="flex flex-col  justify-center items-center lg:w-full">
-                                <div className="flex flex-col gap-6 justify-center pb-10">
+                <div className="flex-1 flex flex-col">
+                    <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
+                        Medical
+                    </h1>
 
-                                    <div className="flex justify-center max-sm:w-[90%] mx-auto lg:mt-4 mb-10 lg:flex lg:justify-center">
-                                        <div className="w-full sm:h-4 h-2 bg-blue-100 rounded-full">
-                                            <div
-                                                className="sm:h-4 h-2 bg-blue-500 rounded-full"
-                                                style={{ width: `${(progressBar / 4) * 100}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
-
-                                    {formParts()}
-                                    <div className="flex justify-center space-x-4">
-                                    </div>
-                                </div>
-                                <div className="flex gap-5 mx-auto ">
-                                    <button
-                                        className="px-4 sm:hidden py-2 mt-4 justify-center items-center hover:cursor-pointer rounded-lg h-14 w-36 text-white bg-blue-500 text-lg"
-                                        type="button"
-                                        disabled={progressBar === 1}
-                                        onClick={() => {
-                                            setProgressBar((currPage) => currPage - 1);
-                                        }}
-                                    >
-                                        Prev
-
-                                    </button>
-                                    {progressBar === 4 ? (
-                                        <></>
-                                    ) : (
-                                        <button
-                                            className="px-4 py-2 mt-4 sm:hidden rounded-lg flex justify-center items-center h-14 w-36 hover:cursor-pointer text-white bg-blue-500 text-lg"
-                                            type="button"
-                                            disabled={progressBar === 4}
-                                            onClick={() => {
-                                                setProgressBar((currPage) => currPage + 1);
-                                            }}
-                                        >
-                                            Next
-                                        </button>
-                                    )}
-                                    {progressBar === 4 ?
-
-                                        <button
-                                            className="justify-center items-center flex py-2 mt-4 rounded-lg hover:cursor-pointer sm:w-96 text-white bg-[#3FA398] w-36 sm:text-lg"
-                                            type="submit"
-                                            disabled={medicalLoading}
-                                        >
-                                            {medicalLoading ? "APPLYING..." : "APPLY CHANGES"}
-                                        </button>
-                                        :
-                                        <></>
-                                    }
-                                </div>
-                            </div>
+                    <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
+                        <div className="w-full h-2 bg-blue-100 rounded-full">
+                            <div
+                                className="h-2 bg-blue-500 rounded-full"
+                                style={{ width: `${(progressBar / 4) * 100}%` }}
+                            ></div>
                         </div>
-                        {progressBar === 4 ? (
-                            <></>
-                        ) : (
+                    </div>
+
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="flex flex-col space-y-2 w-full lg:w-[90%] mx-auto px-4 md:px-0"
+                    >
+                        <div className="flex gap-10 lg:gap-20 justify-center items-center">
+                            {/* Previous Button for Larger Screens */}
                             <button
-                                className="px-4 py-2 mt-4 hidden sm:flex rounded-full  justify-center items-center h-20 w-20 hover:cursor-pointer text-white bg-blue-500 text-lg"
+                                className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-blue-500 text-base"
+                                type="button"
+                                disabled={progressBar === 1}
+                                onClick={() => setProgressBar((currPage) => currPage - 1)}
+                            >
+                                <FaArrowLeft />
+                            </button>
+
+                            {/* Scrollable Form Content */}
+                            <div className="sm:h-[75vh] w-full flex-1 flex flex-col">
+                                {formParts()}
+                            </div>
+
+                            {/* Next Button for Larger Screens */}
+                            <button
+                                className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-blue-500 text-base"
                                 type="button"
                                 disabled={progressBar === 4}
-                                onClick={() => {
-                                    setProgressBar((currPage) => currPage + 1);
-                                }}
+                                onClick={() => setProgressBar((currPage) => currPage + 1)}
                             >
-                                <FaArrowRight className="text-3xl" />
+                                <FaArrowRight />
                             </button>
-                        )}
-                    </div>
-                </form>
+                        </div>
+
+                        <div className="flex justify-center w-full lg:w-[70%] mx-auto gap-4 pb-4">
+                            <button
+                                className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                type="button"
+                                disabled={progressBar === 1}
+                                onClick={() => setProgressBar((currPage) => currPage - 1)}
+                            >
+                                Prev
+                            </button>
+                            {progressBar === 4 ? (
+                                <button
+                                    className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                    type="submit"
+                                    disabled={medicalLoading}
+                                >
+                                    {medicalLoading ? "Hold on..." : "Submit"}
+                                </button>
+                            ) : (
+                                <button
+                                    className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                    type="button"
+                                    onClick={() => setProgressBar((currPage) => currPage + 1)}
+                                >
+                                    Next
+                                </button>
+                            )}
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );
