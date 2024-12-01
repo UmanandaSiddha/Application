@@ -21,7 +21,7 @@ const MedicalComponent = ({ card }: PropsType) => {
         },
         {
             name: "Chronic Meical Conditions",
-            value: card?.chronicHistory
+            value: card?.chronicHistory === "Other" ? card.chronicHistory_Other : card?.chronicHistory
         },
         {
             name: "Current Medications",
@@ -37,11 +37,11 @@ const MedicalComponent = ({ card }: PropsType) => {
         },
         {
             name: "Exercise Routine",
-            value: card?.exercise,
+            value: card?.exercise === "Other" ? card.exercise_Other : card?.exercise,
         },
         {
             name: "Dietary Preferences",
-            value: card?.diet,
+            value: card?.diet === "Other" ? card.diet_Other : card?.diet,
         },
         {
             name: "Mental Condition",
@@ -82,6 +82,10 @@ const MedicalComponent = ({ card }: PropsType) => {
                         <p className="text-md"><span className="font-semibold">Date of Birth:</span> {formattedDate}</p>
                         <p className="text-md"><span className="font-semibold">Phone:</span> {card?.phone}</p>
                         <p className="text-md"><span className="font-semibold">Email:</span> {card?.email}</p>
+                        <p className="text-md"><span className="font-semibold">Height:</span> {card?.height} meters</p>
+                        <p className="text-md"><span className="font-semibold">Weight:</span> {card?.weight} kgs</p>
+                        <p className="text-md"><span className="font-semibold">Age:</span> {card?.age}</p>
+                        <p className="text-md"><span className="font-semibold">Blood Group:</span> {card?.blood}</p>
                     </div>
                 </div>
 

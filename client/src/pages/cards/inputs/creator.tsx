@@ -195,7 +195,7 @@ const CreatorInput = () => {
                         <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
                             <div className="w-full h-2 bg-blue-100 rounded-full">
                                 <div
-                                    className="h-2 bg-blue-500 rounded-full"
+                                    className="h-2 bg-purple-400 rounded-full"
                                     style={{ width: `100%` }}
                                 ></div>
                             </div>
@@ -320,18 +320,18 @@ const CreatorInput = () => {
                                             id="popupform"
                                             onClick={handleCloseForm}
                                         >
-                                            <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
+                                            <div className="bg-white border-2 p-8 rounded shadow-lg w-full max-w-md">
                                                 {/* Popup Form */}
-                                                <h1 className="text-2xl font-bold">
+                                                <h1 className="text-xl md:text-2xl font-semibold">
                                                     {isEditable ? "Edit" : "Add"} Social Profile
                                                 </h1>
                                                 <div className="space-y-4">
                                                     <div className="flex flex-col space-y-2">
                                                         <label
                                                             htmlFor="platform"
-                                                            className="text-md font-semibold text-gray-700"
+                                                            className="text-sm md:text-md font-semibold text-gray-700"
                                                         >
-                                                            Platform:
+                                                            Platform
                                                         </label>
                                                         <input
                                                             type="text"
@@ -347,9 +347,9 @@ const CreatorInput = () => {
                                                     <div className="flex flex-col space-y-2">
                                                         <label
                                                             htmlFor="link"
-                                                            className="text-md font-semibold text-gray-700"
+                                                            className="text-sm md:text-md font-semibold text-gray-700"
                                                         >
-                                                            Link:
+                                                            Link
                                                         </label>
                                                         <input
                                                             type="text"
@@ -364,14 +364,14 @@ const CreatorInput = () => {
                                                 </div>
                                                 <div className="flex justify-end mt-4">
                                                     <button
-                                                        className="bg-black text-white py-2 px-4 rounded"
+                                                        className="bg-black text-white font-semibold py-2 px-4 rounded"
                                                         type="button"
                                                         onClick={handleAdd}
                                                     >
                                                         {isEditable ? "Update" : "Create"} Social
                                                     </button>
                                                     <button
-                                                        className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded ml-2"
+                                                        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded ml-2"
                                                         type="button"
                                                         onClick={() => {
                                                             if (isEditable) {
@@ -390,7 +390,7 @@ const CreatorInput = () => {
                                     )}
 
                                     {/* Submit Button */}
-                                    <div className="flex justify-center">
+                                    <div className="flex justify-center pb-2">
                                         <button
                                             className="px-4 py-2 mt-4 rounded-lg w-full lg:w-[70%] text-white bg-[#5674DC] text-lg"
                                             type="submit"

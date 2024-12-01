@@ -136,7 +136,6 @@ const App = () => {
                     <Route path="/donation" element={<Donation />} />
                     <Route path="/receipt" element={<RecieptPage />} />
 
-
                     <Route
                         element={lod2 ? (
                             <Loader />

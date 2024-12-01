@@ -78,27 +78,43 @@ const PlanPage = () => {
     if (loading) return <Loader />
 
     return (
-        <div className="pt-6 pb-16 h-screen bg-gradient-to-br overflow-x-hidden hide-scrollbar from-[#efe8fa] to-[#fcfafd]">
-            <div className="flex flex-col items-center">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl mt-10 font-semibold text-center">Choose your right plan!</h1>
-                <h2 className="text-center pb-8 md:pb-12 lg:pb-16 pt-5 px-6 text-base md:text-lg lg:text-xl text-gray-600">
+        <div className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] flex flex-col justify-center items-center py-6">
+            <div className="text-center">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold">
+                    Choose your right plan!
+                </h1>
+                <h2 className="pt-5 px-6 text-base md:text-lg lg:text-xl text-gray-600">
                     Select from best plans, ensuring a perfect match. Need more or less? <br className="hidden md:block" />
                     Customize your subscription for a seamless fit!
                 </h2>
-                <div className="flex flex-col sm:flex-row lg:flex-row justify-center gap-6 px-6 md:px-0">
-                    {plans?.filter(plan => plan.visible && ["user", "org", "free"].includes(plan.planType)).map((plan, index) => (
-                        <div key={index} className="w-full sm:w-96 max-sm:w-[22rem] mx-auto shadow-[0px_4px_36px_0px_rgba(0,_0,_0,_0.1)] bg-[#fffdfd] p-8 rounded-2xl mb-6 sm:mb-0">
-                            <button className="w-16 mb-5 bg-[#8547ff] h-9 rounded-xl text-white font-medium">{plan.name}</button>
-                            <p className="pb-10 text-gray-600">
-                                {plan.description}
-                            </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-6 mt-10 px-4 sm:px-6">
+                {plans
+                    ?.filter(plan => plan.visible && ["user", "org", "free"].includes(plan.planType))
+                    .map((plan, index) => (
+                        <div
+                            key={index}
+                            className="w-full sm:w-96 max-w-sm bg-white p-8 rounded-2xl shadow-md"
+                        >
+                            <button className="w-16 mb-5 bg-purple-600 h-9 rounded-xl text-white font-medium">
+                                {plan.name}
+                            </button>
+                            <p className="pb-10 text-gray-600">{plan.description}</p>
                             <h1 className="text-4xl md:text-5xl">
-                                <span className="font-semibold">Rs. {plan.amount}</span> <span className="text-sm">Once in {plan.interval} {periodToDays(plan.period)}{plan.interval > 1 && "s"}</span>
+                                <span className="font-semibold">Rs. {plan.amount}</span>{" "}
+                                <span className="text-sm">
+                                    Once in {plan.interval} {periodToDays(plan.period)}
+                                    {plan.interval > 1 && "s"}
+                                </span>
                             </h1>
-                            <h2 className="text-sm mb-5">{user?.activePlan?.planId === plan._id && ["active", "pending"].includes(user?.activePlan?.status) && ("active")}</h2>
+                            <h2 className="text-sm mb-5">
+                                {user?.activePlan?.planId === plan._id &&
+                                    ["active", "pending"].includes(user?.activePlan?.status) &&
+                                    "active"}
+                            </h2>
                             <hr />
                             <h1 className="pt-5">Details:</h1>
-                            <ul className="outline-none pb-5">
+                            <ul className="list-none pb-5">
                                 <li>Cards: {plan.cards}</li>
                                 <li>Period: {plan.period}</li>
                                 <li>Interval: {plan.interval}</li>
@@ -111,9 +127,9 @@ const PlanPage = () => {
                                         return;
                                     }
                                     if (plan.planType === "free") {
-                                        handleFreePlan(plan._id)
+                                        handleFreePlan(plan._id);
                                     } else {
-                                        navigate(`/checkout?id=${plan?._id}`)
+                                        navigate(`/checkout?id=${plan?._id}`);
                                     }
                                 }}
                                 className="w-full border-2 h-12 font-semibold rounded-xl mt-5"
@@ -122,30 +138,31 @@ const PlanPage = () => {
                             </button>
                         </div>
                     ))}
-
-                    <div className="w-full sm:w-96 max-sm:w-[22rem] mx-auto p-8 rounded-2xl shadow-[0px_4px_36px_0px_rgba(0,_0,_0,_0.1)] bg-gradient-to-b from-[#e1d7fa] to-[#ffffff]">
-                        <button className="w-20 mb-5 h-9 rounded-xl font-bold text-black bg-white">Custom</button>
-                        <p className="pb-10 text-gray-700">
-                            If these plans don't fit, let's create one that suits. Customize your subscription for a perfect fit, bigger or smaller.
-                        </p>
-                        <h1 className="text-4xl md:text-5xl mb-5 pb-5">
-                            <span className="font-semibold">Let's Talk!</span>
-                        </h1>
-                        <hr />
-                        <h1 className="pt-5">Details:</h1>
-                        <ul className="outline-none pb-5">
-                            <li>Cards: 50</li>
-                            <li>Period: monthly</li>
-                            <li>Interval: 1</li>
-                        </ul>
-                        <hr />
-                        <button
-                            onClick={() => navigate(`/request-custom`)}
-                            className="w-full h-12 font-semibold rounded-xl mt-5 bg-[#2b233b] text-white"
-                        >
-                            Get Started
-                        </button>
-                    </div>
+                <div className="w-full sm:w-96 max-w-sm bg-gradient-to-b from-[#e1d7fa] to-[#ffffff] p-8 rounded-2xl shadow-md">
+                    <button className="w-20 mb-5 h-9 rounded-xl font-bold text-black bg-white">
+                        Custom
+                    </button>
+                    <p className="pb-10 text-gray-700">
+                        If these plans don't fit, let's create one that suits. Customize your subscription
+                        for a perfect fit, bigger or smaller.
+                    </p>
+                    <h1 className="text-4xl md:text-5xl mb-5 pb-5">
+                        <span className="font-semibold">Let's Talk!</span>
+                    </h1>
+                    <hr />
+                    <h1 className="pt-5">Details:</h1>
+                    <ul className="list-none pb-5">
+                        <li>Cards: 50</li>
+                        <li>Period: monthly</li>
+                        <li>Interval: 1</li>
+                    </ul>
+                    <hr />
+                    <button
+                        onClick={() => navigate(`/request-custom`)}
+                        className="w-full h-12 font-semibold rounded-xl mt-5 bg-[#2b233b] text-white"
+                    >
+                        Get Started
+                    </button>
                 </div>
             </div>
         </div>

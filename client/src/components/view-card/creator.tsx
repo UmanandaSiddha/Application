@@ -30,7 +30,8 @@ const CreatorComponent = ({ card }: PropsType) => {
                         <div className='w-full py-6'>
                             {card?.links?.map((link: any, index: number) => (
                                 <Link
-                                    to={link.name} target="blank"
+                                    to={link.name}
+                                    target="blank"
                                     className="w-full flex flex-col justify-center items-center py-5"
                                     key={index}
                                 >

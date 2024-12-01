@@ -6,15 +6,14 @@ import { EMAIL_REQUEST_CUSTOM_PLAN } from "../constants/index.js";
 import sendMail from "../utils/services/sendMail.js";
 
 export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
-    const { email, cards, amount, comment, period, interval } = req.body;
-    if (!email || !cards || !amount || !comment || !period || !interval) {
+    const { email, cards, comment, period, interval } = req.body;
+    if (!email || !cards || !comment || !period || !interval) {
         return next(new ErrorHandler("All fields are required", 404));
     }
 
     const newRequest = await CustomRequest.create({
         email,
         cards: Number(cards),
-        amount: Number(amount),
         accepted: acceptedEnum.PENDING,
         comment,
         period,
@@ -29,7 +28,6 @@ export const requestCustomPlan = catchAsyncErrors(async (req, res, next) => {
             dynamicData: {
                 email: email,
                 cards: cards,
-                amount: amount,
                 comment: comment,
                 period: period,
                 interval: interval,

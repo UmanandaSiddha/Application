@@ -59,7 +59,7 @@ const SideBar = () => {
     return (
         <div className="sm:justify-start flex flex-wrap justify-center md:border-r-2 md:py-[4rem] md:pr-4 md:border-r-slate-400 lg:border-r-2 lg:py-[4rem] lg:pr-4 lg:border-r-slate-400 mt-10">
             <div className="md:hidden w-full">
-                <div className="text-4xl font-semibold h-16">
+                <div className="text-3xl md:text-4xl font-semibold h-16">
                     Hello, <span className="text-blue-500">{user?.name}</span>
                 </div>
                 <div className="space-y-2 mt-4">

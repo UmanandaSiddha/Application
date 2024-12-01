@@ -28,7 +28,7 @@ import SideBar from "@/components/rest/sidebar";
 import { FaPlus } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
 
-type CardType =
+export type CardType =
     | TreeResponse
     | PersonalResponse
     | MedicalResponse
@@ -57,11 +57,11 @@ export const createQRCode = (type: string, cardId: string) => {
             mode: "Byte",
             errorCorrectionLevel: "H",
         },
-        image: `${window.location.protocol}//${window.location.host}/${type}.svg`,
+        image: `${window.location.protocol}//${window.location.host}/${type}.png`,
         imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,
-            margin: 0,
+            margin: 20,
         },
         dotsOptions: {
             type: "extra-rounded",
@@ -80,7 +80,7 @@ export const createQRCode = (type: string, cardId: string) => {
     });
 };
 
-const GenerateQRCode = ({ type, card, way }: {
+export const GenerateQRCode = ({ type, card, way }: {
     type: string;
     card: Tree | Personal | MedicalType | Creator | Animal;
     way?: string;

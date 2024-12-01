@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const RequestCustom = () => {
@@ -7,14 +8,12 @@ const RequestCustom = () => {
     const [requestData, setRequestData] = useState<{
         email: string;
         cards: number | null;
-        amount: number | null;
         comment: string;
         period: string;
         interval: number | null;
     }>({
         email: "",
         cards: null,
-        amount: null,
         comment: "",
         period: "",
         interval: null
@@ -24,8 +23,8 @@ const RequestCustom = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setRequestLoading(true);
-        const { email, cards, amount, comment, period, interval } = requestData;
-        if (!email || !cards || !amount || !comment || !period || !interval) {
+        const { email, cards, comment, period, interval } = requestData;
+        if (!email || !cards || !comment || !period || !interval) {
             toast.warning("All fields are required");
             setRequestLoading(false);
             return;
@@ -91,6 +90,10 @@ const RequestCustom = () => {
                                 <p className="text-gray-600">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laborum porro molestias quaerat maxime modi.</p>
                             </div>
                         </div>
+
+                        <Link to="/contact" className="text-xl font-semibold text-purple-500">
+                            Contact Us
+                        </Link>
                     </div>
 
                     <div className="mt-8 lg:w-1/2 lg:pl-6">
@@ -121,20 +124,6 @@ const RequestCustom = () => {
                                         type="number"
                                         placeholder="Enter expected Cards"
                                         value={requestData.cards !== null ? requestData.cards : ''}
-                                        onChange={handleChange}
-                                        className="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-purple-400 focus:ring-purple-300 focus:ring-opacity-40 dark:focus:border-purple-300 focus:outline-none focus:ring"
-                                    />
-                                </div>
-
-                                <div className="flex-1 mt-6">
-                                    <label htmlFor="amount" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
-                                        Amount
-                                    </label>
-                                    <input
-                                        name="amount"
-                                        type="number"
-                                        placeholder="Enter expected price"
-                                        value={requestData.amount !== null ? requestData.amount : ''}
                                         onChange={handleChange}
                                         className="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-purple-400 focus:ring-purple-300 focus:ring-opacity-40 dark:focus:border-purple-300 focus:outline-none focus:ring"
                                     />

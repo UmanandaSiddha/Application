@@ -73,9 +73,9 @@ const PersonalComponent = ({ card }: PropsType) => {
                 { label: "Other Quotes", value: card?.otherQuotes },
                 { label: "Spiritual Beliefs", value: card?.spiritual },
                 { label: "Core Beliefs", value: card?.core },
-                { label: "Philosophy", value: card?.philosophy },
+                { label: "Philosophy", value: card?.philosophy === "Other" ? card?.philosophy_Other : card?.philosophy },
                 { label: "Weird Beliefs", value: card?.weirdBelief },
-                { label: "Social Causes", value: card?.socialCause },
+                { label: "Social Causes", value: card?.socialCause === "Other" ? card?.socialCause_Other : card?.socialCause },
                 { label: "Global Issues", value: card?.globalIssues }
             ]
         },

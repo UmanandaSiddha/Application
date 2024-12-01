@@ -95,9 +95,12 @@ const interests = [
 const personalValues = [
     { name: "spiritual", label: "Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic"] },
     { name: "core", label: "Core Values", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity"] },
-    { name: "philosophy", label: "Philosophies", text: "Philosophies I Believe In", options: ["Stoicism", "Existentialism", "Humanism", "Nihilism"] },
-    { name: "socialCause", label: "Causes I Support", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education"] },
 ];
+
+const sepPersonal = [
+    { name: "philosophy", label: "Philosophies", text: "Philosophies I Believe In", options: ["Stoicism", "Existentialism", "Humanism", "Nihilism", "Other"] },
+    { name: "socialCause", label: "Causes I Support", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education", "Other"] },
+]
 
 const professional = [
     { name: "currentOcupation", label: "Current Occupation", text: "Enter Current Occupation/Industry", options: ["Technology", "Healthcare", "Education", "Finance", "Arts/Entertainment", "Other"] },
@@ -117,6 +120,8 @@ const additionalInfo = [
 ];
 
 const otherInputs = [
+    { name: "philosophy_Other" },
+    { name: "socialCause_Other" },
     { name: "travelMode_Other" },
     { name: "genre_Other" },
     { name: "sports_Other" },
@@ -414,15 +419,15 @@ const CreatePersonal = () => {
                                     id="popupform"
                                     onClick={handleCloseForm}
                                 >
-                                    <div className="bg-white p-8 rounded shadow-lg max-w-[425px]">
+                                    <div className="bg-white border-2 p-8 rounded shadow-lg max-w-[425px]">
                                         <div className="space-y-6 lg:w-full">
-                                            <h1 className="text-2xl font-bold">{isEditable ? "Edit" : "Add"} Social Profile</h1>
+                                            <h1 className="text-xl md:text-2xl font-semibold">{isEditable ? "Edit" : "Add"} Social Profile</h1>
                                             <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
                                                 <label
                                                     htmlFor="name"
-                                                    className="text-md font-semibold text-gray-700 min-w-14"
+                                                    className="text0-sm md:text-md font-semibold text-gray-700 min-w-14"
                                                 >
-                                                    Platform:
+                                                    Platform
                                                 </label>
                                                 <div className="relative h-11 w-full min-w-56">
                                                     <input
@@ -442,9 +447,9 @@ const CreatePersonal = () => {
                                             <div className="relative w-full min-w-56 flex items-center space-x-4 md:space-x-8 lg:space-x-16">
                                                 <label
                                                     htmlFor="link"
-                                                    className="text-md font-semibold text-gray-700 min-w-14"
+                                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-14"
                                                 >
-                                                    Link:
+                                                    Link
                                                 </label>
                                                 <div className="relative h-11 w-full min-w-56">
                                                     <input
@@ -462,14 +467,14 @@ const CreatePersonal = () => {
 
                                             <div className="flex justify-end mt-4">
                                                 <button
-                                                    className="bg-black text-white font-bold py-2 px-4 rounded"
+                                                    className="bg-black text-white font-semibold py-2 px-4 rounded"
                                                     type="button"
                                                     onClick={handleAdd}
                                                 >
                                                     {isEditable ? "Update" : "Create"} Social
                                                 </button>
                                                 <button
-                                                    className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded ml-2"
+                                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded ml-2"
                                                     type="button"
                                                     onClick={() => {
                                                         if (isEditable) {
@@ -817,6 +822,59 @@ const CreatePersonal = () => {
                                 </div>
                             </div>
                         ))}
+
+                        {sepPersonal?.map((sele, index) => {
+                            const selectedValue = watch(sele.name);
+                            return (
+                                <div key={index}>
+                                    <div className="relative w-full flex items-center">
+                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
+                                            {sele.label}
+                                        </label>
+                                        <div className="relative h-11 w-full">
+                                            <select
+                                                id={sele.name}
+                                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                                {...register(sele.name, {
+                                                    required: true,
+                                                    onChange: (e) => {
+                                                        if (e.target.value !== "Other") {
+                                                            setValue(`${sele.name}_Other`, "");
+                                                        }
+                                                    },
+                                                })}
+                                            >
+                                                <option key={index} value="" disabled className="text-slate-400">{sele.label}</option>
+                                                {sele.options.map((option, index) => (
+                                                    <option key={index} value={option}>{option}</option>
+                                                ))}
+                                            </select>
+                                            <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                        </div>
+                                    </div>
+                                    {selectedValue === "Other" && (
+                                        <div className="relative w-full flex items-center">
+                                            <label
+                                                htmlFor={`${sele.name}_Other`}
+                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
+                                            >
+                                                {sele.label} (Specify)
+                                            </label>
+                                            <div className="relative h-11 w-full">
+                                                <input
+                                                    type="text"
+                                                    placeholder={sele.text}
+                                                    {...register(`${sele.name}_Other`, { required: true })}
+                                                    autoComplete="off"
+                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                                />
+                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        })}
                     </div>
                 );
             case 5:
@@ -864,7 +922,7 @@ const CreatePersonal = () => {
                     <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
                         <div className="w-full h-2 bg-blue-100 rounded-full">
                             <div
-                                className="h-2 bg-blue-500 rounded-full"
+                                className="h-2 bg-purple-400 rounded-full"
                                 style={{ width: `${(progressBar / 5) * 100}%` }}
                             ></div>
                         </div>
@@ -877,7 +935,7 @@ const CreatePersonal = () => {
                         <div className="flex gap-10 lg:gap-20 justify-center items-center">
                             {/* Previous Button for Larger Screens */}
                             <button
-                                className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-blue-500 text-base"
+                                className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-purple-400 text-base"
                                 type="button"
                                 disabled={progressBar === 1}
                                 onClick={() => setProgressBar((currPage) => currPage - 1)}
@@ -892,7 +950,7 @@ const CreatePersonal = () => {
 
                             {/* Next Button for Larger Screens */}
                             <button
-                                className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-blue-500 text-base"
+                                className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-purple-400 text-base"
                                 type="button"
                                 disabled={progressBar === 5}
                                 onClick={() => setProgressBar((currPage) => currPage + 1)}
@@ -903,7 +961,7 @@ const CreatePersonal = () => {
 
                         <div className="flex justify-center w-full lg:w-[70%] mx-auto gap-4 pb-4">
                             <button
-                                className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#3763a3] text-lg"
                                 type="button"
                                 disabled={progressBar === 1}
                                 onClick={() => setProgressBar((currPage) => currPage - 1)}
@@ -912,7 +970,7 @@ const CreatePersonal = () => {
                             </button>
                             {progressBar === 5 ? (
                                 <button
-                                    className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                    className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#3763a3] text-lg"
                                     type="submit"
                                     disabled={personalLoading}
                                 >
@@ -920,7 +978,7 @@ const CreatePersonal = () => {
                                 </button>
                             ) : (
                                 <button
-                                    className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#dc8873] text-lg"
+                                    className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#3763a3] text-lg"
                                     type="button"
                                     onClick={() => setProgressBar((currPage) => currPage + 1)}
                                 >

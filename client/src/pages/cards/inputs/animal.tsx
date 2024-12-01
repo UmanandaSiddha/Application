@@ -9,14 +9,19 @@ import { useEffect, useState } from "react";
 import SideBar from "@/components/rest/sidebar";
 
 const inputs = [
-    { name: "species", label: "Species", text: "Enter Species", type: "text" },
-    { name: "name", label: "Name", text: "Enter Animal Name", type: "text" },
-    { name: "age", label: "Age", text: "Enter Animal Age", type: "number" },
-    { name: "gender", label: "Gender", text: "Enter Animal Gender", type: "text" },
-    { name: "color", label: "Color / Marking", text: "Enter Color / Marking", type: "text" },
-    { name: "location", label: "Location", text: "Enter Animal Location", type: "text" },
-    { name: "owner", label: "Owner Name", text: "Enter Owner Name", type: "text" },
-    { name: "phone", label: "Phone Number", text: "Enter Phone Number", type: "tel" }
+    { name: "name", label: "Animal Name", text: "Enter Animal Name" },
+    { name: "scientificName", label: "Scientific Name", text: "Enter Scientific Name" },
+    { name: "habitat", label: "Habitat", text: "Enter Habitat" },
+    { name: "geographicalRange", label: "Geographical Range", text: "Enter Geographical Range" },
+    { name: "physicalDescription", label: "Physical Description", text: "Enter Physical Description" },
+    { name: "diet", label: "Diet", text: "Enter Diet" },
+    { name: "lifespan", label: "Lifespan", text: "Enter Lifespan" },
+    { name: "behavior", label: "Behavior", text: "Enter Behavior" },
+    { name: "conservationStatus", label: "Conservation Status", text: "Enter Conservation Status" },
+    { name: "ownerName", label: "Owner Name (for pets)", text: "Enter Owner Name" },
+    { name: "location", label: "Location", text: "Enter Location" },
+    { name: "caretakerMobileNumber", label: "Caretaker Mobile Number (if applicable)", text: "Enter Caretaker Mobile Number" },
+    { name: "additionalNotes", label: "Additional Notes", text: "Enter Additional Notes" }
 ];
 
 const generateDefaultValues = (fields: { name: string }[]) => {
@@ -81,17 +86,8 @@ const CreateAnimal = () => {
     const onSubmit = async (values: any) => {
         setAnimalLoading(true);
 
-        const convertedValues = inputs.reduce((acc, input) => {
-            if (input.type === "number") {
-                acc[input.name] = Number(values[input.name]);
-            } else {
-                acc[input.name] = values[input.name];
-            }
-            return acc;
-        }, {} as Record<string, any>);
-
         const animalData = {
-            ...convertedValues,
+            ...values,
             user: user?._id,
         };
 
@@ -136,7 +132,7 @@ const CreateAnimal = () => {
                         <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
                             <div className="w-full h-2 bg-blue-100 rounded-full">
                                 <div
-                                    className="h-2 bg-blue-500 rounded-full"
+                                    className="h-2 bg-purple-400 rounded-full"
                                     style={{ width: `100%` }}
                                 ></div>
                             </div>
@@ -166,7 +162,7 @@ const CreateAnimal = () => {
                                             {/* Input */}
                                             <div className="relative w-full md:flex-1">
                                                 <input
-                                                    type={input.type}
+                                                    type={input.name === "caretakerMobileNumber" ? "number" : "text"}
                                                     id={input.name}
                                                     placeholder={input.text}
                                                     {...register(input.name, { required: true })}
@@ -179,7 +175,7 @@ const CreateAnimal = () => {
                                     ))}
 
                                     {/* Submit Button */}
-                                    <div className="flex justify-center">
+                                    <div className="flex justify-center pb-2">
                                         <button
                                             className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-[#dc8873] text-lg"
                                             type="submit"

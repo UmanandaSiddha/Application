@@ -8,7 +8,7 @@ const TreeComponent = ({ card }: PropsType) => {
 
     const data = [
         {
-            title: "Tree Name",
+            title: "Plant Name",
             value: card?.name
         },
         {
@@ -16,34 +16,55 @@ const TreeComponent = ({ card }: PropsType) => {
             value: card?.scientificName
         },
         {
-            title: "Tree type",
-            value: card?.treeType
+            title: "Family",
+            value: card?.family
         },
         {
-            title: "Tree Location",
-            value: card?.location
+            title: "Origin",
+            value: card?.origin
         },
         {
-            title: "Tree Description",
+            title: "Habitat",
+            value: card?.habitat
+        },
+        {
+            title: "Description",
             value: card?.description
         },
         {
-            title: "Tree Features",
-            value: card?.features
+            title: "Height",
+            value: card?.height
         },
         {
-            title: "Tree Maintenance",
-            value: card?.maintenance
+            title: "Leaf Type",
+            value: card?.leafType
         },
         {
-            title: "Tree Benefits",
-            value: card?.benefits
+            title: "Flower Color",
+            value: card?.flowerColor
         },
         {
-            title: "Tree Fun Fact",
-            value: card?.funFact
+            title: "Uses",
+            value: card?.uses
         },
-    ]
+        {
+            title: "Care Instructions",
+            value: card?.careInstructions
+        },
+        {
+            title: "Special Features",
+            value: card?.specialFeatures
+        },
+        {
+            title: "Caretaker Mobile Number",
+            value: card?.caretakerMobileNumber
+        },
+        {
+            title: "Additional Notes",
+            value: card?.additionalNotes
+        }
+    ];
+    
 
     return (
         <div className="bg-[#F5EDA8] relative bg-opacity-45 pb-32 md:pb-6 overflow-x-hidden">

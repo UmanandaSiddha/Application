@@ -24,13 +24,20 @@ const medicalSchema = new mongoose.Schema(
         smoker: String,
         alcohol: String,
         exercise: String,
+        blood: String,
+        height: Number,
+        weight: Number,
+        age: Number,
+        chronicHistory_Other: String,
+        diet_Other: String,
+        exercise_Other: String,
         diet: String,
         mentalCondition: String,
         vaccinationHistory: String,
         insuranceProvider: String,
         insurancePolicyNumber: Number,
         insuranceGrpNumber: Number,
-        shortCode : {
+        shortCode: {
             type: String,
             required: true,
             unique: true,
@@ -39,7 +46,7 @@ const medicalSchema = new mongoose.Schema(
             type: mongoose.Schema.ObjectId,
             ref: "User",
             required: true,
-        }, 
+        },
     },
     {
         timestamps: true

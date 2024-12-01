@@ -19,6 +19,8 @@ const personalSchema = new mongoose.Schema(
         currentCity: String,
         languages: String,
         music: String,
+        socialCause_Other: String,
+        philosophy_Other: String,
         color: String,
         city: String,
         travelDestination: String,

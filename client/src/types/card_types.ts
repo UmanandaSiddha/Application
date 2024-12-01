@@ -3,27 +3,37 @@ export type Tree = {
     shortCode: string;
     name: string
     scientificName: string;
-    treeType: string;
-    location: string;
+    family: string;
+    origin: string;
+    habitat: string;
     description: string;
-    features: string;
-    maintenance: string;
-    benefits: string;
-    funFact: string;
+    height: string;
+    leafType: string;
+    flowerColor: string;
+    uses: string;
+    careInstructions: string;
+    specialFeatures: string;
+    caretakerMobileNumber: string;
+    additionalNotes: string;
     user: string;
 };
 
 export type Animal = {
     _id: string;
     shortCode: string;
-    species: string;
     name: string;
-    age: number;
-    gender: string;
-    color: string;
+    scientificName: string;
+    habitat: string;
+    geographicalRange: string;
+    physicalDescription: string;
+    diet: string;
+    lifespan: string;
+    behavior: string;
+    conservationStatus: string;
+    ownerName: string;
     location: string;
-    owner: string;
-    phone: number;
+    caretakerMobileNumber: string;
+    additionalNotes: string;
     user: string;
 }
 
@@ -49,6 +59,8 @@ export type Personal = {
     travelDestination: string,
     season: string,
     uniqueSkills: string,
+    socialCause_Other: string,
+    philosophy_Other: string,
     cuisine: string,
     beverage: string,
     inspirationalQuotes: string,
@@ -129,6 +141,13 @@ export type MedicalType = {
     diet: string,
     mentalCondition: string,
     vaccinationHistory: string,
+    blood: string;
+    height: number;
+    weight: number;
+    age: number;
+    chronicHistory_Other: string;
+    diet_Other: string;
+    exercise_Other: string;
     insuranceProvider: string,
     insurancePolicyNumber: number,
     insuranceGrpNumber: number,
