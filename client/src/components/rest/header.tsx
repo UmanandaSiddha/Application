@@ -145,7 +145,7 @@ export default function Header() {
                                 </Link>
                             </nav>
 
-                            <div className="pb-5">
+                            <div className="pb-10">
                                 {user ? (
                                     <div className="flex items-center justify-center gap-2">
                                         <Link to="/profile" className='flex items-center'>
