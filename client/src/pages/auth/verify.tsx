@@ -31,7 +31,7 @@ const Verify = () => {
     const resendOtp = async () => {
         setResendLoading(true);
         try {
-            await axios.post(`${import.meta.env.VITE_BASE_URL}/user/resend-otp`, {}, { withCredentials: true });
+            await axios.get(`${import.meta.env.VITE_BASE_URL}/user/request/verification`, { withCredentials: true });
             toast.success("OTP has been resent!");
         } catch (error: any) {
             toast.error("Failed to resend OTP");

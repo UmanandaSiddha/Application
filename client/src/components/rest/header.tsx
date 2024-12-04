@@ -47,27 +47,10 @@ export default function Header() {
 
     return (
         <header className="bg-white fixed top-0 left-0 right-0 z-50 h-16 md:h-18">
-            <nav className="mx-auto flex w-full md:w-[80%] items-center justify-between px-6 py-4" aria-label="Global">
-                <div className="flex lg:flex-1">
-                    <Link to='/' className="flex items-center justify-center">
-                        <img className="h-8 w-fit" src="/voolata_long_r.png" alt="" />
-                    </Link>
-                </div>
-                <div className="flex lg:hidden">
-                    {user ? (
-                        <button
-                            type="button"
-                            className="inline-flex items-center justify-center rounded-md text-gray-700"
-                            onClick={() => setMobileMenuOpen(true)}
-                        >
-                            <RiMenu3Line className="h-6 w-6" aria-hidden="true" />
-                        </button>
-                    ) : (
-                        <button className='font-semibold text-md'>
-                            <Link to="/login">Login</Link>
-                        </button>
-                    )}
-                </div>
+            <nav className="mx-auto w-full md:w-[80%] flex items-center justify-between px-6 py-4">
+                <Link to='/'>
+                    <img className="h-8 w-fit" src="/voolata_long_r.png" alt="" />
+                </Link>
                 <div className="hidden lg:flex lg:gap-x-12">
                     <Link to='/donation' className="text-md font-semibold leading-6">
                         Donate
@@ -83,25 +66,39 @@ export default function Header() {
                     </Link>
                 </div>
 
-                <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                    {
-                        user ? (
-                            <div onClick={() => navigate("/profile")} className="flex items-center gap-5">
-                                <p className="hidden cursor-pointer sm:block text-md">{user.name}</p>
-                                {user.image ? (
-                                    <img src={user.image} className='h-8 w-8 rounded-full' alt="avatar" />
-                                ) : (
-                                    <div className='h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center'>
-                                        <p className='text-lg font-semibold text-black'>{user.name[0].toUpperCase()}</p>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <button className='font-semibol text-md'>
-                                <Link to="/login">Login</Link>
-                            </button>
-                        )
-                    }
+                <div className="lg:hidden">
+                    {user ? (
+                        <button
+                            type="button"
+                            className="inline-flex items-center justify-center rounded-md text-gray-700"
+                            onClick={() => setMobileMenuOpen(true)}
+                        >
+                            <RiMenu3Line className="h-6 w-6" aria-hidden="true" />
+                        </button>
+                    ) : (
+                        <button className='font-semibold text-md'>
+                            <Link to="/login">Login</Link>
+                        </button>
+                    )}
+                </div>
+
+                <div className="hidden lg:block">
+                    {user ? (
+                        <div onClick={() => navigate("/profile")} className="flex items-center gap-3">
+                            <p className="hidden cursor-pointer sm:block text-md">{user.name.split(" ")[0]}</p>
+                            {user.image ? (
+                                <img src={user.image} className='h-8 w-8 rounded-full' alt="avatar" />
+                            ) : (
+                                <div className='h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center'>
+                                    <p className='text-sm font-semibold text-black'>{user.name[0].toUpperCase()}</p>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <button className='font-semibol text-md'>
+                            <Link to="/login">Login</Link>
+                        </button>
+                    )}
                 </div>
             </nav>
 
@@ -110,7 +107,7 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     className="hide-scrollbar h-screen lg:hidden fixed inset-0 bg-opacity-30 backdrop-blur z-10"
                 >
-                    <aside className="flex flex-col w-64 h-full px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
+                    <aside className="flex flex-col w-64 h-screen px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
                         <Link to='/'>
                             <img className="h-8" src="/voolata_long_r.png" alt="" />
                         </Link>
@@ -118,39 +115,37 @@ export default function Header() {
                         <div className="flex flex-col flex-grow justify-between mt-1">
                             <nav>
                                 <hr className="my-2 border-gray-200" />
+                                <Link to="/about-us" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/about" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <LuScrollText className='h-5 w-5' />
+                                    <span className="mx-4 font-medium">About Us</span>
+                                </Link>
+                                {user && (
+                                    <Link to="/dashboard" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/dashboard" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                        <RxDashboard className='h-5 w-5' />
+                                        <span className="mx-4 font-medium">Dashboard</span>
+                                    </Link>
+                                )}
                                 <Link to="/donation" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <BiDonateHeart className='h-5 w-5' />
                                     <span className="mx-4 font-medium">Donate</span>
                                 </Link>
+                                {user && (
+                                    <Link to="/billing" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/billing" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                        <IoWalletOutline className='h-5 w-5' />
+                                        <span className="mx-4 font-medium">Billing</span>
+                                    </Link>
+                                )}
                                 <Link to="/plans" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/plans" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <RiMoneyRupeeCircleLine className='h-5 w-5' />
                                     <span className="mx-4 font-medium">Pricing</span>
-                                </Link>
-                                <Link to="/about-us" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/about" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                    <LuScrollText className='h-5 w-5' />
-                                    <span className="mx-4 font-medium">About Us</span>
                                 </Link>
                                 <Link to="/contact" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/contact" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <FiPhone className='h-5 w-5' />
                                     <span className="mx-4 font-medium">Contact</span>
                                 </Link>
-
-                                {user && (
-                                    <>
-                                        <hr className="my-6 border-gray-200 dark:border-gray-600" />
-                                        <Link to="/dashboard" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/dashboard" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                            <RxDashboard className='h-5 w-5' />
-                                            <span className="mx-4 font-medium">Dashboard</span>
-                                        </Link>
-                                        <Link to="/billing" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/billing" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                            <IoWalletOutline className='h-5 w-5' />
-                                            <span className="mx-4 font-medium">Billing</span>
-                                        </Link>
-                                    </>
-                                )}
                             </nav>
 
-                            <div className="mt-auto pb-20">
+                            <div className="pb-5">
                                 {user ? (
                                     <div className="flex items-center justify-center gap-2">
                                         <Link to="/profile" className='flex items-center'>

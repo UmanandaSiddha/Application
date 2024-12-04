@@ -28,6 +28,7 @@ const medicalSchema = new mongoose.Schema(
         height: Number,
         weight: Number,
         age: Number,
+        allergyHistory_Other: String,
         chronicHistory_Other: String,
         diet_Other: String,
         exercise_Other: String,

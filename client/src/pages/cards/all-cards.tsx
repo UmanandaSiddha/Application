@@ -46,6 +46,26 @@ const qrStyles: Record<string, { qrColor: string; dotColor: string }> = {
 
 export const createQRCode = (type: string, cardId: string) => {
     const styles = type && qrStyles[type] ? qrStyles[type] : qrStyles.default;
+    let imgUrl;
+    switch (type) {
+        case "botanical":
+            imgUrl = `${window.location.protocol}//${window.location.host}/botanical.png`;
+            break;
+        case "individual":
+            imgUrl = `${window.location.protocol}//${window.location.host}/individual.png`;
+            break;
+        case "medical":
+            imgUrl = `${window.location.protocol}//${window.location.host}/medical.png`;
+            break;
+        case "creator":
+            imgUrl = `${window.location.protocol}//${window.location.host}/creator.png`;
+            break;
+        case "animal":
+            imgUrl = `${window.location.protocol}//${window.location.host}/animal.png`;
+            break;
+        default:
+            imgUrl = `${window.location.protocol}//${window.location.host}/botanical.png`;
+    }
 
     return new QRCodeStyling({
         width: 1000,
@@ -57,7 +77,7 @@ export const createQRCode = (type: string, cardId: string) => {
             mode: "Byte",
             errorCorrectionLevel: "H",
         },
-        image: `${window.location.protocol}//${window.location.host}/${type}.png`,
+        image: imgUrl,
         imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,

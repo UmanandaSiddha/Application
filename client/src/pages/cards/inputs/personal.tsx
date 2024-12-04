@@ -92,12 +92,14 @@ const interests = [
     { name: "cookingSkills", label: "Cooking Skills", text: "Cooking Skills", options: ["Novice", "Intermediate", "Expert"] },
 ];
 
-const personalValues = [
-    { name: "spiritual", label: "Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic"] },
-    { name: "core", label: "Core Values", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity"] },
-];
+// const personalValues = [
+//     { name: "spiritual", label: "Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic"] },
+//     { name: "core", label: "Core Values", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity"] },
+// ];
 
 const sepPersonal = [
+    { name: "spiritual", label: "Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic", "Other"] },
+    { name: "core", label: "Core Values", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity", "Other"] },
     { name: "philosophy", label: "Philosophies", text: "Philosophies I Believe In", options: ["Stoicism", "Existentialism", "Humanism", "Nihilism", "Other"] },
     { name: "socialCause", label: "Causes I Support", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education", "Other"] },
 ]
@@ -110,8 +112,8 @@ const professional = [
 ];
 
 const additionalInfo = [
-    { name: "globalIssues", label: "globalIssues", text: "globalIssues" },
-    { name: "weirdBelief", label: "weirdBelief", text: "weirdBelief" },
+    { name: "globalIssues", label: "Global Issues", text: "Enter Global Issues" },
+    { name: "weirdBelief", label: "Weird Belief", text: "Enter Weird Belief" },
     { name: "otherInterests", label: "Other Interests", text: "Any Other Interests" },
     { name: "futureGoals", label: "Future Goals", text: "Future Goals" },
     { name: "current", label: "Currently Learning", text: "Things I'm Learning" },
@@ -120,6 +122,8 @@ const additionalInfo = [
 ];
 
 const otherInputs = [
+    { name: "spiritual_Other" },
+    { name: "core_Other" },
     { name: "philosophy_Other" },
     { name: "socialCause_Other" },
     { name: "travelMode_Other" },
@@ -180,7 +184,8 @@ const CreatePersonal = () => {
             Favourites,
             motto,
             interests,
-            personalValues,
+            sepPersonal,
+            // personalValues,
             professional,
             additionalInfo,
             otherInputs,
@@ -329,7 +334,7 @@ const CreatePersonal = () => {
                                 <input
                                     type="text"
                                     placeholder="Enter your name"
-                                    {...register("name", { required: true })}
+                                    {...register("name")}
                                     autoComplete="off"
                                     className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                 />
@@ -504,7 +509,7 @@ const CreatePersonal = () => {
                             </label>
                             <div className="relative h-16 w-full">
                                 <textarea
-                                    {...register("aboutMe", { required: true })}
+                                    {...register("aboutMe")}
                                     placeholder="Tell Something About Yourself"
                                     autoComplete="off"
                                     className="peer h-full  w-full resize-none border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50"
@@ -527,7 +532,7 @@ const CreatePersonal = () => {
                                         type={em.type}
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -550,7 +555,7 @@ const CreatePersonal = () => {
                                         type={em.type}
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -576,7 +581,7 @@ const CreatePersonal = () => {
                                         type={em.type}
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -599,7 +604,7 @@ const CreatePersonal = () => {
                                         type="text"
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -622,7 +627,6 @@ const CreatePersonal = () => {
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 {...register(sele.name, {
-                                                    required: true,
                                                     onChange: (e) => {
                                                         if (e.target.value !== "Other") {
                                                             setValue(`${sele.name}_Other`, "");
@@ -630,7 +634,7 @@ const CreatePersonal = () => {
                                                     },
                                                 })}
                                             >
-                                                <option key={index} value="" disabled className="text-slate-400">{sele.label}</option>
+                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
                                                 {sele.options.map((option, index) => (
                                                     <option key={index} value={option}>{option}</option>
                                                 ))}
@@ -650,7 +654,7 @@ const CreatePersonal = () => {
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`, { required: true })}
+                                                    {...register(`${sele.name}_Other`)}
                                                     autoComplete="off"
                                                     className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 />
@@ -680,7 +684,7 @@ const CreatePersonal = () => {
                                         type="text"
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -703,7 +707,6 @@ const CreatePersonal = () => {
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 {...register(sele.name, {
-                                                    required: true,
                                                     onChange: (e) => {
                                                         if (e.target.value !== "Other") {
                                                             setValue(`${sele.name}_Other`, "");
@@ -711,7 +714,7 @@ const CreatePersonal = () => {
                                                     },
                                                 })}
                                             >
-                                                <option key={index} value="" disabled className="text-slate-400">{sele.label}</option>
+                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
                                                 {sele.options.map((option, index) => (
                                                     <option key={index} value={option}>{option}</option>
                                                 ))}
@@ -731,7 +734,7 @@ const CreatePersonal = () => {
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`, { required: true })}
+                                                    {...register(`${sele.name}_Other`)}
                                                     autoComplete="off"
                                                     className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 />
@@ -761,7 +764,6 @@ const CreatePersonal = () => {
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 {...register(sele.name, {
-                                                    required: true,
                                                     onChange: (e) => {
                                                         if (e.target.value !== "Other") {
                                                             setValue(`${sele.name}_Other`, "");
@@ -769,7 +771,7 @@ const CreatePersonal = () => {
                                                     },
                                                 })}
                                             >
-                                                <option key={index} value="" disabled className="text-slate-400">{sele.label}</option>
+                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
                                                 {sele.options.map((option, index) => (
                                                     <option key={index} value={option}>{option}</option>
                                                 ))}
@@ -789,7 +791,7 @@ const CreatePersonal = () => {
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`, { required: true })}
+                                                    {...register(`${sele.name}_Other`)}
                                                     autoComplete="off"
                                                     className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 />
@@ -802,7 +804,7 @@ const CreatePersonal = () => {
                         })}
 
                         <h1 className="pt-4 text-2xl font-semibold">Personal Values</h1>
-                        {personalValues?.map((sele, index) => (
+                        {/* {personalValues?.map((sele, index) => (
                             <div className="relative w-full flex items-center" key={index}>
                                 <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
                                     {sele.label}
@@ -811,9 +813,9 @@ const CreatePersonal = () => {
                                     <select
                                         id={sele.name}
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                        {...register(sele.name, { required: true })}
+                                        {...register(sele.name)}
                                     >
-                                        <option key={index} value="" disabled className="text-slate-400">{sele.label}</option>
+                                        <option key={index} value="" className="text-slate-400">{sele.label}</option>
                                         {sele.options.map((option, index) => (
                                             <option key={index} value={option}>{option}</option>
                                         ))}
@@ -821,7 +823,7 @@ const CreatePersonal = () => {
                                     <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
                                 </div>
                             </div>
-                        ))}
+                        ))} */}
 
                         {sepPersonal?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
@@ -836,7 +838,6 @@ const CreatePersonal = () => {
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 {...register(sele.name, {
-                                                    required: true,
                                                     onChange: (e) => {
                                                         if (e.target.value !== "Other") {
                                                             setValue(`${sele.name}_Other`, "");
@@ -844,7 +845,7 @@ const CreatePersonal = () => {
                                                     },
                                                 })}
                                             >
-                                                <option key={index} value="" disabled className="text-slate-400">{sele.label}</option>
+                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
                                                 {sele.options.map((option, index) => (
                                                     <option key={index} value={option}>{option}</option>
                                                 ))}
@@ -864,7 +865,7 @@ const CreatePersonal = () => {
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`, { required: true })}
+                                                    {...register(`${sele.name}_Other`)}
                                                     autoComplete="off"
                                                     className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 />
@@ -894,7 +895,7 @@ const CreatePersonal = () => {
                                         type="text"
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />

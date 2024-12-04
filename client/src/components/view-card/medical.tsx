@@ -17,7 +17,7 @@ const MedicalComponent = ({ card }: PropsType) => {
     const data = [
         {
             name: "Known Allergies",
-            value: card?.allergyHistory
+            value: card?.allergyHistory === "Other" ? card.allergyHistory_Other : card?.allergyHistory
         },
         {
             name: "Chronic Meical Conditions",

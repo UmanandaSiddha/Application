@@ -54,6 +54,8 @@ const personalSchema = new mongoose.Schema(
         education: String,
         skills: String,
         travelMode_Other: String,
+        spiritual_Other: String,
+        core_Other: String,
         genre_Other: String,
         sports_Other: String,
         artistisPursuits_Other: String,

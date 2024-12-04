@@ -41,7 +41,7 @@ const medDetailBlood = [{ name: "blood", type: "text" }];
 const healthHistory = [
     {
         name: "allergyHistory", label: "Known Allergies", text: "Enter Known Allergies", type: "text",
-        options: ['Medications', 'Foods', 'Insects', 'Latex', 'Pollen']
+        options: ['Medications', 'Foods', 'Insects', 'Latex', 'Pollen', 'Other']
     },
     {
         name: "chronicHistory", label: "Chronic Conditions", text: "Enter Chronic Medical Conditions", type: "text",
@@ -72,6 +72,7 @@ const inSur = [
 const otherInputs = [
     { name: "exercise_Other", type: "text" },
     { name: "diet_Other", type: "text" },
+    { name: "allergyHistory_Other", type: "text" },
     { name: "chronicHistory_Other", type: "text" },
 ];
 
@@ -196,7 +197,7 @@ const MedicalInput = () => {
                                         type={pIn.type}
                                         id={pIn.name}
                                         placeholder={pIn.text}
-                                        {...register(pIn.name, { required: true })}
+                                        {...register(pIn.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -219,7 +220,7 @@ const MedicalInput = () => {
                                         type={em.type}
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -246,7 +247,7 @@ const MedicalInput = () => {
                                         type={em.type}
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -269,7 +270,6 @@ const MedicalInput = () => {
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 {...register(sele.name, {
-                                                    required: true,
                                                     onChange: (e) => {
                                                         if (e.target.value !== "Other") {
                                                             setValue(`${sele.name}_Other`, "");
@@ -277,7 +277,7 @@ const MedicalInput = () => {
                                                     },
                                                 })}
                                             >
-                                                <option key={index} value="" disabled className="text-slate-400">{sele.label}</option>
+                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
                                                 {sele.options.map((option, index) => (
                                                     <option key={index} value={option}>{option}</option>
                                                 ))}
@@ -297,7 +297,7 @@ const MedicalInput = () => {
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`, { required: true })}
+                                                    {...register(`${sele.name}_Other`)}
                                                     autoComplete="off"
                                                     className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 />
@@ -327,7 +327,7 @@ const MedicalInput = () => {
                                         type={em.type}
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />
@@ -344,9 +344,9 @@ const MedicalInput = () => {
                                 <select
                                     id={"blood"}
                                     className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    {...register("blood", { required: true })}
+                                    {...register("blood")}
                                 >
-                                    <option value="" disabled className="text-slate-400">Enter blood group</option>
+                                    <option value="" className="text-slate-400">Enter blood group</option>
                                     <option value="A+">A+</option>
                                     <option value="A-">A-</option>
                                     <option value="B+">B+</option>
@@ -374,7 +374,6 @@ const MedicalInput = () => {
                                                 id={sele.name}
                                                 className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 {...register(sele.name, {
-                                                    required: true,
                                                     onChange: (e) => {
                                                         if (e.target.value !== "Other") {
                                                             setValue(`${sele.name}_Other`, "");
@@ -382,7 +381,7 @@ const MedicalInput = () => {
                                                     },
                                                 })}
                                             >
-                                                <option key={index} value="" disabled className="text-slate-400">{sele.label}</option>
+                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
                                                 {sele.options.map((option, index) => (
                                                     <option key={index} value={option}>{option}</option>
                                                 ))}
@@ -402,7 +401,7 @@ const MedicalInput = () => {
                                                 <input
                                                     type="text"
                                                     placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`, { required: true })}
+                                                    {...register(`${sele.name}_Other`)}
                                                     autoComplete="off"
                                                     className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                                 />
@@ -429,7 +428,7 @@ const MedicalInput = () => {
                                 </label>
                                 <div className="relative h-16 w-full">
                                     <textarea
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         placeholder={em.text}
                                         id={em.name}
                                         autoComplete="off"
@@ -454,7 +453,7 @@ const MedicalInput = () => {
                                         type={em.type}
                                         id={em.name}
                                         placeholder={em.text}
-                                        {...register(em.name, { required: true })}
+                                        {...register(em.name)}
                                         autoComplete="off"
                                         className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                                     />

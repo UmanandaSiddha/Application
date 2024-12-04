@@ -18,7 +18,7 @@ const Dashboard = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [countData, setCountData] = useState(1);
     const [cards, setCards] = useState<Tree[] | Personal[] | MedicalType[] | Creator[] | Animal[] | null>();
-    const [cardTypes, setCardTypes] = useState<string>(type || "");
+    const [cardTypes, setCardTypes] = useState<string>(type || "botanical");
 
     const fetchData = async (page: number) => {
         setLoading(true);
@@ -41,15 +41,13 @@ const Dashboard = () => {
     }, [currentPage, type]);
 
     useEffect(() => {
-        setSearch({ ...search, type: "botanical" });
-        if (type) {
-            setCardTypes(type);
-        }
+        setSearch({ ...search, type: "botanical" }, { replace: true });
+        setCardTypes("botanical");
     }, []);
 
     useEffect(() => {
         if (type && type !== cardTypes) {
-            setSearch({...search, type: cardTypes });
+            setSearch({...search, type: cardTypes }, { replace: true });
         }
     }, [type, cardTypes]);
 

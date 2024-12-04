@@ -27,7 +27,7 @@ const HomePage = () => {
                         <Link to={'/dashboard'}>Get Started</Link>
                     </button>
                     <button className='uppercase bg-white border-2 text-sm sm:text-lg border-purple-800 text-purple-800 sm:h-16 md:w-48 w-28 h-14 font-semibold rounded-lg'>
-                        <Link to={'/donation'}>donate</Link>
+                        <Link to={'/donation'}>Donate</Link>
                     </button>
                 </div>
                 <p className='text-center md:text-xl font-normal max-sm:w-[90%] '>
@@ -168,7 +168,7 @@ const HomePage = () => {
                 </div>
             </div>
 
-            <div className='w-[85%] mx-auto' >
+            {/* <div className='w-[85%] mx-auto' >
                 <h1 className='text-3xl md:text-6xl font-semibold sm:pb-20 sm:pt-16'>WHY WE NEED YOUR <span className='text-purple-500'>SUPPORT</span> </h1>
                 <div className='flex flex-col lg:flex-row lg:gap-10'>
                     <div className='flex flex-col h-96 max-lg:pt-20 lg:pt-16 lg:shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.3)] lg:w-1/3 gap-5 lg:rounded-xl max-lg:border-b-black max-lg:border-b-[3px] border-dotted lg:border-red-400 lg:border-2 lg:p-5'>
@@ -233,7 +233,7 @@ const HomePage = () => {
                     Together, we can create a future where technology drives sustainable development and enhances the quality of life for all. Join us in our mission to make a positive impact on the world.
                 </p>
                 <h2 className='md:text-3xl pb-56'><span className="text-blue-500 font-semibold"><Link to={'/donate'}>Donate</Link></span> Now and be a part of the <span className='text-purple-500'>CHANGE!</span></h2>
-            </div>
+            </div> */}
         </div>
     )
 }

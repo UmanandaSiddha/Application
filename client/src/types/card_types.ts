@@ -95,6 +95,8 @@ export type Personal = {
     cookingSkills_Other: string,
     currentOcupation_Other: string,
     careerAspiation_Other: string,
+    spiritual_Other: string,
+    core_Other: string,
     education_Other: string,
     skills_Other: string,
     spiritual: string,
@@ -145,6 +147,7 @@ export type MedicalType = {
     height: number;
     weight: number;
     age: number;
+    allergyHistory_Other: string;
     chronicHistory_Other: string;
     diet_Other: string;
     exercise_Other: string;
