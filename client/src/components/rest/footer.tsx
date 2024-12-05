@@ -1,8 +1,8 @@
 const Footer = () => {
     return (
-        <div className="lg:mt-36">
-            <div className="flex lg:pt-56 lg:pb-10 pt-20 justify-center items-center  bg-purple-800 tilted-top">
-                <div className="flex flex-col max-sm:pb-36 md:flex-row justify-center md:p-24 mb-10 pt-32 px-10 mx-auto w-[90%] lg:gap-24 gap-10">
+        <div className="lg:mt-36 mt-20">
+            <div className="flex lg:pt-20 lg:pb-10  justify-center items-center bg-purple-800 tilted-top tilted-top-sm">
+                <div className="flex flex-col max-sm:pb-10 md:flex-row justify-center md:p-24 mb-10 pt-32 px-10 mx-auto w-[90%] lg:gap-24 gap-10">
                     <div className="flex flex-col items-center md:items-start">
                         <h2 className="text-white text-2xl font-medium">
                             <div className="flex items-center justify-center space-x-2 -m-1.5 p-1.5">
