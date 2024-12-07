@@ -6,6 +6,9 @@ import { getGoogleAuthUrl } from "@/lib/google";
 import { useState } from "react";
 import axios from "axios";
 import { UserResponse } from "@/types/api-types";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Loader2 } from "lucide-react";
+import { RxCross2 } from "react-icons/rx";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -25,6 +28,10 @@ const Login = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!userData.email ||!userData.password) {
+            toast.warning("All fields are required");
+            return;
+        }
         setLoginLoading(true);
         try {
             const config = {
@@ -38,11 +45,17 @@ const Login = () => {
         } catch (error: any) {
             dispatch(userNotExist());
             toast.error(error.response.data.message);
+        } finally {
+            setLoginLoading(false);
         }
-        setLoginLoading(false);
     };
 
-    const onForgot = async () => {
+    const onForgot = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!userData.email) {
+            toast.warning("Enter your email");
+            return;
+        }
         setForgotLoading(true);
         try {
             const config = {
@@ -50,13 +63,13 @@ const Login = () => {
                 withCredentials: true,
             };
             const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/password/forgot`, { email: userData.email }, config);
-            setIsOpen(false);
             toast.success(data.message);
         } catch (error: any) {
-            setIsOpen(false);
             toast.error(error.response.data.message);
+        } finally {
+            setIsOpen(false);
+            setForgotLoading(false);
         }
-        setForgotLoading(false);
     };
 
     function handleOnClose(e: React.MouseEvent<HTMLInputElement>) {
@@ -69,14 +82,14 @@ const Login = () => {
         <div className="bg-white dark:bg-gray-900">
             <div className="flex justify-center h-screen">
                 <div
-                    className="hidden bg-cover lg:block lg:w-2/3"
+                    className="hidden bg-cover lg:block lg:w-1/2"
                     style={{
                         backgroundImage: "url(https://images.unsplash.com/photo-1616763355603-9755a640a287?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80)"
                     }}
                 >
                     <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
                         <div>
-                            <img src="/voolata_long_w_r.png" alt="" className="w-36 pb-5" />
+                            <img src="/voolata_long_w_r.png" loading="lazy" alt="" className="w-36 pb-5" />
                             <p className="max-w-xl mt-3 text-gray-300">
                                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. In
                                 autem ipsa, nulla laboriosam dolores, repellendus perferendis libero suscipit nam temporibus
@@ -93,11 +106,12 @@ const Login = () => {
                         onClick={handleOnClose}
                     >
                         <div className="w-full max-w-md">
-                            <form className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-                                <div className="text-center">
-                                    <p className="m-3 text-xl text-gray-500 dark:text-gray-300">Request Reset Password</p>
+                            <form onSubmit={onForgot} className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-xl font-semibold text-gray-500">Request Reset Password</h2>
+                                    <button onClick={() => setIsOpen(false)}><RxCross2 size={24} /></button>
                                 </div>
-                                <div className="mb-8">
+                                <div className="mt-6 mb-8">
                                     <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
                                         Email Address
                                     </label>
@@ -115,12 +129,13 @@ const Login = () => {
                                 </div>
                                 <div className="flex items-center justify-center">
                                     <button
-                                        className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-purple-700 rounded-lg hover:bg-purple-400 focus:outline-none focus:bg-purple-400 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
+                                        className={`flex items-center justify-center gap-2 w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform ${forgotLoading ? "bg-purple-400" : "bg-purple-700"} rounded-lg hover:bg-purple-400 focus:outline-none focus:bg-purple-400 focus:ring focus:ring-purple-300 focus:ring-opacity-50`}
                                         type="submit"
-                                        onClick={onForgot}
                                         disabled={forgotLoading}
                                     >
-                                        {forgotLoading ? "Sending..." : "Send Email"}
+                                        {forgotLoading ? (
+                                            <><Loader2 className="animate-spin" />Hold on...</>
+                                        ) : "Submit"}
                                     </button>
                                 </div>
                             </form>
@@ -128,20 +143,21 @@ const Login = () => {
                     </div>
                 )}
 
-                <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-2/6">
+                <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-1/2">
                     <div className="flex-1">
                         <div className="text-center">
                             <div className="flex justify-center mx-auto">
-                                <img src="/voolata_long_r.png" alt="" className="w-36 mx-auto pb-5" />
+                                <img src="/voolata_long_r.png" loading="lazy" alt="" className="w-36 mx-auto pb-5" />
                             </div>
 
-                            <p className="mt-3 text-gray-500 dark:text-gray-300">Sign in to access your account</p>
+                            <p className="mt-3 text-gray-700 dark:text-gray-300">Sign in to access your account</p>
                         </div>
 
                         <div className="mt-8 px-4">
                             <form onSubmit={handleSubmit}>
+                                
                                 <div className="mt-6">
-                                    <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                                    <label htmlFor="email" className="block font-semibold mb-2 text-sm text-gray-600 dark:text-gray-200">
                                         Email Address
                                     </label>
                                     <input
@@ -159,33 +175,34 @@ const Login = () => {
 
                                 <div className="mt-6">
                                     <div className="flex justify-between mb-2">
-                                        <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">
+                                        <label htmlFor="password" className="text-sm font-semibold text-gray-600 dark:text-gray-200">
                                             Password
                                         </label>
-                                        <p onClick={() => setIsOpen(true)} className="text-sm text-gray-400 focus:text-blue-500 hover:text-blue-500 hover:underline">
+                                        <p onClick={() => setIsOpen(true)} className="text-sm cursor-pointer text-gray-500 focus:text-purple-500 hover:text-purple-500 hover:underline">
                                             Forgot password?
                                         </p>
                                     </div>
 
                                     <div className="relative flex items-center mt-2">
-                                        <button 
-                                            type="button" 
+                                        <button
+                                            type="button"
                                             onClick={() => {
                                                 passwordType === "password" ? setPasswordType("text") : setPasswordType("password");
-                                            }} 
+                                            }}
                                             className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
-                                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clipRule="evenodd" />
-                                            </svg>
+                                            {passwordType === "password" ? (
+                                                <FaEyeSlash className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                            ) : (
+                                                <FaEye className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                            )}
                                         </button>
 
                                         <input
                                             type={passwordType}
                                             name="password"
                                             id="password"
-                                            placeholder="Your Password"
+                                            placeholder="**********"
                                             className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-purple-400 dark:focus:border-purple-400 focus:ring-purple-400 focus:outline-none focus:ring focus:ring-opacity-40"
                                             value={userData.password}
                                             onChange={(e) =>
@@ -199,10 +216,12 @@ const Login = () => {
                                 <div className="mt-6">
                                     <button
                                         type="submit"
-                                        className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-purple-700 rounded-lg hover:bg-purple-400 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
+                                        className={`flex items-center justify-center gap-2 w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform ${loginLoading ? "bg-purple-500" : "bg-purple-700"} rounded-lg hover:bg-purple-500 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-purple-300 focus:ring-opacity-50`}
                                         disabled={loginLoading}
                                     >
-                                        {loginLoading ? "Signing in..." : "Sign in"}
+                                        {loginLoading ? (
+                                            <><Loader2 className="animate-spin" />Signing in...</>
+                                        ) : "Sign in"}
                                     </button>
 
 

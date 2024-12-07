@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState, ChangeEvent, KeyboardEvent } from "react";
 import { toast } from "react-toastify";
 
@@ -75,9 +76,9 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onOtpSubmit = () => { }
             <button
                 onClick={handleSubmit}
                 disabled={disabled}
-                className="mt-2 text-white tracking-wide text-md lg:text-md font-bold px-5 py-3 capitalize transition-colors duration-300 transform bg-purple-500 hover:bg-purple-400 focus:outline-none focus:ring focus:ring-purple-300 focus:ring-opacity-50 rounded-md"
+                className="flex items-center justify-center gap-2 mt-2 text-white tracking-wide text-md lg:text-md font-bold px-5 py-3 capitalize transition-colors duration-300 transform bg-purple-500 hover:bg-purple-400 focus:outline-none focus:ring focus:ring-purple-300 focus:ring-opacity-50 rounded-md"
             >
-                Verify & Proceed
+                {disabled && (<Loader2 className="animate-spin" />)}Submit
             </button>
         </div>
     );

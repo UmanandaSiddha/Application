@@ -49,7 +49,7 @@ export default function Header() {
         <header className="bg-white fixed top-0 left-0 right-0 z-50 h-16 md:h-18">
             <nav className="mx-auto w-full md:w-[80%] flex items-center justify-between px-6 py-4">
                 <Link to='/'>
-                    <img className="h-8 w-fit" src="/voolata_long_r.png" alt="" />
+                    <img className="h-8 w-auto" src="/voolata_long_r.png" alt="" />
                 </Link>
                 <div className="hidden lg:flex lg:gap-x-12">
                     <Link to='/donation' className="text-md font-semibold leading-6">

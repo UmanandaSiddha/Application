@@ -2,6 +2,7 @@ import OtpInput from "@/components/rest/otp-input";
 import { donatorExist, donatorNotExist } from "@/redux/reducer/donatorReducer";
 import { DonatorResponse } from "@/types/api-types";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -19,20 +20,20 @@ const DonationLogin = () => {
 
     const handleEmail = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setEmailLoading(true);
         if (!email) {
             toast.warning("Email is required");
-            setEmailLoading(false);
             return;
         };
+        setEmailLoading(true);
         try {
             await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/send/otp`, { email }, { withCredentials: true });
             toast.success("Email sent successfully");
             setEmailSent(true);
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setEmailLoading(false);
         }
-        setEmailLoading(false);
     }
 
     const onOtpSubmit = async (otp: string) => {
@@ -80,16 +81,17 @@ const DonationLogin = () => {
                             <button
                                 type="submit"
                                 disabled={emailLoading}
-                                className="px-6 py-3 text-md font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-500 rounded-lg hover:bg-purple-400 focus:outline-none focus:ring focus:ring-purple-300 focus:ring-opacity-50"
+                                className="flex items-center justify-center gap-2 px-6 py-3 text-md font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-500 rounded-lg hover:bg-purple-400 focus:outline-none focus:ring focus:ring-purple-300 focus:ring-opacity-50"
                             >
-                                {emailLoading ? "Hold on..." : "Send Email"}
+                                {emailLoading ? (
+                                    <><Loader2 className="animate-spin" />Hold on...</>
+                                ) : "Submit"}
                             </button>
                         </form>
 
                         <hr className="w-full border border-gray-400" />
 
                         <h1 className="text-2xl lg:text-3xl text-purple-600 font-semibold pb-4">Enter OTP here</h1>
-                        {/* <h2 className="text-md lg:text-lg text-black mb-4">Enter OTP here</h2> */}
 
                         <OtpInput length={6} disabled={emailLoading} onOtpSubmit={onOtpSubmit} />
                     </div>

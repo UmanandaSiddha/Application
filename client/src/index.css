@@ -57,6 +57,14 @@ body.no-scroll {
     overflow: hidden;
 }
 
-.tilted-top {
-    clip-path: polygon(0 0, 100% 10%, 100% 100%, 0% 100%);
+@media (min-width:640px){
+    .tilted-top {
+        clip-path: polygon(0 0, 100% 10%, 100% 100%, 0% 100%);
+    }
+}
+
+@media (max-width:640px){
+    .tilted-top-sm {
+        clip-path: polygon(0 0, 100% 4%, 100% 100%, 0% 100%);
+    }
 }

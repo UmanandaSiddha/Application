@@ -99,7 +99,7 @@ const PlanPage = () => {
                             <button className="w-16 mb-5 bg-purple-600 h-9 rounded-xl text-white font-medium">
                                 {plan.name}
                             </button>
-                            <p className="pb-10 text-gray-600">{plan.description}</p>
+                            <p className="pb-10 text-gray-600">{plan.description} Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatem aut cupiditate deserunt fugit nisi error!</p>
                             <h1 className="text-4xl md:text-5xl">
                                 <span className="font-semibold">Rs. {plan.amount}</span>{" "}
                                 <span className="text-sm">
@@ -149,14 +149,14 @@ const PlanPage = () => {
                     <h1 className="text-4xl md:text-5xl mb-5 pb-5">
                         <span className="font-semibold">Let's Talk!</span>
                     </h1>
-                    <hr />
+                    <hr className="border-[#757476] mt-5" />
                     <h1 className="pt-5">Details:</h1>
                     <ul className="list-none pb-5">
                         <li>Cards: 50</li>
                         <li>Period: monthly</li>
                         <li>Interval: 1</li>
                     </ul>
-                    <hr />
+                    <hr className="border-[#757476] mt-5" />
                     <button
                         onClick={() => navigate(`/request-custom`)}
                         className="w-full h-12 font-semibold rounded-xl mt-5 bg-[#2b233b] text-white"

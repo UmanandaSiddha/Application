@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { RootState } from "../../../redux/store";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SingleCreatorResponse } from "@/types/api-types";
 import axios from "axios";
 import SideBar from "@/components/rest/sidebar";
-import * as icons from 'simple-icons';
 import { IoMdLink } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
+import { setSvg } from "@/lib/helper";
 
 type ArrayInput = {
     name: string;
@@ -23,7 +23,7 @@ const inputs = [
     { name: "", label: "Facebook", text: "Enter Your Facebook Profile" },
     { name: "", label: "Discord", text: "Enter Your Discord Profile" },
     { name: "", label: "X", text: "Enter Your X Profile" },
-]
+];
 
 type LinkType = {
     name: string;
@@ -33,8 +33,7 @@ type LinkType = {
 
 const CreatorInput = () => {
     const navigate = useNavigate();
-    const [search] = useSearchParams();
-    const id = search.get("creatorId");
+    const { id } = useParams();
     const [name, setName] = useState("");
     const [otherLink, setOtherLink] = useState("");
     const [otherName, setOtherName] = useState("");
@@ -77,7 +76,6 @@ const CreatorInput = () => {
                 const updatedArr = [...arrData];
                 updatedArr[index] = {
                     ...updatedArr[index],
-                    // label: normalizedOtherName,
                     name: otherLink,
                     text: `Enter Your ${otherName} Profile`,
                 };
@@ -112,7 +110,6 @@ const CreatorInput = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setCreatorLoading(true);
         let final = [];
         for (let i = 0; i < arrData.length; i++) {
             const element = {
@@ -128,10 +125,10 @@ const CreatorInput = () => {
             links: final,
             user: user?._id,
         };
-
         if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
+            setCreatorLoading(true);
             try {
                 if (isCreator) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=creator`, creatorData, { withCredentials: true });
@@ -146,9 +143,10 @@ const CreatorInput = () => {
             } catch (error: any) {
                 toast.error(error.response.data.message);
                 navigate("/plans");
+            } finally {
+                setCreatorLoading(false);
             }
         }
-        setCreatorLoading(false);
     };
 
     function handleCloseForm(e: React.MouseEvent<HTMLInputElement>) {
@@ -156,16 +154,6 @@ const CreatorInput = () => {
             setOtherName("");
             setOtherLink("");
             setOpen(false);
-        }
-    }
-
-    const setSvg = (input: string) => {
-        const platformKey = `si${input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()}`;
-        const icon = icons[platformKey as keyof typeof icons];
-        if (icon) {
-            return icon.path;
-        } else {
-            return "";
         }
     }
 
@@ -178,20 +166,15 @@ const CreatorInput = () => {
     return (
         <div className="flex justify-center h-screen">
             <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
-                {/* Sidebar Section */}
                 <div className="basis-1/4 hidden lg:block">
                     <SideBar />
                 </div>
-
-                {/* Main Content Section */}
                 <div className="flex-1 lg:basis-3/4">
                     <div className="h-full flex flex-col">
-                        {/* Title */}
                         <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
                             Creator
                         </h1>
 
-                        {/* Progress Bar */}
                         <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
                             <div className="w-full h-2 bg-blue-100 rounded-full">
                                 <div
@@ -201,15 +184,12 @@ const CreatorInput = () => {
                             </div>
                         </div>
 
-                        {/* Scrollable Content */}
                         <div className="flex-1">
                             <div className="flex flex-col items-center">
-                                {/* Form */}
                                 <form
                                     onSubmit={handleSubmit}
                                     className="space-y-6 w-full lg:w-[70%] px-4 md:px-0"
                                 >
-                                    {/* Name Field */}
                                     <div className="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4">
                                         <label
                                             htmlFor="name"
@@ -231,7 +211,6 @@ const CreatorInput = () => {
                                         </div>
                                     </div>
 
-                                    {/* Socials Section */}
                                     <h1 className="text-2xl font-bold">Socials</h1>
                                     {arrData?.map((arr: LinkType, index: number) => (
                                         <div
@@ -303,7 +282,6 @@ const CreatorInput = () => {
                                         </div>
                                     ))}
 
-                                    {/* Add More Button */}
                                     <div className="flex justify-center">
                                         <button
                                             className="px-4 py-2 mt-4 rounded-lg w-full lg:w-[70%] text-white bg-black text-lg"
@@ -389,7 +367,6 @@ const CreatorInput = () => {
                                         </div>
                                     )}
 
-                                    {/* Submit Button */}
                                     <div className="flex justify-center pb-2">
                                         <button
                                             className="px-4 py-2 mt-4 rounded-lg w-full lg:w-[70%] text-white bg-[#5674DC] text-lg"

@@ -117,7 +117,7 @@ const App = () => {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/about-us" element={<HomePage />} />
                     <Route path="/plans" element={<PlanPage />} />
-                    <Route path="/d/:shortId" element={<DisplayCard />} />
+                    <Route path="/d/:shortId/:type?/:id?" element={<DisplayCard />} />
                     <Route path="/onboarding" element={<OnBoarding />} />
                     <Route path="/donation/login" element={<DonationLogin />} />
                     <Route path="/contact" element={<ContactUs />} />
@@ -148,7 +148,6 @@ const App = () => {
                         <Route path="/donation/billing" element={<DonationBilling />} />
                     </Route>
 
-                    <Route path="/request-custom" element={<RequestCustom />} />
                     <Route
                         element={loading ? (
                             <Loader />
@@ -157,20 +156,20 @@ const App = () => {
                         )}
                     >
                         <Route path="/view-custom" element={<ViewCustom />} />
-
+                        <Route path="/request-custom" element={<RequestCustom />} />
                         <Route path="/checkout" element={<Checkout />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/verify" element={<Verify />} />
                         <Route path="/billing" element={<BillingPage />} />
 
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/dashboard/cards" element={<AllCards />} />
-                        <Route path="/dashboard/cards/card" element={<ViewCard />} />
-                        <Route path="/dashboard/botanical/create" element={<CreateTree />} />
-                        <Route path="/dashboard/individual/create" element={<CreatePersonal />} />
-                        <Route path="/dashboard/medical/create" element={<MedicalInput />} />
-                        <Route path="/dashboard/creator/create" element={<CreatorInput />} />
-                        <Route path="/dashboard/animal/create" element={<CreateAnimal />} />
+                        <Route path="/dashboard/:type" element={<Dashboard />} />
+                        <Route path="/dashboard/cards/:type" element={<AllCards />} />
+                        <Route path="/dashboard/cards/card/:type/:id" element={<ViewCard />} />
+                        <Route path="/dashboard/botanical/create/:id?" element={<CreateTree />} />
+                        <Route path="/dashboard/individual/create/:id?" element={<CreatePersonal />} />
+                        <Route path="/dashboard/medical/create/:id?" element={<MedicalInput />} />
+                        <Route path="/dashboard/creator/create/:id?" element={<CreatorInput />} />
+                        <Route path="/dashboard/animal/create/:id?" element={<CreateAnimal />} />
                     </Route>
 
                     <Route path="*" element={<NotFound />} />

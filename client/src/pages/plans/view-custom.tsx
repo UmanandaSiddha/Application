@@ -15,7 +15,7 @@ const ViewCustom = () => {
     const id = search.get("id");
     const userId = search.get("user");
     const [plan, setPlan] = useState<Plan>();
-    const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
+    const { isPaid } = useSelector((state: RootState) => state.userReducer);
 
     const fetchCustomPlan = async () => {
         try {
@@ -44,83 +44,53 @@ const ViewCustom = () => {
     }
 
     return (
-        <div className="bg-white dark:bg-gray-900">
-            <div className="container px-6 py-8 mx-auto">
-                <div className="xl:items-center xl:-mx-8 xl:flex">
-                    <div className="flex flex-col items-center xl:items-start xl:mx-8">
-                        <h1 className="text-2xl font-medium text-gray-800 capitalize lg:text-3xl dark:text-white">Custom Plan {id}</h1>
-
-                        <div className="mt-4">
-                            <span className="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
-                            <span className="inline-block w-3 h-1 mx-1 bg-blue-500 rounded-full"></span>
-                            <span className="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
-                        </div>
+        <div className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] flex flex-col justify-center items-center py-6">
+            <div className="text-center">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold">
+                    Custom Plan
+                </h1>
+                <h2 className="pt-5 px-6 text-base md:text-lg lg:text-xl text-gray-600">
+                    {plan?.name}
+                </h2>
+            </div>
+            <div className="flex flex-wrap justify-center gap-6 mt-10 px-4 sm:px-6">
+                {plan ? (
+                    <div className="w-full sm:w-96 max-w-sm bg-gradient-to-b from-[#e1d7fa] to-[#ffffff] p-8 rounded-2xl shadow-md">
+                        <button className="w-20 mb-5 h-9 rounded-xl font-bold text-black bg-white">
+                            Custom
+                        </button>
+                        <p className="pb-10 text-gray-700">{plan.description}</p>
+                        <h1 className="text-4xl md:text-5xl">
+                            <span className="font-semibold">Rs. {plan.amount}</span>{" "}
+                            <span className="text-sm">
+                                Once in {plan.interval} {periodToDays(plan.period)}
+                                {plan.interval > 1 && "s"}
+                            </span>
+                        </h1>
+                        <hr className="border border-[#dddde0] mt-5" />
+                        <h1 className="pt-5">Details:</h1>
+                        <ul className="list-none pb-5">
+                            <li>Cards: {plan.cards}</li>
+                            <li>Period: {plan.period}</li>
+                            <li>Interval: {plan.interval}</li>
+                        </ul>
+                        <hr className="border border-[#e9e9eb] mt-5" />
+                        <button
+                            onClick={() => {
+                                if (isPaid) {
+                                    toast.warning("You already have a plan");
+                                    return;
+                                }
+                                navigate(`/checkout?id=${plan?._id}&type=custom`);
+                            }}
+                            className="w-full h-12 font-semibold rounded-xl mt-5 bg-[#2b233b] text-white"
+                        >
+                            Get Started
+                        </button>
                     </div>
-
-                    {plan ? (
-                        <div className="flex-1 xl:mx-8">
-                            <div className="mt-8 space-y-8 md:-mx-4 md:flex md:items-center md:justify-center md:space-y-0 xl:mt-0">
-                                <div className="max-w-sm mx-auto border rounded-lg md:mx-4 dark:border-gray-700">
-                                    <div className="p-6">
-                                        <h1 className="text-xl font-medium text-gray-700 capitalize lg:text-2xl dark:text-white">{plan?.name}</h1>
-
-                                        <p className="mt-4 text-gray-500 dark:text-gray-300">
-                                            {plan?.description}
-                                        </p>
-
-                                        <h2 className="mt-4 text-2xl font-semibold text-gray-700 sm:text-3xl dark:text-gray-300">Rs. {plan?.amount} <span className="text-sm text-gray-400">Once in {plan?.interval} {periodToDays(plan ? plan?.period : "weekly")}{plan?.interval && plan?.interval > 1 && "s"}</span></h2>
-
-                                        <p className="mt-1 text-gray-500 dark:text-gray-300">
-                                            {user?.activePlan?.planId === plan?._id && ["active", "pending"].includes(user?.activePlan?.status!) && ("active")}
-                                        </p>
-
-                                        <button
-                                            disabled={isPaid}
-                                            onClick={() => navigate(`/checkout?id=${plan?._id}`)}
-                                            className="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:bg-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-80"
-                                        >
-                                            Buy Plan
-                                        </button>
-                                    </div>
-
-                                    <hr className="border-gray-200 dark:border-gray-700" />
-
-                                    <div className="p-6">
-                                        <h1 className="text-lg font-medium text-gray-700 capitalize lg:text-xl dark:text-white">Details:</h1>
-
-                                        <div className="mt-8 space-y-4">
-                                            <div className="flex items-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-
-                                                <span className="mx-4 text-gray-700 dark:text-gray-300">Cards: {plan?.cards}</span>
-                                            </div>
-
-                                            <div className="flex items-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-
-                                                <span className="mx-4 text-gray-700 dark:text-gray-300">Period: {plan?.period}</span>
-                                            </div>
-
-                                            <div className="flex items-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-
-                                                <span className="mx-4 text-gray-700 dark:text-gray-300">Interval: {plan?.interval}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ): (
-                        <p className="mt-10 text-center text-2xl font-semibold">No Plan Here</p>
-                    )}
-                </div>
+                ) : (
+                    <p className="mt-10 text-center text-2xl font-semibold">No Plan Here</p>
+                )}
             </div>
         </div>
     )

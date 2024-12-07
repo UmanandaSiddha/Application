@@ -34,6 +34,7 @@ const Checkout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const id = search.get("id");
+    const type = search.get("type");
     const [plan, setPlan] = useState<Plan | null>();
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
     const [updateData, setUpdateData] = useState({
@@ -44,14 +45,15 @@ const Checkout = () => {
         postalCode: user?.billingAddress?.postalCode,
         country: user?.billingAddress?.country,
     });
-    const [updateLoading, setUpdateLoading] = useState<boolean>(false);
+    const [updateLoading, setUpdateLoading] = useState(false);
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
 
     const location = useLocation();
     const from = location.state?.from?.pathname || "/dashboard";
 
-    const fetchPlan = async () => {
+    const fetchPlan = async (url: string) => {
         try {
-            const { data }: { data: SinglePlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/details/${id}`, { withCredentials: true });
+            const { data }: { data: SinglePlanResponse } = await axios.get(url, { withCredentials: true });
             setPlan(data.plan);
         } catch (error: any) {
             console.log(error);
@@ -59,23 +61,29 @@ const Checkout = () => {
     }
 
     useEffect(() => {
+        let link;
+        if (type === "custom") {
+            link = `${import.meta.env.VITE_BASE_URL}/plan/custom/view/${id}?user=${user?._id}`;
+        } else {
+            link = `${import.meta.env.VITE_BASE_URL}/plan/details/${id}`;
+        }
         const plansData = window.sessionStorage.getItem("all_plans");
         if (plansData) {
             if (JSON.parse(plansData)?.created < Date.now()) {
                 window.localStorage.removeItem("all_plans");
-                fetchPlan();
+                fetchPlan(link);
             } else {
                 const currentPlan: Plan[] = JSON.parse(plansData).data.filter((cPlan: Plan) => cPlan._id === id);
                 if (currentPlan.length > 0) {
                     setPlan(currentPlan[0]);
                 } else {
-                    fetchPlan();
+                    fetchPlan(link);
                 }
             }
         } else {
-            fetchPlan();
+            fetchPlan(link);
         }
-    }, [id]);
+    }, [id, type]);
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -105,8 +113,9 @@ const Checkout = () => {
             toast.success("Billing details updated");
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setUpdateLoading(false);
         }
-        setUpdateLoading(false);
     }
 
     const handleCheckout = async (razId: string) => {
@@ -189,7 +198,7 @@ const Checkout = () => {
     };
 
     return (
-        <div className="w-[80%] mx-auto mt-8 mb-12">
+        <div className="w-[95%] md:w-[80%] mx-auto mt-8 mb-12">
             {/* <div className="flex justify-center items-center gap-4">
                 {open && (
                     <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex flex-col justify-center items-center z-10">

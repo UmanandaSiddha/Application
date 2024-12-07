@@ -13,10 +13,9 @@ import { IoShareOutline } from "react-icons/io5";
 import { IoDownloadOutline } from "react-icons/io5";
 import { HiMiniArrowSmallRight } from "react-icons/hi2";
 import { HiMiniArrowSmallLeft } from "react-icons/hi2";
-import QRCodeStyling from "qr-code-styling";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     Animal,
     Creator,
@@ -27,6 +26,8 @@ import {
 import SideBar from "@/components/rest/sidebar";
 import { FaPlus } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
+import { createQRCode, typeStyles } from "@/lib/helper";
+import { GenerateQRCode } from "@/components/rest/generate-qr";
 
 export type CardType =
     | TreeResponse
@@ -35,122 +36,9 @@ export type CardType =
     | CreatorResponse
     | AnimalResponse;
 
-const qrStyles: Record<string, { qrColor: string; dotColor: string }> = {
-    botanical: { qrColor: "#4ade80", dotColor: "#22c55e" },
-    individual: { qrColor: "#60a5fa", dotColor: "#3b82f6" },
-    medical: { qrColor: "#818cf8", dotColor: "#6366f1" },
-    creator: { qrColor: "#22d3ee", dotColor: "#06b6d4" },
-    animal: { qrColor: "#f87171", dotColor: "#ef4444" },
-    default: { qrColor: "#9ca3af", dotColor: "#6b7280" },
-};
-
-export const createQRCode = (type: string, cardId: string) => {
-    const styles = type && qrStyles[type] ? qrStyles[type] : qrStyles.default;
-    let imgUrl;
-    switch (type) {
-        case "botanical":
-            imgUrl = `${window.location.protocol}//${window.location.host}/botanical.png`;
-            break;
-        case "individual":
-            imgUrl = `${window.location.protocol}//${window.location.host}/individual.png`;
-            break;
-        case "medical":
-            imgUrl = `${window.location.protocol}//${window.location.host}/medical.png`;
-            break;
-        case "creator":
-            imgUrl = `${window.location.protocol}//${window.location.host}/creator.png`;
-            break;
-        case "animal":
-            imgUrl = `${window.location.protocol}//${window.location.host}/animal.png`;
-            break;
-        default:
-            imgUrl = `${window.location.protocol}//${window.location.host}/botanical.png`;
-    }
-
-    return new QRCodeStyling({
-        width: 1000,
-        height: 1000,
-        margin: 50,
-        data: `${window.location.protocol}//${window.location.host}/d/${cardId}`,
-        qrOptions: {
-            typeNumber: 0,
-            mode: "Byte",
-            errorCorrectionLevel: "H",
-        },
-        image: imgUrl,
-        imageOptions: {
-            hideBackgroundDots: true,
-            imageSize: 0.4,
-            margin: 20,
-        },
-        dotsOptions: {
-            type: "extra-rounded",
-            color: styles.qrColor,
-        },
-        backgroundOptions: {
-            color: "#ffffff",
-        },
-        cornersSquareOptions: {
-            type: "extra-rounded",
-            color: styles.dotColor,
-        },
-        cornersDotOptions: {
-            color: styles.qrColor,
-        },
-    });
-};
-
-export const GenerateQRCode = ({ type, card, way }: {
-    type: string;
-    card: Tree | Personal | MedicalType | Creator | Animal;
-    way?: string;
-}) => {
-    const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
-
-    useEffect(() => {
-        const qrCode = createQRCode(type, card.shortCode);
-
-        qrCode.getRawData("png").then((data) => {
-            if (data) {
-                const dataUrl = URL.createObjectURL(new Blob([data], { type: "image/png" }));
-                setQrCodeDataUrl(dataUrl);
-            }
-        });
-    }, [type, card]);
-
-    if (way && way === "qr-group") {
-        return (
-            <div className="h-full w-full">
-                <div className="bg-white rounded-xl">
-                    {qrCodeDataUrl ? (
-                        <img src={qrCodeDataUrl} alt={card._id} className="rounded-lg object-cover" />
-                    ) : (
-                        <Loader2 className="text-center animate-spin" />
-                    )}
-                </div>
-                <div className="flex items-center justify-center mt-3 text-lg text-black font-medium">
-                    {card.name}
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="flex flex-col justify-center items-center p-4 rounded-xl bg-white shadow-lg border gap-2">
-            {qrCodeDataUrl ? (
-                <img src={qrCodeDataUrl} alt={card.name} className="h-40 w-40 rounded-lg" />
-            ) : (
-                <Loader2 className="text-center animate-spin" />
-            )}
-            <p>{card.name}</p>
-        </div>
-    );
-};
-
 const AllCards = () => {
     const navigate = useNavigate();
-    const [search] = useSearchParams();
-    const type = search.get("type");
+    const { type } = useParams();
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [countData, setCountData] = useState(1);
@@ -199,15 +87,6 @@ const AllCards = () => {
         }
     };
 
-    const typeStyles: Record<string, { backgroundColor: string, textColor: string, mdBackgroundColor: string, iconColor: string }> = {
-        botanical: { backgroundColor: "bg-green-200", textColor: "bg-green-500", mdBackgroundColor: "md:bg-green-500", iconColor: "text-green-500" },
-        individual: { backgroundColor: "bg-blue-200", textColor: "bg-blue-500", mdBackgroundColor: "md:bg-blue-500", iconColor: "text-blue-500" },
-        animal: { backgroundColor: "bg-red-200", textColor: "bg-red-500", mdBackgroundColor: "md:bg-red-500", iconColor: "text-red-500" },
-        creator: { backgroundColor: "bg-cyan-200", textColor: "bg-cyan-500", mdBackgroundColor: "md:bg-cyan-500", iconColor: "text-cyan-500" },
-        medical: { backgroundColor: "bg-indigo-200", textColor: "bg-indigo-500", mdBackgroundColor: "md:bg-indigo-500", iconColor: "text-indigo-500" },
-        default: { backgroundColor: "bg-gray-200", textColor: "bg-gray-500", mdBackgroundColor: "md:bg-gray-500", iconColor: "text-gray-500" }
-    };
-
     const styles = type && typeStyles[type] ? typeStyles[type] : typeStyles.default;
 
     const handleDownload = () => {
@@ -216,7 +95,7 @@ const AllCards = () => {
 
             qrCode.download({
                 name: cards?.[currentIndex]._id,
-                extension: "png" // jpeg //svg
+                extension: "png"
             });
         }
     }
@@ -258,7 +137,7 @@ const AllCards = () => {
 
                             {loading ? (
                                 <div>
-                                    <Loader2 />
+                                    <Loader2 className="text-center animate-spin" />
                                 </div>
                             ) : (
                                 <div>
@@ -266,7 +145,6 @@ const AllCards = () => {
                                         <div className="flex flex-row justify-evenly items-center pt-4 space-x-6 px-4">
                                             <button
                                                 className={`p-1 rounded-full ${styles.textColor} text-white flex justify-center items-center hover:cursor-pointer`}
-                                                // onClick={prevQR}
                                                 onClick={handlePrev}
                                                 disabled={currentPage === 1 && currentIndex === 0}
                                             >
@@ -277,7 +155,7 @@ const AllCards = () => {
                                                     <div
                                                         key={card._id}
                                                         className={`flex h-66 w-48 md:w-56 flex-col transition-transform duration-300 ease-in-out ${index === currentIndex ? 'block' : 'hidden'}`}
-                                                        onClick={() => navigate(`/dashboard/cards/card?id=${card._id}&type=${type}`)}
+                                                        onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)}
                                                     >
                                                         <GenerateQRCode way="qr-group" card={card} type={type || "botanical"} />
                                                     </div>
@@ -286,7 +164,6 @@ const AllCards = () => {
                                             </div>
                                             <button
                                                 className={`p-1 rounded-full ${styles.textColor} text-white flex justify-center items-center hover:cursor-pointer`}
-                                                // onClick={nextQR}
                                                 onClick={handleNext}
                                                 disabled={currentPage * 5 >= countData && currentIndex === cards.length - 1}
                                             >
@@ -300,7 +177,6 @@ const AllCards = () => {
                                     )}
                                 </div>
                             )}
-
                             <div className='flex flex-col md:pt-6 pt-12 space-y-6 md:w-2/3 w-3/4'>
                                 {cards && cards?.length > 0 && (
                                     <div className='flex flow-row justify-evenly space-x-4 w-full'>
@@ -324,7 +200,6 @@ const AllCards = () => {
                                     <p>Add New Card</p>
                                 </button>
                             </div>
-
                         </div>
                     </div>
                 </div>

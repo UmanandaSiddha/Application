@@ -3,17 +3,18 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdOutlineNavigateNext } from "react-icons/md";
-import { CardType, createQRCode, GenerateQRCode } from "../cards/all-cards";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { CardType } from "../cards/all-cards";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
 import { toast } from "react-toastify";
+import { createQRCode, typeStyles } from "@/lib/helper";
+import { GenerateQRCode } from "@/components/rest/generate-qr";
 
 const Dashboard = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [search, setSearch] = useSearchParams();
-    const type = search.get("type");
+    const { type } = useParams();
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [countData, setCountData] = useState(1);
@@ -41,13 +42,8 @@ const Dashboard = () => {
     }, [currentPage, type]);
 
     useEffect(() => {
-        setSearch({ ...search, type: "botanical" }, { replace: true });
-        setCardTypes("botanical");
-    }, []);
-
-    useEffect(() => {
         if (type && type !== cardTypes) {
-            setSearch({...search, type: cardTypes }, { replace: true });
+            navigate(`/dashboard/${cardTypes}`, { replace: true });
         }
     }, [type, cardTypes]);
 
@@ -73,15 +69,6 @@ const Dashboard = () => {
         }
     };
 
-    const typeStyles: Record<string, { backgroundColor: string, textColor: string, mdBackgroundColor: string, iconColor: string }> = {
-        botanical: { backgroundColor: "bg-green-200", textColor: "bg-green-500", mdBackgroundColor: "md:bg-green-500", iconColor: "text-green-500" },
-        individual: { backgroundColor: "bg-blue-200", textColor: "bg-blue-500", mdBackgroundColor: "md:bg-blue-500", iconColor: "text-blue-500" },
-        animal: { backgroundColor: "bg-red-200", textColor: "bg-red-500", mdBackgroundColor: "md:bg-red-500", iconColor: "text-red-500" },
-        creator: { backgroundColor: "bg-cyan-200", textColor: "bg-cyan-500", mdBackgroundColor: "md:bg-cyan-500", iconColor: "text-cyan-500" },
-        medical: { backgroundColor: "bg-indigo-200", textColor: "bg-indigo-500", mdBackgroundColor: "md:bg-indigo-500", iconColor: "text-indigo-500" },
-        default: { backgroundColor: "bg-gray-200", textColor: "bg-gray-500", mdBackgroundColor: "md:bg-gray-500", iconColor: "text-gray-500" }
-    };
-
     const styles = type && typeStyles[type] ? typeStyles[type] : typeStyles.default;
 
     const getCurrentCard = () => {
@@ -94,7 +81,7 @@ const Dashboard = () => {
     const handleEditCard = () => {
         const card = getCurrentCard();
         if (card) {
-            navigate(`/dashboard/${type}/create?${type}Id=${card?._id}`);
+            navigate(`/dashboard/${type}/create/${card?._id}`);
         } else {
             toast.error("Something went wrong");
         }
@@ -117,7 +104,7 @@ const Dashboard = () => {
     
             qrCode.download({
                 name: cards?.[currentIndex]._id,
-                extension: "png" // jpeg //svg
+                extension: "png"
             });
         }
     }
@@ -125,7 +112,7 @@ const Dashboard = () => {
     return (
         <div className="flex justify-center pt-6 pb-16 bg-gray-100">
             <div className="flex flex-row w-[80%] md:w-[90%] lg:w-[80%] md:space-x-4 lg:space-x-4">
-                <div className="basis-full md:basis-1/4 lg:basis-1/4 lg:block xl:block">
+                <div className="basis-full h-screen md:h-auto md:basis-1/4 lg:basis-1/4 lg:block xl:block">
                     <SideBar />
                 </div>
                 <div className="basis-3/4 hidden md:flex flex-col justify-center items-center lg:max-h-screen">
@@ -155,8 +142,6 @@ const Dashboard = () => {
                                     <div className="w-full flex flex-col items-center py-4 space-y-4">
                                         {cards && cards.length > 0 ? (
                                             <div className="flex flex-row justify-between items-center space-x-8">
-
-                                                {/* Previous Button */}
                                                 <button
                                                     className={`p-4 rounded-full ${styles.textColor} text-white black flex justify-center items-center hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed`}
                                                     onClick={handlePrev}
@@ -164,8 +149,6 @@ const Dashboard = () => {
                                                 >
                                                     <IoIosArrowBack className="w-6 h-6" />
                                                 </button>
-
-                                                {/* Cards */}
                                                 <div className="overflow-hidden flex justify-center items-center w-60 h-84">
                                                     {cards.map((card, index) => (
                                                         <div
@@ -173,15 +156,13 @@ const Dashboard = () => {
                                                             className={`flex h-full w-full transition-transform duration-300 ease-in-out ${index === currentIndex ? "block" : "hidden"
                                                                 }`}
                                                             onClick={() =>
-                                                                navigate(`/dashboard/cards/card?id=${card._id}&type=${type}`)
+                                                                navigate(`/dashboard/cards/card/${type}/${card._id}`)
                                                             }
                                                         >
                                                             <GenerateQRCode way="qr-group" card={card} type={type!} />
                                                         </div>
                                                     ))}
                                                 </div>
-
-                                                {/* Next Button */}
                                                 <button
                                                     className={`p-4 rounded-full ${styles.textColor} text-white flex justify-center items-center hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed`}
                                                     onClick={handleNext}
@@ -201,15 +182,19 @@ const Dashboard = () => {
                                 <button onClick={() => navigate(`/dashboard/${type}/create`)} className={`${styles.textColor} text-white px-5 py-3 text-lg font-medium rounded-md`}>
                                     New Card
                                 </button>
-                                <button onClick={handleEditCard} className={`${styles.textColor} text-white px-5 py-3 text-lg font-medium rounded-md`}>
-                                    Edit Card
-                                </button>
-                                <button onClick={handleDownloadCard} className={`${styles.textColor} text-white px-5 py-3 text-lg font-medium rounded-md`}>
-                                    Download
-                                </button>
-                                <button onClick={handleShareCard} className={`${styles.textColor} text-white px-5 py-3 text-lg font-medium rounded-md`}>
-                                    Share
-                                </button>
+                                {cards && cards.length > 0 && (
+                                    <>
+                                        <button onClick={handleEditCard} className={`${styles.textColor} text-white px-5 py-3 text-lg font-medium rounded-md`}>
+                                            Edit Card
+                                        </button>
+                                        <button onClick={handleDownloadCard} className={`${styles.textColor} text-white px-5 py-3 text-lg font-medium rounded-md`}>
+                                            Download
+                                        </button>
+                                        <button onClick={handleShareCard} className={`${styles.textColor} text-white px-5 py-3 text-lg font-medium rounded-md`}>
+                                            Share
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

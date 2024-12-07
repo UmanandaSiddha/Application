@@ -2,100 +2,31 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { toast } from "react-toastify";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { SingleMedicalResponse } from "@/types/api-types";
 import SideBar from "@/components/rest/sidebar";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-
-const perInfo = [
-    { name: "name", label: "Name", text: "Enter your name", type: "text" },
-    { name: "dateOfBirth", label: "Date of Birth", text: "Enter your Date of Birth", type: "date" },
-    { name: "gender", label: "Gender", text: "Enter your Gender", type: "text" },
-    { name: "phone", label: "Phone Number", text: "Enter your Phone Number", type: "tel" },
-    { name: "email", label: "Email Address", text: "Enter your Email Address", type: "email" }
-];
-
-const emCon = [
-    { name: "emergencyName", label: "Name", text: "Enter Name", type: "text" },
-    { name: "emergencyRelation", label: "Relation", text: "Enter Relationship", type: "text" },
-    { name: "emergencyPhone", label: "Phone", text: "Enter Phone Number", type: "tel" }
-];
-
-const medAdd = [
-    { name: "street", label: "Street", text: "Enter Street Address", type: "text" },
-    { name: "city", label: "City", text: "Enter City", type: "text" },
-    { name: "state", label: "State", text: "Enter State/Province", type: "text" },
-    { name: "postalCode", label: "Postal", text: "Enter Postal Code", type: "number" }
-];
-
-const medDetails = [
-    { name: "height", label: "Height", text: "Enter Height (in meters)", type: "number" },
-    { name: "weight", label: "Weight", text: "Enter Weight (in kgs)", type: "number" },
-    { name: "age", label: "Age", text: "Enter State/Province", type: "number" },
-];
-
-const medDetailBlood = [{ name: "blood", type: "text" }];
-
-const healthHistory = [
-    {
-        name: "allergyHistory", label: "Known Allergies", text: "Enter Known Allergies", type: "text",
-        options: ['Medications', 'Foods', 'Insects', 'Latex', 'Pollen', 'Other']
-    },
-    {
-        name: "chronicHistory", label: "Chronic Conditions", text: "Enter Chronic Medical Conditions", type: "text",
-        options: ['Diabetes', 'Hypertension', 'Asthma', 'Heart Disease', 'Arthritis', 'Thyroid Disorder', 'Chronic Pain', 'Respiratory Issues', 'Chronic Obstructive Pulmonary Disease (COPD)', 'Cardiovascular Diseases', 'Cancer', 'Chronic Kidney Disease (CKD)', 'Tuberculosis', 'Rheumatic Heart Disease', 'Hepatitis', 'Alzheimer’s Disease', 'Osteoarthritis', 'Rheumatoid Arthritis', 'Bronchitis', 'Emphysema', 'Cystic Fibrosis', 'Eczema', 'Endometriosis', 'Ehlers-Danlos Syndrome', 'Other']
-    }
-];
-
-const medicalCondition = [
-    { name: "currentMedication", label: "Current Medications", text: "Current Medications", type: "textarea" },
-    { name: "previousSurgeries", label: "Previous Surgeries", text: "Previous Surgeries", type: "textarea" },
-];
-
-const healthhabits = [
-    { name: "smoker", label: "Smoker", text: "Smoker", type: "text", options: ['Yes, currently', 'Used to, but quit', 'No'] },
-    { name: "alcohol", label: "Alcohol Consumption", text: "Alcohol Consumption", type: "text", options: ['Regularly', 'Occasionally', 'Rarely', 'Never'] },
-    { name: "exercise", label: "Exercise Routine", text: "Exercise Routine", type: "text", options: ['Regularly', 'Occasionally', 'Sedentary lifestyle', 'Gym, Yoga, Running, etc.', 'Other'] },
-    { name: "diet", label: "Dietary Preferences", text: "Dietary Preferences", type: "text", options: ['Vegetarian', 'Vegan', 'Gluten-free', 'Dairy-free', 'Other'] },
-    { name: "mentalCondition", label: "Mental Health ", text: "Mental Health", type: "text", options: ['Depression', 'Anxiety', 'Bipolar Disorder', 'PTSD', 'Eating Disorders', 'OCD'] },
-    { name: "vaccinationHistory", label: "Routine Vaccinations", text: "Routine Vaccinations", type: "text", options: ['Influenza', 'Tetanus', 'Hepatitis', 'Measles, Mumps, Rubella (MMR)', 'COVID-19'] }
-];
-
-const inSur = [
-    { name: "insuranceProvider", label: "Provider", text: "Insurance Provider", type: "text" },
-    { name: "insurancePolicyNumber", label: "Policy", text: "Policy Number", type: "number" },
-    { name: "insuranceGrpNumber", label: "Group", text: "Group Number (if applicable)", type: "number" }
-];
-
-const otherInputs = [
-    { name: "exercise_Other", type: "text" },
-    { name: "diet_Other", type: "text" },
-    { name: "allergyHistory_Other", type: "text" },
-    { name: "chronicHistory_Other", type: "text" },
-];
-
-const generateDefaultValues = (arrays: { name: string }[][]) => {
-    return arrays.reduce((acc, array) => {
-        array.forEach(field => {
-            acc[field.name] = "";
-        });
-        return acc;
-    }, {} as Record<string, string>);
-};
-
-const convertToStrings = (data: any) => {
-    return Object.keys(data).reduce((acc, key) => {
-        acc[key] = data[key] !== undefined && data[key] !== null ? String(data[key]) : "";
-        return acc;
-    }, {} as Record<string, string>);
-};
+import { convertToStrings, generateDefaultValues } from "@/lib/helper";
+import SelectInput from "@/components/rest/select-input";
+import {
+    emCon,
+    healthhabits,
+    healthHistory,
+    inSur,
+    medAdd,
+    medDetailBlood,
+    medDetails,
+    medicalCondition,
+    otherInputs,
+    perInfo
+} from "@/data/medical";
+import TextInput from "@/components/rest/text-input";
 
 const MedicalInput = () => {
     const navigate = useNavigate();
-    const [search] = useSearchParams();
-    const id = search.get("medicalId");
+    const { id } = useParams();
     const [progressBar, setProgressBar] = useState<number>(1);
     const [isMedical, setIsMedical] = useState<boolean>(id ? true : false);
     const [medicalLoading, setMedicalLoading] = useState<boolean>(false);
@@ -105,7 +36,15 @@ const MedicalInput = () => {
     );
 
     const form = useForm({
-        defaultValues: generateDefaultValues([perInfo, emCon, medAdd, healthHistory, healthhabits, inSur, medicalCondition]),
+        defaultValues: generateDefaultValues([
+            perInfo,
+            emCon,
+            medAdd,
+            healthHistory,
+            healthhabits,
+            inSur,
+            medicalCondition
+        ]),
     });
 
     const { handleSubmit, register, reset, watch, setValue } = form;
@@ -138,11 +77,6 @@ const MedicalInput = () => {
     }, [id, reset]);
 
     const onSubmit = async (values: any) => {
-
-        console.log("Form submitted with values:", values)
-
-        // setMedicalLoading(true);
-
         const inputs = [...perInfo, ...emCon, ...medAdd, ...medDetails, ...otherInputs, ...medDetailBlood, ...healthHistory, ...healthhabits, ...inSur, ...medicalCondition];
         const convertedValues = inputs.reduce((acc, input) => {
             if (input.type === "number") {
@@ -158,11 +92,10 @@ const MedicalInput = () => {
             user: user?._id,
         };
 
-        console.log(medicalData);
-
         if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
+            setMedicalLoading(true);
             try {
                 if (isMedical) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=medical`, medicalData, { withCredentials: true });
@@ -173,10 +106,10 @@ const MedicalInput = () => {
             } catch (error: any) {
                 toast.error(error.response.data.message);
                 navigate("/plans");
+            } finally {
+                setMedicalLoading(false);
             }
         }
-
-        setMedicalLoading(false);
     };
 
     const formParts = () => {
@@ -184,49 +117,27 @@ const MedicalInput = () => {
             case 1:
                 return (
                     <div className="space-y-4">
-                        {perInfo?.map((pIn, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={pIn.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {pIn.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type={pIn.type}
-                                        id={pIn.name}
-                                        placeholder={pIn.text}
-                                        {...register(pIn.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {perInfo?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
 
                         <h1 className="pt-4 text-2xl font-semibold">Emergency Contact</h1>
-                        {emCon?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type={em.type}
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {emCon?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
                     </div>
                 )
@@ -234,78 +145,31 @@ const MedicalInput = () => {
                 return (
                     <div className="space-y-4">
                         <h1 className="pt-4 text-2xl font-semibold">Address</h1>
-                        {medAdd?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type={em.type}
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {medAdd?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
 
                         <h1 className="pt-4 text-2xl font-semibold">Medical History</h1>
                         {healthHistory?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <div key={index}>
-                                    <div className="relative w-full flex items-center">
-                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}
-                                        </label>
-                                        <div className="relative h-11 w-full">
-                                            <select
-                                                id={sele.name}
-                                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                {...register(sele.name, {
-                                                    onChange: (e) => {
-                                                        if (e.target.value !== "Other") {
-                                                            setValue(`${sele.name}_Other`, "");
-                                                        }
-                                                    },
-                                                })}
-                                            >
-                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
-                                                {sele.options.map((option, index) => (
-                                                    <option key={index} value={option}>{option}</option>
-                                                ))}
-                                            </select>
-                                            <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                        </div>
-                                    </div>
-                                    {selectedValue === "Other" && (
-                                        <div className="relative w-full flex items-center">
-                                            <label
-                                                htmlFor={`${sele.name}_Other`}
-                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                            >
-                                                {sele.label} (Specify)
-                                            </label>
-                                            <div className="relative h-11 w-full">
-                                                <input
-                                                    type="text"
-                                                    placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`)}
-                                                    autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <SelectInput
+                                    key={index}
+                                    name={sele.name}
+                                    text={sele.text}
+                                    label={sele.label}
+                                    options={sele.options}
+                                    selectedValue={selectedValue}
+                                    setValue={setValue}
+                                    register={register}
+                                />
                             )
                         })}
                     </div>
@@ -314,102 +178,47 @@ const MedicalInput = () => {
                 return (
                     <div className="space-y-4">
                         <h1 className="pt-4 text-2xl font-semibold">Medical Details</h1>
-                        {medDetails?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 sm:min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type={em.type}
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {medDetails?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
 
-                        <div className="relative w-full flex items-center">
-                            <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24">
-                                Blood Group
-                            </label>
-                            <div className="relative h-11 w-full">
-                                <select
-                                    id={"blood"}
-                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    {...register("blood")}
-                                >
-                                    <option value="" className="text-slate-400">Enter blood group</option>
-                                    <option value="A+">A+</option>
-                                    <option value="A-">A-</option>
-                                    <option value="B+">B+</option>
-                                    <option value="B+">B+</option>
-                                    <option value="AB+">AB+</option>
-                                    <option value="AB-">AB-</option>
-                                    <option value="O+">O+</option>
-                                    <option value="O-">O-</option>
-                                </select>
-                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                            </div>
-                        </div>
+                        {medDetailBlood.map((sele, index) => {
+                            const selectedValue = watch(sele.name);
+                            return (
+                                <SelectInput
+                                    key={index}
+                                    name={sele.name}
+                                    text={sele.text}
+                                    label={sele.label}
+                                    options={sele.options}
+                                    selectedValue={selectedValue}
+                                    setValue={setValue}
+                                    register={register}
+                                />
+                            )
+                        })}
 
                         <h1 className="pt-4 text-2xl font-semibold">Health Habits</h1>
                         {healthhabits?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <div key={index}>
-                                    <div className="relative w-full flex items-center">
-                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}
-                                        </label>
-                                        <div className="relative h-11 w-full">
-                                            <select
-                                                id={sele.name}
-                                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                {...register(sele.name, {
-                                                    onChange: (e) => {
-                                                        if (e.target.value !== "Other") {
-                                                            setValue(`${sele.name}_Other`, "");
-                                                        }
-                                                    },
-                                                })}
-                                            >
-                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
-                                                {sele.options.map((option, index) => (
-                                                    <option key={index} value={option}>{option}</option>
-                                                ))}
-                                            </select>
-                                            <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                        </div>
-                                    </div>
-                                    {selectedValue === "Other" && (
-                                        <div className="relative w-full flex items-center">
-                                            <label
-                                                htmlFor={`${sele.name}_Other`}
-                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                            >
-                                                {sele.label} (Specify)
-                                            </label>
-                                            <div className="relative h-11 w-full">
-                                                <input
-                                                    type="text"
-                                                    placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`)}
-                                                    autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <SelectInput
+                                    key={index}
+                                    name={sele.name}
+                                    text={sele.text}
+                                    label={sele.label}
+                                    options={sele.options}
+                                    selectedValue={selectedValue}
+                                    setValue={setValue}
+                                    register={register}
+                                />
                             )
                         })}
                     </div>
@@ -418,48 +227,27 @@ const MedicalInput = () => {
                 return (
                     <div className="space-y-4">
                         <h1 className="pt-4 text-2xl font-semibold">Medical Conditions</h1>
-                        {medicalCondition?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-16 w-full">
-                                    <textarea
-                                        {...register(em.name)}
-                                        placeholder={em.text}
-                                        id={em.name}
-                                        autoComplete="off"
-                                        className="peer h-full min-h-[100px] w-full resize-none border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50"
-                                    ></textarea>
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {medicalCondition?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
 
                         <h1 className="pt-4 text-2xl font-semibold">Insurance Information</h1>
-                        {inSur?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type={em.type}
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {inSur?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
                     </div>
                 )
@@ -492,7 +280,6 @@ const MedicalInput = () => {
                         className="flex flex-col space-y-2 w-full lg:w-[90%] mx-auto px-4 md:px-0"
                     >
                         <div className="flex gap-10 lg:gap-20 justify-center items-center">
-                            {/* Previous Button for Larger Screens */}
                             <button
                                 className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-purple-400 text-base"
                                 type="button"
@@ -502,12 +289,10 @@ const MedicalInput = () => {
                                 <FaArrowLeft />
                             </button>
 
-                            {/* Scrollable Form Content */}
                             <div className="sm:h-[75vh] w-full overflow-y-auto hide-scrollbar flex-1 flex flex-col">
                                 {formParts()}
                             </div>
 
-                            {/* Next Button for Larger Screens */}
                             <button
                                 className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-purple-400 text-base"
                                 type="button"

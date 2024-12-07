@@ -3,15 +3,33 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SinglePersonalResponse } from "@/types/api-types";
 import SideBar from "@/components/rest/sidebar";
 import { IoMdLink } from "react-icons/io";
-import * as icons from 'simple-icons';
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import {
+    aboutPersonal,
+    additionalInfo,
+    contactInfo,
+    emailInfo,
+    Favourites,
+    interests,
+    lifestyle,
+    miscellaneous,
+    motto,
+    perosnalName,
+    professional,
+    sepPersonal,
+    socials
+} from "@/data/individual";
+import { convertToStrings, generateDefaultValues, setSvg } from "@/lib/helper";
+import { otherInputs } from "@/data/medical";
+import TextInput from "@/components/rest/text-input";
+import SelectInput from "@/components/rest/select-input";
 
 type LinkType = {
     name: string;
@@ -19,149 +37,9 @@ type LinkType = {
     text: string;
 }
 
-const perosnalName = [{ name: "name" }];
-
-const aboutPersonal = [{ name: "aboutMe" }];
-
-const contactInfo = [
-    { name: "mobileNumber", label: "Mobile", text: "Enter mobile phone number", type: "tel" },
-    { name: "homeNumber", label: "Home", text: "Enter home phone number", type: "tel" },
-    { name: "workNumber", label: "Work", text: "Enter work phone number", type: "tel" },
-    { name: "otherNumber", label: "Other", text: "Enter any other phone number", type: "tel" }
-];
-
-const emailInfo = [
-    { name: "personalEmail", label: "Personal", text: "Enter Personal Email Address", type: "text" },
-    { name: "workEmail", label: "Work", text: "Enter Work Email Address", type: "text" },
-    { name: "otherEmail", label: "Other", text: "Enter any other email address", type: "text" },
-];
-
-const socials = [
-    { name: "", label: "Instagram", text: "Enter Your Instagram Profile" },
-    { name: "", label: "Youtube", text: "Enter Your Youtube Profile" },
-    { name: "", label: "Facebook", text: "Enter Your Facebook Profile" },
-    { name: "", label: "Discord", text: "Enter Your Discord Profile" },
-    { name: "", label: "X", text: "Enter Your X Profile" },
-];
-
-const lifestyle = [
-    { name: "dateOfBirth", label: "Date of Birth", text: "Enter your Date of Birth", type: "date" },
-    { name: "homeTown", label: "Hometown", text: "Enter your Hometown", type: "text" },
-    { name: "currentCity", label: "Current City", text: "Enter your Current City", type: "text" },
-    { name: "languages", label: "Languages", text: "Enter languages spoken", type: "text" },
-];
-
-const Favourites = [
-    { name: "music", label: "Favourite Music", text: "Enter Favourite Music/Artists" },
-    { name: "color", label: "Favourite Color(s)", text: "Enter Favourite Color(s)" },
-    { name: "city", label: "Favourite City", text: "Enter Favourite City" },
-    { name: "travelDestination", label: "Favourite Destination", text: "Enter Favourite Destinations" },
-    { name: "season", label: "Favourite Season", text: "Enter Favourite Season" },
-    { name: "uniqueSkills", label: "Unique Skills", text: "Enter Unique Skills" },
-    { name: "cuisine", label: "Favourite Cuisine", text: "Enter Favourite Cuisine/Food" },
-    { name: "beverage", label: "Favourite Beverage", text: "Enter Beverage" },
-];
-
-const miscellaneous = [
-    { name: "petLover", label: "Pet Lover?", text: "Enter Yes/No", options: ["Yes", "No"] },
-    { name: "partyEnthusiast", label: "Party Enthusiast?", text: "Enter Yes/No", options: ["Yes", "No"] },
-    { name: "smoker", label: "Smoker?", text: "Enter Yes/No", options: ["Yes", "No"] },
-    { name: "maritalStatus", label: "Marital Status?", text: "Enter Yes/No", options: ["Single", "In a relationship", "Engaged", "Married"] },
-    { name: "relationshipStatus", label: "Relationship?", text: "Enter Yes/No", options: ["Just Exploring", "Committed", "It's complicated", "Single and Happy"] },
-    { name: "morningPerson", label: "Morning/Night Person?", text: "Enter Yes/No", options: ["Morning person", "Night Owl", "Somewhere in between", "Depends on the day"] },
-    { name: "sleepingHabit", label: "Sleeping Habits?", text: "Enter Sleeping Habits", options: ["Early Riser", "Night Owl", "Somewhere in between", "Depends on the day"] },
-    { name: "fitnessRoutine", label: "Fitness Routine", text: "Enter Fitness Routine", options: ["Daily fitness regime", "A few times a week", "Sometimes when I can", "Not much into fitness"] },
-    { name: "diet", label: "Dietary Preferences", text: "Enter Dietary Preferences", options: ["Vegetarian", "Vegan", "Omnivore", "Other"] },
-];
-
-const motto = [
-    { name: "inspirationalQuotes", label: "Inspirational", text: "Enter any Inspirational Quote" },
-    { name: "funnyQuotes", label: "Funny", text: "Enter any Funny Quote" },
-    { name: "motivationalQuotes", label: "Motivational", text: "Enter any Motivational Quote" },
-    { name: "otherQuotes", label: "Other", text: "Enter any Other Quote" },
-];
-
-const interests = [
-    { name: "travelMode", label: "Travel", text: "Enter your Preferred Mode of Travel", options: ["Airplane", "Train", "Cars", "Cruise", "Other"] },
-    { name: "genre", label: "Movies/ TV Shows", text: "Favorite Movies/TV Shows/Genres", options: ["Action", "Comedy", "Drama", "Sci-Fi/Fantasy", "Documentary", "Other"] },
-    { name: "sports", label: "Sports Activites", text: "Sports or Outdoor Activities", options: ["Basketball", "Tennis", "Hiking", "Cycling", "Swimming", "Other"] },
-    { name: "artistisPursuits", label: "Artistic Hobbies", text: "Artistic Pursuits/Hobbies", options: ["Drawing/Painting", "Photography", "Writing", "Crafts", "Music", "Other"] },
-    { name: "gaming", label: "Gaming Preferences", text: "Gaming Preferences", options: ["Action", "Adventure", "Puzzle", "Role-playing", "Simulation", "Other"] },
-    { name: "collectignHobby", label: "Collecting Hobby /Interest", text: "Collecting Hobby or Interest", options: ["Coins/Stamps", "Comics/Figurines", "Antiques", "Trading cards", "Memorabilia", "Other"] },
-    { name: "coffee", label: "Coffee or Tea?", text: "Coffee or Tea Lover", options: ["Coffee addict", "Tea enthusiast", "Both!", "None, prefer other beverages"] },
-    { name: "cookingSkills", label: "Cooking Skills", text: "Cooking Skills", options: ["Novice", "Intermediate", "Expert"] },
-];
-
-// const personalValues = [
-//     { name: "spiritual", label: "Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic"] },
-//     { name: "core", label: "Core Values", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity"] },
-// ];
-
-const sepPersonal = [
-    { name: "spiritual", label: "Beliefs", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic", "Other"] },
-    { name: "core", label: "Core Values", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity", "Other"] },
-    { name: "philosophy", label: "Philosophies", text: "Philosophies I Believe In", options: ["Stoicism", "Existentialism", "Humanism", "Nihilism", "Other"] },
-    { name: "socialCause", label: "Causes I Support", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education", "Other"] },
-]
-
-const professional = [
-    { name: "currentOcupation", label: "Current Occupation", text: "Enter Current Occupation/Industry", options: ["Technology", "Healthcare", "Education", "Finance", "Arts/Entertainment", "Other"] },
-    { name: "careerAspiation", label: "Career Aspiation", text: "Enter Career Aspirations/Goals", options: ["Leadership", "Entrepreneurship", "Creativity", "Advancement", "Other"] },
-    { name: "education", label: "Education Background", text: "Enter Education Background/Degrees", options: ["High School", "Bachelor's Degree", "Master's Degree", "Doctorate", "Other"] },
-    { name: "skills", label: "Professional Skills", text: "Enter Professional Skills or Expertise", options: ["Communication", "Problem-solving", "Teamwork", "Leadership", "Other"] },
-];
-
-const additionalInfo = [
-    { name: "globalIssues", label: "Global Issues", text: "Enter Global Issues" },
-    { name: "weirdBelief", label: "Weird Belief", text: "Enter Weird Belief" },
-    { name: "otherInterests", label: "Other Interests", text: "Any Other Interests" },
-    { name: "futureGoals", label: "Future Goals", text: "Future Goals" },
-    { name: "current", label: "Currently Learning", text: "Things I'm Learning" },
-    { name: "unusualExperinece", label: "Unusual Experience", text: "Unusual Experience" },
-    { name: "strangeHabits", label: "Strangest Habits", text: "Strangest Habit I Have" },
-];
-
-const otherInputs = [
-    { name: "spiritual_Other" },
-    { name: "core_Other" },
-    { name: "philosophy_Other" },
-    { name: "socialCause_Other" },
-    { name: "travelMode_Other" },
-    { name: "genre_Other" },
-    { name: "sports_Other" },
-    { name: "artistisPursuits_Other" },
-    { name: "gaming_Other" },
-    { name: "collectignHobby_Other" },
-    { name: "coffee_Other" },
-    { name: "cookingSkills_Other" },
-    { name: "currentOcupation_Other" },
-    { name: "careerAspiation_Other" },
-    { name: "education_Other" },
-    { name: "skills_Other" },
-    { name: "diet_Other" },
-];
-
-const generateDefaultValues = (arrays: { name: string }[][]) => {
-    return arrays.reduce((acc, array) => {
-        array.forEach((field) => {
-            acc[field.name] = "";
-        });
-        return acc;
-    }, {} as Record<string, string>);
-};
-
-const convertToStrings = (data: any) => {
-    return Object.keys(data).reduce((acc, key) => {
-        acc[key] =
-            data[key] !== undefined && data[key] !== null ? String(data[key]) : "";
-        return acc;
-    }, {} as Record<string, string>);
-};
-
 const CreatePersonal = () => {
     const navigate = useNavigate();
-    const [search] = useSearchParams();
-    const id = search.get("individualId");
+    const { id } = useParams();
     const [progressBar, setProgressBar] = useState<number>(1);
     const [isPersonal, setIsPersonal] = useState<boolean>(id ? true : false);
     const [personalLoading, setPersonalLoading] = useState<boolean>(false);
@@ -185,7 +63,6 @@ const CreatePersonal = () => {
             motto,
             interests,
             sepPersonal,
-            // personalValues,
             professional,
             additionalInfo,
             otherInputs,
@@ -223,7 +100,6 @@ const CreatePersonal = () => {
                 const updatedArr = [...socialData];
                 updatedArr[index] = {
                     ...updatedArr[index],
-                    // label: normalizedOtherName,
                     name: otherLink,
                     text: `Enter Your ${otherName} Profile`,
                 };
@@ -257,7 +133,6 @@ const CreatePersonal = () => {
     };
 
     const onSubmit = async (values: any) => {
-        setPersonalLoading(true);
         let final = [];
         for (let i = 0; i < socialData.length; i++) {
             const element = {
@@ -276,6 +151,7 @@ const CreatePersonal = () => {
         if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
+            setPersonalLoading(true);
             try {
                 if (isPersonal) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=individual`, personalData, { withCredentials: true });
@@ -288,9 +164,10 @@ const CreatePersonal = () => {
             } catch (error: any) {
                 toast.error(error.response.data.message);
                 navigate("/plans");
+            } finally {
+                setPersonalLoading(false);
             }
         }
-        setPersonalLoading(false);
     };
 
     function handleCloseForm(e: React.MouseEvent<HTMLInputElement>) {
@@ -298,16 +175,6 @@ const CreatePersonal = () => {
             setOtherName("");
             setOtherLink("");
             setOpen(false);
-        }
-    }
-
-    const setSvg = (input: string) => {
-        const platformKey = `si${input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()}`;
-        const icon = icons[platformKey as keyof typeof icons];
-        if (icon) {
-            return icon.path;
-        } else {
-            return "";
         }
     }
 
@@ -323,24 +190,13 @@ const CreatePersonal = () => {
                 return (
                     <div className="space-y-4">
                         <h1 className="pt-4 text-2xl font-semibold">Personal Preferences</h1>
-                        <div className="relative w-full flex items-center">
-                            <label
-                                htmlFor="name"
-                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                            >
-                                Name
-                            </label>
-                            <div className="relative h-11 w-full">
-                                <input
-                                    type="text"
-                                    placeholder="Enter your name"
-                                    {...register("name")}
-                                    autoComplete="off"
-                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                />
-                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                            </div>
-                        </div>
+                        <TextInput
+                            name="name"
+                            label="Name"
+                            text="Enter your name"
+                            type="text"
+                            register={register}
+                        />
 
                         <h1 className="py-4 text-2xl font-semibold">Socials</h1>
                         {socialData?.map((arr: LinkType, index: number) => (
@@ -500,169 +356,79 @@ const CreatePersonal = () => {
                             )}
                         </div>
 
-                        <div className="relative w-full flex items-center">
-                            <label
-                                htmlFor="aboutMe"
-                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                            >
-                                About me
-                            </label>
-                            <div className="relative h-16 w-full">
-                                <textarea
-                                    {...register("aboutMe")}
-                                    placeholder="Tell Something About Yourself"
-                                    autoComplete="off"
-                                    className="peer h-full  w-full resize-none border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50"
-                                ></textarea>
-                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                            </div>
-                        </div>
+                        <TextInput
+                            name="aboutMe"
+                            label="About me"
+                            text="Tell Something About Yourself"
+                            type="textarea"
+                            register={register}
+                        />
 
                         <h1 className="pt-4 text-2xl font-semibold">Contact Numbers</h1>
-                        {contactInfo?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type={em.type}
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {contactInfo?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
 
                         <h1 className="pt-4 text-2xl font-semibold">Email Addresses</h1>
-                        {emailInfo?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type={em.type}
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {emailInfo?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
                     </div>
                 );
             case 2:
                 return (
                     <div className="space-y-4">
-                        {lifestyle?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type={em.type}
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {lifestyle?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
 
                         <h1 className="pt-4 text-2xl font-semibold">Tell us about your Favourites!</h1>
-                        {Favourites?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type="text"
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {Favourites?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
 
                         <h1 className="pt-4 text-2xl font-semibold">Miscellaneous Details</h1>
                         {miscellaneous?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <div key={index}>
-                                    <div className="relative w-full flex items-center">
-                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}
-                                        </label>
-                                        <div className="relative h-11 w-full">
-                                            <select
-                                                id={sele.name}
-                                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                {...register(sele.name, {
-                                                    onChange: (e) => {
-                                                        if (e.target.value !== "Other") {
-                                                            setValue(`${sele.name}_Other`, "");
-                                                        }
-                                                    },
-                                                })}
-                                            >
-                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
-                                                {sele.options.map((option, index) => (
-                                                    <option key={index} value={option}>{option}</option>
-                                                ))}
-                                            </select>
-                                            <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                        </div>
-                                    </div>
-                                    {selectedValue === "Other" && (
-                                        <div className="relative w-full flex items-center">
-                                            <label
-                                                htmlFor={`${sele.name}_Other`}
-                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                            >
-                                                {sele.label} (Specify)
-                                            </label>
-                                            <div className="relative h-11 w-full">
-                                                <input
-                                                    type="text"
-                                                    placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`)}
-                                                    autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <SelectInput
+                                    key={index}
+                                    name={sele.name}
+                                    text={sele.text}
+                                    label={sele.label}
+                                    options={sele.options}
+                                    selectedValue={selectedValue}
+                                    setValue={setValue}
+                                    register={register}
+                                />
                             )
                         })}
                     </div>
@@ -671,78 +437,31 @@ const CreatePersonal = () => {
                 return (
                     <div className="space-y-4">
                         <h1 className="pt-4 text-2xl font-semibold">Quotes</h1>
-                        {motto?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type="text"
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {motto?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
 
                         <h1 className="pt-4 text-2xl font-semibold">Interests & Activities</h1>
                         {interests?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <div key={index}>
-                                    <div className="relative w-full flex items-center">
-                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}
-                                        </label>
-                                        <div className="relative h-11 w-full">
-                                            <select
-                                                id={sele.name}
-                                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                {...register(sele.name, {
-                                                    onChange: (e) => {
-                                                        if (e.target.value !== "Other") {
-                                                            setValue(`${sele.name}_Other`, "");
-                                                        }
-                                                    },
-                                                })}
-                                            >
-                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
-                                                {sele.options.map((option, index) => (
-                                                    <option key={index} value={option}>{option}</option>
-                                                ))}
-                                            </select>
-                                            <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                        </div>
-                                    </div>
-                                    {selectedValue === "Other" && (
-                                        <div className="relative w-full flex items-center">
-                                            <label
-                                                htmlFor={`${sele.name}_Other`}
-                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                            >
-                                                {sele.label} (Specify)
-                                            </label>
-                                            <div className="relative h-11 w-full">
-                                                <input
-                                                    type="text"
-                                                    placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`)}
-                                                    autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <SelectInput
+                                    key={index}
+                                    name={sele.name}
+                                    text={sele.text}
+                                    label={sele.label}
+                                    options={sele.options}
+                                    selectedValue={selectedValue}
+                                    setValue={setValue}
+                                    register={register}
+                                />
                             )
                         })}
                     </div>
@@ -754,126 +473,33 @@ const CreatePersonal = () => {
                         {professional?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <div key={index}>
-                                    <div className="relative w-full flex items-center">
-                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}
-                                        </label>
-                                        <div className="relative h-11 w-full">
-                                            <select
-                                                id={sele.name}
-                                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                {...register(sele.name, {
-                                                    onChange: (e) => {
-                                                        if (e.target.value !== "Other") {
-                                                            setValue(`${sele.name}_Other`, "");
-                                                        }
-                                                    },
-                                                })}
-                                            >
-                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
-                                                {sele.options.map((option, index) => (
-                                                    <option key={index} value={option}>{option}</option>
-                                                ))}
-                                            </select>
-                                            <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                        </div>
-                                    </div>
-                                    {selectedValue === "Other" && (
-                                        <div className="relative w-full flex items-center">
-                                            <label
-                                                htmlFor={`${sele.name}_Other`}
-                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                            >
-                                                {sele.label} (Specify)
-                                            </label>
-                                            <div className="relative h-11 w-full">
-                                                <input
-                                                    type="text"
-                                                    placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`)}
-                                                    autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <SelectInput
+                                    key={index}
+                                    name={sele.name}
+                                    text={sele.text}
+                                    label={sele.label}
+                                    options={sele.options}
+                                    selectedValue={selectedValue}
+                                    setValue={setValue}
+                                    register={register}
+                                />
                             )
                         })}
 
                         <h1 className="pt-4 text-2xl font-semibold">Personal Values</h1>
-                        {/* {personalValues?.map((sele, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                    {sele.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <select
-                                        id={sele.name}
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                        {...register(sele.name)}
-                                    >
-                                        <option key={index} value="" className="text-slate-400">{sele.label}</option>
-                                        {sele.options.map((option, index) => (
-                                            <option key={index} value={option}>{option}</option>
-                                        ))}
-                                    </select>
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
-                        ))} */}
-
                         {sepPersonal?.map((sele, index) => {
                             const selectedValue = watch(sele.name);
                             return (
-                                <div key={index}>
-                                    <div className="relative w-full flex items-center">
-                                        <label className="text-sm md:text-md font-semibold text-gray-700 min-w-24" htmlFor={sele.name}>
-                                            {sele.label}
-                                        </label>
-                                        <div className="relative h-11 w-full">
-                                            <select
-                                                id={sele.name}
-                                                className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                {...register(sele.name, {
-                                                    onChange: (e) => {
-                                                        if (e.target.value !== "Other") {
-                                                            setValue(`${sele.name}_Other`, "");
-                                                        }
-                                                    },
-                                                })}
-                                            >
-                                                <option key={index} value="" className="text-slate-400">{sele.label}</option>
-                                                {sele.options.map((option, index) => (
-                                                    <option key={index} value={option}>{option}</option>
-                                                ))}
-                                            </select>
-                                            <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                        </div>
-                                    </div>
-                                    {selectedValue === "Other" && (
-                                        <div className="relative w-full flex items-center">
-                                            <label
-                                                htmlFor={`${sele.name}_Other`}
-                                                className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                            >
-                                                {sele.label} (Specify)
-                                            </label>
-                                            <div className="relative h-11 w-full">
-                                                <input
-                                                    type="text"
-                                                    placeholder={sele.text}
-                                                    {...register(`${sele.name}_Other`)}
-                                                    autoComplete="off"
-                                                    className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <SelectInput
+                                    key={index}
+                                    name={sele.name}
+                                    text={sele.text}
+                                    label={sele.label}
+                                    options={sele.options}
+                                    selectedValue={selectedValue}
+                                    setValue={setValue}
+                                    register={register}
+                                />
                             )
                         })}
                     </div>
@@ -882,26 +508,15 @@ const CreatePersonal = () => {
                 return (
                     <div className="space-y-4">
                         <h1 className="pt-4 text-2xl font-semibold">Additional Infomation</h1>
-                        {additionalInfo?.map((em, index) => (
-                            <div className="relative w-full flex items-center" key={index}>
-                                <label
-                                    htmlFor={em.name}
-                                    className="text-sm md:text-md font-semibold text-gray-700 min-w-24"
-                                >
-                                    {em.label}
-                                </label>
-                                <div className="relative h-11 w-full">
-                                    <input
-                                        type="text"
-                                        id={em.name}
-                                        placeholder={em.text}
-                                        {...register(em.name)}
-                                        autoComplete="off"
-                                        className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                    />
-                                    <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
-                                </div>
-                            </div>
+                        {additionalInfo?.map((sele, index) => (
+                            <TextInput
+                                key={index}
+                                name={sele.name}
+                                label={sele.label}
+                                text={sele.text}
+                                type={sele.type}
+                                register={register}
+                            />
                         ))}
                     </div>
                 );
@@ -934,7 +549,6 @@ const CreatePersonal = () => {
                         className="flex flex-col space-y-2 w-full lg:w-[90%] mx-auto px-4 md:px-0"
                     >
                         <div className="flex gap-10 lg:gap-20 justify-center items-center">
-                            {/* Previous Button for Larger Screens */}
                             <button
                                 className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-purple-400 text-base"
                                 type="button"
@@ -944,12 +558,10 @@ const CreatePersonal = () => {
                                 <FaArrowLeft />
                             </button>
 
-                            {/* Scrollable Form Content */}
                             <div className="sm:h-[75vh] w-full overflow-y-auto hide-scrollbar flex-1 flex flex-col">
                                 {formParts()}
                             </div>
 
-                            {/* Next Button for Larger Screens */}
                             <button
                                 className="hidden sm:flex px-3 py-2 justify-center items-center rounded-full h-14 w-14 text-white bg-purple-400 text-base"
                                 type="button"

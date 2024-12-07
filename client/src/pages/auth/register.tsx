@@ -6,13 +6,15 @@ import React, { useState } from "react";
 import { getGoogleAuthUrl } from "@/lib/google";
 import { UserResponse } from "@/types/api-types";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Loader2 } from "lucide-react";
 
 const Register = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [passwordType, setPasswordType] = useState<string>("password");
     const [confirmPasswordType, setConfirmPasswordType] = useState<string>("password");
-
+    const [checked, setChecked] = useState(false);
     const [userData, setUserData] = useState({
         name: "",
         email: "",
@@ -27,8 +29,24 @@ const Register = () => {
             toast.warning("All fields are required");
             return;
         }
+        if (!checked) {
+            toast.warning("Please agree to the terms&conditions and privacy policy");
+            return;
+        }
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(userData.email)) {
+            toast.warning("Invalid email format");
+            return;
+        }
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/.test(userData.password)) {
+            toast.warning("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character");
+            return;
+        }
+        if (userData.password.length < 8) {
+            toast.warning("Password must be at least 8 characters long");
+            return;
+        }
         if (userData.password !== userData.confirmPassword) {
-            toast.warning("Password dont match");
+            toast.warning("Passwords doesn't match");
             return;
         }
         setRegisterLoading(true);
@@ -53,22 +71,23 @@ const Register = () => {
         } catch (error: any) {
             dispatch(userNotExist());
             toast.error(error.response.data.message);
+        } finally {
+            setRegisterLoading(false);
         }
-        setRegisterLoading(false);
     };
 
     return (
         <div className="bg-white dark:bg-gray-900">
             <div className="flex justify-center h-screen">
                 <div
-                    className="hidden bg-cover lg:block lg:w-2/3"
+                    className="hidden bg-cover lg:block lg:w-1/2"
                     style={{
                         backgroundImage: "url(https://images.unsplash.com/photo-1616763355603-9755a640a287?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80)"
                     }}
                 >
                     <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
                         <div>
-                            <img src="/voolata_long_w_r.png" alt="" className="w-36 pb-5" />
+                            <img src="/voolata_long_w_r.png" loading="lazy" alt="" className="w-36 pb-5" />
                             <p className="max-w-xl mt-3 text-gray-300">
                                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. In
                                 autem ipsa, nulla laboriosam dolores, repellendus perferendis libero suscipit nam temporibus
@@ -78,11 +97,11 @@ const Register = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-2/6">
+                <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-1/2">
                     <div className="flex-1 hide-scrollbar overflow-auto h-full">
                         <div className="text-center mt-5">
                             <div className="flex justify-center mx-auto">
-                                <img src="/voolata_long_r.png" alt="" className="w-36 mx-auto pb-5" />
+                                <img src="/voolata_long_r.png" loading="lazy" alt="" className="w-36 mx-auto pb-5" />
                             </div>
 
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign up to access your account</p>
@@ -113,7 +132,7 @@ const Register = () => {
                                         Email Address
                                     </label>
                                     <input
-                                        type="email"
+                                        type="text"
                                         name="email"
                                         id="email"
                                         placeholder="example@example.com"
@@ -140,10 +159,11 @@ const Register = () => {
                                             }}
                                             className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
-                                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clipRule="evenodd" />
-                                            </svg>
+                                            {passwordType === "password" ? (
+                                                <FaEyeSlash className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                            ) : (
+                                                <FaEye className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                            )}
                                         </button>
                                         <input
                                             type={passwordType}
@@ -174,10 +194,11 @@ const Register = () => {
                                             }}
                                             className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
-                                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clipRule="evenodd" />
-                                            </svg>
+                                            {confirmPasswordType === "password" ? (
+                                                <FaEyeSlash className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                            ) : (
+                                                <FaEye className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                            )}
                                         </button>
                                         <input
                                             type={confirmPasswordType}
@@ -193,13 +214,39 @@ const Register = () => {
                                     </div>
                                 </div>
 
+                                <div className="pt-4">
+                                    <div className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            onChange={() => setChecked(ch => !ch)}
+                                            className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded"
+                                        />
+                                        <label
+                                            className="ms-2 text-sm font-medium text-gray-900"
+                                        >
+                                            I agree with the{" "}
+                                            <Link to="/terms-conditions" className="text-purple-600 hover:underline">
+                                                terms and conditions
+                                            </Link>
+                                            {" "}and{" "}
+                                            <Link to="/privacy-policy" className="text-purple-600 hover:underline">
+                                                privacy policy
+                                            </Link>
+                                            .
+                                        </label>
+                                    </div>
+                                </div>
+
                                 <div className="mt-6">
                                     <button
                                         type="submit"
-                                        className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-purple-700 rounded-lg hover:bg-purple-400 focus:outline-none focus:bg-purple-400 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
-                                        disabled={registerLoading}
+                                        disabled={!checked || registerLoading}
+                                        className={`flex items-center justify-center gap-2 w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform ${!checked || registerLoading ? "bg-purple-400" : "bg-purple-700"} rounded-lg hover:bg-purple-400 focus:outline-none focus:bg-purple-400 focus:ring focus:ring-purple-300 focus:ring-opacity-50`}
                                     >
-                                        {registerLoading ? "Signing up..." : "Sign up"}
+                                        {registerLoading ? (
+                                            <><Loader2 className="animate-spin" />Hold on...</>
+                                        ) : "Sign up"}
                                     </button>
 
 

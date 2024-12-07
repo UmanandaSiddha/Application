@@ -5,38 +5,15 @@ import { useEffect, useState } from "react";
 import { RootState } from "../../../redux/store";
 import { SingleTreeResponse } from "@/types/api-types";
 import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SideBar from "@/components/rest/sidebar";
-
-const inputs = [
-    { name: "name", label: "Plant Name", text: "Enter name" },
-    { name: "scientificName", label: "Scientific Name", text: "Enter scientific name" },
-    { name: "family", label: "Family", text: "Enter family" },
-    { name: "origin", label: "Origin", text: "Enter origin" },
-    { name: "habitat", label: "Habitat", text: "Enter habitat" },
-    { name: "description", label: "Description", text: "Enter description" },
-    { name: "height", label: "Height", text: "Enter height" },
-    { name: "leafType", label: "Leaf Type", text: "Enter leaf type" },
-    { name: "flowerColor", label: "Flower Color", text: "Enter flower color" },
-    { name: "uses", label: "Uses", text: "Enter uses" },
-    { name: "careInstructions", label: "Care Instructions", text: "Enter care instructions" },
-    { name: "specialFeatures", label: "Special Features", text: "Enter special features" },
-    { name: "caretakerMobileNumber", label: "Caretaker Mobile Number", text: "Enter caretaker mobile number" },
-    { name: "additionalNotes", label: "Additional Notes", text: "Enter additional notes" }
-];  
-
-const generateDefaultValues = (fields: { name: string }[]) => {
-    return fields.reduce((acc, field) => {
-        acc[field.name] = "";
-        return acc;
-    }, {} as Record<string, string>);
-};
+import { generateSimpleDefaultValues } from "@/lib/helper";
+import { inputs } from "@/data/tree";
 
 const CreateTree = () => {
 
     const navigate = useNavigate();
-    const [search] = useSearchParams();
-    const id = search.get("botanicalId");
+    const { id } = useParams();
     const [isTree, setIsTree] = useState<boolean>(id ? true : false);
     const [treeLoading, setTreeLoading] = useState<boolean>(false);
 
@@ -45,7 +22,7 @@ const CreateTree = () => {
     );
 
     const form = useForm({
-        defaultValues: generateDefaultValues(inputs),
+        defaultValues: generateSimpleDefaultValues(inputs),
     });
 
     const { handleSubmit, register, reset } = form;
@@ -78,16 +55,14 @@ const CreateTree = () => {
     }, [id]);
 
     const onSubmit = async (values: any) => {
-        setTreeLoading(true);
-
         const treeData = {
             ...values,
             user: user?._id,
         };
-
         if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
+            setTreeLoading(true);
             try {
                 if (isTree) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=botanical`, treeData, { withCredentials: true });
@@ -100,28 +75,25 @@ const CreateTree = () => {
             } catch (error: any) {
                 toast.error(error.response.data.message);
                 navigate("/plans");
+            } finally {
+                setTreeLoading(false);
             }
         }
-        setTreeLoading(false);
     }
 
     return (
         <div className="flex justify-center h-screen">
             <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-4 lg:space-y-0 lg:space-x-4">
-                {/* Sidebar Section */}
                 <div className="basis-1/4 hidden lg:block">
                     <SideBar />
                 </div>
 
-                {/* Main Content Section */}
                 <div className="flex-1 lg:basis-3/4">
                     <div className="h-full flex flex-col">
-                        {/* Title */}
                         <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
                             Botanical
                         </h1>
 
-                        {/* Progress Bar */}
                         <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
                             <div className="w-full h-2 bg-blue-100 rounded-full">
                                 <div
@@ -131,10 +103,8 @@ const CreateTree = () => {
                             </div>
                         </div>
 
-                        {/* Scrollable Content */}
                         <div className="flex-1">
                             <div className="flex flex-col items-center">
-                                {/* Form */}
                                 <form
                                     onSubmit={handleSubmit(onSubmit)}
                                     className="space-y-6 w-full lg:w-[70%] px-4 md:px-0"
@@ -144,7 +114,6 @@ const CreateTree = () => {
                                             className="relative flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4"
                                             key={index}
                                         >
-                                            {/* Label */}
                                             <label
                                                 htmlFor={input.name}
                                                 className="text-md font-semibold text-gray-700 w-full md:w-auto"
@@ -152,7 +121,6 @@ const CreateTree = () => {
                                                 {input.label}:
                                             </label>
 
-                                            {/* Input */}
                                             <div className="relative w-full md:flex-1">
                                                 <input
                                                     type={input.name === "caretakerMobileNumber" ? "number" : "text"}
@@ -167,7 +135,6 @@ const CreateTree = () => {
                                         </div>
                                     ))}
 
-                                    {/* Submit Button */}
                                     <div className="flex justify-center pb-2">
                                         <button
                                             className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-[#9ce6cc] text-lg"

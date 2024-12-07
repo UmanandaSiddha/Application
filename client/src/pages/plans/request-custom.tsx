@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,21 +23,21 @@ const RequestCustom = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setRequestLoading(true);
         const { email, cards, comment, period, interval } = requestData;
         if (!email || !cards || !comment || !period || !interval) {
             toast.warning("All fields are required");
-            setRequestLoading(false);
             return;
         };
+        setRequestLoading(true);
         try {
             await axios.post(`${import.meta.env.VITE_BASE_URL}/plan/request/custom`, requestData, { withCredentials: true });
             toast.success("Request Submitted!");
         } catch (error: any) {
             console.log(error);
             toast.error(error.response.data.message);
+        } finally {
+            setRequestLoading(false);
         }
-        setRequestLoading(false);
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -178,9 +179,11 @@ const RequestCustom = () => {
                                 <button
                                     type="submit"
                                     disabled={requestLoading}
-                                    className="w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-600 rounded-md hover:bg-purple-500 focus:outline-none focus:ring focus:ring-purple-400 focus:ring-opacity-50"
+                                    className="flex items-center justify-center gap-2 w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-600 rounded-md hover:bg-purple-500 focus:outline-none focus:ring focus:ring-purple-400 focus:ring-opacity-50"
                                 >
-                                    {requestLoading ? "Hold on..." : "Submit Request"}
+                                    {requestLoading ? (
+                                        <><Loader2 className="animate-spin" />Hold on...</>
+                                    ) : "Submit Request"}
                                 </button>
                             </form>
                         </div>

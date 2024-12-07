@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -21,8 +22,9 @@ const ContactUs = () => {
         } catch (error: any) {
             console.log(error);
             toast.error(error.response.data.message);
+        } finally {
+            setContactLoading(false);
         }
-        setContactLoading(false);
     }
 
     return (
@@ -95,7 +97,6 @@ const ContactUs = () => {
                                 </Link>
                             </div>
                         </div>
-
                     </div>
 
                     <div className="mt-8 lg:w-1/2 lg:mx-6">
@@ -107,15 +108,15 @@ const ContactUs = () => {
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
                                         Full Name
                                     </label>
-                                    <input 
-                                        type="text" 
-                                        placeholder="John Doe" 
+                                    <input
+                                        type="text"
+                                        placeholder="John Doe"
                                         value={contactData.name}
                                         onChange={(e) =>
                                             setContactData({ ...contactData, name: e.target.value })
                                         }
                                         required
-                                        className="block w-full px-5 py-3 mt-2 text-gray-70 border border-gray-200 rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-purple-400 focus:ring-purple-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" 
+                                        className="block w-full px-5 py-3 mt-2 text-gray-70 border border-gray-200 rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-purple-400 focus:ring-purple-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                                     />
                                 </div>
 
@@ -123,15 +124,15 @@ const ContactUs = () => {
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
                                         Email address
                                     </label>
-                                    <input 
-                                        type="email" 
-                                        placeholder="johndoe@example.com" 
+                                    <input
+                                        type="email"
+                                        placeholder="johndoe@example.com"
                                         value={contactData.email}
                                         onChange={(e) =>
                                             setContactData({ ...contactData, email: e.target.value })
                                         }
                                         required
-                                        className="block w-full px-5 py-3 mt-2 text-gray-70 border border-gray-200 rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-purple-400 focus:ring-purple-300 focus:ring-opacity-40 dark:focus:border-purple-300 focus:outline-none focus:ring" 
+                                        className="block w-full px-5 py-3 mt-2 text-gray-70 border border-gray-200 rounded-md dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-purple-400 focus:ring-purple-300 focus:ring-opacity-40 dark:focus:border-purple-300 focus:outline-none focus:ring"
                                     />
                                 </div>
 
@@ -139,24 +140,26 @@ const ContactUs = () => {
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
                                         Message
                                     </label>
-                                    <textarea 
+                                    <textarea
                                         name="message"
                                         value={contactData.message}
                                         onChange={(e) =>
                                             setContactData({ ...contactData, message: e.target.value })
                                         }
                                         required
-                                        className="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-40 border border-gray-200 rounded-md md:h-48 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-purple-400 focus:ring-purple-300 focus:ring-opacity-40 dark:focus:border-purple-300 focus:outline-none focus:ring" 
+                                        className="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-40 border border-gray-200 rounded-md md:h-48 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-purple-400 focus:ring-purple-300 focus:ring-opacity-40 dark:focus:border-purple-300 focus:outline-none focus:ring"
                                         placeholder="Message"
                                     ></textarea>
                                 </div>
 
-                                <button 
+                                <button
                                     type="submit"
                                     disabled={contactLoading}
-                                    className="w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-800 rounded-md hover:bg-purple-700 focus:outline-none focus:ring focus:bg-purple-500 focus:ring-opacity-50"
+                                    className="flex items-center justify-center gap-2 w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-800 rounded-md hover:bg-purple-700 focus:outline-none focus:ring focus:bg-purple-500 focus:ring-opacity-50"
                                 >
-                                    {contactLoading ? "Hold on..." : "get in touch"} 
+                                    {contactLoading ? (
+                                        <><Loader2 className="animate-spin" />Hold on...</>
+                                    ) : "Get in Touch"}
                                 </button>
                             </form>
                         </div>

@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { donatorNotExist } from "@/redux/reducer/donatorReducer";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const DonatorDashboard = () => {
 
@@ -38,8 +39,9 @@ const DonatorDashboard = () => {
             toast.success("Logged out successfully");
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setLogoutLoading(false);
         }
-        setLogoutLoading(false);
     }
 
     return (
@@ -71,7 +73,9 @@ const DonatorDashboard = () => {
                         disabled={logoutLoading}
                         className="w-full sm:w-[70%] md:w-[60%] lg:w-[55%] border-2 border-black text-black hover:text-white hover:bg-black font-semibold py-3 sm:py-4 rounded-lg text-lg sm:text-xl"
                     >
-                        {logoutLoading ? "Hold on..." : "Logout"}
+                        {logoutLoading ? (
+                            <><Loader2 className="animate-spin" />Hold on...</>
+                        ) : "Logout"}
                     </button>
                 </div>
             </div>

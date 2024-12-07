@@ -5,6 +5,8 @@ import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
 import { UserResponse } from "@/types/api-types";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Loader2 } from "lucide-react";
 
 const OrgRegister = () => {
 
@@ -13,6 +15,7 @@ const OrgRegister = () => {
     const [passwordType, setPasswordType] = useState<string>("password");
     const [confirmPasswordType, setConfirmPasswordType] = useState<string>("password");
     const [registerLoading, setRegisterLoading] = useState(false);
+    const [checked, setChecked] = useState(false);
     const [organisationInfo, setOrganisationInfo] = useState({
         name: "",
         website: "",
@@ -35,12 +38,26 @@ const OrgRegister = () => {
                 return;
             }
         }
-
         if (organisationInfo.password != organisationInfo.cfmPassword) {
             toast.warning(`Password doesn't match!!`);
             return;
         }
-
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(organisationInfo.email)) {
+            toast.warning("Invalid email format");
+            return;
+        }
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/.test(organisationInfo.password)) {
+            toast.warning("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character");
+            return;
+        }
+        if (organisationInfo.password.length < 8) {
+            toast.warning("Password must be at least 8 characters long");
+            return;
+        }
+        if (!checked) {
+            toast.warning("Please accept the terms&conditions and privacy policy");
+            return;
+        }
         setRegisterLoading(true);
         const registerData = {
             ...organisationInfo,
@@ -54,22 +71,23 @@ const OrgRegister = () => {
         } catch (error: any) {
             dispatch(userNotExist());
             toast.error(error.response.data.message);
+        } finally {
+            setRegisterLoading(false);
         }
-        setRegisterLoading(false);
     };
 
     return (
         <section className="bg-white dark:bg-gray-900">
             <div className="flex justify-center h-screen">
                 <div
-                    className="hidden bg-cover lg:block lg:w-2/5"
+                    className="hidden bg-cover lg:block lg:w-2/5 loa"
                     style={{
                         backgroundImage: "url(https://images.unsplash.com/photo-1494621930069-4fd4b2e24a11?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=715&q=80)"
                     }}
                 >
                     <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
                         <div>
-                            <img src="/voolata_long_w_r.png" alt="" className="w-36 pb-5" />
+                            <img src="/voolata_long_w_r.png" loading="lazy" alt="" className="w-36 pb-5" />
                             <p className="max-w-xl mt-3 text-gray-300">
                                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. In
                                 autem ipsa, nulla laboriosam dolores, repellendus perferendis libero suscipit nam temporibus
@@ -84,7 +102,7 @@ const OrgRegister = () => {
 
                         <div className="text-center mt-5">
                             <div className="flex justify-center mx-auto">
-                                <img src="/voolata_long_r.png" alt="" className="w-36 mx-auto pb-5" />
+                                <img src="/voolata_long_r.png" loading="lazy" alt="" className="w-36 mx-auto pb-5" />
                             </div>
 
                             <p className="mt-3 text-gray-500 dark:text-gray-300">Sign up as an Organisation</p>
@@ -166,17 +184,18 @@ const OrgRegister = () => {
                                                     }}
                                                     className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto"
                                                 >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
-                                                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                        <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clipRule="evenodd" />
-                                                    </svg>
+                                                    {passwordType === "password" ? (
+                                                        <FaEyeSlash className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                                    ) : (
+                                                        <FaEye className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                                    )}
                                                 </button>
                                                 <input
                                                     type={passwordType}
                                                     name="password"
                                                     id="password"
                                                     placeholder="Your Password"
-                                                    className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-purple-400 dark:focus:border-purple-400 focus:ring-purple-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                                    className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-purple-500 focus:ring-purple-500"
                                                     value={organisationInfo.password}
                                                     onChange={(e) =>
                                                         setOrganisationInfo({ ...organisationInfo, password: e.target.value })
@@ -198,17 +217,18 @@ const OrgRegister = () => {
                                                     }}
                                                     className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto"
                                                 >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
-                                                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                        <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clipRule="evenodd" />
-                                                    </svg>
+                                                    {confirmPasswordType === "password" ? (
+                                                        <FaEyeSlash className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                                    ) : (
+                                                        <FaEye className="w-6 h-6 mx-4 text-gray-400 transition-colors duration-300 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400" />
+                                                    )}
                                                 </button>
                                                 <input
                                                     type={confirmPasswordType}
                                                     name="password"
                                                     id="cnfpassword"
                                                     placeholder="Your Password"
-                                                    className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-purple-400 dark:focus:border-purple-400 focus:ring-purple-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                                    className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-purple-500 focus:ring-purple-500"
                                                     value={organisationInfo.cfmPassword}
                                                     onChange={(e) =>
                                                         setOrganisationInfo({ ...organisationInfo, cfmPassword: e.target.value })
@@ -267,12 +287,39 @@ const OrgRegister = () => {
                                             onChange={(e) => setOrganisationInfo({ ...organisationInfo, country: e.target.value })}
                                         />
                                     </div>
+
+                                    <div className="pt-4">
+                                        <div className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={checked}
+                                                onChange={() => setChecked(ch => !ch)}
+                                                className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded"
+                                            />
+                                            <label
+                                                className="ms-2 text-sm font-medium text-gray-900"
+                                            >
+                                                I agree with the{" "}
+                                                <Link to="/terms-conditions" className="text-purple-600 hover:underline">
+                                                    terms and conditions
+                                                </Link>
+                                                {" "}and{" "}
+                                                <Link to="/privacy-policy" className="text-purple-600 hover:underline">
+                                                    privacy policy
+                                                </Link>
+                                                .
+                                            </label>
+                                        </div>
+                                    </div>
+
                                     <button
                                         type="submit"
-                                        disabled={registerLoading}
-                                        className="mt-4 w-full rounded-md bg-purple-700 px-6 py-3 font-medium text-white shadow-sm"
+                                        disabled={!checked || registerLoading}
+                                        className={`flex items-center justify-center gap-2 mt-4 w-full rounded-md ${!checked || registerLoading ? "bg-purple-400" : "bg-purple-700"} px-6 py-3 font-medium text-white shadow-sm`}
                                     >
-                                        {registerLoading ? "Loading..." : "Sign Up"}
+                                        {registerLoading ? (
+                                            <><Loader2 className="animate-spin" />Hold on...</>
+                                        ) : "Sign up"}
                                     </button>
                                 </form>
 

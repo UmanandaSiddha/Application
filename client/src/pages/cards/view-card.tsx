@@ -17,17 +17,15 @@ import AnimalComponent from "@/components/view-card/animal";
 import CreatorComponent from "@/components/view-card/creator";
 import MedicalComponent from "@/components/view-card/medical";
 import PersonalComponent from "@/components/view-card/personal";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
 import SideBar from "@/components/rest/sidebar";
-import { createQRCode } from "./all-cards";
 import { IoShareSocialOutline } from "react-icons/io5";
+import { createQRCode } from "@/lib/helper";
 
 const ViewCard = () => {
     const navigate = useNavigate();
-    const [search] = useSearchParams();
-    const id = search.get("id");
-    const type = search.get("type");
+    const { type, id } = useParams();
     const [card, setCard] = useState<Tree | Personal | MedicalType | Creator | Animal | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -95,7 +93,7 @@ const ViewCard = () => {
         }
     };
 
-    return card ? (
+    return !loading || card ? (
         <div className="flex justify-center">
             <div className="flex flex-row w-full md:w-[80%] md:space-x-4 lg:space-x-4">
                 <div className="basis-1/4 hidden lg:block">
@@ -128,7 +126,7 @@ const ViewCard = () => {
                                 </button>
                                 <button
                                     className="py-4 px-4 bg-slate-300 rounded-full hover:cursor-pointer shadow-xl"
-                                    onClick={() => navigate(`/dashboard/${type}/create?${type}Id=${card?._id}`)}
+                                    onClick={() => navigate(`/dashboard/${type}/create/${card?._id}`)}
                                 >
                                     <div className="flex justify-center">
                                         <div className="">
@@ -173,7 +171,7 @@ const ViewCard = () => {
                             </button>
                             <button
                                 className="py-4 px-4 bg-slate-300 rounded-full hover:cursor-pointer shadow-xl"
-                                onClick={() => navigate(`/dashboard/${type}/create?${type}Id=${card?._id}`)}
+                                onClick={() => navigate(`/dashboard/${type}/create/${card?._id}`)}
                             >
                                 <div className="flex justify-center">
                                     <div className="">
@@ -198,9 +196,7 @@ const ViewCard = () => {
             </div>
         </div>
     ) : (
-        <div className="flex justify-center items-center h-screen">
-            <p className="text-2xl font-semibold text-red-500">Error</p>
-        </div>
+        <Loader />
     );
 };
 

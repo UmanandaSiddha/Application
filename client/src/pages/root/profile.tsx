@@ -280,7 +280,7 @@ const Profile = () => {
 
                                 <Link
                                     className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md group"
-                                    to="/dashboard"
+                                    to="/dashboard/botanical"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"

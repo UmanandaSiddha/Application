@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { toast } from 'react-toastify';
@@ -7,6 +7,7 @@ import { SingleAnimalResponse } from "@/types/api-types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SideBar from "@/components/rest/sidebar";
+import { convertToStrings, generateSimpleDefaultValues } from "@/lib/helper";
 
 const inputs = [
     { name: "name", label: "Animal Name", text: "Enter Animal Name" },
@@ -24,25 +25,10 @@ const inputs = [
     { name: "additionalNotes", label: "Additional Notes", text: "Enter Additional Notes" }
 ];
 
-const generateDefaultValues = (fields: { name: string }[]) => {
-    return fields.reduce((acc, field) => {
-        acc[field.name] = "";
-        return acc;
-    }, {} as Record<string, string>);
-};
-
-const convertToStrings = (data: any) => {
-    return Object.keys(data).reduce((acc, key) => {
-        acc[key] = data[key] !== undefined && data[key] !== null ? String(data[key]) : "";
-        return acc;
-    }, {} as Record<string, string>);
-};
-
 const CreateAnimal = () => {
 
     const navigate = useNavigate();
-    const [search] = useSearchParams();
-    const id = search.get("animalId");
+    const { id } = useParams();
     const [isAnimal, setIsAnimal] = useState<boolean>(id ? true : false);
     const [animalLoading, setAnimalLoading] = useState<boolean>(false);
 
@@ -51,7 +37,7 @@ const CreateAnimal = () => {
     );
 
     const form = useForm({
-        defaultValues: generateDefaultValues(inputs),
+        defaultValues: generateSimpleDefaultValues(inputs),
     });
 
     const { handleSubmit, register, reset } = form;
@@ -84,16 +70,14 @@ const CreateAnimal = () => {
     }, [id, reset]);
 
     const onSubmit = async (values: any) => {
-        setAnimalLoading(true);
-
         const animalData = {
             ...values,
             user: user?._id,
         };
-
         if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
+            setAnimalLoading(true);
             try {
                 if (isAnimal) {
                     await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=animal`, animalData, { withCredentials: true });
@@ -106,29 +90,25 @@ const CreateAnimal = () => {
             } catch (error: any) {
                 toast.error(error.response.data.message);
                 navigate("/plans");
+            } finally {
+                setAnimalLoading(false);
             }
         }
-
-        setAnimalLoading(false);
     }
 
     return (
         <div className="flex justify-center h-screen">
             <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-4 lg:space-y-0 lg:space-x-4">
-                {/* Sidebar Section */}
                 <div className="basis-1/4 hidden lg:block">
                     <SideBar />
                 </div>
 
-                {/* Main Content Section */}
                 <div className="flex-1 lg:basis-3/4">
                     <div className="h-full flex flex-col">
-                        {/* Title */}
                         <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
                             Animal
                         </h1>
 
-                        {/* Progress Bar */}
                         <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
                             <div className="w-full h-2 bg-blue-100 rounded-full">
                                 <div
@@ -138,10 +118,8 @@ const CreateAnimal = () => {
                             </div>
                         </div>
 
-                        {/* Scrollable Content */}
                         <div className="flex-1">
                             <div className="flex flex-col items-center">
-                                {/* Form */}
                                 <form
                                     onSubmit={handleSubmit(onSubmit)}
                                     className="space-y-6 w-full lg:w-[70%] px-4 md:px-0"
@@ -151,7 +129,6 @@ const CreateAnimal = () => {
                                             className="relative flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4"
                                             key={index}
                                         >
-                                            {/* Label */}
                                             <label
                                                 htmlFor={input.name}
                                                 className="text-md font-semibold text-gray-700 w-full md:w-auto"
@@ -159,7 +136,6 @@ const CreateAnimal = () => {
                                                 {input.label}:
                                             </label>
 
-                                            {/* Input */}
                                             <div className="relative w-full md:flex-1">
                                                 <input
                                                     type={input.name === "caretakerMobileNumber" ? "number" : "text"}
@@ -173,8 +149,6 @@ const CreateAnimal = () => {
                                             </div>
                                         </div>
                                     ))}
-
-                                    {/* Submit Button */}
                                     <div className="flex justify-center pb-2">
                                         <button
                                             className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-[#dc8873] text-lg"

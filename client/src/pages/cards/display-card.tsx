@@ -9,7 +9,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import Loader from "@/components/rest/loader";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TreeComponent from "@/components/view-card/tree";
 import CreatorComponent from "@/components/view-card/creator";
 import AnimalComponent from "@/components/view-card/animal";
@@ -25,10 +25,8 @@ type CardInfoResponseType = {
 
 const DisplayCard = () => {
 
-    const [search, setSearch] = useSearchParams();
-    const id = search.get("id");
-    const type = search.get("type");
-    const { shortId } = useParams();
+    const navigate = useNavigate();
+    const { shortId, type, id } = useParams();
 
     const [card, setCard] = useState<Tree | Personal | MedicalType | Creator | Animal | null>(null);
     const [loading, setLoading] = useState(false);
@@ -49,7 +47,7 @@ const DisplayCard = () => {
         setLoading(true);
         try {
             const { data }: { data: CardInfoResponseType } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/short/${shortId}`, { withCredentials: true });
-            setSearch({ type: data.cardType, id: data.cardId }, { replace: true });
+            navigate(`/d/${shortId}/${data.cardType}/${data.cardId}`, { replace: true });
             fetchData(data.cardId, data.cardType);
         } catch (error: any) {
             toast.error(error.response.data.message);

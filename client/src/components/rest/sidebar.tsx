@@ -22,7 +22,7 @@ const ButtonItem: React.FC<ButtonItemProps> = ({ icon: Icon, title, type, isVeri
             className="w-full flex justify-center pt-4" 
             disabled={!isVerified}
             onClick={() => {
-                navigate(`/dashboard/cards?type=${type}`);
+                navigate(`/dashboard/cards/${type}`);
             }}
         >
             <div className="w-[100%] text-white">

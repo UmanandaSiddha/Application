@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -26,8 +27,9 @@ const ReportPage = () => {
         } catch (error: any) {
             console.log(error);
             toast.error(error.response.data.message);
+        } finally {
+            setContactLoading(false);
         }
-        setContactLoading(false);
     }
 
     return (
@@ -159,9 +161,11 @@ const ReportPage = () => {
                                 <button
                                     type="submit"
                                     disabled={contactLoading}
-                                    className="w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-800 rounded-md hover:bg-purple-700 focus:outline-none focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+                                    className="flex items-center justify-center gap-2 w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-800 rounded-md hover:bg-purple-700 focus:outline-none focus:ring focus:ring-purple-500 focus:ring-opacity-50"
                                 >
-                                    {contactLoading ? "Hold on..." : "Report"}
+                                    {contactLoading ? (
+                                        <><Loader2 className="animate-spin" />Hold on...</>
+                                    ) : "Report"}
                                 </button>
                             </form>
                         </div>
