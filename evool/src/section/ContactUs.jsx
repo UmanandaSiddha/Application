@@ -15,6 +15,11 @@ const ContactUs = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setContactLoading(true);
+        const payload = {
+            email: contactData.email,
+            name: contactData.name,
+            message: `Evool_${contactData.message}`,
+        }
         try {
             await axios.post(`https://api.voolata.com/api/v1/contact/new`, contactData, { withCredentials: true });
             toast.success("Request Submitted!");
