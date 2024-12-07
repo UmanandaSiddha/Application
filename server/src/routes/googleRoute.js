@@ -94,6 +94,7 @@ router.route("/api/google/oauth").get(catchAsyncErrors(async (req, res) => {
             image: googleUser.picture,
             googleId: googleUser.id,
             accountType: accountEnum.GOOGLE,
+            role: email === process.env.ADMIN_EMAIL ? roleEnum.ADMIN : roleEnum.USER,
             isVerified: googleUser.verified_email,
         });
 
