@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Footer = () => {
     return (
         <div className="lg:mt-36 mt-20">
@@ -33,19 +35,19 @@ const Footer = () => {
                     <div className="flex flex-col text-center md:text-left items-center md:mt-0 ">
                         <h2 className="text-white text-xl font-medium lg:pr-14">Company</h2>
                         <ul className="text-white mt-4 space-y-2  w-36">
-                            <a href="/about-us"><li className="pb-3">About Us</li></a>
-                            <a href="/donation"><li className="pb-3">Donation</li></a>
-                            <a href="/plans"><li className="pb-3">Pricing</li></a>
-                            <a href="/contact"><li>Contact Us</li></a>
+                            <Link to="/about-us"><li className="pb-3">About Us</li></Link>
+                            <Link to="/donation"><li className="pb-3">Donation</li></Link>
+                            <Link to="/plans"><li className="pb-3">Pricing</li></Link>
+                            <Link to="/contact"><li>Contact Us</li></Link>
                         </ul>
                     </div>
 
                     <div className="flex flex-col text-center md:text-left mt-10 md:mt-0">
                         <h2 className="text-white text-xl font-medium">Links</h2>
                         <ul className="text-white mt-4 space-y-2 ">
-                            <a href="/terms-conditions"><li className="text-nowrap pb-3">Terms & Conditions</li></a>
-                            <a href="/refund-policy"><li className="pb-3">Refund Policy</li></a>
-                            <a href="/privacy-policy"><li>Privacy Policy</li></a>
+                            <Link to="/terms-conditions"><li className="text-nowrap pb-3">Terms & Conditions</li></Link>
+                            <Link to="/refund-policy"><li className="pb-3">Refund Policy</li></Link>
+                            <Link to="/privacy-policy"><li>Privacy Policy</li></Link>
                             
                         </ul>
                     </div>
