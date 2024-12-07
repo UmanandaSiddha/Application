@@ -46,7 +46,7 @@ const Checkout = () => {
         country: user?.billingAddress?.country,
     });
     const [updateLoading, setUpdateLoading] = useState(false);
-    const [checkoutLoading, setCheckoutLoading] = useState(false);
+    // const [checkoutLoading, setCheckoutLoading] = useState(false);
 
     const location = useLocation();
     const from = location.state?.from?.pathname || "/dashboard";

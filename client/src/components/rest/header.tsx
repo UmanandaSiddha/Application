@@ -120,7 +120,7 @@ export default function Header() {
                                     <span className="mx-4 font-medium">About Us</span>
                                 </Link>
                                 {user && (
-                                    <Link to="/dashboard" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/dashboard" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <Link to="/dashboard/botanical" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/dashboard" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                         <RxDashboard className='h-5 w-5' />
                                         <span className="mx-4 font-medium">Dashboard</span>
                                     </Link>
