@@ -110,7 +110,7 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="flex justify-center pt-6 pb-16 bg-gray-100">
+        <div className="flex justify-center pt-6 pb-16">
             <div className="flex flex-row w-[80%] md:w-[90%] lg:w-[80%] md:space-x-4 lg:space-x-4">
                 <div className="basis-full h-screen md:h-auto md:basis-1/4 lg:basis-1/4 lg:block xl:block">
                     <SideBar />
