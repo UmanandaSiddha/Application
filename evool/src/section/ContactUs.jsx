@@ -31,7 +31,7 @@ const ContactUs = () => {
     }
 
     return (
-        <section className="min-h-screen  ">
+        <section className="min-h-screen  mt-12">
             <div className="container w-[80%] flex flex-col min-h-screen px-6 py-12 mx-auto">
                 <div className="flex-1 lg:flex lg:items-center lg:-mx-6">
                     <div className=" lg:w-1/2 lg:mx-6">
