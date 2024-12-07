@@ -16,7 +16,7 @@ const ContactUs = () => {
         e.preventDefault();
         setContactLoading(true);
         try {
-            await axios.post(`${import.meta.env.VITE_BASE_URL}/contact/new`, contactData, { withCredentials: true });
+            await axios.post(`https://api.voolata.com/api/v1/contact/new`, contactData, { withCredentials: true });
             toast.success("Request Submitted!");
         } catch (error) {
             console.log(error);
