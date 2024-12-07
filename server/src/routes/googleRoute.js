@@ -1,7 +1,7 @@
 import express from "express";
 import qs from "qs";
 import axios from "axios";
-import User, { accountEnum } from "../models/userModel.js";
+import User, { accountEnum, roleEnum } from "../models/userModel.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import { CLIENT_URL } from "../server.js";
 
