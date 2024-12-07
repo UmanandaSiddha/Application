@@ -46,7 +46,7 @@ const PersonalComponent = ({ card }: PropsType) => {
                 { label: "Current Occupation", value: card?.currentOcupation === "Other" ? card.currentOcupation_Other : card?.currentOcupation },
                 { label: "Career Goals", value: card?.careerAspiation === "Other" ? card.careerAspiation_Other : card?.careerAspiation },
                 { label: "Education", value: card?.education === "Other" ? card.education_Other : card?.education },
-                { label: "Skills", value: card?.skills === "Other" ? card.skills_Other : card?.skills },
+                { label: "Skills", multiple: true, originValue: card?.skills, value: card?.skills === "Other" ? card.skills_Other : card?.skills },
             ]
         },
         {
@@ -72,10 +72,10 @@ const PersonalComponent = ({ card }: PropsType) => {
                 { label: "Motivational Quotes", value: card?.motivationalQuotes },
                 { label: "Other Quotes", value: card?.otherQuotes },
                 { label: "Spiritual Beliefs", value: card?.spiritual === "Other" ? card.spiritual_Other : card?.spiritual },
-                { label: "Core Beliefs", value: card?.core === "Other" ? card.core_Other : card?.core },
+                { label: "Core Beliefs", multiple: true, originValue: card?.core, value: card?.core === "Other" ? card.core_Other : card?.core },
                 { label: "Philosophy", value: card?.philosophy === "Other" ? card?.philosophy_Other : card?.philosophy },
                 { label: "Weird Beliefs", value: card?.weirdBelief },
-                { label: "Social Causes", value: card?.socialCause === "Other" ? card?.socialCause_Other : card?.socialCause },
+                { label: "Social Causes", multiple: true, originValue: card?.socialCause, value: card?.socialCause === "Other" ? card?.socialCause_Other : card?.socialCause },
                 { label: "Global Issues", value: card?.globalIssues }
             ]
         },
@@ -98,12 +98,12 @@ const PersonalComponent = ({ card }: PropsType) => {
             label: "Interests",
             icon: FcComboChart as IconType,
             data: [
-                { label: "Preferred Mode of Travel", value: card?.travelMode === "Other" ? card?.travelMode_Other : card?.travelMode },
-                { label: "Fav Movies/TV Shows", value: card?.genre === "Other" ? card.genre_Other : card?.genre },
-                { label: "Sports Activities", value: card?.sports === "Other" ? card?.sports_Other : card?.sports },
-                { label: "Artistic Hobbies", value: card?.artistisPursuits === "Other" ? card.artistisPursuits_Other : card?.artistisPursuits },
-                { label: "Gaming Preferences", value: card?.gaming === "Other" ? card.gaming_Other : card?.gaming },
-                { label: "Collecting Hobby/Interest", value: card?.collectignHobby === "Other" ? card.collectignHobby_Other : card?.collectignHobby },
+                { label: "Preferred Mode of Travel", multiple: true, originValue: card?.travelMode, value: card?.travelMode === "Other" ? card?.travelMode_Other : card?.travelMode },
+                { label: "Fav Movies/TV Shows", multiple: true, originValue: card?.genre, value: card?.genre === "Other" ? card.genre_Other : card?.genre },
+                { label: "Sports Activities", multiple: true, originValue: card?.sports, value: card?.sports === "Other" ? card?.sports_Other : card?.sports },
+                { label: "Artistic Hobbies", multiple: true, originValue: card?.artistisPursuits, value: card?.artistisPursuits === "Other" ? card.artistisPursuits_Other : card?.artistisPursuits },
+                { label: "Gaming Preferences", multiple: true, originValue: card?.gaming, value: card?.gaming === "Other" ? card.gaming_Other : card?.gaming },
+                { label: "Collecting Hobby/Interest", multiple: true, originValue: card?.collectignHobby, value: card?.collectignHobby === "Other" ? card.collectignHobby_Other : card?.collectignHobby },
                 { label: "Coffee or Tea?", value: card?.coffee === "Other" ? card.coffee_Other : card?.coffee },
                 { label: "Cooking Skills", value: card?.cookingSkills === "Other" ? card.cookingSkills_Other : card?.cookingSkills }
             ]
@@ -225,7 +225,15 @@ const PersonalComponent = ({ card }: PropsType) => {
                                                             <div key={index} className="flex flex-col md:flex-row justify-center md:items-center md:gap-4">
                                                                 <div className="md:basis-1/3 flex justify-start items-center text-lg text-black"><p className="text-sm font-semibold">{item.label}:</p></div>
                                                                 <div className="md:basis-2/3 flex justify-start items-center">
+                                                                {item?.multiple && item.originValue !== "Other" ? (
+                                                                    <ul className="block py-2.5 px-0 w-full text-base bg-transparent border-0 border-b-2 border-gray-600 appearance-none text-gray-600 focus:outline-none focus:ring-0 focus:border-gray-600">
+                                                                        {item.value?.split(",").map((it, index) => (
+                                                                            <li key={index} className="p-3 h-10 flex items-center justify-center bg-gray-200 rounded-xl">{it}</li>
+                                                                        ))}
+                                                                    </ul>
+                                                                ) : (
                                                                     <p className="block py-2.5 px-0 w-full text-base bg-transparent border-0 border-b-2 border-gray-600 appearance-none text-gray-600 focus:outline-none focus:ring-0 focus:border-gray-600">{item.value}</p>
+                                                                )}
                                                                 </div>
                                                             </div>
                                                         ))}

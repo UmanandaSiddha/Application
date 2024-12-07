@@ -11,7 +11,7 @@ import { RxDashboard } from 'react-icons/rx';
 import { BiDonateHeart } from 'react-icons/bi';
 import { FiPhone } from 'react-icons/fi';
 import { LuScrollText } from 'react-icons/lu';
-import { IoWalletOutline } from 'react-icons/io5';
+import { IoHomeOutline, IoWalletOutline } from 'react-icons/io5';
 
 export default function Header() {
 
@@ -52,6 +52,9 @@ export default function Header() {
                     <img className="h-8 w-auto" src="/voolata_long_r.png" alt="" />
                 </Link>
                 <div className="hidden lg:flex lg:gap-x-12">
+                    <Link to='/' className="text-md font-semibold leading-6">
+                        Home
+                    </Link>
                     <Link to='/donation' className="text-md font-semibold leading-6">
                         Donate
                     </Link>
@@ -115,17 +118,21 @@ export default function Header() {
                         <div className="flex flex-col flex-grow justify-between mt-1">
                             <nav>
                                 <hr className="my-2 border-gray-200" />
-                                <Link to="/about-us" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/about" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                <Link to="/" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <IoHomeOutline className='h-5 w-5' />
+                                    <span className="mx-4 font-medium">Home</span>
+                                </Link>
+                                <Link to="/about-us" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/about-us" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <LuScrollText className='h-5 w-5' />
                                     <span className="mx-4 font-medium">About Us</span>
                                 </Link>
                                 {user && (
-                                    <Link to="/dashboard/botanical" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/dashboard" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <Link to="/dashboard/botanical" className={`flex items-center p-2 mt-5 rounded-md ${["/dashboard/botanical", "/dashboard/animal", "/dashboard/creator", "/dashboard/individual", "/dashboard/medical"].includes(location.pathname) ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                         <RxDashboard className='h-5 w-5' />
                                         <span className="mx-4 font-medium">Dashboard</span>
                                     </Link>
                                 )}
-                                <Link to="/donation" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                <Link to="/donation" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/donation" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <BiDonateHeart className='h-5 w-5' />
                                     <span className="mx-4 font-medium">Donate</span>
                                 </Link>

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { UserResponse } from "@/types/api-types";
 import OtpInput from "@/components/rest/otp-input";
+import { Helmet } from "react-helmet-async";
 
 const TIMER_DURATION = 30;
 
@@ -20,7 +21,7 @@ const Verify = () => {
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/dashboard";
+    const from = location.state?.from?.pathname || "/dashboard/botanical";
 
     useEffect(() => {
         const otpSent = search.get("otpSent") === "true";
@@ -80,32 +81,39 @@ const Verify = () => {
     };
 
     return (
-        <div className="pt-6 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
-            <div className="w-[95%] md:w-[80%] lg:w-[70%] mx-auto mt-2 rounded-lg bg-white shadow-xl">
-                <div className="flex flex-col lg:flex-row justify-center items-center lg:items-stretch rounded-2xl p-6">
-                    <img
-                        src="./otp_img.jpg"
-                        alt="OTP Verification"
-                        className="hidden lg:block lg:w-[500px] xl:w-[600px]"
-                    />
-                    <div className="w-full lg:w-1/2 text-center flex flex-col justify-center items-center space-y-4 lg:text-left p-4">
-                        <h1 className="text-2xl lg:text-3xl font-semibold">Verify your <span className="text-purple-600">Email</span></h1>
-                        <h2 className="text-md lg:text-lg text-gray-500 mb-4">Enter the OTP code sent to your email</h2>
+        <>
+            <Helmet>
+                <title>Voolata | Verify</title>
+                <meta name="description" content={`This is the verify page of Voolata`} />
+                <meta name="keywords" content="verify, voolata" />
+            </Helmet>
+            <div className="pt-6 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
+                <div className="w-[95%] md:w-[80%] lg:w-[70%] mx-auto mt-2 rounded-lg bg-white shadow-xl">
+                    <div className="flex flex-col lg:flex-row justify-center items-center lg:items-stretch rounded-2xl p-6">
+                        <img
+                            src="./otp_img.jpg"
+                            alt="OTP Verification"
+                            className="hidden lg:block lg:w-[500px] xl:w-[600px]"
+                        />
+                        <div className="w-full lg:w-1/2 text-center flex flex-col justify-center items-center space-y-4 lg:text-left p-4">
+                            <h1 className="text-2xl lg:text-3xl font-semibold">Verify your <span className="text-purple-600">Email</span></h1>
+                            <h2 className="text-md lg:text-lg text-gray-500 mb-4">Enter the OTP code sent to your email</h2>
 
-                        <OtpInput length={6} disabled={verifyLoading} onOtpSubmit={onOtpSubmit} />
-                        <div className="mt-4">
-                            <button
-                                onClick={resendOtp}
-                                disabled={isButtonDisabled}
-                                className={`text-purple-600 font-semibold hover:underline ${isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                            >
-                                {isButtonDisabled ? `Resend OTP in ${timer}s` : "Resend OTP"}
-                            </button>
+                            <OtpInput length={6} disabled={verifyLoading} onOtpSubmit={onOtpSubmit} />
+                            <div className="mt-4">
+                                <button
+                                    onClick={resendOtp}
+                                    disabled={isButtonDisabled}
+                                    className={`text-purple-600 font-semibold hover:underline ${isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                                >
+                                    {isButtonDisabled ? `Resend OTP in ${timer}s` : "Resend OTP"}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

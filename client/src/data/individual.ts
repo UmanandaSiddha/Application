@@ -61,28 +61,28 @@ export const motto = [
 ];
 
 export const interests = [
-    { name: "travelMode", label: "Travel", type: "text", text: "Enter your Preferred Mode of Travel", options: ["Airplane", "Train", "Cars", "Cruise", "Other"] },
-    { name: "genre", label: "Movies/ TV Shows", type: "text", text: "Favorite Movies/TV Shows/Genres", options: ["Action", "Comedy", "Drama", "Sci-Fi/Fantasy", "Documentary", "Other"] },
-    { name: "sports", label: "Sports Activites", type: "text", text: "Sports or Outdoor Activities", options: ["Basketball", "Tennis", "Hiking", "Cycling", "Swimming", "Other"] },
-    { name: "artistisPursuits", label: "Artistic Hobbies", type: "text", text: "Artistic Pursuits/Hobbies", options: ["Drawing/Painting", "Photography", "Writing", "Crafts", "Music", "Other"] },
-    { name: "gaming", label: "Gaming Preferences", type: "text", text: "Gaming Preferences", options: ["Action", "Adventure", "Puzzle", "Role-playing", "Simulation", "Other"] },
-    { name: "collectignHobby", label: "Collecting Hobby /Interest", type: "text", text: "Collecting Hobby or Interest", options: ["Coins/Stamps", "Comics/Figurines", "Antiques", "Trading cards", "Memorabilia", "Other"] },
+    { name: "travelMode", label: "Travel", multiple: true, type: "text", text: "Enter your Preferred Mode of Travel", options: ["Airplane", "Train", "Cars", "Cruise", "Other"] },
+    { name: "genre", label: "Movies/ TV Shows", multiple: true, type: "text", text: "Favorite Movies/TV Shows/Genres", options: ["Action", "Comedy", "Drama", "Sci-Fi/Fantasy", "Documentary", "Other"] },
+    { name: "sports", label: "Sports Activites", multiple: true, type: "text", text: "Sports or Outdoor Activities", options: ["Basketball", "Tennis", "Hiking", "Cycling", "Swimming", "Other"] },
+    { name: "artistisPursuits", label: "Artistic Hobbies", multiple: true, type: "text", text: "Artistic Pursuits/Hobbies", options: ["Drawing/Painting", "Photography", "Writing", "Crafts", "Music", "Other"] },
+    { name: "gaming", label: "Gaming Preferences", multiple: true, type: "text", text: "Gaming Preferences", options: ["Action", "Adventure", "Puzzle", "Role-playing", "Simulation", "Other"] },
+    { name: "collectignHobby", label: "Collecting Hobby /Interest", multiple: true, type: "text", text: "Collecting Hobby or Interest", options: ["Coins/Stamps", "Comics/Figurines", "Antiques", "Trading cards", "Memorabilia", "Other"] },
     { name: "coffee", label: "Coffee or Tea?", type: "text", text: "Coffee or Tea Lover", options: ["Coffee addict", "Tea enthusiast", "Both!", "None, prefer other beverages"] },
     { name: "cookingSkills", label: "Cooking Skills", type: "text", text: "Cooking Skills", options: ["Novice", "Intermediate", "Expert"] },
 ];
 
 export const sepPersonal = [
     { name: "spiritual", label: "Beliefs", type: "text", text: "Spiritual or Religious Beliefs", options: ["Religious", "Spiritual", "Atheist", "Agnostic", "Other"] },
-    { name: "core", label: "Core Values", type: "text", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity", "Other"] },
+    { name: "core", label: "Core Values", multiple: true, type: "text", text: "Core Values", options: ["Honesty", "Respect", "Kindness", "Integrity", "Other"] },
     { name: "philosophy", label: "Philosophies", type: "text", text: "Philosophies I Believe In", options: ["Stoicism", "Existentialism", "Humanism", "Nihilism", "Other"] },
-    { name: "socialCause", label: "Causes I Support", type: "text", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education", "Other"] },
+    { name: "socialCause", label: "Causes I Support", multiple: true, type: "text", text: "Environmental/Social Causes I Support", options: ["Environmental Conservation", "Human Rights", "Animal Welfare", "Education", "Other"] },
 ]
 
 export const professional = [
     { name: "currentOcupation", label: "Current Occupation", type: "text", text: "Enter Current Occupation/Industry", options: ["Technology", "Healthcare", "Education", "Finance", "Arts/Entertainment", "Other"] },
     { name: "careerAspiation", label: "Career Aspiation", type: "text", text: "Enter Career Aspirations/Goals", options: ["Leadership", "Entrepreneurship", "Creativity", "Advancement", "Other"] },
     { name: "education", label: "Education Background", type: "text", text: "Enter Education Background/Degrees", options: ["High School", "Bachelor's Degree", "Master's Degree", "Doctorate", "Other"] },
-    { name: "skills", label: "Professional Skills", type: "text", text: "Enter Professional Skills or Expertise", options: ["Communication", "Problem-solving", "Teamwork", "Leadership", "Other"] },
+    { name: "skills", label: "Professional Skills", multiple: true, type: "text", text: "Enter Professional Skills or Expertise", options: ["Communication", "Problem-solving", "Teamwork", "Leadership", "Other"] },
 ];
 
 export const additionalInfo = [

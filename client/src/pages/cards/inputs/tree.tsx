@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import SideBar from "@/components/rest/sidebar";
 import { generateSimpleDefaultValues } from "@/lib/helper";
 import { inputs } from "@/data/tree";
+import { Helmet } from "react-helmet-async";
 
 const CreateTree = () => {
 
@@ -82,75 +83,82 @@ const CreateTree = () => {
     }
 
     return (
-        <div className="flex justify-center h-screen">
-            <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-4 lg:space-y-0 lg:space-x-4">
-                <div className="basis-1/4 hidden lg:block">
-                    <SideBar />
-                </div>
+        <>
+            <Helmet>
+                <title>Voolata | Form botanical</title>
+                <meta name="description" content={`This is the botanical form page of Voolata`} />
+                <meta name="keywords" content="botanical, form, voolata" />
+            </Helmet>
+            <div className="flex justify-center h-screen">
+                <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-4 lg:space-y-0 lg:space-x-4">
+                    <div className="basis-1/4 hidden lg:block">
+                        <SideBar />
+                    </div>
 
-                <div className="flex-1 lg:basis-3/4">
-                    <div className="h-full flex flex-col">
-                        <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
-                            Botanical
-                        </h1>
+                    <div className="flex-1 lg:basis-3/4">
+                        <div className="h-full flex flex-col">
+                            <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
+                                Botanical
+                            </h1>
 
-                        <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
-                            <div className="w-full h-2 bg-blue-100 rounded-full">
-                                <div
-                                    className="h-2 bg-purple-400 rounded-full"
-                                    style={{ width: `100%` }}
-                                ></div>
+                            <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
+                                <div className="w-full h-2 bg-blue-100 rounded-full">
+                                    <div
+                                        className="h-2 bg-purple-400 rounded-full"
+                                        style={{ width: `100%` }}
+                                    ></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="flex-1">
-                            <div className="flex flex-col items-center">
-                                <form
-                                    onSubmit={handleSubmit(onSubmit)}
-                                    className="space-y-6 w-full lg:w-[70%] px-4 md:px-0"
-                                >
-                                    {inputs.map((input, index) => (
-                                        <div
-                                            className="relative flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4"
-                                            key={index}
-                                        >
-                                            <label
-                                                htmlFor={input.name}
-                                                className="text-md font-semibold text-gray-700 w-full md:w-auto"
+                            <div className="flex-1">
+                                <div className="flex flex-col items-center">
+                                    <form
+                                        onSubmit={handleSubmit(onSubmit)}
+                                        className="space-y-6 w-full lg:w-[70%] px-4 md:px-0"
+                                    >
+                                        {inputs.map((input, index) => (
+                                            <div
+                                                className="relative flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4"
+                                                key={index}
                                             >
-                                                {input.label}:
-                                            </label>
+                                                <label
+                                                    htmlFor={input.name}
+                                                    className="text-md font-semibold text-gray-700 w-full md:w-auto"
+                                                >
+                                                    {input.label}:
+                                                </label>
 
-                                            <div className="relative w-full md:flex-1">
-                                                <input
-                                                    type={input.name === "caretakerMobileNumber" ? "number" : "text"}
-                                                    id={input.name}
-                                                    placeholder={input.text}
-                                                    {...register(input.name, { required: true })}
-                                                    autoComplete="off"
-                                                    className="peer h-10 w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-                                                />
-                                                <span className="absolute left-0 bottom-0 h-[2px] w-full bg-transparent scale-x-0 border-gray-500 transition-transform duration-300 peer-focus:scale-x-100 peer-focus:bg-gray-900"></span>
+                                                <div className="relative w-full md:flex-1">
+                                                    <input
+                                                        type={input.name === "caretakerMobileNumber" ? "number" : "text"}
+                                                        id={input.name}
+                                                        placeholder={input.text}
+                                                        {...register(input.name)}
+                                                        autoComplete="off"
+                                                        className="peer h-10 w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                                                    />
+                                                    <span className="absolute left-0 bottom-0 h-[2px] w-full bg-transparent scale-x-0 border-gray-500 transition-transform duration-300 peer-focus:scale-x-100 peer-focus:bg-gray-900"></span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
 
-                                    <div className="flex justify-center pb-2">
-                                        <button
-                                            className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-[#9ce6cc] text-lg"
-                                            type="submit"
-                                            disabled={treeLoading}
-                                        >
-                                            {treeLoading ? "APPLYING..." : "APPLY CHANGES"}
-                                        </button>
-                                    </div>
-                                </form>
+                                        <div className="flex justify-center pb-2">
+                                            <button
+                                                className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-[#9ce6cc] text-lg"
+                                                type="submit"
+                                                disabled={treeLoading}
+                                            >
+                                                {treeLoading ? "APPLYING..." : "APPLY CHANGES"}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

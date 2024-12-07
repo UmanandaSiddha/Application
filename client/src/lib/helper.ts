@@ -45,27 +45,12 @@ export const qrStyles: Record<string, { qrColor: string; dotColor: string }> = {
 
 export const createQRCode = (type: string, cardId: string) => {
     const styles = type && qrStyles[type] ? qrStyles[type] : qrStyles.default;
-    let imgUrl;
-    switch (type) {
-        case "botanical":
-            imgUrl = `${window.location.protocol}//${window.location.host}/botanical.png`;
-            break;
-        case "individual":
-            imgUrl = `${window.location.protocol}//${window.location.host}/individual.png`;
-            break;
-        case "medical":
-            imgUrl = `${window.location.protocol}//${window.location.host}/medical.png`;
-            break;
-        case "creator":
-            imgUrl = `${window.location.protocol}//${window.location.host}/creator.png`;
-            break;
-        case "animal":
-            imgUrl = `${window.location.protocol}//${window.location.host}/animal.png`;
-            break;
-        default:
-            imgUrl = `${window.location.protocol}//${window.location.host}/botanical.png`;
+    let baseUrl;
+    if (import.meta.env.VITE_ENV === "development") {
+        baseUrl = "http://localhost:5173";
+    } else {
+        baseUrl = `https//voolata.com`;
     }
-
     return new QRCodeStyling({
         width: 1000,
         height: 1000,
@@ -76,7 +61,7 @@ export const createQRCode = (type: string, cardId: string) => {
             mode: "Byte",
             errorCorrectionLevel: "H",
         },
-        image: imgUrl,
+        image: `${baseUrl}/${type}.png`,
         imageOptions: {
             hideBackgroundDots: true,
             imageSize: 0.4,

@@ -17,10 +17,13 @@ const MedicalComponent = ({ card }: PropsType) => {
     const data = [
         {
             name: "Known Allergies",
-            value: card?.allergyHistory === "Other" ? card.allergyHistory_Other : card?.allergyHistory
+            multiple: true,
+            value: card?.allergyHistory === "Other" ? card.allergyHistory_Other : card?.allergyHistory,
+            originValue: card?.allergyHistory
         },
         {
             name: "Chronic Meical Conditions",
+            multiple: true,
             value: card?.chronicHistory === "Other" ? card.chronicHistory_Other : card?.chronicHistory
         },
         {
@@ -45,10 +48,12 @@ const MedicalComponent = ({ card }: PropsType) => {
         },
         {
             name: "Mental Condition",
+            multiple: true,
             value: card?.mentalCondition,
         },
         {
             name: "Vaccination History",
+            multiple: true,
             value: card?.vaccinationHistory,
         },
         {
@@ -124,7 +129,15 @@ const MedicalComponent = ({ card }: PropsType) => {
                         {data.map((item, index) => (
                             <div key={index} className="flex flex-col gap-y-2 py-2">
                                 <p className="text-lg font-semibold">{item.name}:</p>
-                                <p className="bg-white border-2 border-slate-200 w-full h-12 rounded-lg px-3 py-1 text-lg ">{item.value}</p>
+                                {item?.multiple && item.originValue !== "Other" ? (
+                                    <ul className="bg-white border-2 flex-wrap flex gap-3 border-slate-200 w-full rounded-lg px-3 py-1 text-lg ">
+                                        {item.value?.split(",").map((it, index) => (
+                                            <li key={index} className="p-3 h-10 flex items-center justify-center bg-gray-200 rounded-xl">{it}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="bg-white border-2 border-slate-200 w-full h-12 rounded-lg px-3 py-1 text-lg">{item.value}</p>
+                                )}
                             </div>
                         ))}
                     </div>

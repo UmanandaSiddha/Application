@@ -16,6 +16,7 @@ import AnimalComponent from "@/components/view-card/animal";
 import MedicalComponent from "@/components/view-card/medical";
 import PersonalComponent from "@/components/view-card/personal";
 import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
+import { Helmet } from "react-helmet-async";
 
 type CardInfoResponseType = {
     success: boolean;
@@ -31,7 +32,7 @@ const DisplayCard = () => {
     const [card, setCard] = useState<Tree | Personal | MedicalType | Creator | Animal | null>(null);
     const [loading, setLoading] = useState(false);
 
-    const fetchData = async (id : string, type: string) => {
+    const fetchData = async (id: string, type: string) => {
         setLoading(true);
         try {
             const { data }: { data: SingleTreeResponse | SinglePersonalResponse | SingleMedicalResponse | SingleCreatorResponse | SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/details/${id}?type=${type}`, { withCredentials: true });
@@ -84,15 +85,22 @@ const DisplayCard = () => {
     }
 
     return (
-        <div className="m-auto mt-4 p-auto lg:w-2/3">
-            <div className="border border-primary p-2 md:p-6 gap-4 items-center mx-0 my-0 md:mx-8 lg:mx-16 xl:mx-32">
-                {loading ? <Loader /> : card ? renderCard() : (
-                    <div className="flex justify-center items-center">
-                        <p className="text-3xl text-red-500 font-semibold">No Card Found</p>
-                    </div>
-                )}
+        <>
+            <Helmet>
+                <title>Voolata | Card {id}</title>
+                <meta name="description" content={`This is the display card page of Voolata`} />
+                <meta name="keywords" content="display, card, voolata" />
+            </Helmet>
+            <div className="m-auto mt-4 p-auto lg:w-2/3">
+                <div className="border border-primary p-2 md:p-6 gap-4 items-center mx-0 my-0 md:mx-8 lg:mx-16 xl:mx-32">
+                    {loading ? <Loader /> : card ? renderCard() : (
+                        <div className="flex justify-center items-center">
+                            <p className="text-3xl text-red-500 font-semibold">No Card Found</p>
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 
