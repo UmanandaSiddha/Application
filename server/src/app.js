@@ -21,9 +21,11 @@ const corsOptions = {
 	origin: (origin, callback) => {
 		const allowedOrigins = [
 			"https://voolata.com",
-			"https://www.voolata.com",
 			"https://admin.voolata.com",
+			"https://evoolfoundation.org",
+			"https://www.voolata.com",
 			"https://www.admin.voolata.com",
+			"https://www.evoolfoundation.org",
 			"http://localhost:5173",
 			"http://localhost:5174",
 		];

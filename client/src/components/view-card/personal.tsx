@@ -225,15 +225,23 @@ const PersonalComponent = ({ card }: PropsType) => {
                                                             <div key={index} className="flex flex-col md:flex-row justify-center md:items-center md:gap-4">
                                                                 <div className="md:basis-1/3 flex justify-start items-center text-lg text-black"><p className="text-sm font-semibold">{item.label}:</p></div>
                                                                 <div className="md:basis-2/3 flex justify-start items-center">
-                                                                {item?.multiple && item.originValue !== "Other" ? (
-                                                                    <ul className="block py-2.5 px-0 w-full text-base bg-transparent border-0 border-b-2 border-gray-600 appearance-none text-gray-600 focus:outline-none focus:ring-0 focus:border-gray-600">
-                                                                        {item.value?.split(",").map((it, index) => (
-                                                                            <li key={index} className="p-3 h-10 flex items-center justify-center bg-gray-200 rounded-xl">{it}</li>
-                                                                        ))}
-                                                                    </ul>
-                                                                ) : (
-                                                                    <p className="block py-2.5 px-0 w-full text-base bg-transparent border-0 border-b-2 border-gray-600 appearance-none text-gray-600 focus:outline-none focus:ring-0 focus:border-gray-600">{item.value}</p>
-                                                                )}
+                                                                    {item?.multiple && item.originValue !== "Other" ? (
+                                                                        <ul className="flex flex-wrap gap-2 py-2 px-3 rounded-md w-full bg-white">
+                                                                            {item.value?.split(",").map((it, index) => (
+                                                                                <li
+                                                                                    key={index}
+                                                                                    className="px-4 py-2 bg-gray-200 text-gray-600 rounded-full shadow-sm text-sm flex items-center justify-center"
+                                                                                >
+                                                                                    {it}
+                                                                                </li>
+                                                                            ))}
+                                                                        </ul>
+                                                                    ) : (
+                                                                        <p className="block py-2.5 px-0 w-full text-base bg-transparent border-0 border-b-2 border-gray-600 appearance-none text-gray-600 focus:outline-none focus:ring-0 focus:border-gray-600">
+                                                                            {item.value}
+                                                                        </p>
+                                                                    )}
+
                                                                 </div>
                                                             </div>
                                                         ))}
