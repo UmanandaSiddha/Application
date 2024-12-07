@@ -21,7 +21,7 @@ const ContactUs = () => {
             message: `Evool_${contactData.message}`,
         }
         try {
-            await axios.post(`https://api.voolata.com/api/v1/contact/new`, contactData, { withCredentials: true });
+            await axios.post(`https://api.voolata.com/api/v1/contact/new`, payload, { withCredentials: true });
             toast.success("Request Submitted!");
         } catch (error) {
             console.log(error);
