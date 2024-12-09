@@ -45,11 +45,13 @@ export const qrStyles: Record<string, { qrColor: string; dotColor: string }> = {
 
 export const createQRCode = (type: string, cardId: string) => {
     const styles = type && qrStyles[type] ? qrStyles[type] : qrStyles.default;
-    let baseUrl;
-    if (import.meta.env.VITE_ENV === "development") {
-        baseUrl = "http://localhost:5173";
-    } else {
-        baseUrl = `https//voolata.com`;
+    let baseUrl = `${window.location.protocol}//${window.location.host}`;
+    if (!baseUrl) {
+        if (import.meta.env.VITE_ENV === "development") {
+            baseUrl = "http://localhost:5173";
+        } else {
+            baseUrl = `https://voolata.com`;
+        }
     }
     return new QRCodeStyling({
         width: 1000,

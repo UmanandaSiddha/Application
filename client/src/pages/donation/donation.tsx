@@ -73,7 +73,11 @@ const Donation = () => {
                 <p className='md:text-2xl pt-20 pb-16'>
                     Together, we can create a future where technology drives sustainable development and enhances the quality of life for all. Join us in our mission to make a positive impact on the world.
                 </p>
-                <h2 className='md:text-3xl pb-56'><span className="text-purple-700 font-semibold"><Link to="/donation/dashboard">Donate</Link></span> Now and be a part of the <span className='text-purple-500'>CHANGE!</span></h2>
+                <h2 className='md:text-3xl pb-16'><span className="text-purple-700 font-semibold"><Link to="/donation/dashboard">Donate</Link></span> Now and be a part of the <span className='text-purple-500'>CHANGE!</span></h2>
+
+                <div className="text-center pb-56">
+                    <Link to="/donation/dashboard" className="bg-purple-600 shadow-xl hover:bg-purple-500 text-white text-xl md:text-2xl font-semibold px-6 py-3 rounded-full">Donate Now</Link>
+                </div>
             </div>
         </>
     );
