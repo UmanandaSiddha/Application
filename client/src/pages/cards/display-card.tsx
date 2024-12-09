@@ -87,7 +87,7 @@ const DisplayCard = () => {
     return (
         <>
             <Helmet>
-                <title>Voolata | Card {id}</title>
+                <title>Voolata | Card</title>
                 <meta name="description" content={`This is the display card page of Voolata`} />
                 <meta name="keywords" content="display, card, voolata" />
             </Helmet>
