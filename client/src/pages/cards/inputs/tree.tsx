@@ -34,7 +34,11 @@ const CreateTree = () => {
                 try {
                     const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=botanical`, { withCredentials: true });
                     setIsTree(true);
-                    reset(data.vCard);
+                    // reset(data.vCard);
+                    reset({
+                        ...data.vCard,
+                        createdAt: data.vCard.createdAt.toISOString()
+                    });
                 } catch (error: any) {
                     toast.error(error.response.data.message);
                 }
