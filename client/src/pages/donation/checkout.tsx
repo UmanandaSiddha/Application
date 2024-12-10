@@ -58,7 +58,7 @@ const DonationCheckout = () => {
         postalCode: donator?.address?.postalCode || "",
         country: donator?.address?.country || "",
     });
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState("Processing Payment");
     const location = useLocation();
     const from = location.state?.from?.pathname || "/donation/dashboard";
 

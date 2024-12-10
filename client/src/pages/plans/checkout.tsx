@@ -48,7 +48,7 @@ const Checkout = () => {
     });
     const [updateLoading, setUpdateLoading] = useState(false);
     const [checkoutLoading, setCheckoutLoading] = useState(false);
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState("Processing Payment");
 
     const location = useLocation();
     const from = location.state?.from?.pathname || "/profile";
