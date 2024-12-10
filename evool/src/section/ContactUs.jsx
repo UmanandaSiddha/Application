@@ -35,8 +35,8 @@ const ContactUs = () => {
     }
 
     return (
-        <section className="min-h-screen pt-6">
-            <div className="container w-[80%] flex flex-col min-h-screen px-6 py-12 mx-auto">
+        <section className="min-h-screen pt-12 md:pt-8">
+            <div className="container w-full md:w-[80%] flex flex-col min-h-screen px-6 py-12 mx-auto">
                 <div className="flex-1 lg:flex lg:items-center lg:-mx-6">
                     <div className=" lg:w-1/2 lg:mx-6">
                         <h1 className="text-2xl font-semibold capitalize lg:text-3xl">Contact Us</h1>
@@ -108,7 +108,7 @@ const ContactUs = () => {
                     </div>
 
                     
-                    <div className="mt-8 w-full lg:w-1/2 lg:mx-6">
+                    <div className="mt-8 lg:w-1/2 lg:mx-6">
                         <div className="w-full px-8 py-10 mx-auto bg-white overflow-hidden shadow-2xl rounded-xl lg:max-w-xl">
                             <h1 className="text-xl font-medium text-gray-700">What do you want to ask</h1>
 
