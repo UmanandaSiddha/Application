@@ -108,7 +108,7 @@ const ContactUs = () => {
                     </div>
 
                     
-                    <div className="mt-8 lg:w-1/2 lg:mx-6">
+                    <div className="mt-8 w-full lg:w-1/2 lg:mx-6">
                         <div className="w-full px-8 py-10 mx-auto bg-white overflow-hidden shadow-2xl rounded-xl lg:max-w-xl">
                             <h1 className="text-xl font-medium text-gray-700">What do you want to ask</h1>
 
