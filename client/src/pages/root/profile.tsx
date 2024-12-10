@@ -265,7 +265,7 @@ const Profile = () => {
                     <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-10">
                         <div className="bg-white p-8 rounded-lg shadow-lg w-[90%] md:w-[70%] lg:w-[50%]">
                             <div className="flex justify-between items-center">
-                                <h2 className="text-2xl font-semibold mb-4 flex justify-center">Update Password</h2>
+                                <h2 className="text-2xl font-semibold mb-4 flex justify-center">Deactivate Account</h2>
                                 <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenDelete(false)}>Close</button>
                             </div>
                             <p className="text-lg italic text-gray-500">This will deactivate your account and delete all your cards. You may Reactivate by contacting the admin</p>
@@ -375,7 +375,7 @@ const Profile = () => {
                             <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                                 <div className="flex justify-between">
                                     <h1 className="text-xl font-semibold">Billing Address</h1>
-                                    <button onClick={() => setOpenBilling(true)} className="text-md bg-white underline">Edit</button>
+                                    <button onClick={() => setOpenBilling(true)} className="text-md bg-white underline">Edit Address</button>
                                 </div>
                                 <hr className="my-2 border-gray-400 " />
                                 <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.street}</span></p>
