@@ -18,6 +18,7 @@ const DonationLogin = () => {
     const [email, setEmail] = useState<string>("");
     const [emailSent, setEmailSent] = useState<boolean>(false);
     const [emailLoading, setEmailLoading] = useState<boolean>(false);
+    const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
 
     const handleEmail = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -46,6 +47,7 @@ const DonationLogin = () => {
             toast.warning("Send the email first");
             return;
         }
+        setVerifyLoading(true);
         try {
             const { data }: { data: DonatorResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/donate/login`, { email, otp }, { withCredentials: true });
             dispatch(donatorExist(data.donator));
@@ -54,6 +56,8 @@ const DonationLogin = () => {
         } catch (error: any) {
             toast.error(error.response.data.message);
             dispatch(donatorNotExist());
+        } finally {
+            setVerifyLoading(false);
         }
     };
 
@@ -100,7 +104,7 @@ const DonationLogin = () => {
 
                             <h1 className="text-2xl lg:text-3xl text-purple-600 font-semibold pb-4">Enter OTP here</h1>
 
-                            <OtpInput length={6} disabled={emailLoading} onOtpSubmit={onOtpSubmit} />
+                            <OtpInput length={6} disabled={verifyLoading} onOtpSubmit={onOtpSubmit} />
                         </div>
                     </div>
                 </div>
