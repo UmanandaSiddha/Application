@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 export const menuItems = [
-  { label: "Our Mission", path: "/our-mission" },
-  { label: "Our Vision", path: "/our-vision" },
-  { label: "Our Project", path: "/our-project" },
+  { label: "Mission", path: "/our-mission" },
+  { label: "Vision", path: "/our-vision" },
+  { label: "Project", path: "/our-project" },
   { label: "About Us", path: "/about-us" },
   { label: "Get Involved", path: "/get-involved" }
 ];
@@ -38,7 +38,7 @@ export default function Navbar() {
       </div>
 
 
-      <div className="hidden md:flex text-sm md:text-md gap-10 transition-all duration-300 ease-in-out">
+      <div className="hidden md:flex text-md md:text-lg lg:text-xl gap-2 md:gap-6 lg:gap-10 transition-all duration-300 ease-in-out">
         {menuItems.map((me, index) => (
           <Link to={me.path}><h1>{me.label}</h1></Link>
         ))}
@@ -68,7 +68,7 @@ export default function Navbar() {
 
       <Link to="/contact-us" className={`hidden md:flex items-center justify-center border-[3px] border-black lg:p-2 p-1 lg:w-32 hover:bg-teal-200 transition-all duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}>
         <button className=''>
-          <h1 className="text-center max-lg:text-lg ">Contact Us</h1>
+          <h1 className="text-center text-md md:text-lg lg:text-xl">Contact Us</h1>
         </button>
       </Link>
 
