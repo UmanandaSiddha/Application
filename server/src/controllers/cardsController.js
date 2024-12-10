@@ -164,15 +164,22 @@ export const getUserCards = catchAsyncErrors(async (req, res, next) => {
     }
 
     const resultPerPage = 20;
-    const vCardCount = await Model.countDocuments({ user: req.user.id });
+    const count = await Model.countDocuments({ user: req.user.id });
 
-    const apiFeatures = new ApiFeatures(Model.find({ user: req.user.id }).select("name shortCode").sort({ $natural: -1 }), req.query).pagination(resultPerPage);
-    const vCards = await apiFeatures.query;
+    const apiFeatures = new ApiFeatures(Model.find({ user: req.user.id }).select("name shortCode createdAt").sort({ $natural: -1 }), req.query).searchCard();
 
-    res.status(200).json({
+    let filteredCards = await apiFeatures.query;
+    let filteredCardsCount = filteredCards.length;
+    
+    apiFeatures.pagination(resultPerPage);
+    filteredCards = await apiFeatures.query.clone();
+
+    return res.status(200).json({
         success: true,
-        count: vCardCount,
-        vCards,
+        count,
+        resultPerPage,
+        vCards: filteredCards,
+        filteredCardsCount
     });
 });
 

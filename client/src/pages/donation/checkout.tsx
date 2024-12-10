@@ -58,7 +58,7 @@ const DonationCheckout = () => {
         postalCode: donator?.address?.postalCode || "",
         country: donator?.address?.country || "",
     });
-
+    const [message, setMessage] = useState("");
     const location = useLocation();
     const from = location.state?.from?.pathname || "/donation/dashboard";
 
@@ -141,23 +141,7 @@ const DonationCheckout = () => {
                     description: "just fine",
                     subscription_id: subData.data.subscriptions_id,
                     handler: async function (response: any) {
-                        // try {
-                        //     const { data }: { data: SubscriptionCatpureResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/capture`, response, { withCredentials: true });
-                        //     if (!data) {
-                        //         toast.error("Failed to Verify Payment");
-                        //         return;
-                        //     }
-                        //     if (data.subscriptionStatus === "active" && data.paymentStatus === "captured") {
-                        //         toast.success("All set")
-                        //     } else {
-                        //         toast.info("If the amount was debited from your account, please don't pay again. We are looking into this matter");
-                        //     }
-                        //     setTimeout(() => {
-                        //         navigate(from, { replace: true });
-                        //     }, 3000);
-                        // } catch (error: any) {
-                        //     toast.error(error.response.data.message);
-                        // }
+                        setMessage("Processing Payment");
                         setCheckoutLoading(true);
                         setTimeout(async () => {
                             try {
@@ -167,15 +151,15 @@ const DonationCheckout = () => {
                                 } else {
                                     toast.info("Payment is being processed. Please wait.");
                                 }
+                                setMessage("Redirecting");
                                 setTimeout(() => {
                                     navigate(from, { replace: true });
                                 }, 3000);
                             } catch (error: any) {
                                 toast.error("Error verifying payment. Please contact support.");
-                            } finally {
-                                setCheckoutLoading(false);
                             }
                         }, 5000);
+                        setCheckoutLoading(false);
                     },
                     prefill: {
                         email: donator?.email,
@@ -204,23 +188,7 @@ const DonationCheckout = () => {
                     description: "just fine",
                     order_id: donationData.data.order.id,
                     handler: async function (response: any) {
-                        // try {
-                        //     const { data }: { data: PaymentCatpureResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/verify/pay`, response, { withCredentials: true });
-                        //     if (!data) {
-                        //         toast.error("Failed to Verify Payment");
-                        //         return;
-                        //     }
-                        //     if (data.paymentStatus === "captured") {
-                        //         toast.success("All set");
-                        //     } else {
-                        //         toast.info("If the amount was debited from your account, please don't pay again. We are looking into this matter");
-                        //     }
-                        //     setTimeout(() => {
-                        //         navigate(from, { replace: true });
-                        //     }, 3000);
-                        // } catch (error: any) {
-                        //     toast.error(error.response.data.message);
-                        // }
+                        setMessage("Processing Payment");
                         setCheckoutLoading(true);
                         setTimeout(async () => {
                             try {
@@ -230,15 +198,15 @@ const DonationCheckout = () => {
                                 } else {
                                     toast.info("Payment is being processed. Please wait.");
                                 }
+                                setMessage("Redirecting");
                                 setTimeout(() => {
                                     navigate(from, { replace: true });
                                 }, 3000);
                             } catch (error: any) {
                                 toast.error("Error verifying payment. Please contact support.");
-                            } finally {
-                                setCheckoutLoading(false);
                             }
                         }, 5000);
+                        setCheckoutLoading(false);
                     },
                     prefill: {
                         email: donator?.email,
@@ -274,8 +242,10 @@ const DonationCheckout = () => {
                 <div className="flex justify-center items-center gap-4">
                     {checkoutLoading && (
                         <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex flex-col justify-center items-center z-10">
-                            <div className="flex items-center gap-2">
-                                <p className="text-lg font-semibold text-gray-900">Processing Payment...</p>
+                            <div className="bg-white p-8 rounded-lg shadow-lg h-24 w-[95%] md:w-[70%] lg:w-[50%]">
+                                <div className="flex items-center gap-2">
+                                    <p className="text-lg font-semibold text-gray-900">{message}...</p>
+                                </div>
                             </div>
                         </div>
                     )}

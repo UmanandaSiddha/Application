@@ -16,6 +16,7 @@ export type Tree = {
     caretakerMobileNumber: string;
     additionalNotes: string;
     user: string;
+    createdAt: Date;
 };
 
 export type Animal = {
@@ -35,6 +36,7 @@ export type Animal = {
     caretakerMobileNumber: string;
     additionalNotes: string;
     user: string;
+    createdAt: Date;
 }
 
 export type Personal = {
@@ -116,6 +118,7 @@ export type Personal = {
     strangeHabits: string,
     socialMedia: any,
     user: string;
+    createdAt: Date;
 }
 
 export type MedicalType = {
@@ -155,6 +158,7 @@ export type MedicalType = {
     insurancePolicyNumber: number,
     insuranceGrpNumber: number,
     user: string;
+    createdAt: Date;
 }
 
 export type Creator = {
@@ -163,4 +167,5 @@ export type Creator = {
     name: string;
     links: any;
     user: string;
+    createdAt: Date;
 }

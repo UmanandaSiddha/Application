@@ -40,6 +40,8 @@ export type SingleTransactionResponse = {
 export type TreeResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
+    filteredCardsCount: number;
     vCards: Tree[];
 }
 
@@ -51,6 +53,8 @@ export type SingleTreeResponse = {
 export type AnimalResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
+    filteredCardsCount: number;
     vCards: Animal[];
 }
 
@@ -62,6 +66,8 @@ export type SingleAnimalResponse = {
 export type PersonalResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
+    filteredCardsCount: number;
     vCards: Personal[];
 }
 
@@ -73,6 +79,8 @@ export type SinglePersonalResponse = {
 export type MedicalResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
+    filteredCardsCount: number;
     vCards: MedicalType[];
 }
 
@@ -84,6 +92,8 @@ export type SingleMedicalResponse = {
 export type CreatorResponse = {
     success: boolean;
     count: number;
+    resultPerPage: number;
+    filteredCardsCount: number;
     vCards: Creator[];
 }
 
