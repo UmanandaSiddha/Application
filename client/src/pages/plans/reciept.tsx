@@ -6,14 +6,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const RecieptPage = () => {
 
-    const [search] = useSearchParams();
-    const id = search.get("id");
-    const type = search.get("type");
+    const { type, id } = useParams();
     const [transaction, setTransaction] = useState<Transaction | null>();
     const { donator } = useSelector((state: RootState) => state.donatorReducer);
     const [reciept, setReciept] = useState(false);

@@ -307,7 +307,7 @@ export const getDonatorTransaction = catchAsyncErrors(async (req, res, next) => 
     const resultPerPage = 20;
     const count = await Transaction.countDocuments();
 
-    const apiFeatures = new ApiFeatures(Transaction.find({ donator: req.donator.id }).select("createdAt end paymentMethod razorpayPaymentId amount status").sort({ $natural: -1 }), req.query).filter();
+    const apiFeatures = new ApiFeatures(Transaction.find({ donator: req.donator.id }).sort({ $natural: -1 }), req.query).filter();
     let filteredTransaction = await apiFeatures.query;
     let filteredTransactionCount = filteredTransaction.length;
 
@@ -318,7 +318,7 @@ export const getDonatorTransaction = catchAsyncErrors(async (req, res, next) => 
         success: true,
         count,
         resultPerPage,
-        filteredTransaction,
+        transactions: filteredTransaction,
         filteredTransactionCount
     });
 });

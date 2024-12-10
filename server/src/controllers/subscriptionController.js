@@ -213,7 +213,7 @@ export const getUserTransactions = catchAsyncErrors(async (req, res, next) => {
     const resultPerPage = 20;
     const count = await Transaction.countDocuments();
 
-    const apiFeatures = new ApiFeatures(Transaction.find({ user: req.user.id }).select("createdAt end paymentMethod razorpayPaymentId amount status").sort({ $natural: -1 }), req.query).filter();
+    const apiFeatures = new ApiFeatures(Transaction.find({ user: req.user.id }).sort({ $natural: -1 }), req.query).filter();
     let filteredTransaction = await apiFeatures.query;
     let filteredTransactionCount = filteredTransaction.length;
 

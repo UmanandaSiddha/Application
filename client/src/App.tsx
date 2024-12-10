@@ -134,7 +134,7 @@ const App = () => {
                     <Route path="/org/register" element={<OrgRegister />} />
                     <Route path="/reset/:token/:user" element={<ResetPassword />} />
                     <Route path="/donation" element={<Donation />} />
-                    <Route path="/receipt" element={<RecieptPage />} />
+                    <Route path="/receipt/:type/:id" element={<RecieptPage />} />
 
                     <Route
                         element={lod2 ? (
