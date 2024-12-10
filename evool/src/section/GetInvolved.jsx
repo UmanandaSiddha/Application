@@ -11,7 +11,8 @@ export default function GetInvolved() {
           businesses who share our vision of using technology to address
           human and environmental challenges to join us in our mission.
         </p>
-        <h1 className='text-2xl md:text-4xl sm:pt-24 pt-10 max-md:font-semibold font-semibold md:pb-5 text-center w-fit mx-auto border-b-4 border-purple-400 pb-3'>WAYS TO GET INVOLVED</h1>
+        
+          <h1 className='text-2xl md:text-4xl sm:pt-24 pt-10 max-md:font-semibold  pb-3 sm:pb-5 text-center w-fit mx-auto relative low-highlight '>WAYS TO GET INVOLVED</h1>
       </div>
       <div className='flex max-lg:flex-col gap-8 p-3 justify-center mx-auto '>
         <div className='flex flex-col lg:w-[40%] max-sm:h-80 relative gap-10 rounded-2xl shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.1)] bg-white border-dotted border-red-400 border-[4px] text-center p-10'>
@@ -27,8 +28,8 @@ export default function GetInvolved() {
           <p className='font-medium md:text-base text-sm'>Whether through financial contributions or spreading the word, your support helps us continue developing platforms that improve lives and care for the planet.</p>
         </div>
       </div>
-      <h2 className='text-2xl max-md:font-semibold
-       md:text-4xl sm:pt-20 max-sm:text-center w-fit mx-auto border-b-4 pb-4 border-purple-400'>
+      <h2 className='text-[1.4rem] max-md:font-semibold
+       md:text-4xl sm:pt-20 max-sm:text-center w-fit  mx-auto relative low-highlight pb-2.5 max-sm:pt-8 sm:pb-5'>
         SUPPORT EVOOL FOUNDATION
       </h2>
       <p className='text-lg md:text-2xl'>

@@ -193,7 +193,7 @@ const AllCards = () => {
                         <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-20">
                             <div className="bg-white p-8 rounded-lg shadow-lg w-[95%] md:w-[70%] lg:w-[50%]">
                                 <div className="flex justify-between items-center">
-                                    <h2 className="text-xl md:text-2xl font-semibold">{type && type.charAt(0).toUpperCase() + type.slice(1)} Table</h2>
+                                    <h2 className="text-xl md:text-2xl font-semibold">{type && type.charAt(0).toUpperCase() + type.slice(1)} Table {counts?.filteredCards}</h2>
                                     <button className="p-1 md:p-2 bg-red-400 rounded-full" onClick={handleCloseTable}><RxCross2 className="text-white font-bold h-5 w-5" /></button>
                                 </div>
 

@@ -38,7 +38,7 @@ export default function Navbar() {
       </div>
 
 
-      <div className="hidden md:flex max-lg:text-sm gap-10 transition-all duration-300 ease-in-out">
+      <div className="hidden md:flex text-sm md:text-md gap-10 transition-all duration-300 ease-in-out">
         {menuItems.map((me, index) => (
           <Link to={me.path}><h1>{me.label}</h1></Link>
         ))}
@@ -66,9 +66,9 @@ export default function Navbar() {
         }
       </div>
 
-      <Link to="/contact-us" className={`hidden md:flex items-center justify-center border-[3px] border-black lg:p-2 p-1 lg:w-32  transition-all duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}>
-        <button >
-          <h1 className="text-center max-lg:text-lg">Contact Us</h1>
+      <Link to="/contact-us" className={`hidden md:flex items-center justify-center border-[3px] border-black lg:p-2 p-1 lg:w-32 hover:bg-teal-200 transition-all duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}>
+        <button className=''>
+          <h1 className="text-center max-lg:text-lg ">Contact Us</h1>
         </button>
       </Link>
 

@@ -622,7 +622,7 @@ const CreatePersonal = () => {
 
                             <div className="flex justify-center w-full lg:w-[70%] mx-auto gap-4 pb-4">
                                 <button
-                                    className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#3763a3] text-lg"
+                                    className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                     type="button"
                                     disabled={progressBar === 1}
                                     onClick={() => setProgressBar((currPage) => currPage - 1)}
@@ -631,7 +631,7 @@ const CreatePersonal = () => {
                                 </button>
                                 {progressBar === 5 ? (
                                     <button
-                                        className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#3763a3] text-lg"
+                                        className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="submit"
                                         disabled={personalLoading}
                                     >
@@ -639,7 +639,7 @@ const CreatePersonal = () => {
                                     </button>
                                 ) : (
                                     <button
-                                        className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-[#3763a3] text-lg"
+                                        className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="button"
                                         onClick={() => setProgressBar((currPage) => currPage + 1)}
                                     >

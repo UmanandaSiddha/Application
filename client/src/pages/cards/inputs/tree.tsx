@@ -148,7 +148,7 @@ const CreateTree = () => {
 
                                         <div className="flex justify-center pb-2">
                                             <button
-                                                className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-[#9ce6cc] text-lg"
+                                                className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-purple-500 text-lg"
                                                 type="submit"
                                                 disabled={treeLoading}
                                             >
