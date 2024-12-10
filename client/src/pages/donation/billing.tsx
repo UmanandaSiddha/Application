@@ -30,10 +30,11 @@ const DonationBilling = () => {
     const fetchTransactions = async () => {
         try {
             const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/donate/transaction/all`, { withCredentials: true });
-            setTransactions(data.transactions);
+            setTransactions(data.filteredTransaction);
+            console.log(data)
             const chachedTransaction = {
                 created: Date.now() + 30 * 1000,
-                data: data.transactions,
+                data: data.filteredTransaction,
             }
             window.sessionStorage.setItem("donation_transactions", JSON.stringify(chachedTransaction));
         } catch (error) {

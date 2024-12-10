@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -8,6 +8,7 @@ import { Plan } from "@/types/plan_types";
 import { SinglePlanResponse, UserResponse } from "@/types/api-types";
 import { togglePaid, userExist } from "@/redux/reducer/userReducer";
 import { Helmet } from "react-helmet-async";
+import { Loader2 } from "lucide-react";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -31,11 +32,9 @@ interface SubscriptionCaptureResponse {
 
 const Checkout = () => {
 
-    const [search] = useSearchParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const id = search.get("id");
-    const type = search.get("type");
+    const { id, type } = useParams();
     const [plan, setPlan] = useState<Plan | null>();
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
     const [updateData, setUpdateData] = useState({
@@ -141,6 +140,8 @@ const Checkout = () => {
             return;
         }
         try {
+            setMessage("Processing Payment");
+            setCheckoutLoading(true);
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
             const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, { id: razId }, config);
             if (!data) {
@@ -174,7 +175,6 @@ const Checkout = () => {
                             toast.error("Error verifying payment. Please contact support.");
                         }
                     }, 5000);
-                    setCheckoutLoading(false);
                 },
                 prefill: {
                     name: user?.name,
@@ -197,6 +197,8 @@ const Checkout = () => {
             });
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setCheckoutLoading(false);
         }
     };
 
@@ -211,9 +213,9 @@ const Checkout = () => {
                 <div className="flex justify-center items-center gap-4">
                     {checkoutLoading && (
                         <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex flex-col justify-center items-center z-10">
-                            <div className="bg-white p-8 rounded-lg shadow-lg h-24 w-[95%] md:w-[70%] lg:w-[50%]">
-                                <div className="flex items-center gap-2">
-                                    <p className="text-lg font-semibold text-gray-900">{message}...</p>
+                            <div className="bg-white p-8 rounded-lg shadow-lg h-24 w-[70%] md:w-[50%] lg:w-[30%]">
+                                <div className="flex justify-center items-center gap-2">
+                                    <p className="text-lg font-semibold flex items-center justify-center gap-2 text-gray-900"><Loader2 className="animate-spin" />{message}...</p>
                                 </div>
                             </div>
                         </div>
@@ -338,9 +340,9 @@ const Checkout = () => {
                                     e.preventDefault();
                                     handleCheckout(plan?.razorPlanId!);
                                 }}
-                                className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
+                                className="mt-4 w-full flex items-center justify-center gap-2 rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                             >
-                                Buy Now
+                                {checkoutLoading && <Loader2 className="animate-spin" />}Buy Now
                             </button>
 
                             <div className="mt-4 flex items-center justify-center space-x-2">

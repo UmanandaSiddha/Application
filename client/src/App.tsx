@@ -157,7 +157,7 @@ const App = () => {
                     >
                         <Route path="/view-custom" element={<ViewCustom />} />
                         <Route path="/request-custom" element={<RequestCustom />} />
-                        <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/checkout/:id/:type?" element={<Checkout />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/verify" element={<Verify />} />
                         <Route path="/billing" element={<BillingPage />} />

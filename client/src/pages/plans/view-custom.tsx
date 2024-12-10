@@ -88,7 +88,7 @@ const ViewCustom = () => {
                                         toast.warning("You already have a plan");
                                         return;
                                     }
-                                    navigate(`/checkout?id=${plan?._id}&type=custom`);
+                                    navigate(`/checkout/${plan?._id}/custom`);
                                 }}
                                 className="w-full h-12 font-semibold rounded-xl mt-5 bg-[#2b233b] text-white"
                             >

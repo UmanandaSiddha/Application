@@ -136,7 +136,7 @@ const PlanPage = () => {
                                         if (plan.planType === "free") {
                                             handleFreePlan(plan._id);
                                         } else {
-                                            navigate(`/checkout?id=${plan?._id}`);
+                                            navigate(`/checkout/${plan?._id}`);
                                         }
                                     }}
                                     className="w-full border-2 h-12 font-semibold rounded-xl mt-5"

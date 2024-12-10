@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { DonatorResponse } from "@/types/api-types";
 import { donatorExist } from "@/redux/reducer/donatorReducer";
 import { Helmet } from "react-helmet-async";
+import { Loader2 } from "lucide-react";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -121,6 +122,8 @@ const DonationCheckout = () => {
             return;
         }
         try {
+            setMessage("Processing Payment");
+            setCheckoutLoading(true);
             let options;
             if (isRecurring) {
                 const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
@@ -159,7 +162,6 @@ const DonationCheckout = () => {
                                 toast.error("Error verifying payment. Please contact support.");
                             }
                         }, 5000);
-                        setCheckoutLoading(false);
                     },
                     prefill: {
                         email: donator?.email,
@@ -206,7 +208,6 @@ const DonationCheckout = () => {
                                 toast.error("Error verifying payment. Please contact support.");
                             }
                         }, 5000);
-                        setCheckoutLoading(false);
                     },
                     prefill: {
                         email: donator?.email,
@@ -228,12 +229,14 @@ const DonationCheckout = () => {
             razor.open();
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setCheckoutLoading(false);
         }
     };
 
     return (
         <>
-        <Helmet>
+            <Helmet>
                 <title>Voolata | Donation Checkout</title>
                 <meta name="description" content={`This is the donation checkout page of Voolata`} />
                 <meta name="keywords" content="donation, checkout, voolata" />
@@ -242,9 +245,9 @@ const DonationCheckout = () => {
                 <div className="flex justify-center items-center gap-4">
                     {checkoutLoading && (
                         <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex flex-col justify-center items-center z-10">
-                            <div className="bg-white p-8 rounded-lg shadow-lg h-24 w-[95%] md:w-[70%] lg:w-[50%]">
-                                <div className="flex items-center gap-2">
-                                    <p className="text-lg font-semibold text-gray-900">{message}...</p>
+                            <div className="bg-white p-8 rounded-lg shadow-lg h-24 w-[70%] md:w-[50%] lg:w-[30%]">
+                                <div className="flex justify-center items-center gap-2">
+                                    <p className="text-lg font-semibold flex items-center justify-center gap-2 text-gray-900"><Loader2 className="animate-spin" />{message}...</p>
                                 </div>
                             </div>
                         </div>
@@ -416,7 +419,9 @@ const DonationCheckout = () => {
                                 </div>
                             </div>
 
-                            <button type="submit" className="mt-4 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm">Donate Now</button>
+                            <button type="submit" className="mt-4 w-full flex items-center justify-center gap-2 rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm">
+                                {checkoutLoading && <Loader2 className="animate-spin" />}Donate Now
+                            </button>
                         </form>
 
                         <div className="mt-4 flex items-center justify-center space-x-2">
