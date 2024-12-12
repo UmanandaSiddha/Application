@@ -338,7 +338,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
 export const setPassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(req.user.id).select("+password");
-    if (user.accountType !== accountEnum.HYBRID) {
+    if (user.accountType === accountEnum.HYBRID) {
         return next(new ErrorHandler("Account is aready hybrid", 400));
     }
     if (user.accountType !== accountEnum.GOOGLE) {
