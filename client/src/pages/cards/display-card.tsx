@@ -84,7 +84,7 @@ const DisplayCard = () => {
         }
     }
 
-    return (
+    return !loading || card ? (
         <>
             <Helmet>
                 <title>Voolata | Card</title>
@@ -101,6 +101,8 @@ const DisplayCard = () => {
                 </div>
             </div>
         </>
+    ) : (
+        <Loader />
     )
 }
 
