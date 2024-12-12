@@ -104,11 +104,27 @@ const Profile = () => {
                     toast.warning("Enter your password");
                     return;
                 }
+                if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/.test(password.newPassword)) {
+                    toast.warning("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character");
+                    return;
+                }
+                if (password.newPassword.length < 8) {
+                    toast.warning("Password must be at least 8 characters long");
+                    return;
+                }
+                if (password.newPassword !== password.confirmPassword) {
+                    toast.warning("Passwords doesn't match");
+                    return;
+                }
                 const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/set/password`, password, { withCredentials: true });
                 dispatch(userExist(data.user));
             } else {
                 if (!password.oldPassword || !password.newPassword || !password.confirmPassword) {
-                    toast.warning("Enter your password");
+                    toast.warning("All fields are required");
+                    return;
+                }
+                if (password.newPassword !== password.confirmPassword) {
+                    toast.warning("Passwords doesn't match");
                     return;
                 }
                 const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, password, { withCredentials: true });
@@ -254,7 +270,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex flex-col gap-4">
                                     <label htmlFor="confirmPassword" className="text-lg font-semibold">Confirm Passowrd</label>
-                                    <input type="number" value={password.confirmPassword} onChange={(e) => setPassword({ ...password, confirmPassword: e.target.value })} placeholder="Enter your new password again" className="border-2 px-3 py-2 rounded-lg" />
+                                    <input type="text" value={password.confirmPassword} onChange={(e) => setPassword({ ...password, confirmPassword: e.target.value })} placeholder="Enter your new password again" className="border-2 px-3 py-2 rounded-lg" />
                                 </div>
                                 <button className="w-full mt-4 px-3 py-2 text-lg text-white bg-gray-700 rounded-lg" type="submit">Submit</button>
                             </form>
