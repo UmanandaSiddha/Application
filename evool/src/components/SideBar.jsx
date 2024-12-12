@@ -20,7 +20,7 @@ export default function SideBar() {
                 <p className="rotate-90 mt-14 -ml-3 w-52">
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                   Accusamus, perspiciatis.
-                  <a href="https://voolata.com" target="_blank" rel="noopener noreferrer">
+                  <a href="https://voolata.com/donation" target="_blank" rel="noopener noreferrer">
                     <h1 className="pt-5 font-outfit text-xl text-red-500">
                       Take Me There
                     </h1>

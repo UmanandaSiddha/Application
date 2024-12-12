@@ -6,7 +6,8 @@ export const menuItems = [
   { label: "Vision", path: "/our-vision" },
   { label: "Project", path: "/our-project" },
   { label: "About Us", path: "/about-us" },
-  { label: "Get Involved", path: "/get-involved" }
+  { label: "Get Involved", path: "/get-involved" },
+  { label: "Contact Us", path: "/contact-us" }
 ];
 
 export default function Navbar() {

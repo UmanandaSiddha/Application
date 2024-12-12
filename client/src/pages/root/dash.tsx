@@ -91,6 +91,7 @@ const Dashboard = () => {
 
     const getCurrentCard = () => {
         if (!cards || currentIndex < 0 || currentIndex >= cards.length) {
+            toast.error("Something went wrong");
             return null;
         }
         return cards[currentIndex];
@@ -119,6 +120,7 @@ const Dashboard = () => {
 
     const handleDownloadCard = () => {
         const card = getCurrentCard();
+        toast.info(card?.shortCode);
         if (card && card.shortCode && type) {
             const qrCode = createQRCode(type, card.shortCode);
 
