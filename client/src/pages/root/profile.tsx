@@ -2,7 +2,7 @@ import { userExist, userNotExist } from "@/redux/reducer/userReducer";
 import { RootState } from "@/redux/store";
 import { UserResponse } from "@/types/api-types";
 import axios from "axios";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { IoIosLogOut } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -84,7 +84,7 @@ const Profile = () => {
         }
     }
 
-    const handleDeleteAccount = useCallback(async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleDeleteAccount = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         try {
             await axios.delete(`${import.meta.env.VITE_BASE_URL}/user/delete/account`, { withCredentials: true });
@@ -93,15 +93,14 @@ const Profile = () => {
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
-    }, [dispatch]);
+    }
 
-    const handleResetPassword = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         try {
             if (user?.accountType === "google") {
                 if (!password.newPassword || !password.confirmPassword) {
-                    toast.warning("Enter your password");
+                    toast.warning("All fields are required");
                     return;
                 }
                 if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/.test(password.newPassword)) {
@@ -134,7 +133,7 @@ const Profile = () => {
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
-    }, [dispatch]);
+    }
 
     const logout = async () => {
         try {
