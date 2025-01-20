@@ -265,6 +265,7 @@ export const unBlockUser = catchAsyncErrors(async (req, res, next) => {
     }
 
     user.isBlocked = false;
+    user.loginAttempt = 0;
     await user.save();
 
     res.status(200).json({
