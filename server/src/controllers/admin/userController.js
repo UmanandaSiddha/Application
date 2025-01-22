@@ -25,7 +25,7 @@ export const adminLogin = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Only Admins are allowed", 401));
     }
 
-    if (user.isBlocked || (user.loginAttempt?.count >= 5)) {
+    if (user.isBlocked && (user.loginAttempt?.count >= 5)) {
         if (!user.isBlocked) {
             user.isBlocked = true;
             try {

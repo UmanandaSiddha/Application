@@ -107,7 +107,6 @@ const MedicalInput = () => {
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
-                navigate("/plans");
             } finally {
                 setMedicalLoading(false);
             }
@@ -348,18 +347,20 @@ const MedicalInput = () => {
                                 >
                                     Prev
                                 </button>
-                                {progressBar === 4 ? (
+                                {progressBar === 4 && (
                                     <button
                                         className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="submit"
-                                        disabled={medicalLoading}
+                                        disabled={progressBar !== 4 || medicalLoading}
                                     >
                                         {medicalLoading ? "Hold on..." : "Submit"}
                                     </button>
-                                ) : (
+                                )}
+                                {progressBar < 4 && (
                                     <button
                                         className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="button"
+                                        disabled={progressBar === 4}
                                         onClick={() => setProgressBar((currPage) => currPage + 1)}
                                     >
                                         Next

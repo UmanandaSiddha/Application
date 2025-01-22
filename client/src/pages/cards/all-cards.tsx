@@ -379,7 +379,7 @@ const AllCards = () => {
                                 <div className='max-h-[75vh] m-2 hide-scrollbar overflow-y-scroll'>
                                     <div className='flex flex-col justify-center items-center space-y-4 p-4'>
                                         {cards.map((card, index) => (
-                                            <div onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)} >
+                                            <div key={index} onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)} >
                                                 <GenerateQRCode key={index} card={card} type={type || "botanical"} />
                                             </div>
                                         ))}

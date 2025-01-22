@@ -83,6 +83,70 @@ export const createCard = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+// Batch Create Cards
+export const createBatchCards = catchAsyncErrors(async (req, res, next) => {
+    const Model = selectModelByType(req.query.type);
+    if (!Model) {
+        return next(new ErrorHandler(`Model not found for type: ${req.query.type}`, 400));
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+
+    const { names, total } = req.body;
+
+    if (!Array.isArray(names) || total === 0) {
+        return next(new ErrorHandler('Invalid request: Provide an array of card names.', 400));
+    }
+
+    if (user.freePlan.type === freeEnum.PLAN && user.cards.total < user.cards.created + total) {
+        return next(new ErrorHandler(`You can only create ${user.cards.total - user.cards.created} more cards.`, 403));
+    }
+
+    const batchCards = [];
+    const shortUrls = [];
+
+    for (const cardName of names) {
+        let shortId = `sh${Date.now().toString(36)}${names.indexOf(cardName)}`;
+        let exists = await ShortUrl.findOne({ shortCode: shortId });
+
+        while (exists) {
+            shortId = `sh${Date.now().toString(36)}${names.indexOf(cardName)}`;
+            exists = await ShortUrl.findOne({ shortCode: shortId });
+        }
+
+        batchCards.push({
+            ...req.body,
+            name: cardName,
+            shortCode: shortId,
+            user,
+        });
+
+        shortUrls.push({
+            shortCode: shortId,
+            cardType: req.query.type,
+        });
+    }
+
+    const createdCards = await Model.insertMany(batchCards);
+
+    createdCards.forEach((card, index) => {
+        shortUrls[index].cardId = card._id;
+    });
+
+    await ShortUrl.insertMany(shortUrls);
+
+    user.cards.created += total;
+    await user.save();
+
+    res.status(201).json({
+        success: true,
+        createdCards,
+    });
+})
+
 // Update Card
 export const updateCard = catchAsyncErrors(async (req, res, next) => {
     const Model = selectModelByType(req.query.type);

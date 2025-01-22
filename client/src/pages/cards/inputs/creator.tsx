@@ -143,7 +143,6 @@ const CreatorInput = () => {
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
-                navigate("/plans");
             } finally {
                 setCreatorLoading(false);
             }
@@ -306,7 +305,6 @@ const CreatorInput = () => {
                                                 onClick={handleCloseForm}
                                             >
                                                 <div className="bg-white border-2 p-8 rounded shadow-lg w-full max-w-md">
-                                                    {/* Popup Form */}
                                                     <h1 className="text-xl md:text-2xl font-semibold">
                                                         {isEditable ? "Edit" : "Add"} Social Profile
                                                     </h1>
