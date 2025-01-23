@@ -6,7 +6,10 @@ const creatorSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please Enter Creator Name"],
         },
-        links: [Object],
+        links: {
+            type: [Object],
+            default: []
+        },
         shortCode : {
             type: String,
             required: true,

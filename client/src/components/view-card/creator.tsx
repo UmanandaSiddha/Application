@@ -25,23 +25,28 @@ const CreatorComponent = ({ card }: PropsType) => {
 
             <div className='mt-6 mb-10 flex justify-center rounded-3xl bg-[#F7F7F7] border-2 md:w-[550px] w-[370px] mx-auto pb-20'>
                 <div className='flex flex-col justify-center w-[80%]'>
-
-                    <div className='mt-4'>
-                        <div className='w-full py-6'>
-                            {card?.links?.map((link: any, index: number) => (
-                                <Link
-                                    to={link.name}
-                                    target="blank"
-                                    className="w-full flex flex-col justify-center items-center py-5"
-                                    key={index}
-                                >
-                                    <div className="w-full flex justify-center items-center px-4 py-2 text-lg bg-[#5674DC] rounded-2xl hover:cursor-pointer border-[3px] h-14 border-black shadow-[4px_17px_16px_3px_rgba(0,_0,_0,_0.1)]">
-                                        <p className='text-lg font-medium text-white'>{link.label}</p>
-                                    </div>
-                                </Link>
-                            ))}
+                    {card?.links.length > 0 ? (
+                        <div className='mt-4'>
+                            <div className='w-full py-6'>
+                                {card?.links?.map((link: any, index: number) => (
+                                    <Link
+                                        to={link.name}
+                                        target="blank"
+                                        className="w-full flex flex-col justify-center items-center py-5"
+                                        key={index}
+                                    >
+                                        <div className="w-full flex justify-center items-center px-4 py-2 text-lg bg-[#5674DC] rounded-2xl hover:cursor-pointer border-[3px] h-14 border-black shadow-[4px_17px_16px_3px_rgba(0,_0,_0,_0.1)]">
+                                            <p className='text-lg font-medium text-white'>{link.label}</p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className='text-center text-xl font-semibold mt-6 text-red-500'>
+                            No links yet
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

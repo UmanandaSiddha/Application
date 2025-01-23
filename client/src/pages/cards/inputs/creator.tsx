@@ -54,7 +54,11 @@ const CreatorInput = () => {
                 const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=creator`, { withCredentials: true });
                 setIsCreator(true);
                 setName(data.vCard.name);
-                setArrData(data.vCard.links);
+                if (data.vCard.links.length ===0) {
+                    setArrData(inputs)
+                } else {
+                    setArrData(data.vCard.links);
+                }
             } catch (error: any) {
                 toast.error(error.response.data.message);
             }
@@ -126,6 +130,7 @@ const CreatorInput = () => {
             links: final,
             user: user?._id,
         };
+        console.log(creatorData);
         if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {

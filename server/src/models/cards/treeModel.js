@@ -6,19 +6,58 @@ const treeSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please Enter Tree Name"],
         },
-        scientificName: String,
-        family: String,
-        origin: String,
-        habitat: String,
-        description: String,
-        height: String,
-        leafType: String,
-        flowerColor: String,
-        uses: String,
-        careInstructions: String,
-        specialFeatures: String,
-        caretakerMobileNumber: String,
-        additionalNotes: String,
+        scientificName: {
+            type: String,
+            default: ""
+        },
+        family: {
+            type: String,
+            default: ""
+        },
+        origin: {
+            type: String,
+            default: ""
+        },
+        habitat: {
+            type: String,
+            default: ""
+        },
+        description: {
+            type: String,
+            default: ""
+        },
+        height: {
+            type: String,
+            default: ""
+        },
+        leafType: {
+            type: String,
+            default: ""
+        },
+        flowerColor: {
+            type: String,
+            default: ""
+        },
+        uses: {
+            type: String,
+            default: ""
+        },
+        careInstructions: {
+            type: String,
+            default: ""
+        },
+        specialFeatures: {
+            type: String,
+            default: ""
+        },
+        caretakerMobileNumber: {
+            type: String,
+            default: ""
+        },
+        additionalNotes: {
+            type: String,
+            default: ""
+        },
         shortCode: {
             type: String,
             required: true,

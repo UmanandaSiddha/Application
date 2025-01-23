@@ -79,7 +79,11 @@ const CreatePersonal = () => {
                 const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=individual`, { withCredentials: true });
                 setIsPersonal(true);
                 reset(convertToStrings(data.vCard));
-                setSocialData(data.vCard.socialMedia);
+                if (data.vCard.socialMedia.length === 0) {
+                    setSocialData(socials);
+                } else {
+                    setSocialData(data.vCard.socialMedia);
+                }
             } catch (error: any) {
                 toast.error(error.response.data.message);
             }

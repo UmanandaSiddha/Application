@@ -6,38 +6,134 @@ const medicalSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please Enter Patient Name"],
         },
-        dateOfBirth: String,
-        gender: String,
-        street: String,
-        city: String,
-        state: String,
-        postalCode: Number,
-        phone: String,
-        email: String,
-        emergencyName: String,
-        emergencyRelation: String,
-        emergencyPhone: String,
-        allergyHistory: String,
-        chronicHistory: String,
-        currentMedication: String,
-        previousSurgeries: String,
-        smoker: String,
-        alcohol: String,
-        exercise: String,
-        blood: String,
-        height: Number,
-        weight: Number,
-        age: Number,
-        allergyHistory_Other: String,
-        chronicHistory_Other: String,
-        diet_Other: String,
-        exercise_Other: String,
-        diet: String,
-        mentalCondition: String,
-        vaccinationHistory: String,
-        insuranceProvider: String,
-        insurancePolicyNumber: Number,
-        insuranceGrpNumber: Number,
+        dateOfBirth: {
+            type: String,
+            default: ""
+        },
+        gender: {
+            type: String,
+            default: ""
+        },
+        street: {
+            type: String,
+            default: ""
+        },
+        city: {
+            type: String,
+            default: ""
+        },
+        state: {
+            type: String,
+            default: ""
+        },
+        postalCode: {
+            type: Number,
+            default: 0
+        },
+        phone: {
+            type: String,
+            default: ""
+        },
+        email: {
+            type: String,
+            default: ""
+        },
+        emergencyName: {
+            type: String,
+            default: ""
+        },
+        emergencyRelation: {
+            type: String,
+            default: ""
+        },
+        emergencyPhone: {
+            type: String,
+            default: ""
+        },
+        allergyHistory: {
+            type: String,
+            default: ""
+        },
+        chronicHistory: {
+            type: String,
+            default: ""
+        },
+        currentMedication: {
+            type: String,
+            default: ""
+        },
+        previousSurgeries: {
+            type: String,
+            default: ""
+        },
+        smoker: {
+            type: String,
+            default: ""
+        },
+        alcohol: {
+            type: String,
+            default: ""
+        },
+        exercise: {
+            type: String,
+            default: ""
+        },
+        blood: {
+            type: String,
+            default: ""
+        },
+        height: {
+            type: Number,
+            default: 0
+        },
+        weight: {
+            type: Number,
+            default: 0
+        },
+        age: {
+            type: Number,
+            default: 0
+        },
+        allergyHistory_Other: {
+            type: String,
+            default: ""
+        },
+        chronicHistory_Other: {
+            type: String,
+            default: ""
+        },
+        diet_Other: {
+            type: String,
+            default: ""
+        },
+        exercise_Other: {
+            type: String,
+            default: ""
+        },
+        diet: {
+            type: String,
+            default: ""
+        },
+        mentalCondition: {
+            type: String,
+            default: ""
+        },
+        vaccinationHistory: {
+            type: String,
+            default: ""
+        },
+        insuranceProvider: {
+            type: String,
+            default: ""
+        },
+        insurancePolicyNumber: {
+            type: Number,
+            default: 0
+        },
+        insuranceGrpNumber: {
+            type: Number,
+            default: 0
+        },
         shortCode: {
             type: String,
             required: true,

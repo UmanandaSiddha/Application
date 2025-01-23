@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { RootState } from "../../../redux/store";
-import { SingleTreeResponse } from "@/types/api-types";
+// import { SingleTreeResponse } from "@/types/api-types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import SideBar from "@/components/rest/sidebar";
@@ -32,31 +32,32 @@ const CreateTree = () => {
         const fetchTree = async () => {
             if (id) {
                 try {
-                    const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=botanical`, { withCredentials: true });
+                    const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=botanical`, { withCredentials: true });
                     setIsTree(true);
-                    // reset(data.vCard);
+                    console.log(data.vCard);
                     reset({
                         ...data.vCard,
-                        createdAt: data.vCard.createdAt.toISOString()
+                        // createdAt: (data.vCard.createdAt as Date).toISOString()
                     });
                 } catch (error: any) {
-                    toast.error(error.response.data.message);
+                    // toast.error(error.response.data.message);
+                    console.log(error);
                 }
             }
         }
 
-        const cardData = localStorage.getItem("current_card");
-        if (cardData && id) {
-            const cardDataParsed = JSON.parse(cardData);
-            if (cardDataParsed?._id !== id) {
-                fetchTree();
-            } else {
-                setIsTree(true);
-                reset(cardDataParsed);
-            }
-        } else {
-            fetchTree();
-        }
+        // const cardData = localStorage.getItem("current_card");
+        // if (cardData && id) {
+        //     const cardDataParsed = JSON.parse(cardData);
+        //     if (cardDataParsed?._id !== id) {
+        //         fetchTree();
+        //     } else {
+        //         setIsTree(true);
+        //         reset(cardDataParsed);
+        //     }
+        // } else {
+        // }
+        fetchTree();
     }, [id]);
 
     const onSubmit = async (values: any) => {

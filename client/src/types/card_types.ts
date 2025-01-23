@@ -43,7 +43,7 @@ export type Personal = {
     _id: string;
     shortCode: string;
     name: string,
-    mobileNumer: string,
+    mobileNumber: string,
     homeNumber: string,
     workNumber: string,
     otherNumber: string,

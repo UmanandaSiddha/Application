@@ -142,7 +142,7 @@ export const createBatchCards = catchAsyncErrors(async (req, res, next) => {
 
     res.status(201).json({
         success: true,
-        createdCards,
+        vCard: createdCards,
     });
 })
 

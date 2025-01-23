@@ -8,8 +8,8 @@ import Personal from "../../models/cards/personalModel.js";
 import catchAsyncErrors from "../../middleware/catchAsyncErrors.js";
 import User, { freeEnum, roleEnum } from "../../models/userModel.js";
 import ApiFeatures from "../../utils/services/apiFeatures.js";
-import { EMAIL_ACCOUNT_BLOCKED } from "../../constants/index.js";
-import sendMail from "../../utils/services/sendMail.js";
+// import { EMAIL_ACCOUNT_BLOCKED } from "../../constants/index.js";
+// import sendMail from "../../utils/services/sendMail.js";
 
 export const adminLogin = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
@@ -265,7 +265,7 @@ export const unBlockUser = catchAsyncErrors(async (req, res, next) => {
     }
 
     user.isBlocked = false;
-    user.loginAttempt = 0;
+    user.loginAttempt.count = 0;
     await user.save();
 
     res.status(200).json({

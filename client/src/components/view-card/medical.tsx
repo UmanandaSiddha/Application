@@ -117,9 +117,14 @@ const MedicalComponent = ({ card }: PropsType) => {
                             <p className="text-slate-600 text-sm">
                                 {card?.emergencyRelation}
                             </p>
-                            <p className="text-slate-600 text-sm">
+                            {/* <p className="text-slate-600 text-sm">
                                 {card?.emergencyPhone}
-                            </p>
+                            </p> */}
+                            {card?.emergencyPhone && (
+                                <a href={`tel:${card?.emergencyPhone}`} className="text-slate-600 text-sm">
+                                    Call {card?.emergencyPhone}
+                                </a>
+                            )}
                         </div>
                     </div>
                 </div>

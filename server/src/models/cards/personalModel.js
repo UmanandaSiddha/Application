@@ -6,80 +6,302 @@ const personalSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please Enter Individual Name"],
         },
-        mobileNumer: String,
-        homeNumber: String,
-        workNumber: String,
-        otherNumber: String,
-        personalEmail: String,
-        workEmail: String,
-        otherEmail: String,
-        aboutMe: String,
-        dateOfBirth: String,
-        homeTown: String,
-        currentCity: String,
-        languages: String,
-        music: String,
-        socialCause_Other: String,
-        philosophy_Other: String,
-        color: String,
-        city: String,
-        travelDestination: String,
-        season: String,
-        uniqueSkills: String,
-        cuisine: String,
-        beverage: String,
-        inspirationalQuotes: String,
-        funnyQuotes: String,
-        motivationalQuotes: String,
-        otherQuotes: String,
-        petLover: String,
-        partyEnthusiast: String,
-        smoker: String,
-        maritalStatus: String,
-        relationshipStatus: String,
-        fitnessRoutine: String,
-        morningPerson: String,
-        diet: String,
-        sleepingHabit: String,
-        travelMode: String,
-        genre: String,
-        sports: String,
-        artistisPursuits: String,
-        gaming: String,
-        collectignHobby: String, 
-        coffee: String,
-        cookingSkills: String,
-        currentOcupation: String,
-        careerAspiation: String,
-        education: String,
-        skills: String,
-        travelMode_Other: String,
-        spiritual_Other: String,
-        core_Other: String,
-        genre_Other: String,
-        sports_Other: String,
-        artistisPursuits_Other: String,
-        gaming_Other: String,
-        collectignHobby_Other: String, 
-        coffee_Other: String,
-        cookingSkills_Other: String,
-        currentOcupation_Other: String,
-        careerAspiation_Other: String,
-        education_Other: String,
-        skills_Other: String,
-        diet_Other: String,
-        spiritual: String,
-        core: String,
-        philosophy: String,
-        socialCause: String,
-        globalIssues: String,
-        weirdBelief: String,
-        otherInterests: String,
-        futureGoals: String,
-        current: String,
-        unusualExperinece: String,
-        strangeHabits: String,
-        socialMedia: [Object],
+        mobileNumber: {
+            type: String,
+            default: ""
+        },
+        homeNumber: {
+            type: String,
+            default: ""
+        },
+        workNumber: {
+            type: String,
+            default: ""
+        },
+        otherNumber: {
+            type: String,
+            default: ""
+        },
+        personalEmail: {
+            type: String,
+            default: ""
+        },
+        workEmail: {
+            type: String,
+            default: ""
+        },
+        otherEmail: {
+            type: String,
+            default: ""
+        },
+        aboutMe: {
+            type: String,
+            default: ""
+        },
+        dateOfBirth: {
+            type: String,
+            default: ""
+        },
+        homeTown: {
+            type: String,
+            default: ""
+        },
+        currentCity: {
+            type: String,
+            default: ""
+        },
+        languages: {
+            type: String,
+            default: ""
+        },
+        music: {
+            type: String,
+            default: ""
+        },
+        socialCause_Other: {
+            type: String,
+            default: ""
+        },
+        philosophy_Other: {
+            type: String,
+            default: ""
+        },
+        color: {
+            type: String,
+            default: ""
+        },
+        city: {
+            type: String,
+            default: ""
+        },
+        travelDestination: {
+            type: String,
+            default: ""
+        },
+        season: {
+            type: String,
+            default: ""
+        },
+        uniqueSkills: {
+            type: String,
+            default: ""
+        },
+        cuisine: {
+            type: String,
+            default: ""
+        },
+        beverage: {
+            type: String,
+            default: ""
+        },
+        inspirationalQuotes: {
+            type: String,
+            default: ""
+        },
+        funnyQuotes: {
+            type: String,
+            default: ""
+        },
+        motivationalQuotes: {
+            type: String,
+            default: ""
+        },
+        otherQuotes: {
+            type: String,
+            default: ""
+        },
+        petLover: {
+            type: String,
+            default: ""
+        },
+        partyEnthusiast: {
+            type: String,
+            default: ""
+        },
+        smoker: {
+            type: String,
+            default: ""
+        },
+        maritalStatus: {
+            type: String,
+            default: ""
+        },
+        relationshipStatus: {
+            type: String,
+            default: ""
+        },
+        fitnessRoutine: {
+            type: String,
+            default: ""
+        },
+        morningPerson: {
+            type: String,
+            default: ""
+        },
+        diet: {
+            type: String,
+            default: ""
+        },
+        sleepingHabit: {
+            type: String,
+            default: ""
+        },
+        travelMode: {
+            type: String,
+            default: ""
+        },
+        genre: {
+            type: String,
+            default: ""
+        },
+        sports: {
+            type: String,
+            default: ""
+        },
+        artistisPursuits: {
+            type: String,
+            default: ""
+        },
+        gaming: {
+            type: String,
+            default: ""
+        },
+        collectignHobby: {
+            type: String,
+            default: ""
+        }, 
+        coffee: {
+            type: String,
+            default: ""
+        },
+        cookingSkills: {
+            type: String,
+            default: ""
+        },
+        currentOcupation: {
+            type: String,
+            default: ""
+        },
+        careerAspiation: {
+            type: String,
+            default: ""
+        },
+        education: {
+            type: String,
+            default: ""
+        },
+        skills: {
+            type: String,
+            default: ""
+        },
+        travelMode_Other: {
+            type: String,
+            default: ""
+        },
+        spiritual_Other: {
+            type: String,
+            default: ""
+        },
+        core_Other: {
+            type: String,
+            default: ""
+        },
+        genre_Other: {
+            type: String,
+            default: ""
+        },
+        sports_Other: {
+            type: String,
+            default: ""
+        },
+        artistisPursuits_Other: {
+            type: String,
+            default: ""
+        },
+        gaming_Other: {
+            type: String,
+            default: ""
+        },
+        collectignHobby_Other: {
+            type: String,
+            default: ""
+        },
+        coffee_Other: {
+            type: String,
+            default: ""
+        },
+        cookingSkills_Other: {
+            type: String,
+            default: ""
+        },
+        currentOcupation_Other: {
+            type: String,
+            default: ""
+        },
+        careerAspiation_Other: {
+            type: String,
+            default: ""
+        },
+        education_Other: {
+            type: String,
+            default: ""
+        },
+        skills_Other: {
+            type: String,
+            default: ""
+        },
+        diet_Other: {
+            type: String,
+            default: ""
+        },
+        spiritual: {
+            type: String,
+            default: ""
+        },
+        core: {
+            type: String,
+            default: ""
+        },
+        philosophy: {
+            type: String,
+            default: ""
+        },
+        socialCause: {
+            type: String,
+            default: ""
+        },
+        globalIssues: {
+            type: String,
+            default: ""
+        },
+        weirdBelief: {
+            type: String,
+            default: ""
+        },
+        otherInterests: {
+            type: String,
+            default: ""
+        },
+        futureGoals: {
+            type: String,
+            default: ""
+        },
+        current: {
+            type: String,
+            default: ""
+        },
+        unusualExperinece: {
+            type: String,
+            default: ""
+        },
+        strangeHabits: {
+            type: String,
+            default: ""
+        },
+        socialMedia: {
+            type: [Object],
+            default: []
+        },
         shortCode : {
             type: String,
             required: true,

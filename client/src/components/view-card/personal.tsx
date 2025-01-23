@@ -29,7 +29,7 @@ const PersonalComponent = ({ card }: PropsType) => {
                 { label: "Home Town", value: card?.homeTown },
                 { label: "Current City", value: card?.currentCity },
                 { label: "Languages", value: card?.languages },
-                { label: "Mobile Number", value: card?.mobileNumer },
+                { label: "Mobile Number", value: card?.mobileNumber },
                 { label: "Home Number", value: card?.homeNumber },
                 { label: "Work Number", value: card?.workNumber },
                 { label: "Other Number", value: card?.otherNumber },
