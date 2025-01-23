@@ -118,10 +118,9 @@ export const createBatchCards = catchAsyncErrors(async (req, res, next) => {
         }
 
         batchCards.push({
-            ...req.body,
             name: cardName,
             shortCode: shortId,
-            user,
+            user: user?._id,
         });
 
         shortUrls.push({

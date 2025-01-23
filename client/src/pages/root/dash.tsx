@@ -202,11 +202,11 @@ const Dashboard = () => {
                 { withCredentials: true }
             );
             toast.success("Successfully Created Cards");
-            setOpen(false);
             fetchData(currentPage);
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Error creating cards");
         } finally {
+            setOpen(false);
             setBatchLoading(false);
         }
     }
