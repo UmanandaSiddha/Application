@@ -46,12 +46,12 @@ export default function Header() {
     }, [mobileMenuOpen]);
 
     return (
-        <header className="bg-white fixed top-0 left-0 right-0 z-50 h-16 md:h-18">
-            <nav className="mx-auto w-full md:w-[80%] flex items-center justify-between px-6 py-4">
+        <header className="bg-white sm:border-[1px] border-gray-500 fixed sm:top-7 left-0 right-0 sm:w-[80%] mx-auto sm:rounded-3xl z-50 h-16 md:h-18">
+            <nav className="mx-auto w-[90%] md:w-[80%] flex items-center justify-between py-3">
                 <Link to='/'>
-                    <img className="h-8 w-auto" src="/voolata_long_r.png" alt="" />
+                    <img className="h-8 w-auto flex " src="/voolata_long_r.png" alt="" />
                 </Link>
-                <div className="hidden lg:flex lg:gap-x-12">
+                <div className="hidden lg:flex lg:gap-x-12 ">
                     <Link to='/' className="text-md font-semibold leading-6">
                         Home
                     </Link>
@@ -69,7 +69,7 @@ export default function Header() {
                     </Link>
                 </div>
 
-                <div className="lg:hidden">
+                <div className="lg:hidden ">
                     {user ? (
                         <button
                             type="button"

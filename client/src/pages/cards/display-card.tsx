@@ -91,8 +91,8 @@ const DisplayCard = () => {
                 <meta name="description" content={`This is the display card page of Voolata`} />
                 <meta name="keywords" content="display, card, voolata" />
             </Helmet>
-            <div className="m-auto mt-4 p-auto lg:w-2/3">
-                <div className="border border-primary p-2 md:p-6 gap-4 items-center mx-0 my-0 md:mx-8 lg:mx-16 xl:mx-32">
+            <div className="m-auto mt-4 p-auto lg:w-2/3 ">
+                <div className=" p-2 md:p-6 gap-4 items-center mx-0 my-0 md:mx-8 lg:mx-16 xl:mx-32">
                     {loading ? <Loader /> : card ? renderCard() : (
                         <div className="flex justify-center items-center">
                             <p className="text-3xl text-red-500 font-semibold">No Card Found</p>

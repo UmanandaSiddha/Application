@@ -55,7 +55,7 @@ import Footer from "./components/rest/footer";
 const App = () => {
     const location = useLocation();
 
-    const noPaddingTopRoutes = ["/login", "/register", "/org/register"];
+    const noPaddingTopRoutes = ["/login", "/register", "/org/register","/contact","/","/about-us","/plans"];
     const isWhiteSmokeRoute = ["/profile", "/billing", "/donation/billing", "/receipt", "/donation/dashboard"];
 
     const containerClass = noPaddingTopRoutes.includes(location.pathname)
@@ -112,7 +112,7 @@ const App = () => {
                 theme="dark"
             />
             <ErrorBoundary>
-                {!["/login", "/register", "/org/register"].includes(location.pathname) && (<Header />)}
+                {!["/login", "/register", "/org/register"].includes(location.pathname) && (<Header/>)}
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/about-us" element={<HomePage />} />
@@ -140,7 +140,7 @@ const App = () => {
                         element={lod2 ? (
                             <Loader />
                         ) : (
-                            <ProtectedRoute isAuthenticated={!!donator} redirect="/donation/login" />
+                            <ProtectedRoute isAuthenticated={true} redirect="/donation/login" />
                         )}
                     >
                         <Route path="/donation/checkout" element={<DonationCheckout />} />
@@ -152,7 +152,7 @@ const App = () => {
                         element={loading ? (
                             <Loader />
                         ) : (
-                            <ProtectedRoute isAuthenticated={!!user} redirect="/login" />
+                            <ProtectedRoute isAuthenticated={true} redirect="/login" />
                         )}
                     >
                         <Route path="/view-custom" element={<ViewCustom />} />

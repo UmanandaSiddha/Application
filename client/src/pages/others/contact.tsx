@@ -35,8 +35,8 @@ const ContactUs = () => {
                 <meta name="description" content={`This is the contact us page of Voolata`} />
                 <meta name="keywords" content="contact us, voolata" />
             </Helmet>
-            <section className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] dark:from-gray-700 dark:via-gray-800 dark:to-gray-900">
-                <div className="container flex flex-col min-h-screen px-6 py-12 mx-auto">
+            <section className=" bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 max-sm:pt-20 max-sm:pb-10">
+                <div className="container flex flex-col min-h-screen px-6  mx-auto">
                     <div className="flex-1 lg:flex lg:items-center lg:-mx-6">
                         <div className=" lg:w-1/2 lg:mx-6">
                             <h1 className="text-2xl font-semibold capitalize lg:text-3xl">Contact Us</h1>

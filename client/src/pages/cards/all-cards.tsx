@@ -9,8 +9,6 @@ import {
 import { BsQrCodeScan } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdOutlineNavigateNext } from "react-icons/md";
-import { IoShareOutline } from "react-icons/io5";
-import { IoDownloadOutline } from "react-icons/io5";
 import { HiMiniArrowSmallRight } from "react-icons/hi2";
 import { HiMiniArrowSmallLeft } from "react-icons/hi2";
 import { toast } from "react-toastify";
@@ -55,7 +53,7 @@ const AllCards = () => {
         filteredCards: 1,
         totalCards: 1
     });
-
+    const [switchTab, setSwitchTab] = useState<boolean>(false)
     const fetchData = async (link: string) => {
         try {
             const { data }: { data: CardType } = await axios.get(link, { withCredentials: true });
@@ -183,7 +181,7 @@ const AllCards = () => {
                 <meta name="description" content={`This is the all cards page of Voolata`} />
                 <meta name="keywords" content="all cards, voolata" />
             </Helmet>
-            <div className="flex justify-center bg-white ">
+            <div className="flex justify-center bg-white mt-6">
                 <div className="flex flex-row w-full md:w-[90%] lg:w-[80%] md:space-x-4 lg:space-x-4">
                     <div className="basis-1/4 hidden lg:block">
                         <SideBar />
@@ -192,7 +190,7 @@ const AllCards = () => {
                     {open && (
                         <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex justify-center items-center z-20">
                             <div className="bg-white p-8 rounded-lg shadow-lg w-[95%] md:w-[70%] lg:w-[50%]">
-                                <div className="flex justify-between items-center">
+                                <div className="flex justify-between items-center ">
                                     <h2 className="text-xl md:text-2xl font-semibold">{type && type.charAt(0).toUpperCase() + type.slice(1)} Table ({counts?.filteredCards})</h2>
                                     <button className="p-1 md:p-2 bg-red-400 rounded-full" onClick={handleCloseTable}><RxCross2 className="text-white font-bold h-5 w-5" /></button>
                                 </div>
@@ -270,26 +268,36 @@ const AllCards = () => {
                         </div>
                     )}
 
-                    <div className="basis-full  md:basis-2/3 lg:basis-2/4 flex justify-center items-center lg:max-h-screen md:my-2 bg-slate-100 rounded-md">
+                    <div className="basis-full overflow-y-scroll  hide-scrollbar md:basis-2/3 lg:basis-2/4 flex justify-center items-center lg:max-h-screen md:my-2 bg-slate-100 rounded-md">
                         <div className="relative w-full h-screen md:max-h-[87vh] overflow-hidden">
                             <div className={`absolute w-full h-full ${styles.backgroundColor} mobile-curve rounded-lg`}></div>
-                            <div className="absolute w-full h-full flex flex-col justify-evenly space-y-2 items-center z-10 md:overflow-y-auto hide-scrollbar md:p-4">
-
-                                <button onClick={() => setOpen(true)} className='flex flex-col items-center justify-center pt-4 space-y-3'>
-                                    <div className={`flex justify-center items-center ${styles.textColor} rounded-2xl py-4 px-4 shadow-xl text-white font-semibold`}>
-                                        <BsQrCodeScan className='mx-2 w-[1rem] h-[1rem]' />
-                                        <p className='text-lg font-bold'>
-                                            {type && type.charAt(0).toUpperCase() + type.slice(1)} Data
-                                        </p>
-                                    </div>
-                                    <div className='flex flex-col justify-center items-center'>
-                                        <p className='text-md font-normal text-slate-800'>Share this QR Code to share your</p>
-                                        <h1 className='text-xl font-semibold text-slate-900'>
-                                            {type && type.charAt(0).toUpperCase() + type.slice(1)} Data
-                                        </h1>
-                                    </div>
-                                </button>
-
+                            <div className="absolute  w-full h-full flex flex-col justify-evenly space-y-2 items-center z-10 md:overflow-y-auto hide-scrollbar md:p-4 ">
+                                <div className={`flex sm:gap-5 items-center justify-center ${switchTab?"max-sm:pt-14":" max-sm:pt-10"}`} >
+                                    {/* onClick={() => setOpen(true)} */}
+                                    <button onClick={() => setSwitchTab(false)} className='flex flex-col items-center justify-center pt-4 space-y-3 '>
+                                        <div className={`flex justify-center items-center ${switchTab ? "text-[#135EF2]" : `bg-gradient-to-br from-[#1858F0] via-[#6571FB] to-[#4D63F4] text-white`} rounded-3xl  px-4 h-16 font-semibold `}>
+                                            <BsQrCodeScan className='mx-2 sm:w-[2rem] sm:h-[1.5rem]' />
+                                            <p className='text-lg font-bold'>
+                                                {type && type.charAt(0).toUpperCase() + type.slice(1)} Data
+                                            </p>
+                                        </div>
+                                    </button>
+                                    <button onClick={() => setSwitchTab(true)} className="flex flex-col items-center justify-center pt-4 space-y-3 ">
+                                        <div className={`flex justify-center items-center ${switchTab ? `text-white bg-gradient-to-br from-[#1858F0] via-[#6571FB] to-[#4D63F4]` : "text-[#135EF2]"
+                                            }  rounded-3xl px-4 w-56 h-16 font-semibold `}>
+                                            <BsQrCodeScan className='mx-2 sm:w-[2rem] sm:h-[1.5rem]' />
+                                            <p className='text-lg font-bold'>
+                                                Card QR
+                                            </p>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div className='flex flex-col justify-center items-center pt-3'>
+                                    <p className='text-md font-normal text-slate-800'>Share this QR Code to share your</p>
+                                    <h1 className='text-xl font-semibold text-slate-900'>
+                                        {type && type.charAt(0).toUpperCase() + type.slice(1)} Data
+                                    </h1>
+                                </div>
                                 {loading ? (
                                     <div>
                                         <Loader2 className="text-center animate-spin" />
@@ -297,33 +305,66 @@ const AllCards = () => {
                                 ) : (
                                     <div>
                                         {cards && cards.length > 0 ? (
-                                            <div className="flex flex-row justify-evenly items-center pt-4 space-x-6 px-4">
-                                                <button
-                                                    className={`p-1 rounded-full ${styles.textColor} text-white flex justify-center items-center hover:cursor-pointer`}
-                                                    onClick={handlePrev}
-                                                    disabled={counts.currentPage === 1 && currentIndex === 0}
-                                                >
-                                                    <IoIosArrowBack className="w-[2rem] h-[2rem]" />
-                                                </button>
-                                                <div className="overflow-hidden flex justify-center items-center w-full">
-                                                    {cards.map((card, index) => (
-                                                        <div
-                                                            key={card._id}
-                                                            className={`flex h-66 w-48 md:w-56 flex-col transition-transform duration-300 ease-in-out ${index === currentIndex ? 'block' : 'hidden'}`}
-                                                            onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)}
+                                            switchTab ?
+                                                <>
+                                                    <div className="flex justify-center items-center pt-5 gap-5 ">
+                                                        <button
+                                                            className={`p-1 rounded-full bg-[rgb(0,0,0,0.24)] text-white flex justify-center items-center hover:cursor-pointer`}
+                                                            onClick={handlePrev}
+                                                            disabled={counts.currentPage === 1 && currentIndex === 0}
                                                         >
-                                                            <GenerateQRCode way="qr-group" card={card} type={type || "botanical"} />
-                                                        </div>
-                                                    ))}
+                                                            <IoIosArrowBack className="w-[2rem] h-[2rem]" />
+                                                        </button>
+               
+                                                                {cards.map((card, index) => (
+                                                                    <div
+                                                                        key={card._id}
+                                                                        className={`transition-transform duration-300 ease-in-out text-white ${index === currentIndex ? 'block' : 'hidden'}`}
+                                                                        onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)}
+                                                                    >
+                                                                        <GenerateQRCode way="qr-group" switchTab = {true} styles={styles.cardBg} card={card} type={type || "botanical"} />
+                                                                    </div>
+                                                                ))}
+                                                            
+            
+                                                        <button
+                                                            className={`p-1 rounded-full bg-[rgb(0,0,0,0.24)] text-white flex justify-center items-center hover:cursor-pointer`}
+                                                            onClick={handleNext}
+                                                            disabled={counts.currentPage * counts.resultPerPage >= counts.filteredCards && currentIndex === cards.length - 1}
+                                                        >
+                                                            <MdOutlineNavigateNext className="w-[2rem] h-[2rem]" />
+                                                        </button>
+                                                    </div>
+                                                </>
+                                                :
+                                                <div className={`flex flex-row  justify-evenly items-center pt-4  space-x-6 px-4`}>
+                                                    <button
+                                                        className={`p-1 rounded-full bg-[rgb(0,0,0,0.24)] text-white flex justify-center items-center hover:cursor-pointer`}
+                                                        onClick={handlePrev}
+                                                        disabled={counts.currentPage === 1 && currentIndex === 0}
+                                                    >
+                                                        <IoIosArrowBack className="w-[2rem] h-[2rem]" />
+                                                    </button>
+                                                    <div className="overflow-hidden flex justify-center items-center w-full">
+                                                        {cards.map((card, index) => (
+                                                            <div
+                                                                key={card._id}
+                                                                className={`flex h-66 w-48 md:w-56 flex-col transition-transform duration-300 ease-in-out ${index === currentIndex ? 'block' : 'hidden'}`}
+                                                                onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)}
+                                                            >
+                                                                <GenerateQRCode way="qr-group" switchTab={false} card={card} type={type || "botanical"} />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    <button
+                                                        className={`p-1 rounded-full bg-[rgb(0,0,0,0.24)] text-white flex justify-center items-center hover:cursor-pointer`}
+                                                        onClick={handleNext}
+                                                        disabled={counts.currentPage * counts.resultPerPage >= counts.filteredCards && currentIndex === cards.length - 1}
+                                                    >
+                                                        <MdOutlineNavigateNext className="w-[2rem] h-[2rem]" />
+                                                    </button>
                                                 </div>
-                                                <button
-                                                    className={`p-1 rounded-full ${styles.textColor} text-white flex justify-center items-center hover:cursor-pointer`}
-                                                    onClick={handleNext}
-                                                    disabled={counts.currentPage * counts.resultPerPage >= counts.filteredCards && currentIndex === cards.length - 1}
-                                                >
-                                                    <MdOutlineNavigateNext className="w-[2rem] h-[2rem]" />
-                                                </button>
-                                            </div>
+
                                         ) : (
                                             <div>
                                                 No Card Yet
@@ -331,22 +372,22 @@ const AllCards = () => {
                                         )}
                                     </div>
                                 )}
-                                <div className='flex flex-col md:pt-6 pt-12 space-y-6 md:w-2/3 w-3/4'>
+                                <div className='flex flex-col  md:pt-6 pt-12 space-y-6 md:w-2/3 w-3/4'>
                                     {cards && cards.length > 0 && (
-                                        <div className='flex flow-row justify-evenly space-x-4 w-full'>
-                                            <button onClick={handleShare} className={`flex md:flex-row flex-col justify-center items-center space-x-2 md:space-y-0 space-y-4 ${styles.mdBackgroundColor} shadow-lg bg-white text-slate-500 px-5 py-4 md:rounded-md rounded-3xl text-lg font-semibold md:text-white w-1/2`}>
-                                                <IoShareOutline size={25} className={`md:text-white ${styles.iconColor} text-lg`} />
-                                                <p>Share</p>
+                                        <div className='flex flow-row  justify-evenly space-x-4 w-full'>
+                                            <button onClick={handleShare} className={`flex flex-col  justify-center items-center md:h-28 space-x-2 md:space-y-0 space-y-4  shadow-lg bg-white text-slate-500 px-5 py-4 rounded-3xl text-lg font-semibold md:text-white w-1/2`}>
+                                                <img src="/share.svg" alt="" className="w-8" />
+                                                <p className="text-gray-500">Share</p>
                                             </button>
-                                            <button onClick={handleDownload} className={`flex md:flex-row flex-col justify-center items-center space-x-2 md:space-y-0 space-y-4 ${styles.mdBackgroundColor} shadow-lg bg-white text-slate-500 px-5 py-4 md:rounded-md rounded-3xl text-lg font-semibold md:text-white w-1/2`}>
-                                                <IoDownloadOutline size={25} className={`md:text-white ${styles.iconColor} text-lg`} />
-                                                <p>Download</p>
+                                            <button onClick={handleDownload} className={`flex  flex-col justify-center items-center space-x-2 md:space-y-0 space-y-4 md:h-28 shadow-lg bg-white text-slate-500 px-5 py-4  rounded-3xl text-lg font-semibold md:text-white w-1/2`}>
+                                                <img src="/download.svg" alt="" className="w-8" />
+                                                <p className="text-gray-500">Download</p>
                                             </button>
                                         </div>
                                     )}
                                     <button
                                         onClick={() => navigate(`/dashboard/${type}/create`)}
-                                        className={`flex justify-center items-center space-x-2 ${styles.textColor} px-4 py-3 rounded-md text-lg font-semibold text-white w-full`}
+                                        className={`flex  justify-center items-center space-x-2 ] bg-gradient-to-br from-[#1858F0] via-[#6571FB] to-[#4D63F4] px-4 py-3 rounded-md text-lg font-semibold text-white w-full`}
                                     >
                                         <FaPlus />
                                         <p>Add New Card</p>
@@ -380,7 +421,7 @@ const AllCards = () => {
                                     <div className='flex flex-col justify-center items-center space-y-4 p-4'>
                                         {cards.map((card, index) => (
                                             <div onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)} >
-                                                <GenerateQRCode key={index} card={card} type={type || "botanical"} />
+                                                <GenerateQRCode key={index} card={card} switchTab={false} styles="" type={type || "botanical"} />
                                             </div>
                                         ))}
                                     </div>

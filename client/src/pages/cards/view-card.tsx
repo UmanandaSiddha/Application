@@ -101,14 +101,11 @@ const ViewCard = () => {
                 <meta name="description" content={`This is the view card page of Voolata`} />
                 <meta name="keywords" content="view, card, voolata" />
             </Helmet>
-            <div className="flex justify-center">
-                <div className="flex flex-row w-full md:w-[80%] md:space-x-4 lg:space-x-4">
-                    <div className="basis-1/4 hidden lg:block">
-                        <SideBar />
-                    </div>
-                    <div className="basis-full lg:basis-3/4 flex lg:max-h-[87vh] md:my-2 rounded-md">
-                        <div className="basis-full lg:basis-3/4 flex justify-center items-center">
-                            <div className="w-full overflow-auto h-full md:rounded-xl md:mr-5 hide-scrollbar">
+            <div className="flex justify-center mt-6 max-sm:pt-7">
+                <div className="flex flex-row w-full ">
+                    <div className="basis-full mx-auto flex lg:max-h-[87vh] md:my-2  ">
+                        <div className="basis-full flex justify-center items-center">
+                            <div className="w-full overflow-auto h-full  hide-scrollbar">
                                 {loading ? <Loader /> : <>{renderCard()}</>}
                                 <div className="w-full py-4 fixed bottom-0 flex md:hidden justify-center rounded-t-3xl items-center gap-6 bg-slate-100">
                                     <button
@@ -154,7 +151,7 @@ const ViewCard = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="basis-1/4 hidden md:block">
+                        {/* <div className="basis-1/4 hidden md:block">
                             <div className="mt-6 md:mt-0 pt-8 pb-16 flex flex-col justify-center items-center gap-6 bg-slate-100 rounded-b-3xl">
                                 <button
                                     className="py-4 px-4 bg-green-200 rounded-full hover:cursor-pointer shadow-xl"
@@ -198,7 +195,7 @@ const ViewCard = () => {
                                     </div>
                                 </button>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

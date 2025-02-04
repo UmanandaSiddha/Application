@@ -15,7 +15,7 @@ body {
 
 @media (max-width: 730px) {
     .mobile-curve {
-        height: 70vh;
+        height: 75vh;
         transform: scaleX(1.9);
         border-bottom-left-radius: 50%;
         border-bottom-right-radius: 50%;
@@ -31,12 +31,13 @@ body {
 }
 
 .custom-padding {
-    padding-top: 2.5rem;
+    padding-top: 0.1rem;
 }
 
 @media (min-width: 640px) {
     .custom-padding {
         padding-top: 4rem;
+        
     }
 }
 

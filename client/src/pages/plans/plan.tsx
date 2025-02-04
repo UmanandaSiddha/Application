@@ -85,7 +85,7 @@ const PlanPage = () => {
                 <meta name="description" content={`This is the pricing page of Voolata`} />
                 <meta name="keywords" content="pricing, voolata" />
             </Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] flex flex-col justify-center items-center py-6">
+            <div className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] flex flex-col justify-center items-center py-6 pt-24">
                 <div className="text-center">
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold">
                         Choose your right plan!

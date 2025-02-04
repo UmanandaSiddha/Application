@@ -291,7 +291,7 @@ const MedicalInput = () => {
                 <meta name="description" content={`This is the medical form page of Voolata`} />
                 <meta name="keywords" content="medical, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen">
+            <div className="flex justify-center h-screen pt-6">
                 <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
                     <div className="basis-1/4 hidden lg:block">
                         <SideBar />

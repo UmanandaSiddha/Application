@@ -9,7 +9,7 @@ const Donation = () => {
                 <meta name="description" content={`This is the donation page of Voolata`} />
                 <meta name="keywords" content="donation, voolata" />
             </Helmet>
-            <div className='w-[85%] mx-auto lg:mt-0 mt-10' >
+            <div className='w-[85%] mx-auto lg:mt-0 mt-10 max-sm:pt-10' >
                 <h1 className='text-3xl text-center md:text-6xl font-semibold lg:pb-20 lg:pt-16 sm:pt-10'>WHY WE NEED YOUR <span className='text-purple-500'>SUPPORT</span> </h1>
                 <div className='flex flex-col lg:flex-row lg:gap-10'>
                     <div className='flex flex-col lg:h-96 max-lg:pt-20 lg:pt-16 lg:shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.3)] lg:w-1/3 gap-5 lg:rounded-xl max-lg:border-b-black max-lg:border-b-[3px] border-dotted lg:border-red-400 lg:border-[3px] lg:p-5'>
