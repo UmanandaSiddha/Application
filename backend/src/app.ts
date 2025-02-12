@@ -6,14 +6,14 @@ import cors, { CorsOptions } from "cors";
 import helmet from "helmet";
 import limiter from "./config/rateLimiter.js";
 
-import user from "./routes/userRoute.js";
-import googleRoute from "./routes/googleRoute.js";
-import plan from "./routes/planRoute.js";
-import sub from "./routes/subscriptionRoute.js";
-import cards from "./routes/cardsRoute.js";
-import donator from "./routes/donatorRoute.js";
-import admin from "./routes/adminRoutes.js";
-import contact from "./routes/contactRoute.js";
+import user from "./routes/user.routes.js";
+import googleRoute from "./routes/google.routes.js";
+import plan from "./routes/plan.routes.js";
+import sub from "./routes/subscription.routes.js";
+import cards from "./routes/card.routes.js";
+import donator from "./routes/donator.routes.js";
+import admin from "./routes/admin.routes.js";
+import contact from "./routes/contact.routes.js";
 
 const app = express();
 

@@ -24,7 +24,7 @@ const Login = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
     const [forgotLoading, setForgotLoading] = useState<boolean>(false);
-    const from = location.state?.from?.pathname || "/dashboard/botanical";
+    const from = location.state?.from?.pathname || "/dashboard";
     const [passwordType, setPasswordType] = useState<string>("password");
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

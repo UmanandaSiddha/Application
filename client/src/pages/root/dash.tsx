@@ -360,6 +360,7 @@ const Dashboard = () => {
                                                                 onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)}
                                                             >
                                                                 <GenerateQRCode
+                                                                    switchTab={true}
                                                                     way="qr-group"
                                                                     card={card}
                                                                     type={type!}

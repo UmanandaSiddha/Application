@@ -20,10 +20,7 @@ export interface IDonator extends Document {
     oneTimePassword?: string;
     oneTimeExpire?: Date;
 
-    generateAccessToken(): string;
-    generateRefreshToken(): string;
-    comparePassword(enteredPassword: string): Promise<boolean>;
-    getResetPasswordToken(): string;
+    generateJWTToken(): string;
     getOneTimePassword(): string;
 }
 
@@ -59,7 +56,7 @@ const DonatorSchema: Schema<IDonator> = new mongoose.Schema(
     }
 );
 
-DonatorSchema.methods.generateAccessToken = function (this: IDonator) {
+DonatorSchema.methods.generateJWTToken = function (this: IDonator) {
     const token = jwt.sign(
         { id: this._id },
         process.env.ACCESS_TOKEN_SECRET!, 

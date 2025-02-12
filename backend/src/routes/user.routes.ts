@@ -1,0 +1,42 @@
+import express from "express";
+import {
+    deleteAccount,
+    fetchBlocked,
+    forgotPassword, 
+    getUserDetails, 
+    loginUser,
+    logoutUser,
+    registerUser,
+    requestVerification,
+    resetPassword,
+    setPassword,
+    unblockUser,
+    updateBillingInfo,
+    updateOrganisationDetails,
+    updatePassword,
+    updateProfile,
+    verifyUser
+} from "../controllers/user.controller.js";
+import { checkDeactivated, isAuthenticatedUser, isUserVerified } from "../middleware/auth.middleware.js";
+
+const router = express.Router();
+
+router.route("/register").post(registerUser);
+router.route("/request/verification").get(isAuthenticatedUser, requestVerification);
+router.route("/verify/:id").put(verifyUser);
+router.route("/login").post(loginUser);
+router.route("/block/:id").get(fetchBlocked);
+router.route("/unblock/:id").get(unblockUser);
+router.route("/logout").get(isAuthenticatedUser, logoutUser);
+router.route("/password/forgot").post(forgotPassword);
+router.route("/password/reset/:token").put(resetPassword);
+router.route("/set/password").put(isAuthenticatedUser, isUserVerified, checkDeactivated, setPassword);
+// router.route("/me").get(isAuthenticatedUser, checkDeactivated, checkCancellation, getUserDetails);
+router.route("/me").get(isAuthenticatedUser, checkDeactivated, getUserDetails);
+router.route("/billing/update").put(isAuthenticatedUser, isUserVerified, checkDeactivated, updateBillingInfo);
+router.route("/org/update").put(isAuthenticatedUser, isUserVerified, checkDeactivated, updateOrganisationDetails);
+router.route("/password/update").put(isAuthenticatedUser, isUserVerified, checkDeactivated, updatePassword);
+router.route("/me/update").put(isAuthenticatedUser, isUserVerified, checkDeactivated, updateProfile);
+router.route("/delete/account").delete(isAuthenticatedUser, isUserVerified, checkDeactivated, deleteAccount);
+
+export default router;

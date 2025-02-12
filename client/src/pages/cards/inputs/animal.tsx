@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { SingleAnimalResponse } from "@/types/api-types";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import SideBar from "@/components/rest/sidebar";
+// import SideBar from "@/components/rest/sidebar";
 import { convertToStrings, generateSimpleDefaultValues } from "@/lib/helper";
 import { Helmet } from "react-helmet-async";
 
@@ -90,6 +90,7 @@ const CreateAnimal = () => {
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
+                navigate("/plans");
             } finally {
                 setAnimalLoading(false);
             }
@@ -103,11 +104,11 @@ const CreateAnimal = () => {
                 <meta name="description" content={`This is the animal form page of Voolata`} />
                 <meta name="keywords" content="animal, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen">
+            <div className="flex justify-center h-screen pt-6">
                 <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-4 lg:space-y-0 lg:space-x-4">
-                    <div className="basis-1/4 hidden lg:block">
+                    {/* <div className="basis-1/4 hidden lg:block">
                         <SideBar />
-                    </div>
+                    </div> */}
 
                     <div className="flex-1 lg:basis-3/4">
                         <div className="h-full flex flex-col">

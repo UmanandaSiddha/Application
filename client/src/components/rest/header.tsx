@@ -46,12 +46,13 @@ export default function Header() {
     }, [mobileMenuOpen]);
 
     return (
-        <header className="bg-white fixed top-0 left-0 right-0 z-50 h-16 md:h-18">
-            <nav className="mx-auto w-full md:w-[80%] flex items-center justify-between px-6 py-4">
+        <header className="bg-white shadow-[0_4px_8px_rgba(0,0,0,0.05),0_-4px_8px_rgba(0,0,0,0.05),4px_0_8px_rgba(0,0,0,0.05),-4px_0_8px_rgba(0,0,0,0.05)] fixed sm:top-7 left-0 right-0 sm:w-[85%] mx-auto sm:rounded-full z-20 h-14 md:h-16">
+            {/* <nav className="mx-auto w-[90%] md:w-[80%] flex items-center justify-between py-3"> */}
+            <nav className="flex items-center justify-between px-8 py-3">
                 <Link to='/'>
-                    <img className="h-8 w-auto" src="/voolata_long_r.png" alt="" />
+                    <img className="h-8 w-auto flex " src="/voolata_long_r.png" alt="" />
                 </Link>
-                <div className="hidden lg:flex lg:gap-x-12">
+                <div className="hidden lg:flex lg:gap-x-12 ">
                     <Link to='/' className="text-md font-semibold leading-6">
                         Home
                     </Link>
@@ -69,7 +70,7 @@ export default function Header() {
                     </Link>
                 </div>
 
-                <div className="lg:hidden">
+                <div className="lg:hidden ">
                     {user ? (
                         <button
                             type="button"
@@ -127,7 +128,7 @@ export default function Header() {
                                     <span className="mx-4 font-medium">About Us</span>
                                 </Link>
                                 {user && (
-                                    <Link to="/dashboard/botanical" className={`flex items-center p-2 mt-5 rounded-md ${["/dashboard/botanical", "/dashboard/animal", "/dashboard/creator", "/dashboard/individual", "/dashboard/medical"].includes(location.pathname) ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <Link to="/dashboard" className={`flex items-center p-2 mt-5 rounded-md ${["/dashboard", "/dashboard/animal", "/dashboard/creator", "/dashboard/individual", "/dashboard/medical"].includes(location.pathname) ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                         <RxDashboard className='h-5 w-5' />
                                         <span className="mx-4 font-medium">Dashboard</span>
                                     </Link>

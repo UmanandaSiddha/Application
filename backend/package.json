@@ -16,8 +16,10 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@sendgrid/mail": "^8.1.4",
 		"bcryptjs": "^2.4.3",
 		"body-parser": "^1.20.3",
+		"bullmq": "^5.39.1",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
 		"dotenv": "^16.4.7",
@@ -29,6 +31,7 @@
 		"jsonwebtoken": "^9.0.2",
 		"mongoose": "^8.9.4",
 		"razorpay": "^2.9.5",
+		"short-uuid": "^5.2.0",
 		"winston": "^3.17.0"
 	},
 	"devDependencies": {

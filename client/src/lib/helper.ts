@@ -28,7 +28,7 @@ export const setSvg = (input: string) => {
     const platformKey = `si${input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()}`;
     const icon = icons[platformKey as keyof typeof icons];
     if (icon) {
-        return icon.path;
+        return (icon as any).path as string;
     } else {
         return "";
     }
@@ -54,9 +54,9 @@ export const createQRCode = (type: string, cardId: string) => {
         }
     }
     return new QRCodeStyling({
-        width: 1000,
-        height: 1000,
-        margin: 50,
+        width: 2000,
+        height: 2000,
+        margin: 20,
         data: `${window.location.protocol}//${window.location.host}/d/${cardId}`,
         qrOptions: {
             typeNumber: 0,
@@ -86,11 +86,11 @@ export const createQRCode = (type: string, cardId: string) => {
     });
 };
 
-export const typeStyles: Record<string, { backgroundColor: string, textColor: string, mdBackgroundColor: string, iconColor: string }> = {
-    botanical: { backgroundColor: "bg-green-200", textColor: "bg-green-500", mdBackgroundColor: "md:bg-green-500", iconColor: "text-green-500" },
-    individual: { backgroundColor: "bg-blue-200", textColor: "bg-blue-500", mdBackgroundColor: "md:bg-blue-500", iconColor: "text-blue-500" },
-    animal: { backgroundColor: "bg-red-200", textColor: "bg-red-500", mdBackgroundColor: "md:bg-red-500", iconColor: "text-red-500" },
-    creator: { backgroundColor: "bg-cyan-200", textColor: "bg-cyan-500", mdBackgroundColor: "md:bg-cyan-500", iconColor: "text-cyan-500" },
-    medical: { backgroundColor: "bg-indigo-200", textColor: "bg-indigo-500", mdBackgroundColor: "md:bg-indigo-500", iconColor: "text-indigo-500" },
-    default: { backgroundColor: "bg-gray-200", textColor: "bg-gray-500", mdBackgroundColor: "md:bg-gray-500", iconColor: "text-gray-500" }
+export const typeStyles: Record<string, { backgroundColor: string, textColor: string, mdBackgroundColor: string, iconColor: string, cardBg: string }> = {
+    botanical: { backgroundColor: "bg-[#4BA197]", textColor: "bg-green-500", mdBackgroundColor: "md:bg-green-500", iconColor: "text-green-500",cardBg:"bg-[url('/botany_card.png')]"},
+    individual: { backgroundColor: "bg-[rgb(19,94,242,0.44)]", textColor: "bg-blue-500", mdBackgroundColor: "md:bg-blue-500", iconColor: "text-blue-500" ,cardBg:"bg-[url('/individual_card.png')]"},
+    animal: { backgroundColor: "bg-[#E5ACAD]", textColor: "bg-red-500", mdBackgroundColor: "md:bg-red-500", iconColor: "text-red-500",cardBg:"bg-[url('/animal_card.png')]" },
+    creator: { backgroundColor: "bg-[#66B1DF]", textColor: "bg-cyan-500", mdBackgroundColor: "md:bg-cyan-500", iconColor: "text-cyan-500" ,cardBg:"bg-[url('/creator_card.png')]"},
+    medical: { backgroundColor: "bg-[#92C6BD]", textColor: "bg-indigo-500", mdBackgroundColor: "md:bg-indigo-500", iconColor: "text-indigo-500",cardBg:"bg-[url('/medical_card.png')]" },
+    default: { backgroundColor: "bg-gray-200", textColor: "bg-gray-500", mdBackgroundColor: "md:bg-gray-500", iconColor: "text-gray-500",cardBg:"bg-[url('/individual_card.png')]" }
 };

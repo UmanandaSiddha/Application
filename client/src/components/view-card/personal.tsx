@@ -134,34 +134,31 @@ const PersonalComponent = ({ card }: PropsType) => {
         const platformKey = `si${input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()}`;
         const icon = icons[platformKey as keyof typeof icons];
         if (icon) {
-            return icon.path;
+            return (icon as any).path as string;
         } else {
             return "";
         }
     }
 
     return (
-        <div className="bg-[#ACC5F5] bg-[url('/personal_bg.png')] overflow-x-hidden relative bg-auto bg-center pb-16 md:pb-6">
-            <img src="/personal_curve.png" alt="" className="absolute md:right-10 md:top-10 md:rotate-6 z-10 " />
-            <div className="relative rounded-[10px] mb-10">
-                <img src="/card_header_bg.png" alt="" className="hidden sm:block w-full h-80" />
-                <img src="/individual_header_mobile.png" alt="" className="sm:hidden w-full h-64" />
-                <div className="pt-10  pl-5 absolute top-5">
-                    <div className="flex justify-start pl-6 sm:py-4">
-                        <p className="text-white font-semibold">Individual Data</p>
-                    </div>
-                    <div className="text-white text-5xl lg:text-5xl xl:text-6xl sm:text-4xl font-semibold mb-10">
-                        <h1 className="pl-6">{card?.name}</h1>
+        <div className=" overflow-x-hidden relative bg-center bg-auto">
+            <div className="relative rounded-[10px] mb-10 flex justify-center items-center">
+                <img src="/individual_cover.png" alt="" className="block md:hidden w-full h-80 sm:h-96" />
+                <img src="/individual_cover_lg.png" alt="" className="hidden md:block w-full h-80"/>
+                <div className="absolute top-5">
+                    <div className="flex flex-col gap-1 justify-center items-center sm:py-4">
+                        <img src="/person_img.png" alt="" className="sm:w-28" />
+                        <p className="text-white font-bold text-3xl pt-2">David Storm</p>
+                        <p className="text-white text-lg">Data Analyst</p>
                     </div>
                 </div>
             </div>
-
-            <div className="flex justify-center w-full">
-                <div className="w-[90%]">
-                    <div className="bg-white rounded-xl mb-16 pb-8">
-
+            
+            <div className="flex flex-col justify-center items-center bg-[#F7F7F7] sm:w-[85%] mx-auto rounded-3xl">
+                <div className="sm:w-[40%]">
+                    <div className=" rounded-xl mb-5 pb-8">
                         <div className="flex justify-center">
-                            <div className="w-[80%] flex flex-nowrap justify-between md:gap-2 gap-5 pb-6 mt-6">
+                            <div className="sm:w-[80%] flex flex-nowrap justify-between md:gap-2 gap-5 pb-6 mt-6">
                                 {card?.socialMedia.map((item: any, index: number) => (
                                     <Link key={index} to={item.name} target="blank" className="flex w-14 h-14 md:w-16 md:h-16 shadow-lg justify-center border-2 rounded-full py-2.5 items-center">
                                         {setSvg(item.label) === "" ? (
@@ -241,7 +238,6 @@ const PersonalComponent = ({ card }: PropsType) => {
                                                                             {item.value}
                                                                         </p>
                                                                     )}
-
                                                                 </div>
                                                             </div>
                                                         ))}
@@ -254,6 +250,10 @@ const PersonalComponent = ({ card }: PropsType) => {
                             </div>
                         ))}
                     </div>
+                </div>
+                <div className="flex flex-col justify-center items-center  pb-20">
+                    <p className="pb-3 text-xl font-semibold">Made with</p>
+                    <img src="/voolata_long_r.png" alt="" className="w-36" />
                 </div>
             </div>
         </div>

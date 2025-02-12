@@ -2,8 +2,8 @@ import app from "./app.js";
 import dotenv from "dotenv";
 import connectDatabase from "./config/database.js";
 import Razorpay from "razorpay";
-import "./utils/queue/donationQueue.js";
-import "./utils/queue/subscriptionQueue.js";
+import "./utils/queue/donation.queue.js";
+import "./utils/queue/subscription.queue.js";
 import { Redis } from "ioredis";
 import { createServer } from "http";
 

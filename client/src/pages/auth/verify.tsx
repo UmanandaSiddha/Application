@@ -21,7 +21,7 @@ const Verify = () => {
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/dashboard/botanical";
+    const from = location.state?.from?.pathname || "/dashboard";
 
     useEffect(() => {
         const otpSent = search.get("otpSent") === "true";

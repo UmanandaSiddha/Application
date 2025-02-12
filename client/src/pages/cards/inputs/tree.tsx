@@ -3,10 +3,10 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { RootState } from "../../../redux/store";
-// import { SingleTreeResponse } from "@/types/api-types";
+import { SingleTreeResponse } from "@/types/api-types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import SideBar from "@/components/rest/sidebar";
+// import SideBar from "@/components/rest/sidebar";
 import { generateSimpleDefaultValues } from "@/lib/helper";
 import { inputs } from "@/data/tree";
 import { Helmet } from "react-helmet-async";
@@ -32,32 +32,31 @@ const CreateTree = () => {
         const fetchTree = async () => {
             if (id) {
                 try {
-                    const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=botanical`, { withCredentials: true });
+                    const { data }: { data: SingleTreeResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=botanical`, { withCredentials: true });
                     setIsTree(true);
-                    console.log(data.vCard);
+                    // reset(data.vCard);
                     reset({
                         ...data.vCard,
-                        // createdAt: (data.vCard.createdAt as Date).toISOString()
+                        createdAt: data.vCard.createdAt.toISOString()
                     });
                 } catch (error: any) {
-                    // toast.error(error.response.data.message);
-                    console.log(error);
+                    toast.error(error.response.data.message);
                 }
             }
         }
 
-        // const cardData = localStorage.getItem("current_card");
-        // if (cardData && id) {
-        //     const cardDataParsed = JSON.parse(cardData);
-        //     if (cardDataParsed?._id !== id) {
-        //         fetchTree();
-        //     } else {
-        //         setIsTree(true);
-        //         reset(cardDataParsed);
-        //     }
-        // } else {
-        // }
-        fetchTree();
+        const cardData = localStorage.getItem("current_card");
+        if (cardData && id) {
+            const cardDataParsed = JSON.parse(cardData);
+            if (cardDataParsed?._id !== id) {
+                fetchTree();
+            } else {
+                setIsTree(true);
+                reset(cardDataParsed);
+            }
+        } else {
+            fetchTree();
+        }
     }, [id]);
 
     const onSubmit = async (values: any) => {
@@ -93,11 +92,11 @@ const CreateTree = () => {
                 <meta name="description" content={`This is the botanical form page of Voolata`} />
                 <meta name="keywords" content="botanical, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen">
+            <div className="flex justify-center h-screen pt-6 ">
                 <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-4 lg:space-y-0 lg:space-x-4">
-                    <div className="basis-1/4 hidden lg:block">
+                    {/* <div className="basis-1/4 hidden lg:block">
                         <SideBar />
-                    </div>
+                    </div> */}
 
                     <div className="flex-1 lg:basis-3/4">
                         <div className="h-full flex flex-col">
@@ -146,7 +145,7 @@ const CreateTree = () => {
                                             </div>
                                         ))}
 
-                                        <div className="flex justify-center pb-2">
+                                        <div className="flex justify-center pb-10">
                                             <button
                                                 className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-purple-500 text-lg"
                                                 type="submit"

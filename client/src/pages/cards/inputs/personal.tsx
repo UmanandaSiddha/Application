@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SinglePersonalResponse } from "@/types/api-types";
-import SideBar from "@/components/rest/sidebar";
+// import SideBar from "@/components/rest/sidebar";
 import { IoMdLink } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -79,11 +79,7 @@ const CreatePersonal = () => {
                 const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=individual`, { withCredentials: true });
                 setIsPersonal(true);
                 reset(convertToStrings(data.vCard));
-                if (data.vCard.socialMedia.length === 0) {
-                    setSocialData(socials);
-                } else {
-                    setSocialData(data.vCard.socialMedia);
-                }
+                setSocialData(data.vCard.socialMedia);
             } catch (error: any) {
                 toast.error(error.response.data.message);
             }
@@ -167,6 +163,7 @@ const CreatePersonal = () => {
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
+                navigate("/plans");
             } finally {
                 setPersonalLoading(false);
             }
@@ -575,11 +572,11 @@ const CreatePersonal = () => {
                 <meta name="description" content={`This is the individual form page of Voolata`} />
                 <meta name="keywords" content="individual, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen">
+            <div className="flex justify-center h-screen pt-6">
                 <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
-                    <div className="basis-1/4 hidden lg:block">
+                    {/* <div className="basis-1/4 hidden lg:block">
                         <SideBar />
-                    </div>
+                    </div> */}
 
                     <div className="flex-1 flex flex-col">
                         <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
@@ -632,20 +629,18 @@ const CreatePersonal = () => {
                                 >
                                     Prev
                                 </button>
-                                {progressBar === 5 && (
+                                {progressBar === 5 ? (
                                     <button
                                         className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="submit"
-                                        disabled={progressBar !== 5 || personalLoading}
+                                        disabled={personalLoading}
                                     >
                                         {personalLoading ? "Hold on..." : "Submit"}
                                     </button>
-                                )}
-                                {progressBar < 5 && (
+                                ) : (
                                     <button
                                         className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="button"
-                                        disabled={progressBar === 5}
                                         onClick={() => setProgressBar((currPage) => currPage + 1)}
                                     >
                                         Next

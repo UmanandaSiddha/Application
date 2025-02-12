@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { SingleMedicalResponse } from "@/types/api-types";
-import SideBar from "@/components/rest/sidebar";
+// import SideBar from "@/components/rest/sidebar";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { convertToStrings, generateDefaultValues } from "@/lib/helper";
 import SelectInput from "@/components/rest/select-input";
@@ -107,6 +107,7 @@ const MedicalInput = () => {
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
+                navigate("/plans");
             } finally {
                 setMedicalLoading(false);
             }
@@ -290,11 +291,8 @@ const MedicalInput = () => {
                 <meta name="description" content={`This is the medical form page of Voolata`} />
                 <meta name="keywords" content="medical, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen">
+            <div className="flex justify-center h-screen pt-6">
                 <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
-                    <div className="basis-1/4 hidden lg:block">
-                        <SideBar />
-                    </div>
 
                     <div className="flex-1 flex flex-col">
                         <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
@@ -347,20 +345,18 @@ const MedicalInput = () => {
                                 >
                                     Prev
                                 </button>
-                                {progressBar === 4 && (
+                                {progressBar === 4 ? (
                                     <button
                                         className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="submit"
-                                        disabled={progressBar !== 4 || medicalLoading}
+                                        disabled={medicalLoading}
                                     >
                                         {medicalLoading ? "Hold on..." : "Submit"}
                                     </button>
-                                )}
-                                {progressBar < 4 && (
+                                ) : (
                                     <button
                                         className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="button"
-                                        disabled={progressBar === 4}
                                         onClick={() => setProgressBar((currPage) => currPage + 1)}
                                     >
                                         Next

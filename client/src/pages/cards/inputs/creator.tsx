@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { SingleCreatorResponse } from "@/types/api-types";
 import axios from "axios";
-import SideBar from "@/components/rest/sidebar";
+// import SideBar from "@/components/rest/sidebar";
 import { IoMdLink } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -54,11 +54,7 @@ const CreatorInput = () => {
                 const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=creator`, { withCredentials: true });
                 setIsCreator(true);
                 setName(data.vCard.name);
-                if (data.vCard.links.length ===0) {
-                    setArrData(inputs)
-                } else {
-                    setArrData(data.vCard.links);
-                }
+                setArrData(data.vCard.links);
             } catch (error: any) {
                 toast.error(error.response.data.message);
             }
@@ -130,7 +126,6 @@ const CreatorInput = () => {
             links: final,
             user: user?._id,
         };
-        console.log(creatorData);
         if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
             navigate("/plans");
         } else {
@@ -148,6 +143,7 @@ const CreatorInput = () => {
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
+                navigate("/plans");
             } finally {
                 setCreatorLoading(false);
             }
@@ -175,11 +171,11 @@ const CreatorInput = () => {
                 <meta name="description" content={`This is the creator form page of Voolata`} />
                 <meta name="keywords" content="creator, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen">
+            <div className="flex justify-center h-screen pt-6">
                 <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
-                    <div className="basis-1/4 hidden lg:block">
+                    {/* <div className="basis-1/4 hidden lg:block">
                         <SideBar />
-                    </div>
+                    </div> */}
                     <div className="flex-1 lg:basis-3/4">
                         <div className="h-full flex flex-col">
                             <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
@@ -310,6 +306,7 @@ const CreatorInput = () => {
                                                 onClick={handleCloseForm}
                                             >
                                                 <div className="bg-white border-2 p-8 rounded shadow-lg w-full max-w-md">
+                                                    {/* Popup Form */}
                                                     <h1 className="text-xl md:text-2xl font-semibold">
                                                         {isEditable ? "Edit" : "Add"} Social Profile
                                                     </h1>

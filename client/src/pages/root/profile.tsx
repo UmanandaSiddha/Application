@@ -293,7 +293,7 @@ const Profile = () => {
                 )}
                 <div className="pt-5 flex justify-center items-center gap-6">
                     <div className="sidebar basis-1/4 hidden lg:block">
-                        <div className="flex bg-[#9483eb] w-full min-h-[80vh] px-8 py-4 mt-4 rounded-lg shadow-lg">
+                        <div className="flex bg-[#6371FB] w-full min-h-[80vh] px-8 py-4 mt-4 rounded-lg shadow-lg">
                             <div className="flex  w-full flex-col justify-between mt-6">
                                 <nav className="flex flex-col justify-center gap-4">
                                     <h1 className="mx-4 text-2xl text-white font-bold capitalize">Welcome, <span className="text-xl font-semibold">{user?.name}</span></h1>
@@ -302,7 +302,7 @@ const Profile = () => {
 
                                     <Link
                                         className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md group"
-                                        to="/dashboard/botanical"
+                                        to="/dashboard"
                                     >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"

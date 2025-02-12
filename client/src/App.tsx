@@ -27,9 +27,9 @@ import Checkout from "./pages/plans/checkout";
 import Profile from "./pages/root/profile";
 import Verify from "./pages/auth/verify";
 import BillingPage from "./pages/plans/billing";
-import Dashboard from "./pages/root/dash";
-import AllCards from "./pages/cards/all-cards";
-import ViewCard from "./pages/cards/view-card";
+import Dashboard from "./pages/card/dashboard";
+// import AllCards from "./pages/cards/all-cards";
+import ViewCard from "./pages/card/view-card";
 import HomePage from "./pages/root/home";
 import PlanPage from "./pages/plans/plan";
 import DonationCheckout from "./pages/donation/checkout";
@@ -51,18 +51,26 @@ import ReFundPolicyPage from "./pages/others/refund";
 import PrivacyPolicyPage from "./pages/others/privacy";
 import TermsAndConditions from "./pages/others/terms";
 import Footer from "./components/rest/footer";
+import DetailsCard from "./pages/card/details-card";
+import { useMediaQuery } from "react-responsive";
+// import Dash from "./pages/card/dashboard";
 
 const App = () => {
     const location = useLocation();
+    const isDesktop = useMediaQuery({ maxWidth: 1024 });
 
-    const noPaddingTopRoutes = ["/login", "/register", "/org/register"];
+    const weirdHeader = location.pathname.startsWith("/dashboard/cards/card/") && !(location.pathname.startsWith("/dashboard/cards/card/medical") && !isDesktop);
+
+    // const noPaddingTopRoutes = ["/login", "/register", "/org/register"];
+    const noPaddingTopRoutes = ["/login", "/register", "/org/register", "/contact", "/", "/about-us", "/plans"];
     const isWhiteSmokeRoute = ["/profile", "/billing", "/donation/billing", "/receipt", "/donation/dashboard"];
 
-    const containerClass = noPaddingTopRoutes.includes(location.pathname)
+    const containerClass = noPaddingTopRoutes.includes(location.pathname) || weirdHeader
         ? ""
         : "custom-padding";
 
-    document.body.style.backgroundColor = isWhiteSmokeRoute.includes(location.pathname) ? "#f5f5f5" : "#ffffff";
+
+    document.body.style.backgroundColor = isWhiteSmokeRoute.includes(location.pathname) || location.pathname.startsWith("/dashboard/cards/card/medical") ? "#f5f5f5" : "#ffffff";
 
     const { user, loading } = useSelector(
         (state: RootState) => state.userReducer
@@ -112,7 +120,7 @@ const App = () => {
                 theme="dark"
             />
             <ErrorBoundary>
-                {!["/login", "/register", "/org/register"].includes(location.pathname) && (<Header />)}
+                {!(["/login", "/register", "/org/register"].includes(location.pathname) || weirdHeader) && <Header />}
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/about-us" element={<HomePage />} />
@@ -162,14 +170,18 @@ const App = () => {
                         <Route path="/verify" element={<Verify />} />
                         <Route path="/billing" element={<BillingPage />} />
 
-                        <Route path="/dashboard/:type" element={<Dashboard />} />
-                        <Route path="/dashboard/cards/:type" element={<AllCards />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        {/* <Route path="/dashboard/cards/:type" element={<AllCards />} /> */}
                         <Route path="/dashboard/cards/card/:type/:id" element={<ViewCard />} />
                         <Route path="/dashboard/botanical/create/:id?" element={<CreateTree />} />
                         <Route path="/dashboard/individual/create/:id?" element={<CreatePersonal />} />
                         <Route path="/dashboard/medical/create/:id?" element={<MedicalInput />} />
                         <Route path="/dashboard/creator/create/:id?" element={<CreatorInput />} />
                         <Route path="/dashboard/animal/create/:id?" element={<CreateAnimal />} />
+
+
+                        {/* <Route path="/dash" element={<Dash />} /> */}
+                        <Route path="/dashboard/card" element={<DetailsCard />} />
                     </Route>
 
                     <Route path="*" element={<NotFound />} />
