@@ -119,7 +119,7 @@ const DetailsCard = () => {
         <div className="mt-14 bg-slate-50 hide-scrollbar">
             <div
                 className={`w-full ${isSmaller ? "h-[85vh]" : "h-[65vh]"} bg-cover bg-bottom`}
-                style={{ backgroundImage: `url(${backgroundImage})` }}
+                style={{ backgroundImage: `url(${backgroundImage || IndividualBackgroundMobile})` }}
             >
                 <div className="flex items-center justify-center space-x-12 pt-3 w-full px-4">
                     <CardHeaderSwitchButton
