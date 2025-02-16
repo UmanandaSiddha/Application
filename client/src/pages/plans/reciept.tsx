@@ -1,12 +1,12 @@
 import Loader from "@/components/rest/loader";
 import "@/css/print.css";
-import { RootState } from "@/redux/store";
+// import { RootState } from "@/redux/store";
 import { ITransaction } from "@/types/type";
 // import { Transaction } from "@/types/plan_types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -14,8 +14,8 @@ const RecieptPage = () => {
 
     const { type, id } = useParams();
     const [transaction, setTransaction] = useState<ITransaction | null>();
-    const { donator } = useSelector((state: RootState) => state.donatorReducer);
-    const [reciept, setReciept] = useState(false);
+    // const { donator } = useSelector((state: RootState) => state.donatorReducer);
+    // const [reciept, setReciept] = useState(false);
 
     const fetchTransaction = async () => {
         try {
