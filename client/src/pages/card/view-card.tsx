@@ -15,43 +15,65 @@ import {
     IndividualViewCardBackgroundMobile,
     MedicalViewCardBackgroundMobile
 } from "@/constants/cards/view-card";
-// import { SinglePersonalResponse } from "@/types/api-types";
-// import { Personal } from "@/types/card_types";
-// import axios from "axios";
-// import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useParams } from "react-router-dom";
-// import { toast } from "react-toastify";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { AnimalData, BotanyData, CreatorData, ICard, IndividualData, MedicalData } from "@/types/type";
+import { useEffect, useState } from "react";
+import API from "@/config/apiConfig";
+import { toast } from "react-toastify";
 
-// type CardCategory = "individual" | "botanical" | "animal" | "creator" | "medical";
+interface SingleCardResponse {
+    success: boolean;
+    card: ICard;
+}
 
 const ViewCard = () => {
-    // const [searchParams, setSearchParams] = useSearchParams();
-    // const type = (searchParams.get("type") as CardCategory) || "individual";
-    // const id = searchParams.get("id");
-    const { type } = useParams();
+    const { shortId, type, id } = useParams();
     const isMobile = useMediaQuery({ maxWidth: 628 });
     const isDesktop = useMediaQuery({ maxWidth: 1024 });
 
-    // const [card, setCard] = useState<Personal | null>(null);
-    // const [loading, setLoading] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    // const fetchData = async (id: string, type: string) => {
-    //     setLoading(true);
-    //     try {
-    //         const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=${type}`, { withCredentials: true });
-    //         setCard(data.vCard);
-    //     } catch (error: any) {
-    //         toast.error(error.response.data.message);
-    //     }
-    //     setLoading(false);
-    // };
+    const displayPage = location.pathname.startsWith("/d/");
+    const viewPage = location.pathname.startsWith("/dashboard/cards/card/");
 
-    // useEffect(() => {
-    //     if (type && ["botanical", "individual", "medical", "creator", "animal"].includes(type) && id) {
-    //         fetchData(id, type);
-    //     }
-    // }, [type, id]);
+    const [card, setCard] = useState<ICard | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const fetchViewData = async (id: string, type: string) => {
+        setLoading(true);
+        try {
+            const { data }: { data: SingleCardResponse } = await API.get(`/cards/detailed/${id}?type=${type}`);
+            setCard(data.card);
+        } catch (error: any) {
+            toast.error(error.response.data.message);
+        }
+        setLoading(false);
+    };
+
+    const fetchDisplayData = async (shortId: string) => {
+        setLoading(true);
+        try {
+            const { data }: { data: SingleCardResponse } = await API.get(`/cards/details/${shortId}`);
+            setCard(data.card);
+            navigate(`/d/${data.card.shortCode}/${data.card.type}`, { replace: true });
+        } catch (error: any) {
+            console.error(error.response.data.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (viewPage && type && ["BOTANICAL", "INDIVIDUAL", "MEDICAL", "CREATOR", "ANIMAL"].includes(type) && id) {
+            fetchViewData(id, type);
+        } else if (displayPage && shortId) {
+            fetchDisplayData(shortId);
+        } else {
+            toast.error("Invalid card link, please check your URL");
+        }
+    }, [type, id, shortId]);
 
     let backgroundImage;
     switch (type?.toLowerCase()) {
@@ -77,35 +99,36 @@ const ViewCard = () => {
     const renderCard = () => {
         switch (type?.toLowerCase()) {
             case "botanical":
-                return <BotanicalViewCard />;
+                return card && <BotanicalViewCard cardData={card.data as BotanyData} />;
             case "individual":
-                return <IndividualViewCard />;
+                return card && <IndividualViewCard cardData={card.data as IndividualData} />;
             case "medical":
-                return <MedicalViewCard />;
+                return card && <MedicalViewCard cardData={card.data as MedicalData} />;
             case "creator":
-                return <CreatorViewCard />;
+                return card && <CreatorViewCard cardData={card.data as CreatorData} />;
             case "animal":
-                return <AnimalViewCard />;
+                return card &&  <AnimalViewCard cardData={card.data as AnimalData} />;
             default:
                 return <h1>You have enter a broken link, no cards here</h1>;
         }
     };
 
+    useEffect(() => {
+
+    }, []);
+
     return (
         <div className="">
-            {!isDesktop && type === "medical" ? (
+            {!isDesktop && type === "MEDICAL" ? (
                 <MedicalDesktopViewCard />
-            ) : (
+            ) : !loading && card ? (
                 <>
                     <div
-                        className={`flex flex-col justify-center items-center w-full h-[30vh] bg-cover bg-bottom`}
+                        className={`flex flex-col justify-center items-center gap-2 w-full h-[30vh] bg-cover bg-bottom`}
                         style={{ backgroundImage: `url(${backgroundImage})` }}
                     >
-                        <div className="h-16 w-16 bg-white rounded-full"></div>
-                        <div className="mt-2">
-                            <h2>David Strom</h2>
-                            <p>Data Analyst</p>
-                        </div>
+                        <div className="h-14 w-14 bg-white rounded-full"></div>
+                        <h2 className="text-white text-lg font-semibold">{card?.data.name}</h2>
                     </div>
                     <div className="px-2 mb-12">
                         <div className="mt-4 w-full md:w-[90%] mx-auto flex flex-col justify-center items-center bg-[#F7F7F7] border-2 border-gray-200 rounded-xl">
@@ -119,6 +142,10 @@ const ViewCard = () => {
                         </div>
                     </div>
                 </>
+            ) : (
+                <div className="flex justify-center items-center">
+                    <h1 className="text-red-500 text-xl font-semibold">You have enter a broken link, no cards here</h1>
+                </div>
             )}
         </div>
     )

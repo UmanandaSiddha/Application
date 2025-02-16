@@ -328,6 +328,7 @@ export interface CreatorData {
 
 export interface AnimalData {
     name: string;
+    species?: string;
     signIllness?: string;
     vaccination?: string;
     physicalDescription?: string;

@@ -1,27 +1,31 @@
+import { MedicalData } from "@/types/type";
 import { ArrowRight } from "lucide-react";
 
+interface PropTypes {
+    cardData: MedicalData;
+}
 
-const MedicalViewCard = () => {
+const MedicalViewCard = ({ cardData }: PropTypes) => {
     const data = {
         profile: [
             {
                 label: "Gender",
-                value: "Male"
+                value: cardData.gender || ""
             }, {
                 label: "Age",
-                value: 27
+                value: cardData.age || ""
             }, {
                 label: "Language",
                 value: "ENG"
             }, {
                 label: "Height",
-                value: 6.3
+                value: cardData.height || ""
             }, {
                 label: "Date of Birth",
-                value: "01/01/1997"
+                value: cardData.dateOfBirth || ""
             }, {
                 label: "Phone Number",
-                value: "+91 9876543219"
+                value: cardData.phone || ""
             }
         ],
         address: {

@@ -207,6 +207,7 @@ const AnimalCardSchema: Schema<AnimalData> = new mongoose.Schema(
             required: true,
         },
         signIllness: String,
+        species: String,
         vaccination: String,
         commonHealth: String,
         physicalDescription: String,

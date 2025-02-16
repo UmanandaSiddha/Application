@@ -109,6 +109,7 @@ export interface CreatorData extends Document {
 export interface AnimalData extends Document {
     name: string;
     signIllness?: string;
+    species?: string;
     vaccination?: string;
     physicalDescription?: string;
     diet?: string;

@@ -135,7 +135,7 @@ const App = () => {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/about-us" element={<HomePage />} />
                     <Route path="/plans" element={<PlanPage />} />
-                    {/* <Route path="/d/:shortId/:type?/:id?" element={<DisplayCard />} /> */}
+                    <Route path="/d/:shortId/:type?/:id?" element={<ViewCard />} />
                     <Route path="/onboarding" element={<OnBoarding />} />
                     <Route path="/donation/login" element={<DonationLogin />} />
                     <Route path="/contact" element={<ContactUs />} />

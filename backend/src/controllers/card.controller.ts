@@ -1,7 +1,7 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import User, { UserRoleEnum } from "../models/accounts/user.model.js";
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserRequest } from "../middleware/auth.middleware.js";
 import Card, { CardEnum } from "../models/card/card.model.js";
 import mongoose from "mongoose";
@@ -170,10 +170,10 @@ export const getUserCards = catchAsyncErrors(async (req: UserRequest, res: Respo
 });
 
 // Get Display Card
-export const getDisplayCard = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
-    const card = await Card.findById(req.params.id);
+export const getDisplayCard = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const card = await Card.findOne({ shortCode: req.params.id });
     if (!card) return next(new ErrorHandler("Card Not Found", 404));
-    const { user } = req;
+    const user = await User.findById(card.userId);
     if (!user) return next(new ErrorHandler("User not found", 404));
 
     if (!user.access.freeAccess &&

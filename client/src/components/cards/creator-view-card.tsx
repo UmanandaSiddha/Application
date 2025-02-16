@@ -1,32 +1,19 @@
 import { setSvg } from "@/lib/helper";
+import { CreatorData } from "@/types/type";
 import { Link } from "react-router-dom";
 
-const CreatorViewCard = () => {
-    const data = [
-        {
-            label: "Instagram",
-            name: "https://www.instagram.com/example"
-        },
-        {
-            label: "Facebook",
-            name: "https://www.facebook.com/example"
-        },
-        {
-            label: "Spotify",
-            name: "https://www.twitter.com/example"
-        },
-        {
-            label: "LinkedIn",
-            name: "https://www.linkedin.com/in/example"
-        },
-    ]
+interface PropTypes {
+    cardData: CreatorData;
+}
+
+const CreatorViewCard = ({ cardData }: PropTypes) => {
     return (
         <div className='w-full md:w-[50%] lg:w-[30%] mx-auto px-6'>
             <div className='flex flex-col justify-center w-full'>
                 <div className='w-full py-6'>
-                    {data.map((link: any, index: number) => (
+                    {cardData && cardData.links.length > 0 ? cardData.links.map((link, index: number) => (
                         <Link
-                            to={link.name}
+                            to={link.link}
                             target="blank"
                             className="w-full relative flex flex-col justify-center items-center py-3"
                             key={index}
@@ -52,7 +39,9 @@ const CreatorViewCard = () => {
                                 <p className='text-lg font-bold text-white'>{link.label}</p>
                             </div>
                         </Link>
-                    ))}
+                    )) : (
+                        <p className='text-center text-gray-500 text-lg'>No links available</p>
+                    )}
                 </div>
             </div>
         </div>

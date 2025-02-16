@@ -496,7 +496,7 @@ const Dashboard = () => {
                     <div className="flex justify-center items-center">
                         <Loader2 className="text-center animate-spin" />
                     </div>
-                ) : cards && cards.length > 0 ? cards.map(card => (
+                ) : cards && cards.length > 0 ? (type ==="ALL" ? cards : cards.filter(card => card.type === type)).map(card => (
                     <div
                         key={card._id}
                         onClick={() => navigate(`/dashboard/cards/card/${card.type}/${card._id}`)}
@@ -576,7 +576,7 @@ const Dashboard = () => {
                     <div className="flex justify-center items-center">
                         <Loader2 className="text-center animate-spin" />
                     </div>
-                ) : cards && cards.length > 0 ? cards.map(card => (
+                ) : cards && cards.length > 0 ? (type ==="ALL" ? cards : cards.filter(card => card.type === type)).map(card => (
                     <div
                         key={card._id}
                         onClick={() => navigate(`/dashboard/cards/card/${card.type}/${card._id}`)}

@@ -12,6 +12,7 @@ import { AnimalData, ICard } from "@/types/type";
 
 const inputs = [
     { name: "name", label: "Animal Name", text: "Enter Animal Name" },
+    { name: "species", label: "Species", text: "Enter Species Name" },
     { name: "signIllness", label: "Sign of Illness", text: "Enter Sign of illness" },
     { name: "vaccination", label: "Vaccination & Deworming Needs", text: "Enter Vaccination & Deworming Needs" },
     { name: "physicalDescription", label: "Physical Description", text: "Enter Physical Description" },
