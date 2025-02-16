@@ -43,7 +43,7 @@ const DetailsCard = () => {
     const isSmaller = useMediaQuery({ maxWidth: 380 });
     const isMobile = useMediaQuery({ maxWidth: 628 });
 
-    const { currentIndex, setCurrentIndex, handleNext, handlePrev, hasNext, hasPrev, handleDownload, handleShare } = useCardTraversal(cards, counts, setCounts);
+    const { currentIndex, setCurrentIndex, handleNext, handlePrev, hasNext, hasPrev, handleDownload, handleShare, downloadDivAsImage } = useCardTraversal(cards, counts, setCounts);
 
     const fetchData = async (link: string) => {
         try {
@@ -216,7 +216,8 @@ const DetailsCard = () => {
                     />
                     <CardActionsButton
                         imageSrc={DownloadButtonIcon}
-                        onClick={handleDownload}
+                        // onClick={handleDownload}
+                        onClick={activeTab === "card" ? downloadDivAsImage : handleDownload}
                         placeholder="Download"
                     />
                 </div>
