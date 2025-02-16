@@ -137,7 +137,7 @@ export const getAllUsers = catchAsyncErrors(async (req: Request, res: Response, 
     const resultPerPage = 20;
     const count = await User.countDocuments();
 
-    const apiFeatures = new ApiFeatures(User.find().select("name email image role accountType").sort({ $natural: -1 }), req.query).search().filter();
+    const apiFeatures = new ApiFeatures(User.find().select("profile account access").sort({ $natural: -1 }), req.query).search().filter();
 
     let filteredUsers = await apiFeatures.getQuery();
     let filteredUsersCount = filteredUsers.length;
