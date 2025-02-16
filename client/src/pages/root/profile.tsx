@@ -102,7 +102,7 @@ const Profile = () => {
     const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            if ((["google"] as any).includes(user?.account.accountType)) {
+            if ((["GOOGLE"] as any).includes(user?.account.accountType)) {
                 if (!password.newPassword || !password.confirmPassword) {
                     toast.warning("All fields are required");
                     return;
@@ -264,7 +264,7 @@ const Profile = () => {
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenPassword(false)}>Close</button>
                         </div>
                         <form onSubmit={handleResetPassword} className="flex flex-col gap-4">
-                            {!(["google"] as any).includes(user?.account.accountType) && (
+                            {!(["GOOGLE"] as any).includes(user?.account.accountType) && (
                                 <div className="flex flex-col gap-4">
                                     <label htmlFor="oldPassword" className="text-lg font-semibold">Previous Passowrd</label>
                                     <input type="text" value={password.oldPassword} onChange={(e) => setPassword({ ...password, oldPassword: e.target.value })} placeholder="Enter your previous password" className="border-2 px-3 py-2 rounded-lg" />
@@ -428,7 +428,7 @@ const Profile = () => {
                     <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                         <h1 className="text-xl font-semibold">Privacy Settings</h1>
                         <hr className="my-2 border-gray-400 " />
-                        <p className="mt-2 text-gray-500 italic">You can {(["google"] as any).includes(user?.account.accountType) ? "" : "re"}set your password here</p>
+                        <p className="mt-2 text-gray-500 italic">You can {(["GOOGLE"] as any).includes(user?.account.accountType) ? "" : "re"}set your password here</p>
                         <button onClick={() => setOpenPassword(true)} className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">{(["google"] as any).includes(user?.account.accountType) ? "S" : "Res"}et Password</button>
                     </div>
                     <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
