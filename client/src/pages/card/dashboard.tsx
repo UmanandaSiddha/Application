@@ -18,6 +18,30 @@ import { IoShareSocialOutline } from "react-icons/io5";
 import { Loader2 } from "lucide-react";
 import { NoQR } from "@/constants/cards/actions";
 import { ICard } from "@/types/type";
+import html2canvas from "html2canvas";
+import Backdrop  from "@/components/cards/backdrop";
+const downloadDivAsImage = async () => {
+    const element = document.getElementById("cardDiv");
+
+    if (!element) return;
+
+    // Ensure all images inside the div are fully loaded
+    const images = element.getElementsByTagName("img");
+    await Promise.all([...images].map(img => {
+        return new Promise(resolve => {
+            if (img.complete) resolve(true);
+            else img.onload = () => resolve(true);
+        });
+    }));
+
+    // Now capture the div
+    html2canvas(element, { useCORS: true }).then((canvas) => {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "card.png";
+        link.click();
+    });
+};
 
 const categories = [
     {
@@ -157,7 +181,7 @@ const Dashboard = () => {
         debouncedSearch();
     }, [keyword]);
 
-    const { currentIndex, setCurrentIndex, handleNext, handlePrev, hasNext, hasPrev, handleShare, handleDownload } = useCardTraversal(cards, counts, setCounts);
+    const { currentIndex, setCurrentIndex, handleNext, handlePrev, hasNext, hasPrev, handleShare, handleDownload,downloadDivAsImage } = useCardTraversal(cards, counts, setCounts);
 
     useEffect(() => {
         setCurrentIndex(Number(searchParams.get("currentIndex")) || 0);
@@ -200,6 +224,7 @@ const Dashboard = () => {
 
     return (
         <div className="p-4 sm:p-6 lg:p-10">
+            <Backdrop />
             <div className="mx-4 sm:mx-16">
                 <h1 className="text-3xl mt-14 md:mt-5 font-semibold">Dashboard</h1>
                 <form className="relative w-full mx-auto sm:w-72 lg:w-96 mt-5 sm:ml-0">
@@ -234,7 +259,7 @@ const Dashboard = () => {
                                 <li
                                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                     onClick={() => {
-                                        if (type=== "ALL") {
+                                        if (type === "ALL") {
                                             return;
                                         } else {
                                             navigate(`/dashboard/${type}/create`)
@@ -312,7 +337,7 @@ const Dashboard = () => {
 
             {open && (
                 <div
-                    className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[999]"
+                    className="fixed inset-0 bg-black/70 backdrop-blur-xl flex justify-center items-center z-[999]"
                     onClick={() => setOpen(false)}
                 >
                     <div className="flex flex-col justify-between items-center gap-16 h-full w-full py-12">
@@ -375,7 +400,8 @@ const Dashboard = () => {
                         <div onClick={(e) => e.stopPropagation()} className="flex justify-center items-center gap-6">
                             <button
                                 className="bg-[rgb(0,0,0,0.24)] p-3 cursor-pointer hover:opacity-75 rounded-full"
-                                onClick={handleDownload}
+                                 onClick={ downloadDivAsImage}
+                                
                             >
                                 <FiDownload size={24} className="text-white" />
                             </button>

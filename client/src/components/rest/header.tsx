@@ -109,62 +109,68 @@ export default function Header() {
             {mobileMenuOpen && (
                 <div
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="hide-scrollbar h-screen lg:hidden fixed inset-0 bg-opacity-30 backdrop-blur z-10"
+                    className="hide-scrollbar h-screen lg:hidden fixed inset-0 bg-opacity-30 backdrop-blur z-10  "
                 >
-                    <aside className="flex flex-col w-64 h-screen px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l">
+                    <aside className="flex flex-col w-64 h-screen px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l  rounded-r-xl" >
                         <Link to='/'>
                             <img className="h-8" src="/voolata_long_r.png" alt="" />
                         </Link>
 
-                        <div className="flex flex-col flex-grow justify-between mt-1">
+                        <div className="flex flex-col flex-grow justify-between mt-1 ">
                             <nav>
-                                <hr className="my-2 border-gray-200" />
-                                <Link to="/" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                    <IoHomeOutline className='h-5 w-5' />
-                                    <span className="mx-4 font-medium">Home</span>
+                                <hr className="mt-[17px] border-gray-500 " />
+                                <Link to="/" className={`flex items-center p-2 mt-6 rounded-md ${location.pathname === "/" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                            
+                                    <img src="/home_icon.svg" alt="" className='h-5 w-5'/>
+                                    <span className="mx-4 font-semibold text-base">Home</span>
                                 </Link>
-                                <Link to="/about-us" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/about-us" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                    <LuScrollText className='h-5 w-5' />
-                                    <span className="mx-4 font-medium">About Us</span>
+                                <Link to="/about-us" className={`flex items-center p-2 mt-1 rounded-md ${location.pathname === "/about-us" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <img src="/about_icon_nav.svg" alt="" className='w-5 h-5'/>
+                                    <span className="mx-4 font-semibold text-base">About Us</span>
                                 </Link>
+                                <Link to="/contact" className={`flex items-center p-2 mt-1 rounded-md ${location.pathname === "/contact" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <img src="/contact_icon.svg" alt="" className='h-5 w-5'/>
+                                    <span className="mx-4 font-semibold text-base">Contact</span>
+                                </Link>
+                                <Link to="/donation" className={`flex items-center p-2 mt-1 rounded-md ${location.pathname === "/donation" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <img src="/donate_icon.svg" alt="" className='w-5 h-5'/>
+                                    <span className="mx-4 font-semibold text-base">Donate</span>
+                                </Link>
+                                <hr className='bg-gray-500 mt-[33px] mb-6'/>
+                                <h1 className='text-xl font-bold'>QR Codes</h1>
                                 {user && (
-                                    <Link to="/dashboard" className={`flex items-center p-2 mt-5 rounded-md ${["/dashboard", "/dashboard/animal", "/dashboard/creator", "/dashboard/individual", "/dashboard/medical"].includes(location.pathname) ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                        <RxDashboard className='h-5 w-5' />
-                                        <span className="mx-4 font-medium">Dashboard</span>
+                                    <Link to="/dashboard" className={`flex items-center p-2 mt-6 rounded-md ${["/dashboard", "/dashboard/animal", "/dashboard/creator", "/dashboard/individual", "/dashboard/medical"].includes(location.pathname) ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                        <img src="/dashboard_icon.svg" alt="" className='w-5 h-5'/>
+                                        <span className="mx-4 font-semibold text-base">Dashboard</span>
                                     </Link>
                                 )}
-                                <Link to="/donation" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/donation" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                    <BiDonateHeart className='h-5 w-5' />
-                                    <span className="mx-4 font-medium">Donate</span>
-                                </Link>
+                                
                                 {user && (
-                                    <Link to="/billing" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/billing" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                        <IoWalletOutline className='h-5 w-5' />
-                                        <span className="mx-4 font-medium">Billing</span>
+                                    <Link to="/billing" className={`flex items-center p-2 mt-1 rounded-md ${location.pathname === "/billing" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                        <img src="/billing_icon.svg" alt="" className='w-5 h-5'/>
+                                        <span className="mx-4 font-semibold text-base">Billing</span>
                                     </Link>
                                 )}
-                                <Link to="/plans" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/plans" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                    <RiMoneyRupeeCircleLine className='h-5 w-5' />
-                                    <span className="mx-4 font-medium">Pricing</span>
+                                <Link to="/plans" className={`flex items-center p-2 mt-1 rounded-md ${location.pathname === "/plans" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <RiMoneyRupeeCircleLine className='h-6 w-5' />
+                                    <span className="mx-4 font-semibold text-base">Pricing</span>
                                 </Link>
-                                <Link to="/contact" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/contact" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
-                                    <FiPhone className='h-5 w-5' />
-                                    <span className="mx-4 font-medium">Contact</span>
-                                </Link>
+                                
                             </nav>
 
                             <div className="pb-10">
+                                <hr className='mb-8 bg-gray-500'/>
                                 {user ? (
-                                    <div className="flex items-center justify-center gap-2">
-                                        <Link to="/profile" className='flex items-center'>
+                                    <div className="flex  gap-5 mx-2">
+                                        <Link to="/profile" className='flex items-center '>
                                             {user.profile.profilePicture ? (
-                                                <img src={user.profile.profilePicture} className='h-10 w-10 rounded-full' alt="avatar" />
+                                                <img src={user.profile.profilePicture} className='h-5 w-5 rounded-full' alt="avatar" />
                                             ) : (
                                                 <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
                                                     <p className='text-xl font-semibold text-black'>{user.profile.firstName[0].toUpperCase()}</p>
                                                 </div>
                                             )}
-                                            <span className="mx-2 font-medium text-gray-800">{user.profile.firstName}</span>
+                                            <span className="ml-4 font-medium text-gray-800">{user.profile.firstName}</span>
                                         </Link>
                                         <IoIosLogOut onClick={logout} className="object-cover mx-2 rounded-full h-6 w-6" />
                                     </div>
@@ -173,6 +179,10 @@ export default function Header() {
                                         Login
                                     </Link>
                                 )}
+                                <Link to="/" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/plans" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                    <img src="/settings_icon.svg" alt="" className='w-5 h-5'/>
+                                    <span className="mx-4 font-semibold text-base">Settings</span>
+                                </Link>
                             </div>
                         </div>
                     </aside>

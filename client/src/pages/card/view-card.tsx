@@ -93,7 +93,7 @@ const ViewCard = () => {
 
     return (
         <div className="">
-            {!isDesktop && type === "medical" ? (
+            {!isDesktop && type === "MEDICAL" ? (
                 <MedicalDesktopViewCard />
             ) : (
                 <>
