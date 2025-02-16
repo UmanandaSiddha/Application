@@ -89,12 +89,9 @@ export const freeAccess = catchAsyncErrors(async (req: Request, res: Response, n
 
     const updatedUser = await User.findByIdAndUpdate(
         req.params.id,
-        {
-            access: { freeAccess: true }
-        },
+        { "access.freeAccess": true },
         { new: true, runValidators: true, useFindAndModify: false }
     );
-
     if (!updatedUser) {
         return next(new ErrorHandler(`Failed to update user with Id: ${req.params.id}`, 500));
     }
