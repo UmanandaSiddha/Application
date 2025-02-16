@@ -64,7 +64,7 @@ router.route("/api/google/oauth").get(catchAsyncErrors(async (req, res) => {
     // console.log(user.email);
     const googleUser = await getGoogleUser(id_token, access_token);
 
-    const user = await User.findOne({ email: googleUser.email });
+    const user = await User.findOne({ "profile.email": googleUser.email });
 
     const options: CookieOptions = {
         expires: new Date(
@@ -92,7 +92,8 @@ router.route("/api/google/oauth").get(catchAsyncErrors(async (req, res) => {
     } else {
         const newUser = await User.create({
             profile: {
-                name: googleUser.name,
+                firstName: googleUser.name.split(" ")[0],
+                lastName: googleUser.name.split(" ")[1],
                 email: googleUser.email,
                 profilePicture: googleUser.picture,
                 googleId: googleUser.id,
