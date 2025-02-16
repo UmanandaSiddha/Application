@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { createQRCode } from "@/lib/helper";
 import { ICard } from "@/types/type";
 import { toast } from "react-toastify";
+import { toPng } from "html-to-image";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 interface Counts {
     currentPage: number;
@@ -44,6 +47,69 @@ const useCardTraversal = (
         }
     };
 
+    const downloadDivAsImage = async () => {
+        const mainDiv = document.getElementById("cardDiv");
+        const backdropDiv = document.getElementById("backdrop");
+
+        if (!mainDiv || !backdropDiv) {
+            console.error("One or both divs are missing.");
+            return;
+        }
+
+        // ✅ Clone the backdrop to prevent UI shifting
+        const clonedBackdrop = backdropDiv.cloneNode(true) as HTMLElement;
+        document.body.appendChild(clonedBackdrop);
+        clonedBackdrop.style.position = "absolute";
+        clonedBackdrop.style.left = "0px"; // Ensure it starts at the left edge
+        clonedBackdrop.style.top = "0px"; // Prevents shifting down
+        clonedBackdrop.style.opacity = "1"; // Ensure visibility for capturing
+
+        // ✅ Wait for any rendering issues to settle
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const scale = 3;
+        const options = {
+            quality: 1,
+            backgroundColor: "transparent",
+            width: mainDiv.offsetWidth * scale,
+            height: mainDiv.offsetHeight * scale,
+            style: {
+                transform: `scale(${scale})`,
+                transformOrigin: "top left",
+                width: `${mainDiv.offsetWidth * scale}px`,
+                height: `${mainDiv.offsetHeight * scale}px`,
+                fontFamily: window.getComputedStyle(document.body).fontFamily,
+                border: "none",
+                boxShadow: "none",
+            },
+        };
+
+        try {
+            // ✅ Capture main div
+            const mainImg = await toPng(mainDiv, options);
+
+            // ✅ Capture backdrop div (fixed position)
+            const backdropImg = await toPng(clonedBackdrop, options);
+
+            // ✅ Remove the cloned backdrop after capturing
+            document.body.removeChild(clonedBackdrop);
+
+            // ✅ Create ZIP file
+            const zip = new JSZip();
+            zip.file("card.png", mainImg.split(",")[1], { base64: true });
+            zip.file("backdrop.png", backdropImg.split(",")[1], { base64: true });
+
+            // ✅ Generate and download ZIP
+            zip.generateAsync({ type: "blob" }).then((content) => {
+                saveAs(content, "downloaded_images.zip");
+            });
+
+        } catch (error) {
+            console.error("Error capturing images:", error);
+        }
+    };
+
+
     const handlePrev = () => {
         if (cards) {
             if (currentIndex > 0) {
@@ -75,7 +141,7 @@ const useCardTraversal = (
         }
     };
 
-    return { currentIndex, setCurrentIndex, handleNext, handlePrev, handleDownload, handleShare, hasNext, hasPrev };
+    return { currentIndex, setCurrentIndex, handleNext, handlePrev, handleDownload, handleShare, hasNext, hasPrev, downloadDivAsImage };
 };
 
 export default useCardTraversal;

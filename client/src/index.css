@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
 .spin-button-none::-webkit-outer-spin-button,
 .spin-button-none::-webkit-inner-spin-button {
     appearance: none;
@@ -11,6 +12,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: white;
+    font-family: "Geist", serif;;
 }
 
 @media (max-width: 730px) {
