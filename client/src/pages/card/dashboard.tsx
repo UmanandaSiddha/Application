@@ -211,9 +211,9 @@ const Dashboard = () => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsDropdownOpen(false);
             }
-            if (cardDropdownRef.current && !cardDropdownRef.current.contains(event.target as Node)) {
-                setActiveDropdownId(null);
-            }
+            // if (cardDropdownRef.current && !cardDropdownRef.current.contains(event.target as Node)) {
+            //     setActiveDropdownId(null);
+            // }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
