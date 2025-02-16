@@ -184,20 +184,19 @@ const Dashboard = () => {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            if (
+                dropdownRef.current && !dropdownRef.current.contains(event.target as Node)
+            ) {
                 setIsDropdownOpen(false);
-            }
-            if (cardDropdownRef.current && !cardDropdownRef.current.contains(event.target as Node)) {
-                setActiveDropdownId(null);
+                // setActiveDropdownId(null);
             }
         };
-
+    
         document.addEventListener("mousedown", handleClickOutside);
-
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, []);    
 
     const [columns, setColumns] = useState<string[]>([""]);
     const [batchLoading, setBatchLoading] = useState(false);
@@ -706,8 +705,8 @@ const Dashboard = () => {
                     <div
                         key={card._id}
                         onClick={() => navigate(`/dashboard/cards/card/${card.type}/${card._id}`)}
-                        className="border flex items-center gap-3 p-3 rounded-lg mx-4 sm:mx-16 mt-5"
                         ref={cardDropdownRef}
+                        className="border flex items-center gap-3 p-3 rounded-lg mx-4 sm:mx-16 mt-5"
                     >
                         <input type="checkbox" className="w-4 h-4" />
                         <div className="flex flex-col font-medium text-sm sm:text-base">

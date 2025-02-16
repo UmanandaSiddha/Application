@@ -3,7 +3,13 @@ import CardHeaderSwitchButton from "@/components/cards/card-header-switch-button
 import CardQR from "@/components/cards/card-qr";
 import QRCode from "@/components/cards/qr-code";
 import { DownloadButtonIcon, NoQR, ShareButtonIcon } from "@/constants/cards/actions";
-import { AnimalBackgroundMobile, BotanyBackgroundMobile, CreatorBackgroundMobile, IndividualBackgroundMobile, MedicalBackgroundMobile } from "@/constants/cards/background";
+import {
+    AnimalBackgroundPng,
+    BotanyBackgroundPng,
+    CreatorBackgroundPng,
+    IndividualBackgroundPng,
+    MedicalBackgroundPng
+} from "@/constants/cards/background";
 import { useEffect, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
@@ -94,25 +100,25 @@ const DetailsCard = () => {
         }
     }, [isMobile, useMediaQuery]);
 
-    let backgroundImage = IndividualBackgroundMobile;
+    let backgroundImage = IndividualBackgroundPng;
     switch (type.toLowerCase()) {
         case "individual":
-            backgroundImage = IndividualBackgroundMobile;
+            backgroundImage = IndividualBackgroundPng;
             break;
         case "botanical":
-            backgroundImage = BotanyBackgroundMobile;
+            backgroundImage = BotanyBackgroundPng;
             break;
         case "animal":
-            backgroundImage = AnimalBackgroundMobile;
+            backgroundImage = AnimalBackgroundPng;
             break;
         case "creator":
-            backgroundImage = CreatorBackgroundMobile;
+            backgroundImage = CreatorBackgroundPng;
             break;
         case "medical":
-            backgroundImage = MedicalBackgroundMobile;
+            backgroundImage = MedicalBackgroundPng;
             break;
         default:
-            backgroundImage = IndividualBackgroundMobile;
+            backgroundImage = IndividualBackgroundPng;
     }
 
     const styles = type && qrStyles[type.toLowerCase()] ? qrStyles[type.toLowerCase()] : qrStyles.default;
