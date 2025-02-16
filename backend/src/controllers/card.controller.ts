@@ -13,7 +13,7 @@ export const createCard = catchAsyncErrors(async (req: UserRequest, res: Respons
     const { user } = req;
     if (!user) return next(new ErrorHandler("User not found", 404));
     const totalCards = user.access.cards.total.extra + user.access.cards.total.initial;
-    if (!user.access.freeAccess && totalCards <= user.access.cards.created) return next(new ErrorHandler(`You have reached your total card limit.`, 403))
+    if (user.profile.role !== UserRoleEnum.ADMIN && !user.access.freeAccess && totalCards <= user.access.cards.created) return next(new ErrorHandler(`You have reached your total card limit.`, 403))
 
     let shortId = `sh${Date.now().toString(36)}`;
     let exists = await Card.findOne({ shortCode: shortId });
@@ -47,48 +47,52 @@ export const createBatchCards = catchAsyncErrors(async (req: UserRequest, res: R
     const { user } = req;
     if (!user) return next(new ErrorHandler("User not found", 404));
 
-    const { names, total } = req.body;
-    if (!Array.isArray(names) || total === 0) return next(new ErrorHandler('Invalid request: Provide an array of card names.', 400));
+    const { names, name, quantity } = req.body;
+    if ((!Array.isArray(names) && !name) || (!names && (!quantity || quantity <= 0))) {
+        return next(new ErrorHandler('Invalid request: Provide an array of names or a single name with quantity.', 400));
+    }
+
+    const totalRequested = Array.isArray(names) ? names.length : quantity;
     const totalCards = user.access.cards.total.extra + user.access.cards.total.initial;
-    if (!user.access.freeAccess && totalCards < user.access.cards.created + total) {
+
+    if (user.profile.role !== UserRoleEnum.ADMIN && !user.access.freeAccess && totalCards < user.access.cards.created + totalRequested) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
 
     const batchCards = [];
-
     const { type } = req.query;
+    
     if (!type) return next(new ErrorHandler("Card type is required", 400));
     if (!Object.values(CardEnum).includes(type as any)) return next(new ErrorHandler("Invalid card type", 400));
 
-    for (const cardName of names) {
-        let shortId = `sh${Date.now().toString(36)}${names.indexOf(cardName)}`;
+    const cardNames = Array.isArray(names) ? names : Array(quantity).fill(name);
+
+    for (const cardName of cardNames) {
+        let shortId = `sh${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
         let exists = await Card.findOne({ shortCode: shortId });
 
         while (exists) {
-            shortId = `sh${Date.now().toString(36)}${names.indexOf(cardName)}`;
+            shortId = `sh${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
             exists = await Card.findOne({ shortCode: shortId });
         }
 
         batchCards.push({
             type,
-            data: {
-                name: cardName
-            },
+            data: { name: cardName },
             shortCode: shortId,
             userId: user?._id,
         });
     }
 
     const createdCards = await Card.insertMany(batchCards);
-
-    user.access.cards.created += total;
+    user.access.cards.created += totalRequested;
     await user.save();
 
     res.status(201).json({
         success: true,
         card: createdCards,
     });
-})
+});
 
 // Update Card
 export const updateCard = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {

@@ -121,7 +121,7 @@ const CreatorInput = () => {
             name,
             links: final,
         };
-        if (!isPaid && user?.access.cards?.total.extra! > 10 && user?.profile.role !== "ADMIN") {
+        if (!isPaid && user?.access.cards?.created! > user?.access.cards?.total.initial! && user?.profile.role !== "ADMIN") {
             navigate("/plans");
         } else {
             setCreatorLoading(true);
