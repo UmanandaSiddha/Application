@@ -1,55 +1,55 @@
 import { Helmet } from "react-helmet-async";
-import Slider from "react-slick";
+// import Slider from "react-slick";
 import donation from '../../assets/extra/donation.svg';
 import inovation from '../../assets/extra/innovation.svg';
 import server from '../../assets/extra/server.svg';
 import support from '../../assets/extra/support.svg';
-import sustain from '../../assets/extra/sustain.svg';
-import foster from '../../assets/extra/foster.svg';
+// import sustain from '../../assets/extra/sustain.svg';
+// import foster from '../../assets/extra/foster.svg';
 import arrow from '../../assets/extra/arrow.svg';
 import rocket from '../../assets/extra/rocket.svg';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
 
-const data = [
-    {
-        title: "Sustainability",
-        image: sustain,
-        alt: "Sustainability",
-        description: "Sustainable innovations that support the future.",
-    },
-    {
-        title: "Empowering Communities",
-        image: foster,
-        alt: "Empowerment",
-        description: "Building smarter, user-friendly solutions.",
-    },
-    {
-        title: "Creating Jobs",
-        image: foster,
-        alt: "Jobs",
-        description: "Fostering employment and economic growth.",
-    }
-];
+// const data = [
+//     {
+//         title: "Sustainability",
+//         image: sustain,
+//         alt: "Sustainability",
+//         description: "Sustainable innovations that support the future.",
+//     },
+//     {
+//         title: "Empowering Communities",
+//         image: foster,
+//         alt: "Empowerment",
+//         description: "Building smarter, user-friendly solutions.",
+//     },
+//     {
+//         title: "Creating Jobs",
+//         image: foster,
+//         alt: "Jobs",
+//         description: "Fostering employment and economic growth.",
+//     }
+// ];
 
 const Donation = () => {
-    var settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: { slidesToShow: 2, slidesToScroll: 1, dots: true }
-            },
-            {
-                breakpoint: 768,
-                settings: { slidesToShow: 1, slidesToScroll: 1 }
-            }
-        ]
-    };
+    // var settings = {
+    //     dots: true,
+    //     infinite: true,
+    //     speed: 500,
+    //     slidesToShow: 3,
+    //     slidesToScroll: 1,
+    //     responsive: [
+    //         {
+    //             breakpoint: 1024,
+    //             settings: { slidesToShow: 2, slidesToScroll: 1, dots: true }
+    //         },
+    //         {
+    //             breakpoint: 768,
+    //             settings: { slidesToShow: 1, slidesToScroll: 1 }
+    //         }
+    //     ]
+    // };
     return (
         <>
             <Helmet>
@@ -118,7 +118,7 @@ const Donation = () => {
                     </p>
                 </div>
 
-                <div className='mt-6 md:mt-10'>
+                {/* <div className='mt-6 md:mt-10'>
                     <Slider {...settings}>
                         {data.map((item, index) => (
                             <div key={index} className='p-4'>
@@ -130,7 +130,7 @@ const Donation = () => {
                             </div>
                         ))}
                     </Slider>
-                </div>
+                </div> */}
 
                 <div className='mt-12 md:mt-16 bg-gray-200 p-6 sm:p-8 md:p-10 lg:p-12 rounded-[32px] md:rounded-[64px] text-center relative max-w-[90%] md:max-w-3xl mx-auto flex flex-col items-center'>
                     <img src={arrow} className='absolute top-[-20px] left-4 hidden sm:block' alt="Arrow" />
