@@ -60,56 +60,56 @@ router.route("/api/google/oauth").get(catchAsyncErrors(async (req, res) => {
     }
 
     const { id_token, access_token } = await getGoogleAuthToken(code);
-    // const user = jwt.decode(id_token);
-    // console.log(user.email);
     const googleUser = await getGoogleUser(id_token, access_token);
 
-    const user = await User.findOne({ "profile.email": googleUser.email });
+    if (!googleUser.email) {
+        throw new ErrorHandler("Google authentication failed: No email received", 400);
+    }
 
     const options: CookieOptions = {
-        expires: new Date(
-            Date.now() + parseInt(process.env.COOKIE_EXPIRE as string) * 24 * 60 * 60 * 1000
-        ),
+        expires: new Date(Date.now() + parseInt(process.env.COOKIE_EXPIRE as string) * 24 * 60 * 60 * 1000),
         httpOnly: true,
         secure: true,            
         sameSite: 'strict',       
     };
 
+    let user = await User.findOne({ "profile.email": googleUser.email });
+
     if (user) {
-        if (user.profile.googleId === googleUser.id) {
-            const token = user.generateJWTToken();
-            res.status(200).cookie("user_token", token, options);
-        } else {
+        if (user.profile.googleId !== googleUser.id) {
             user.profile.googleId = googleUser.id;
-            user.account.accountType = [...user.account.accountType, UserAccountEnum.GOOGLE];
-            if (user.profile.profilePicture && user.profile.profilePicture.length === 0) {
+            user.account.accountType = [...new Set([...user.account.accountType, UserAccountEnum.GOOGLE])];
+            if (!user.profile.profilePicture || user.profile.profilePicture.length === 0) {
                 user.profile.profilePicture = googleUser.picture;
             }
             await user.save();
-            const token = user.generateJWTToken();
-            res.status(200).cookie("user_token", token, options);
         }
     } else {
-        const newUser = await User.create({
+        // Fixing the missing firstName, lastName issue
+        const fullName = googleUser.name?.split(" ") || ["", ""];
+        const firstName = fullName[0] || "Unknown";
+        const lastName = fullName.slice(1).join(" ") || "Unknown";
+
+        user = await User.create({
             profile: {
-                firstName: googleUser.name.split(" ")[0],
-                lastName: googleUser.name.split(" ")[1],
+                firstName,
+                lastName,
                 email: googleUser.email,
-                profilePicture: googleUser.picture,
+                profilePicture: googleUser.picture || "",
                 googleId: googleUser.id,
                 role: googleUser.email === process.env.ADMIN_EMAIL ? UserRoleEnum.ADMIN : UserRoleEnum.USER,
             },
             account: {
                 accountType: [UserAccountEnum.GOOGLE],
-                isVerified: googleUser.verified_email,
+                isVerified: googleUser.verified_email || false,
             }
         });
-
-        const token = newUser.generateJWTToken();
-        res.status(200).cookie("user_token", token, options);
     }
 
-    res.redirect(CLIENT_URL);
+    const token = user.generateJWTToken();
+    res.cookie("user_token", token, options);
+
+    return res.redirect(CLIENT_URL);
 }));
 
 export default router;
