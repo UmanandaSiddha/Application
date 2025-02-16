@@ -3,28 +3,32 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { toast } from 'react-toastify';
-import { SingleAnimalResponse } from "@/types/api-types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 // import SideBar from "@/components/rest/sidebar";
 import { convertToStrings, generateSimpleDefaultValues } from "@/lib/helper";
 import { Helmet } from "react-helmet-async";
+import { AnimalData, ICard } from "@/types/type";
 
 const inputs = [
     { name: "name", label: "Animal Name", text: "Enter Animal Name" },
-    { name: "scientificName", label: "Scientific Name", text: "Enter Scientific Name" },
-    { name: "habitat", label: "Habitat", text: "Enter Habitat" },
-    { name: "geographicalRange", label: "Geographical Range", text: "Enter Geographical Range" },
+    { name: "signIllness", label: "Sign of Illness", text: "Enter Sign of illness" },
+    { name: "vaccination", label: "Vaccination & Deworming Needs", text: "Enter Vaccination & Deworming Needs" },
     { name: "physicalDescription", label: "Physical Description", text: "Enter Physical Description" },
     { name: "diet", label: "Diet", text: "Enter Diet" },
     { name: "lifespan", label: "Lifespan", text: "Enter Lifespan" },
     { name: "behavior", label: "Behavior", text: "Enter Behavior" },
-    { name: "conservationStatus", label: "Conservation Status", text: "Enter Conservation Status" },
+    { name: "commonHealth", label: "Common Health Issues", text: "Enter Common health issues" },
     { name: "ownerName", label: "Owner Name (for pets)", text: "Enter Owner Name" },
     { name: "location", label: "Location", text: "Enter Location" },
     { name: "caretakerMobileNumber", label: "Caretaker Mobile Number (if applicable)", text: "Enter Caretaker Mobile Number" },
     { name: "additionalNotes", label: "Additional Notes", text: "Enter Additional Notes" }
 ];
+
+export interface CardResponse {
+    success: boolean;
+    card: ICard;
+}
 
 const CreateAnimal = () => {
 
@@ -47,9 +51,9 @@ const CreateAnimal = () => {
         const fetchAnimal = async () => {
             if (id) {
                 try {
-                    const { data }: { data: SingleAnimalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=animal`, { withCredentials: true });
+                    const { data }: { data: CardResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=animal`, { withCredentials: true });
                     setIsAnimal(true);
-                    reset(convertToStrings(data.vCard));
+                    reset(convertToStrings(data.card.data as AnimalData));
                 } catch (error: any) {
                     toast.error(error.response.data.message);
                 }
@@ -71,26 +75,22 @@ const CreateAnimal = () => {
     }, [id, reset]);
 
     const onSubmit = async (values: any) => {
-        const animalData = {
-            ...values,
-            user: user?._id,
-        };
-        if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
+        if (!isPaid && user?.access.cards?.total.extra! > 10 && user?.profile.role !== "ADMIN") {
             navigate("/plans");
         } else {
             setAnimalLoading(true);
             try {
                 if (isAnimal) {
-                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=animal`, animalData, { withCredentials: true });
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=ANIMAL`, { ...values }, { withCredentials: true });
                     // toast.success("Animal VCard Updated");
                 } else {
-                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=animal`, animalData, { withCredentials: true });
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=ANIMAL`, { ...values }, { withCredentials: true });
                     // toast.success("Animal VCard Created");
                 }
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
-                navigate("/plans");
+                // navigate("/plans");
             } finally {
                 setAnimalLoading(false);
             }
@@ -104,8 +104,8 @@ const CreateAnimal = () => {
                 <meta name="description" content={`This is the animal form page of Voolata`} />
                 <meta name="keywords" content="animal, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen pt-6">
-                <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-4 lg:space-y-0 lg:space-x-4">
+            <div className="flex justify-center h-screen pt-12 md:pt-6">
+                <div className="flex flex-col lg:flex-row w-[90%] md:w-[60%] lg:w-[50%] space-y-4 lg:space-y-0 lg:space-x-4">
                     {/* <div className="basis-1/4 hidden lg:block">
                         <SideBar />
                     </div> */}
@@ -145,7 +145,7 @@ const CreateAnimal = () => {
 
                                                 <div className="relative w-full md:flex-1">
                                                     <input
-                                                        type={input.name === "caretakerMobileNumber" ? "number" : "text"}
+                                                        type={input.name === "caretakerMobileNumber" ? "tel" : "text"}
                                                         id={input.name}
                                                         placeholder={input.text}
                                                         {...register(input.name)}
@@ -158,7 +158,7 @@ const CreateAnimal = () => {
                                         ))}
                                         <div className="flex justify-center pb-2">
                                             <button
-                                                className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full lg:w-[70%] text-white bg-purple-500 text-lg"
+                                                className="px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                                 type="submit"
                                                 disabled={animalLoading}
                                             >

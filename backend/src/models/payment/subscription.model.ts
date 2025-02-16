@@ -2,8 +2,9 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export const SubscriptionEnum = {
     USER: "USER",
+    FREE: "FREE",
     DONATOR: "DONATOR"
-}
+} as const;
 
 export interface ISubscription extends Document {
     _id: mongoose.Schema.Types.ObjectId;

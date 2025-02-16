@@ -57,9 +57,7 @@ export const sendDonatorOTP = catchAsyncErrors(async (req: Request, res: Respons
 
 export const loginDonator = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { otp, email } = req.body;
-    if (!email || !otp) {
-        return next(new ErrorHandler("Please enter Email and And Otp", 400));
-    }
+    if (!email || !otp) return next(new ErrorHandler("Please enter Email and And Otp", 400));
 
     const oneTimePassword = crypto
         .createHash("sha256")
@@ -71,9 +69,7 @@ export const loginDonator = catchAsyncErrors(async (req: Request, res: Response,
         oneTimePassword,
         oneTimeExpire: { $gt: Date.now() },
     });
-    if (!donator) {
-        return next(new ErrorHandler("Email Veification OTP has Expired", 400));
-    }
+    if (!donator) return next(new ErrorHandler("Email Veification OTP has Expired", 400));
 
     donator.oneTimePassword = undefined;
     donator.oneTimeExpire = undefined;
@@ -83,7 +79,7 @@ export const loginDonator = catchAsyncErrors(async (req: Request, res: Response,
 });
 
 export const getDonator = catchAsyncErrors(async (req: DonatorRequest, res: Response, next: NextFunction): Promise<void> => {
-    const donator = await Donator.findById(req.donator?._id).populate("activeDonation", "planId status currentEnd");
+    const donator = await Donator.findById(req.donator?._id).populate("latestDonation", "planId status currentEnd");
 
     res.status(200).json({
         success: true,

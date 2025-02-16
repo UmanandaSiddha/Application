@@ -1,6 +1,11 @@
+import { IDonator } from "@/types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DonatorReducerInitialState } from "../../types/reducer-types";
-import { Donator } from "../../types/types";
+
+interface DonatorReducerInitialState {
+    donator: IDonator | null;
+    activeDonation: boolean;
+    loading: boolean;
+}
 
 const initialState: DonatorReducerInitialState = {
     donator: null,
@@ -12,10 +17,10 @@ export const donatorReducer = createSlice({
     name: "donatorReducer",
     initialState,
     reducers: {
-        donatorExist: (state, action: PayloadAction<Donator>) => {
+        donatorExist: (state, action: PayloadAction<IDonator>) => {
             state.loading = true;
             state.donator = action.payload;
-            if (["active", "pending"].includes(action.payload.activeDonation?.status)) {
+            if (action.payload.latestDonation && ["active", "pending"].includes(action.payload.latestDonation?.status)) {
                 state.activeDonation = true
             }
             state.loading = false;
@@ -24,8 +29,8 @@ export const donatorReducer = createSlice({
             state.loading = false;
             state.donator = null;
         },
-        toggleDonation: (state, action: PayloadAction<Donator>) => {
-            if (["active", "pending"].includes(action.payload.activeDonation?.status)) {
+        toggleDonation: (state, action: PayloadAction<IDonator>) => {
+            if (action.payload.latestDonation && ["active", "pending"].includes(action.payload.latestDonation?.status)) {
                 state.activeDonation = true
             } else {
                 state.activeDonation = false

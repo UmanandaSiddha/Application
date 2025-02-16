@@ -4,11 +4,12 @@ import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Plan } from "@/types/plan_types";
-import { SinglePlanResponse, UserResponse } from "@/types/api-types";
+// import { Plan } from "@/types/plan_types";
+// import { SinglePlanResponse, UserResponse } from "@/types/api-types";
 import { togglePaid, userExist } from "@/redux/reducer/userReducer";
 import { Helmet } from "react-helmet-async";
 import { Loader2 } from "lucide-react";
+import { IPlan } from "@/types/type";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -35,15 +36,15 @@ const Checkout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id, type } = useParams();
-    const [plan, setPlan] = useState<Plan | null>();
+    const [plan, setPlan] = useState<IPlan | null>();
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
     const [updateData, setUpdateData] = useState({
-        phone: user?.phone,
-        street: user?.billingAddress?.street,
-        state: user?.billingAddress?.state,
-        city: user?.billingAddress?.city,
-        postalCode: user?.billingAddress?.postalCode,
-        country: user?.billingAddress?.country,
+        phone: user?.access.billingInfo?.phoneNumber,
+        street: user?.access.billingInfo?.address.street,
+        state: user?.access.billingInfo?.address.state,
+        city: user?.access.billingInfo?.address.city,
+        postalCode: user?.access.billingInfo?.address.postalCode,
+        country: user?.access.billingInfo?.address.country,
     });
     const [updateLoading, setUpdateLoading] = useState(false);
     const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -54,7 +55,7 @@ const Checkout = () => {
 
     const fetchPlan = async (url: string) => {
         try {
-            const { data }: { data: SinglePlanResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(url, { withCredentials: true });
             setPlan(data.plan);
         } catch (error: any) {
             console.log(error);
@@ -74,7 +75,7 @@ const Checkout = () => {
                 window.localStorage.removeItem("all_plans");
                 fetchPlan(link);
             } else {
-                const currentPlan: Plan[] = JSON.parse(plansData).data.filter((cPlan: Plan) => cPlan._id === id);
+                const currentPlan: IPlan[] = JSON.parse(plansData).data.filter((cPlan: IPlan) => cPlan._id === id);
                 if (currentPlan.length > 0) {
                     setPlan(currentPlan[0]);
                 } else {
@@ -88,10 +89,10 @@ const Checkout = () => {
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { phone, billingAddress } = user || {};
+        const { phoneNumber, address: billingAddress } = user?.access.billingInfo || {};
         const { street, state, city, postalCode, country } = billingAddress || {};
         const isDataSame =
-            phone === updateData.phone &&
+            phoneNumber === updateData.phone &&
             street === updateData.street &&
             state === updateData.state &&
             city === updateData.city &&
@@ -109,7 +110,7 @@ const Checkout = () => {
         }
         setUpdateLoading(true);
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/billing/update`, updateData, { withCredentials: true });
+            const { data }: { data: any } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/billing/update`, updateData, { withCredentials: true });
             dispatch(userExist(data.user));
             toast.success("Billing details updated");
         } catch (error: any) {
@@ -129,8 +130,8 @@ const Checkout = () => {
             toast.error("This is a broken link");
             return;
         }
-        const { phone, billingAddress } = user || {};
-        if (!phone || !billingAddress) {
+        const { phoneNumber, address: billingAddress } = user?.access.billingInfo || {};
+        if (!phoneNumber || !billingAddress) {
             toast.warning("Please update your billing details");
             return;
         }
@@ -177,13 +178,13 @@ const Checkout = () => {
                     }, 5000);
                 },
                 prefill: {
-                    name: user?.name,
-                    email: user?.email,
+                    name: user?.profile.firstName,
+                    email: user?.profile.email,
                 },
                 timeout: 120,
                 readonly: {
-                    email: user?.email,
-                    name: user?.name,
+                    email: user?.profile.email,
+                    name: user?.profile.firstName,
                 },
                 remember_customer: true,
                 theme: {
@@ -226,12 +227,16 @@ const Checkout = () => {
                         <p className="text-xl font-medium">User Details</p>
                         <div className="mt-6 space-y-4">
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium">Name</label>
-                                <input type="text" readOnly id="name" value={user?.name} name="name" className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" placeholder="Your Name" />
+                                <label htmlFor="first-name" className="block text-sm font-medium">First Name</label>
+                                <input type="text" readOnly id="name" value={user?.profile.firstName} name="name" className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" placeholder="Your Name" />
+                            </div>
+                            <div>
+                                <label htmlFor="last-name" className="block text-sm font-medium">Last Name</label>
+                                <input type="text" readOnly id="name" value={user?.profile.lastName} name="name" className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" placeholder="Your Name" />
                             </div>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium">Email</label>
-                                <input type="email" readOnly id="email" value={user?.email} name="email" className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" placeholder="your.email@example.com" />
+                                <input type="email" readOnly id="email" value={user?.profile.email} name="email" className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500" placeholder="your.email@example.com" />
                             </div>
                             <form onSubmit={handleUpdate} className="mt-8 space-y-2">
                                 <div>

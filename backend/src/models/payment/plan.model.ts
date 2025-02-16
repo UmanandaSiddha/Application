@@ -1,4 +1,3 @@
-
 import mongoose, { Document, Schema } from "mongoose";
 
 export const PeriodEnum = {
@@ -16,7 +15,7 @@ export const PlanEnum = {
     DONATOR: "DONATOR",
 } as const;
 
-interface IPLan extends Document {
+interface IPlan extends Document {
     _id: mongoose.Schema.Types.ObjectId;
     name: string;
     amount: number;
@@ -31,7 +30,7 @@ interface IPLan extends Document {
     updatedAt: Date;
 }
 
-const PlanSchema: Schema<IPLan> = new mongoose.Schema(
+const PlanSchema: Schema<IPlan> = new mongoose.Schema(
     {
         name: {
             type: String,

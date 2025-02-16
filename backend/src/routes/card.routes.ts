@@ -16,7 +16,7 @@ const router = express.Router();
 router.route("/new").post(isAuthenticatedUser, isUserVerified, hasAccess, createCard);
 router.route("/new/batch").post(isAuthenticatedUser, isUserVerified, hasAccess, createBatchCards);
 router.route("/details/:id").get(getDisplayCard);
-router.route("/detailed/:id").get(isAuthenticatedUser,  isUserVerified, getGeneralCard);
+router.route("/detailed/:id").get(isAuthenticatedUser, isUserVerified, getGeneralCard);
 router.route("/user").get(isAuthenticatedUser, isUserVerified, getUserCards);
 router.route("/edit/:id")
     .delete(isAuthenticatedUser, isUserVerified, hasAccess, deleteCard)

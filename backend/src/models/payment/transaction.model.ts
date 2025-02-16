@@ -4,7 +4,7 @@ import { SubscriptionEnum } from "./subscription.model.js";
 export const TransactionEnum = {
     RECURRING: "RECURRING",
     ONETIME: "ONETIME"
-}
+} as const;
 
 export interface ITransaction extends Document {
     _id: mongoose.Schema.Types.ObjectId;

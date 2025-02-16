@@ -1,6 +1,11 @@
+import { IUser } from "@/types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserReducerInitialState } from "../../types/reducer-types";
-import { User } from "../../types/types";
+
+interface UserReducerInitialState {
+    user: IUser | null;
+    isPaid: boolean;
+    loading: boolean;
+}
 
 const initialState: UserReducerInitialState = {
     user: null,
@@ -12,10 +17,10 @@ export const userReducer = createSlice({
     name: "userReducer",
     initialState,
     reducers: {
-        userExist: (state, action: PayloadAction<User>) => {
+        userExist: (state, action: PayloadAction<IUser>) => {
             state.loading = true;
             state.user = action.payload;
-            if (["active", "pending"].includes(action.payload.activePlan?.status) || action.payload.freePlan?.status) {
+            if ((action.payload.access.latestSubscription && ["active", "pending"].includes(action.payload.access.latestSubscription?.status)) || action.payload.access.freeAccess) {
                 state.isPaid = true
             }
             state.loading = false;

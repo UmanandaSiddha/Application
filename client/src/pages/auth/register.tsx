@@ -4,11 +4,11 @@ import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
 import React, { useState } from "react";
 import { getGoogleAuthUrl } from "@/lib/google";
-import { UserResponse } from "@/types/api-types";
-import axios from "axios";
+// import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
+import { registerUser } from "@/actions/users/user.actions";
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -17,7 +17,8 @@ const Register = () => {
     const [confirmPasswordType, setConfirmPasswordType] = useState<string>("password");
     const [checked, setChecked] = useState(false);
     const [userData, setUserData] = useState({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         password: "",
         confirmPassword: ""
@@ -26,7 +27,7 @@ const Register = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!userData.name || !userData.email || !userData.password || !userData.confirmPassword) {
+        if (!userData.firstName || !userData.lastName || !userData.email || !userData.password || !userData.confirmPassword) {
             toast.warning("All fields are required");
             return;
         }
@@ -52,20 +53,22 @@ const Register = () => {
         }
         setRegisterLoading(true);
         const registerData = {
-            name: userData.name,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
             email: userData.email,
             password: userData.password,
         };
         try {
-            const config = {
-                headers: { "Content-Type": "application/json" },
-                withCredentials: true,
-            };
-            const { data }: { data: UserResponse } = await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/user/register`,
-                registerData,
-                config
-            );
+            // const config = {
+            //     headers: { "Content-Type": "application/json" },
+            //     withCredentials: true,
+            // };
+            const data = await registerUser(registerData);
+            // const { data }: { data: UserResponse } = await axios.post(
+            //     `${import.meta.env.VITE_BASE_URL}/user/register`,
+            //     registerData,
+            //     config
+            // );
             dispatch(userExist(data.user));
             toast.success(`OTP sent ${userData.email}, please verify yourself`);
             navigate("/verify?otpSent=true")
@@ -119,17 +122,34 @@ const Register = () => {
 
                                     <div className="mt-6">
                                         <label htmlFor="name" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
-                                            Full Name
+                                            First Name
                                         </label>
                                         <input
                                             type="text"
-                                            name="name"
+                                            name="first-name"
                                             id="name"
-                                            placeholder="Example Simple"
+                                            placeholder="John"
                                             className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-purple-400 dark:focus:border-purple-400 focus:ring-purple-400 focus:outline-none focus:ring focus:ring-opacity-40"
-                                            value={userData.name}
+                                            value={userData.firstName}
                                             onChange={(e) =>
-                                                setUserData({ ...userData, name: e.target.value })
+                                                setUserData({ ...userData, firstName: e.target.value })
+                                            }
+                                        />
+                                    </div>
+
+                                    <div className="mt-6">
+                                        <label htmlFor="name" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                                            Last Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="last-name"
+                                            id="name"
+                                            placeholder="Doe"
+                                            className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-purple-400 dark:focus:border-purple-400 focus:ring-purple-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                            value={userData.lastName}
+                                            onChange={(e) =>
+                                                setUserData({ ...userData, lastName: e.target.value })
                                             }
                                         />
                                     </div>

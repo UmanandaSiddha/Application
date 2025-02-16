@@ -54,7 +54,7 @@ const ViewCard = () => {
     // }, [type, id]);
 
     let backgroundImage;
-    switch (type) {
+    switch (type?.toLowerCase()) {
         case "individual":
             backgroundImage = isMobile ? IndividualViewCardBackgroundMobile : IndividualViewCardBackgroundDesktop;
             break;
@@ -75,7 +75,7 @@ const ViewCard = () => {
     }
 
     const renderCard = () => {
-        switch (type) {
+        switch (type?.toLowerCase()) {
             case "botanical":
                 return <BotanicalViewCard />;
             case "individual":

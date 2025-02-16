@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { SingleMedicalResponse } from "@/types/api-types";
 // import SideBar from "@/components/rest/sidebar";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { convertToStrings, generateDefaultValues } from "@/lib/helper";
@@ -25,6 +24,8 @@ import {
 import TextInput from "@/components/rest/text-input";
 import MultiSelectInput from "@/components/rest/multi-select-input";
 import { Helmet } from "react-helmet-async";
+import { CardResponse } from "./animal";
+import { MedicalData } from "@/types/type";
 
 const MedicalInput = () => {
     const navigate = useNavigate();
@@ -55,9 +56,9 @@ const MedicalInput = () => {
         const fetchMedical = async () => {
             if (id) {
                 try {
-                    const { data }: { data: SingleMedicalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=medical`, { withCredentials: true });
+                    const { data }: { data: CardResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=medical`, { withCredentials: true });
                     setIsMedical(true);
-                    reset(convertToStrings(data.vCard));
+                    reset(convertToStrings(data.card.data as MedicalData));
                 } catch (error: any) {
                     toast.error(error.response.data.message);
                 }
@@ -91,23 +92,22 @@ const MedicalInput = () => {
 
         const medicalData = {
             ...convertedValues,
-            user: user?._id,
         };
 
-        if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
+        if (!isPaid && user?.access.cards?.total.extra! > 10 && user?.profile.role !== "ADMIN") {
             navigate("/plans");
         } else {
             setMedicalLoading(true);
             try {
                 if (isMedical) {
-                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=medical`, medicalData, { withCredentials: true });
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=MEDICAL`, medicalData, { withCredentials: true });
                 } else {
-                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=medical`, medicalData, { withCredentials: true });
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=MEDICAL`, medicalData, { withCredentials: true });
                 }
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
-                navigate("/plans");
+                // navigate("/plans");
             } finally {
                 setMedicalLoading(false);
             }
@@ -130,8 +130,8 @@ const MedicalInput = () => {
                             />
                         ))}
 
-                        <h1 className="pt-4 text-2xl font-semibold">Emergency Contact</h1>
-                        {emCon?.map((sele, index) => (
+                        <h1 className="pt-4 text-2xl font-semibold">Medical Details</h1>
+                        {medDetails?.map((sele, index) => (
                             <TextInput
                                 key={index}
                                 name={sele.name}
@@ -193,8 +193,8 @@ const MedicalInput = () => {
             case 3:
                 return (
                     <div className="space-y-4">
-                        <h1 className="pt-4 text-2xl font-semibold">Medical Details</h1>
-                        {medDetails?.map((sele, index) => (
+                        <h1 className="pt-4 text-2xl font-semibold">Emergency Contact</h1>
+                        {emCon?.map((sele, index) => (
                             <TextInput
                                 key={index}
                                 name={sele.name}
@@ -291,8 +291,8 @@ const MedicalInput = () => {
                 <meta name="description" content={`This is the medical form page of Voolata`} />
                 <meta name="keywords" content="medical, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen pt-6">
-                <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
+            <div className="flex justify-center h-screen pt-12 md:pt-6">
+                <div className="flex flex-col lg:flex-row w-[90%] md:w-[60%] lg:w-[50%] space-y-6 lg:space-y-0 lg:space-x-4">
 
                     <div className="flex-1 flex flex-col">
                         <h1 className="font-bold text-3xl md:text-4xl text-center mt-6 mb-4">
@@ -310,7 +310,7 @@ const MedicalInput = () => {
 
                         <form
                             onSubmit={handleSubmit(onSubmit)}
-                            className="flex flex-col space-y-2 w-full lg:w-[90%] mx-auto px-4 md:px-0"
+                            className="flex flex-col space-y-2 w-full mx-auto px-4 md:px-0"
                         >
                             <div className="flex gap-10 lg:gap-20 justify-center items-center">
                                 <button
@@ -338,7 +338,7 @@ const MedicalInput = () => {
 
                             <div className="flex justify-center w-full lg:w-[70%] mx-auto gap-4 pb-4">
                                 <button
-                                    className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
+                                    className="sm:hidden px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                     type="button"
                                     disabled={progressBar === 1}
                                     onClick={() => setProgressBar((currPage) => currPage - 1)}
@@ -347,7 +347,7 @@ const MedicalInput = () => {
                                 </button>
                                 {progressBar === 4 ? (
                                     <button
-                                        className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
+                                        className="px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="submit"
                                         disabled={medicalLoading}
                                     >
@@ -355,7 +355,7 @@ const MedicalInput = () => {
                                     </button>
                                 ) : (
                                     <button
-                                        className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
+                                        className="sm:hidden px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="button"
                                         onClick={() => setProgressBar((currPage) => currPage + 1)}
                                     >

@@ -4,10 +4,11 @@ import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Plan } from "@/types/plan_types";
-import { SinglePlanResponse } from "@/types/api-types";
+// import { Plan } from "@/types/plan_types";
+// import { SinglePlanResponse } from "@/types/api-types";
 import { periodEnum } from "./plan";
 import { Helmet } from "react-helmet-async";
+import { IPlan } from "@/types/type";
 
 const ViewCustom = () => {
 
@@ -15,12 +16,12 @@ const ViewCustom = () => {
     const navigate = useNavigate();
     const id = search.get("id");
     const userId = search.get("user");
-    const [plan, setPlan] = useState<Plan>();
+    const [plan, setPlan] = useState<IPlan>();
     const { isPaid } = useSelector((state: RootState) => state.userReducer);
 
     const fetchCustomPlan = async () => {
         try {
-            const { data }: { data: SinglePlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/custom/view/${id}?user=${userId}`, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/custom/view/${id}?user=${userId}`, { withCredentials: true });
             setPlan(data.plan);
         } catch (error: any) {
             toast.error(error.response.data.message);

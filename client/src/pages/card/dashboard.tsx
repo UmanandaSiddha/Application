@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { CiMenuKebab, CiSearch } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
-import { AnimalResponse, CreatorResponse, MedicalResponse, PersonalResponse, TreeResponse } from "@/types/api-types";
 import axios from "axios";
 import { toast } from "react-toastify";
 import QRCode from "@/components/cards/qr-code";
@@ -19,55 +17,64 @@ import { MdOutlineNavigateNext } from "react-icons/md";
 import { IoShareSocialOutline } from "react-icons/io5";
 import { Loader2 } from "lucide-react";
 import { NoQR } from "@/constants/cards/actions";
+import { ICard } from "@/types/type";
 
 const categories = [
     {
+        id: 0,
+        name: 'All',
+        type: "ALL"
+    },
+    {
         id: 1,
         name: 'Botany',
-        type: "botanical"
+        type: "BOTANICAL"
     },
     {
         id: 2,
         name: 'Animal',
-        type: "animal"
+        type: "ANIMAL"
     },
     {
         id: 3,
         name: 'Creator',
-        type: "creator"
+        type: "CREATOR"
     },
     {
         id: 4,
         name: 'Medical',
-        type: "medical"
+        type: "MEDICAL"
     },
     {
         id: 5,
         name: 'Individual',
-        type: "individual"
+        type: "INDIVIDUAL"
     }
 ]
 
-export type CardType =
-    | TreeResponse
-    | PersonalResponse
-    | MedicalResponse
-    | CreatorResponse
-    | AnimalResponse;
+export type CardCategory = "ALL" | "INDIVIDUAL" | "BOTANICAL" | "ANIMAL" | "CREATOR" | "MEDICAL";
+export type ActiveTabs = "qr" | "card";
 
-type CardCategory = "individual" | "botanical" | "animal" | "creator" | "medical";
-type ActiveTabs = "qr" | "card";
+export interface FetchUserCardsResponse {
+    success: boolean;
+    count: number;
+    resultPerPage: number;
+    cards: ICard[];
+    filteredCardsCount: number;
+}
 
 const Dashboard = () => {
 
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-    const paramsType = (searchParams.get("type") as CardCategory) || "individual";
+    const paramsType = (searchParams.get("type") as CardCategory) || "ALL";
     const [type, setType] = useState<CardCategory>(paramsType);
     const [open, setOpen] = useState(false);
     const [openUpload, setOpenUpload] = useState(false);
+    const [openBulk, setOpenBulk] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [cards, setCards] = useState<Tree[] | Personal[] | MedicalType[] | Creator[] | Animal[] | null>(null);
+    const [cards, setCards] = useState<ICard[] | null>(null);
     const [keyword, setKeyword] = useState(searchParams.get("keyword") || "");
     const [counts, setCounts] = useState({
         currentPage: Number(searchParams.get("currentPage")) || 1,
@@ -75,17 +82,18 @@ const Dashboard = () => {
         filteredCards: 1,
         totalCards: 1
     });
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
-    const dropdownRef = useRef<HTMLDivElement | null>(null);
     const [activeTab, setActiveTab] = useState<ActiveTabs>(searchParams.get("activeTab") as ActiveTabs || "qr");
-    const cardRef = useRef<HTMLDivElement>(null);
     const [isMobileCardType, setIsMobileCardType] = useState(false);
+    const cardRef = useRef<HTMLDivElement>(null);
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
+    const cardDropdownRef = useRef<HTMLDivElement | null>(null);
+    const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const fetchData = async (link: string) => {
         try {
-            const { data }: { data: CardType } = await axios.get(link, { withCredentials: true });
-            setCards(data.vCards);
+            const { data }: { data: FetchUserCardsResponse } = await axios.get(link, { withCredentials: true });
+            setCards(data.cards);
             setCounts(prev => ({
                 ...prev,
                 resultPerPage: data.resultPerPage,
@@ -94,6 +102,7 @@ const Dashboard = () => {
             }));
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Error fetching data");
+            setCards([]);
         }
     };
 
@@ -114,7 +123,9 @@ const Dashboard = () => {
 
         setLoading(true);
 
-        if (type && ["botanical", "individual", "medical", "creator", "animal"].includes(type)) {
+        setCards([]);
+
+        if (type && ["ALL", "BOTANICAL", "INDIVIDUAL", "MEDICAL", "CREATOR", "ANIMAL"].includes(type)) {
             const link = `${import.meta.env.VITE_BASE_URL}/cards/user?${queryParams}`;
             fetchData(link);
         }
@@ -146,7 +157,7 @@ const Dashboard = () => {
         debouncedSearch();
     }, [keyword]);
 
-    const { currentIndex, setCurrentIndex, handleNext, handlePrev, hasNext, hasPrev, handleShare, handleDownload } = useCardTraversal(type, cards, counts, setCounts);
+    const { currentIndex, setCurrentIndex, handleNext, handlePrev, hasNext, hasPrev, handleShare, handleDownload } = useCardTraversal(cards, counts, setCounts);
 
     useEffect(() => {
         setCurrentIndex(Number(searchParams.get("currentIndex")) || 0);
@@ -162,8 +173,6 @@ const Dashboard = () => {
         }, { replace: true });
     }, [counts.currentPage, currentIndex, type, activeTab]);
 
-    // const styles = type && typeStyles[type] ? typeStyles[type] : typeStyles.default;
-
     useEffect(() => {
         if (open || openUpload) {
             document.body.classList.add('no-scroll');
@@ -172,15 +181,22 @@ const Dashboard = () => {
         }
     }, [open, openUpload]);
 
-    // const handleShare = () => {
-    //     const card = cards && cards[currentIndex];
-    //     if (card && card?.shortCode && type) {
-    //         window.navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/d/${card?.shortCode}`);
-    //         toast.success("Link has been copied to clipboard");
-    //     } else {
-    //         toast.error("Something went wrong");
-    //     }
-    // }
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+            if (cardDropdownRef.current && !cardDropdownRef.current.contains(event.target as Node)) {
+                setActiveDropdownId(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="p-4 sm:p-6 lg:p-10">
@@ -201,7 +217,7 @@ const Dashboard = () => {
             <div className="flex justify-between items-center mx-4 sm:mx-16 mt-5">
                 <h2 className="text-xl sm:text-2xl font-semibold">My QR Codes</h2>
                 <div className="flex items-center gap-3 sm:gap-5 relative" ref={dropdownRef}>
-                    <RiDeleteBin6Line size={24} className="cursor-pointer hover:opacity-75" />
+                    <RiDeleteBin6Line onClick={() => setOpenDelete(true)} size={24} className="cursor-pointer hover:opacity-75" />
                     <button
                         className="flex items-center justify-center bg-[#454545] text-white rounded-full sm:rounded-md p-1 md:px-3 md:py-1 text-sm font-medium hover:bg-gray-700 transition"
                         onClick={() => setIsDropdownOpen(prev => !prev)}
@@ -209,30 +225,40 @@ const Dashboard = () => {
                         <FiPlus size={24} />
                         <span className="hidden sm:inline ml-2 text-lg">Add</span>
                     </button>
+                    {isDropdownOpen && (
+                        <div
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="absolute right-2 mt-2 w-40 bg-white border border-gray-300 rounded-md shadow-lg"
+                        >
+                            <ul className="py-2">
+                                <li
+                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => {
+                                        if (type=== "ALL") {
+                                            return;
+                                        } else {
+                                            navigate(`/dashboard/${type}/create`)
+                                        }
+                                    }}
+                                >
+                                    Create QR
+                                </li>
+                                <li
+                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => setOpenBulk(true)}
+                                >
+                                    Bulk QR
+                                </li>
+                                <li
+                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => setOpenUpload(true)}
+                                >
+                                    Import Bulk
+                                </li>
+                            </ul>
+                        </div>
+                    )}
                 </div>
-
-                {isDropdownOpen && (
-                    <div
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="absolute right-2 mt-2 w-40 bg-white border border-gray-300 rounded-md shadow-lg"
-                    >
-                        <ul className="py-2">
-                            <li
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                onClick={() => navigate(`/dashboard/${type}/create`)}
-                            >
-                                Create QR
-                            </li>
-                            <li
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                onClick={() => setOpenUpload(true)}
-                            >
-                                Bulk QR
-                            </li>
-                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Create Folder</li>
-                        </ul>
-                    </div>
-                )}
             </div>
 
             <div className="block md:hidden mt-2 border border-gray-500 rounded-lg py-2 px-3 mx-4 sm:mx-16">
@@ -321,10 +347,10 @@ const Dashboard = () => {
                                             onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)}
                                         >
                                             {activeTab === "qr" ? (
-                                                <QRCode card={card} type={type} />
+                                                <QRCode shortCode={card.shortCode} type={card.type} />
                                             ) : (
 
-                                                <CardQR card={card} type={type} ref={cardRef} />
+                                                <CardQR shortCode={card.shortCode} type={card.type} ref={cardRef} />
                                             )}
                                         </div>
                                         <p className={`text-white ${index === currentIndex ? 'block' : 'hidden'}`}>{card.shortCode}{activeTab === "qr" ? "?type=qr" : "?type=card"}</p>
@@ -361,7 +387,7 @@ const Dashboard = () => {
                             </button>
                             <button
                                 className="bg-[rgb(0,0,0,0.24)] p-3 cursor-pointer hover:opacity-75 rounded-full"
-                                onClick={() => navigate(`/dashboard/${type}/create/${cards && cards[currentIndex]._id}`)}
+                                onClick={() => navigate(`/dashboard/${cards && cards[currentIndex].type}/create/${cards && cards[currentIndex]._id}`)}
                             >
                                 <LuPencilLine size={24} className="text-white" />
                             </button>
@@ -400,6 +426,56 @@ const Dashboard = () => {
                 </div>
             )}
 
+            {openBulk && (
+                <div
+                    className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[999]"
+                    onClick={() => setOpenBulk(false)}
+                >
+                    <div onClick={(e) => e.stopPropagation()} className="bg-white w-full md:w-[50%] h-[50vh] rounded-md flex flex-col justify-between items-center px-4 md:px-14 py-12 gap-2 relative">
+                        <div className="cursor-pointer absolute top-0 right-0 p-4">
+                            <RxCross1 onClick={() => setOpenBulk(false)} size={24} />
+                        </div>
+                        <h1 className="text-2xl text-center font-semibold text-gray-600">Bulk QR</h1>
+                        <div className="flex flex-col md:flex-row justify-center items-center gap-4 w-full">
+                            <select className="px-4 py-3 w-full md:w-3/12 rounded-md border border-gray-600 outline-none">
+                                <option value="INDIVIDUAL">INDIVIDUAL</option>
+                                <option value="BOTANICAL">BOTANICAL</option>
+                                <option value="ANIMAL">ANIMAL</option>
+                                <option value="MEDICAL">MEDICAL</option>
+                                <option value="CREATOR">CREATOR</option>
+                            </select>
+                            <input
+                                type="text"
+                                placeholder="Name"
+                                className="px-4 py-3 w-full md:w-6/12 rounded-md border border-gray-600 outline-none"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Quantity"
+                                className="px-4 py-3 w-full md:w-3/12 rounded-md border border-gray-600 outline-none"
+                            />
+                        </div>
+                        <button className="px-4 py-3 w-1/2 text-lg rounded-md border border-gray-600 bg-gray-600 text-white outline-none">Submit</button>
+                    </div>
+                </div>
+            )}
+
+            {openDelete && (
+                <div
+                    className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[999]"
+                    onClick={() => setOpenDelete(false)}
+                >
+                    <div onClick={(e) => e.stopPropagation()} className="bg-white w-[90%] md:w-[50%] h-[50vh] rounded-md flex flex-col justify-between items-center px-4 md:px-14 py-4 md:py-12 gap-2 relative">
+                        <div className="cursor-pointer absolute top-0 right-0 p-4">
+                            <RxCross1 onClick={() => setOpenDelete(false)} size={24} />
+                        </div>
+                        <h1 className="text-2xl text-center font-semibold text-red-600">Delete</h1>
+                        <p className="text-lg font-semibold">some delete text</p>
+                        <button className="px-4 py-3 w-1/2 text-lg rounded-md border border-gray-600 bg-gray-600 text-white outline-none">Submit</button>
+                    </div>
+                </div>
+            )}
+
             <div className="hidden lg:block border rounded-lg mx-4 sm:mx-16 mt-5 overflow-x-auto">
                 <div className="flex items-center justify-between px-4 py-3 bg-gray-100 border-b">
                     <div className="flex items-center gap-3 w-[450px]">
@@ -423,21 +499,21 @@ const Dashboard = () => {
                 ) : cards && cards.length > 0 ? cards.map(card => (
                     <div
                         key={card._id}
-                        onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)}
+                        onClick={() => navigate(`/dashboard/cards/card/${card.type}/${card._id}`)}
                         className="flex items-center justify-between px-4 py-3 cursor-pointer border-t"
                     >
                         <div className="flex items-center gap-3 w-[450px]">
                             <input type="checkbox" className="w-4 h-4" />
-                            <div className="">{card.name}</div>
+                            <div className="">{card.data.name}</div>
                         </div>
                         <div className="hidden md:flex w-full justify-between text-sm">
                             <div className="w-[100px]">{card.shortCode}</div>
-                            <div className="w-[100px]">{type.toUpperCase()}</div>
+                            <div className="w-[100px]">{card.type}</div>
                             <div className="w-[150px]">{String(new Date(card.createdAt).toDateString())}</div>
                             <div onClick={(e) => e.stopPropagation()} className="w-[180px] flex items-center justify-center gap-6">
                                 <div
                                     className="cursor-pointer bg-gray-50 rounded-full p-3 hover:opacity-75"
-                                    onClick={() => navigate(`/dashboard/${type}/create/${card._id}`)}
+                                    onClick={() => navigate(`/dashboard/${card.type}/create/${card._id}`)}
                                 >
                                     <LuPencilLine size={18} className="" />
                                 </div>
@@ -450,7 +526,13 @@ const Dashboard = () => {
                                 >
                                     <FiEye size={18} className="" />
                                 </div>
-                                <div className="cursor-pointer bg-gray-50 rounded-full p-3 hover:opacity-75">
+                                <div
+                                    className="cursor-pointer bg-gray-50 rounded-full p-3 hover:opacity-75"
+                                    onClick={() => {
+                                        setOpenDelete(true)
+                                        setCurrentIndex(cards.indexOf(card as any))
+                                    }}
+                                >
                                     <RiDeleteBin6Line size={18} className="text-red-500" />
                                 </div>
                             </div>
@@ -497,12 +579,13 @@ const Dashboard = () => {
                 ) : cards && cards.length > 0 ? cards.map(card => (
                     <div
                         key={card._id}
-                        onClick={() => navigate(`/dashboard/cards/card/${type}/${card._id}`)}
+                        onClick={() => navigate(`/dashboard/cards/card/${card.type}/${card._id}`)}
                         className="border flex items-center gap-3 p-3 rounded-lg mx-4 sm:mx-16 mt-5"
+                        ref={cardDropdownRef}
                     >
                         <input type="checkbox" className="w-4 h-4" />
                         <div className="flex flex-col font-medium text-sm sm:text-base">
-                            <div>{card.name}</div>
+                            <div>{card.data.name}</div>
                             <div className="w-fit mt-1 text-center border border-gray-400 px-3 py-1 rounded-full">
                                 {card.shortCode}
                             </div>
@@ -513,7 +596,6 @@ const Dashboard = () => {
                                 e.stopPropagation()
                                 setActiveDropdownId(activeDropdownId === card._id ? null : card._id)
                             }}
-                            // onClick={() => setActiveDropdownId(activeDropdownId === card._id ? null : card._id)}
                         >
                             <CiMenuKebab />
                         </button>
@@ -522,7 +604,10 @@ const Dashboard = () => {
                                 <ul className="py-2">
                                     <li
                                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                        onClick={() => navigate(`/dashboard/${type}/create/${card._id}`)}
+                                        onClick={() => {
+                                            navigate(`/dashboard/${card.type}/create/${card._id}`);
+                                            setActiveDropdownId(null);
+                                        }}
                                     >
                                         Edit
                                     </li>
@@ -530,16 +615,26 @@ const Dashboard = () => {
                                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                         onClick={() => {
                                             if (isMobile) {
-                                                navigate(`/dashboard/card?type=${type}`)
+                                                navigate(`/dashboard/card?type=${card.type}`);
                                             } else {
                                                 setOpen(true)
-                                                setCurrentIndex(cards.indexOf(card as any))
+                                                setCurrentIndex(cards.indexOf(card as any));
                                             }
+                                            setActiveDropdownId(null);
                                         }}
                                     >
                                         View
                                     </li>
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Delete</li>
+                                    <li
+                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                        onClick={() => {
+                                            setOpenDelete(true);
+                                            setCurrentIndex(cards.indexOf(card as any));
+                                            setActiveDropdownId(null);
+                                        }}
+                                    >
+                                        Delete
+                                    </li>
                                 </ul>
                             </div>
                         )}

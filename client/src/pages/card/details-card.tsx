@@ -11,24 +11,21 @@ import { MdOutlineNavigateNext } from "react-icons/md";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate, useSearchParams } from "react-router-dom";
 // import html2canvas from "html2canvas";
-import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
-import { CardType } from "./dashboard";
 import axios from "axios";
 import { toast } from "react-toastify";
 import useCardTraversal from "@/hooks/useCardTraversal";
 import { Loader2 } from "lucide-react";
 import DotIndicator from "@/components/cards/dot-indicator";
-
-type CardCategory = "individual" | "botanical" | "animal" | "creator" | "medical";
-
-type ActiveTabs = "qr" | "card";
+import { ICard } from "@/types/type";
+import { ActiveTabs, CardCategory, FetchUserCardsResponse } from "./dashboard";
+import { qrStyles } from "@/lib/helper";
 
 const DetailsCard = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-    const type = (searchParams.get("type") as CardCategory) || "individual";
+    const type = (searchParams.get("type") as CardCategory) || "ALL";
     const [loading, setLoading] = useState(false);
-    const [cards, setCards] = useState<Tree[] | Personal[] | MedicalType[] | Creator[] | Animal[] | null>(null);
+    const [cards, setCards] = useState<ICard[] | null>(null);
     const [counts, setCounts] = useState({
         currentPage: Number(searchParams.get("currentPage")) || 1,
         resultPerPage: 20,
@@ -40,12 +37,12 @@ const DetailsCard = () => {
     const isSmaller = useMediaQuery({ maxWidth: 380 });
     const isMobile = useMediaQuery({ maxWidth: 628 });
 
-    const { currentIndex, setCurrentIndex, handleNext, handlePrev, hasNext, hasPrev, handleDownload, handleShare } = useCardTraversal(type, cards, counts, setCounts);
+    const { currentIndex, setCurrentIndex, handleNext, handlePrev, hasNext, hasPrev, handleDownload, handleShare } = useCardTraversal(cards, counts, setCounts);
 
     const fetchData = async (link: string) => {
         try {
-            const { data }: { data: CardType } = await axios.get(link, { withCredentials: true });
-            setCards(data.vCards);
+            const { data }: { data: FetchUserCardsResponse } = await axios.get(link, { withCredentials: true });
+            setCards(data.cards);
             setCounts(prev => ({
                 ...prev,
                 resultPerPage: data.resultPerPage,
@@ -54,6 +51,7 @@ const DetailsCard = () => {
             }));
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Error fetching data");
+            setCards([]);
         }
     };
 
@@ -65,7 +63,9 @@ const DetailsCard = () => {
 
         setLoading(true);
 
-        if (type && ["botanical", "individual", "medical", "creator", "animal"].includes(type)) {
+        setCards([]);
+
+        if (type && ["ALL", "BOTANICAL", "INDIVIDUAL", "MEDICAL", "CREATOR", "ANIMAL"].includes(type)) {
             const link = `${import.meta.env.VITE_BASE_URL}/cards/user?${queryParams}`;
             fetchData(link);
         }
@@ -95,7 +95,7 @@ const DetailsCard = () => {
     }, [isMobile, useMediaQuery]);
 
     let backgroundImage = IndividualBackgroundMobile;
-    switch (type) {
+    switch (type.toLowerCase()) {
         case "individual":
             backgroundImage = IndividualBackgroundMobile;
             break;
@@ -115,6 +115,8 @@ const DetailsCard = () => {
             backgroundImage = IndividualBackgroundMobile;
     }
 
+    const styles = type && qrStyles[type.toLowerCase()] ? qrStyles[type.toLowerCase()] : qrStyles.default;
+
     return (
         <div className="mt-14 bg-slate-50 hide-scrollbar">
             <div
@@ -126,11 +128,13 @@ const DetailsCard = () => {
                         isActive={activeTab === "qr"}
                         setIsActive={() => setActiveTab("qr")}
                         placeholder={type.charAt(0).toUpperCase() + type.slice(1)}
+                        type={type}
                     />
                     <CardHeaderSwitchButton
                         isActive={activeTab === "card"}
                         setIsActive={() => setActiveTab("card")}
                         placeholder={"Card"}
+                        type={type}
                     />
                 </div>
 
@@ -166,12 +170,12 @@ const DetailsCard = () => {
                                 >
                                     {activeTab === "qr" ? (
                                         <>
-                                            <QRCode card={card} type={type} />
-                                            <p className="mt-4 text-center text-xl font-semibold">{card.name}</p>
+                                            <QRCode shortCode={card.shortCode} type={card.type} />
+                                            <p className="mt-4 text-center text-xl font-semibold">{card.data.name}</p>
                                         </>
                                     ) : (
 
-                                        <CardQR card={card} type={type} ref={cardRef} />
+                                        <CardQR shortCode={card.shortCode} type={card.type} ref={cardRef} />
                                     )}
                                 </div>
                             </div>
@@ -211,7 +215,7 @@ const DetailsCard = () => {
                     />
                 </div>
                 <button
-                    className={`flex justify-center items-center space-x-2 bg-gradient-to-br from-[#1858F0] via-[#6571FB] to-[#4D63F4] px-4 py-3 text-white rounded-md w-full`}
+                    className={`flex justify-center items-center space-x-2 ${styles.bgColor} px-4 py-3 text-white rounded-md w-full`}
                 >
                     <FaPlus />
                     <p className="text-lg font-semibold">Add New Card</p>

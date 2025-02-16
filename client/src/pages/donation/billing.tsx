@@ -1,5 +1,3 @@
-import { SubscriptionResponse } from "@/types/api-types";
-import { Subscription, Transaction } from "@/types/plan_types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -7,19 +5,20 @@ import { toast } from "react-toastify";
 import { HiMiniArrowSmallRight } from "react-icons/hi2";
 import { HiMiniArrowSmallLeft } from "react-icons/hi2";
 import { Helmet } from "react-helmet-async";
+import { ISubscription, ITransaction } from "@/types/type";
 
 export type AllTransactionsResponse = {
     success: boolean;
     count: number;
     resultPerPage: number;
     filteredTransactionCount: number;
-    transactions: Transaction[];
+    transactions: ITransaction[];
 }
 
 const DonationBilling = () => {
 
-    const [subscription, setSubscription] = useState<Subscription | null>();
-    const [transactions, setTransactions] = useState<Transaction[]>();
+    const [subscription, setSubscription] = useState<ISubscription | null>();
+    const [transactions, setTransactions] = useState<ITransaction[]>();
     const [counts, setCounts] = useState({
         currentPage: 1,
         resultPerPage: 1,
@@ -29,7 +28,7 @@ const DonationBilling = () => {
 
     const fetchSubscription = async () => {
         try {
-            const { data }: { data: SubscriptionResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/donate/subcription/latest`, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(`${import.meta.env.VITE_BASE_URL}/donate/subcription/latest`, { withCredentials: true });
             setSubscription(data.subscription);
         } catch (error) {
             console.log(error);
@@ -89,9 +88,11 @@ const DonationBilling = () => {
                                     <h1 className="text-xl font-semibold underline">Subscription Id: {subscription._id}</h1>
                                     <p className="text-md font-semibold">Service Period: <span className="text-gray-500">{String(new Date(subscription.currentEnd).toDateString())} - {String(new Date(subscription.currentStart).toDateString())}</span></p>
                                     <p className="text-md font-semibold">Next Billing: <span className="text-gray-500">{String(new Date(subscription.currentEnd).toDateString())}</span></p>
-                                    <p className="text-md font-semibold">Payment Method: <span className="text-gray-500">{subscription?.paymentMethod?.methodType.toUpperCase()}</span></p>
+                                    <p className="text-md font-semibold">Payment Method: <span className="text-gray-500">{subscription?.paymentMethod?.methodType?.toUpperCase()}</span></p>
                                     <p className="text-md font-semibold">Payment Details: <span className="text-gray-500">{subscription?.paymentMethod?.methodType === "card" ? `${subscription?.paymentMethod?.cardInfo?.name} ${subscription?.paymentMethod?.cardInfo?.cardType} ${subscription?.paymentMethod?.cardInfo?.last4}` : (subscription?.paymentMethod?.bankInfo || subscription?.paymentMethod?.upiInfo || subscription?.paymentMethod?.walletInfo)}</span></p>
-                                    <p className="text-md font-semibold">Razoray Link: <Link to={subscription.shortUrl} target="blank" className="italic underline text-gray-500">{subscription.shortUrl}</Link></p>
+                                    {subscription.shortUrl && (
+                                        <p className="text-md font-semibold">Razoray Link: <Link to={subscription.shortUrl} target="blank" className="italic underline text-gray-500">{subscription.shortUrl}</Link></p>
+                                    )}
                                     <p className="text-sm italic text-gray-500">( Recommended for changing payment method)</p>
                                 </div>
                                 <div className="mt-4 md:mt-0 flex flex-col justify-center items-center gap-4">
@@ -136,10 +137,10 @@ const DonationBilling = () => {
                                         <div className="flex flex-col justify-center gap-1">
                                             <p className="text-md font-semibold">Donation Type - <span className="text-red-500">{transaction.transactionType.toUpperCase()}</span></p>
                                             <p className="text-md font-semibold">Date: {String(new Date(transaction.createdAt).toDateString())}</p>
-                                            {transaction.transactionType === "recurring" && (
+                                            {transaction.transactionType === "RECURRING" && (
                                                 <p className="text-md font-semibold">Service Period: {String(new Date(transaction.end).toDateString())} - {String(new Date(transaction.start).toDateString())}</p>
                                             )}
-                                            <p className="text-md font-semibold">Payment Method: {transaction.paymentMethod?.methodType.toUpperCase()}</p>
+                                            <p className="text-md font-semibold">Payment Method: {transaction.paymentMethod?.methodType?.toUpperCase()}</p>
                                             <p className="text-md font-semibold">Payment Id: {transaction.razorpayPaymentId}</p>
                                         </div>
                                         <div className="mt-4 md:mt-0 flex flex-col justify-center gap-1">

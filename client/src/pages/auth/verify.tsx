@@ -4,9 +4,10 @@ import { userExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { UserResponse } from "@/types/api-types";
 import OtpInput from "@/components/rest/otp-input";
 import { Helmet } from "react-helmet-async";
+// import { verifyUser } from "@/actions/users/user.actions";
+import { RegisterUserResponse } from "@/actions/users/user.types";
 
 const TIMER_DURATION = 30;
 
@@ -55,7 +56,8 @@ const Verify = () => {
     const onOtpSubmit = async (otp: string) => {
         setVerifyLoading(true);
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/verify`, { otp }, { withCredentials: true });
+            const { data }: { data: RegisterUserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/verify`, { otp }, { withCredentials: true });
+            // const data = await verifyUser({ otp });
             dispatch(userExist(data.user));
             toast.success("User Verified!");
             navigate(from, { replace: true });

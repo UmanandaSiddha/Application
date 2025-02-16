@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { createQRCode } from "@/lib/helper";
-import { Animal, Creator, MedicalType, Personal, Tree } from "@/types/card_types";
+import { ICard } from "@/types/type";
+import { toast } from "react-toastify";
 
 interface Counts {
     currentPage: number;
@@ -10,8 +11,8 @@ interface Counts {
 }
 
 const useCardTraversal = (
-    type: "individual" | "botanical" | "animal" | "creator" | "medical",
-    cards: Tree[] | Personal[] | MedicalType[] | Creator[] | Animal[] | null,
+    // type: "ALL" | "INDIVIDUAL" | "BOTANICAL" | "ANIMAL" | "CREATOR" | "MEDICAL",
+    cards: ICard[] | null,
     counts: Counts,
     setCounts: React.Dispatch<React.SetStateAction<Counts>>
 ) => {
@@ -59,7 +60,7 @@ const useCardTraversal = (
 
     const handleDownload = () => {
         if (cards && cards[currentIndex]?.shortCode) {
-            const qrCode = createQRCode(type, cards[currentIndex].shortCode);
+            const qrCode = createQRCode(cards[currentIndex].type, cards[currentIndex].shortCode);
             qrCode.download({
                 name: cards[currentIndex]._id,
                 extension: "png"
@@ -70,7 +71,7 @@ const useCardTraversal = (
     const handleShare = () => {
         if (cards && cards[currentIndex]?.shortCode) {
             window.navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/d/${cards[currentIndex].shortCode}`);
-            alert("Link has been copied to clipboard");
+            toast.success("Link has been copied to clipboard");
         }
     };
 

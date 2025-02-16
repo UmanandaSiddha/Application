@@ -56,7 +56,7 @@ const DonatorDashboard = () => {
                 <div className="w-[95%] md:w-[80%] lg:w-[70%] mx-auto mt-2 rounded-lg bg-white shadow-xl">
                     <div className="p-4 pt-4 sm:pt-6 md:pt-8 mx-auto w-full md:w-[70%] lg:w-[65%]">
                         <h1 className="text-2xl text-center sm:text-3xl md:text-4xl lg:text-4xl  md:text-center font-bold">
-                            Welcome, {donator?.name ? donator.name : donator?.email}
+                            Welcome, {donator?.firstName ? donator.firstName : donator?.email}
                         </h1>
                         <p className="text-sm text-center sm:text-lg mt-4 leading-tight md:text-center text-slate-500">
                             We are very thankful for your donations.

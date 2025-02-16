@@ -5,9 +5,7 @@ import { NextFunction, Request, Response } from "express";
 
 export const createContact = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, name, message, report } = req.body;
-    if (!email || !name || !message) {
-        return next(new ErrorHandler("All fields are required", 404));
-    }
+    if (!email || !name || !message) return next(new ErrorHandler("All fields are required", 404));
 
     const contact = await Contact.create({
         email,

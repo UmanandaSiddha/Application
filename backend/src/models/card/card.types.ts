@@ -84,14 +84,14 @@ export interface IndividualData extends Document {
 export interface BotanyData extends Document {
     name: string;
     scientificName?: string;
-    family?: string;
-    origin?: string;
-    habitat?: string;
+    waterRequirement?: string;
+    sunlightRequirement?: string;
+    commonPestsDiseases?: string;
     description?: string;
     height?: string;
     leafType?: string;
-    flowerColor?: string;
-    uses?: string;
+    symptoms?: string;
+    nutritionalNeeds?: string;
     careInstructions?: string;
     specialFeatures?: string;
     caretakerMobileNumber?: string;
@@ -108,14 +108,13 @@ export interface CreatorData extends Document {
 
 export interface AnimalData extends Document {
     name: string;
-    scientificName?: string;
-    habitat?: string;
-    geographicalRange?: string;
+    signIllness?: string;
+    vaccination?: string;
     physicalDescription?: string;
     diet?: string;
     lifespan?: string;
     behavior?: string;
-    conservationStatus?: string;
+    commonHealth?: string;
     ownerName?: string;
     location?: string;
     caretakerMobileNumber?: string;

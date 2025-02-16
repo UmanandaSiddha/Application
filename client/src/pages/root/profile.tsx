@@ -1,6 +1,5 @@
 import { userExist, userNotExist } from "@/redux/reducer/userReducer";
 import { RootState } from "@/redux/store";
-import { UserResponse } from "@/types/api-types";
 import axios from "axios";
 import React, { useState } from "react";
 import { IoIosLogOut } from "react-icons/io";
@@ -9,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "@/components/rest/loader";
 import { Helmet } from "react-helmet-async";
+import { UserRoleEnum } from "@/types/type";
 // import { RxCross1 } from "react-icons/rx";
 
 const Profile = () => {
@@ -25,25 +25,28 @@ const Profile = () => {
     );
 
     const [profileData, setProfileData] = useState({
-        name: user?.name || "",
-        phone: user?.phone || "",
+        // name: user?.name || "",
+        firstName: user?.profile.firstName || "",
+        lastName: user?.profile.lastName || "",
+        // email: user?.email || "",
+        phone: user?.access.billingInfo?.phoneNumber || "",
     });
     const [billingAddress, setBillingAddress] = useState({
-        street: user?.billingAddress?.street || "",
-        city: user?.billingAddress?.city || "",
-        state: user?.billingAddress?.state || "",
-        country: user?.billingAddress?.country || "",
-        postalCode: user?.billingAddress?.postalCode || ""
+        street: user?.access.billingInfo?.address?.street || "",
+        city: user?.access.billingInfo?.address?.city || "",
+        state: user?.access.billingInfo?.address?.state || "",
+        country: user?.access.billingInfo?.address?.country || "",
+        postalCode: user?.access.billingInfo?.address?.postalCode || ""
     });
     const [orgDetails, setOrgDetails] = useState({
-        website: user?.orgDetails?.website || "",
-        phone: user?.orgDetails?.phone || "",
+        website: user?.organization?.website || "",
+        phone: user?.organization?.organizationBilling.phoneNumber || "",
         address: {
-            street: user?.orgDetails?.address?.street || "",
-            city: user?.orgDetails?.address?.city || "",
-            state: user?.orgDetails?.address?.state || "",
-            country: user?.orgDetails?.address?.country || "",
-            postalCode: user?.orgDetails?.address?.postalCode || ""
+            street: user?.organization?.organizationBilling.address.street || "",
+            city: user?.organization?.organizationBilling.address.city || "",
+            state: user?.organization?.organizationBilling.address.state || "",
+            country: user?.organization?.organizationBilling.address.country || "",
+            postalCode: user?.organization?.organizationBilling.address.postalCode || ""
         }
     });
     const [password, setPassword] = useState({
@@ -55,7 +58,7 @@ const Profile = () => {
     const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/me/update`, profileData, { withCredentials: true });
+            const { data }: { data: any } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/me/update`, profileData, { withCredentials: true });
             dispatch(userExist(data.user));
             toast.success("Profile Updated Successfully");
         } catch (error: any) {
@@ -66,7 +69,7 @@ const Profile = () => {
     const handleUpdateBillingAddress = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/billing/update`, billingAddress, { withCredentials: true });
+            const { data }: { data: any } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/billing/update`, billingAddress, { withCredentials: true });
             dispatch(userExist(data.user));
             toast.success("Billing Address Updated Successfully");
         } catch (error: any) {
@@ -77,7 +80,7 @@ const Profile = () => {
     const handleUpdateOrgDetails = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/org/update`, orgDetails, { withCredentials: true });
+            const { data }: { data: any } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/org/update`, orgDetails, { withCredentials: true });
             dispatch(userExist(data.user));
             toast.success("Organization Details Updated Successfully");
         } catch (error: any) {
@@ -99,7 +102,7 @@ const Profile = () => {
     const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            if (user?.accountType === "google") {
+            if ((["google"] as any).includes(user?.account.accountType)) {
                 if (!password.newPassword || !password.confirmPassword) {
                     toast.warning("All fields are required");
                     return;
@@ -116,7 +119,7 @@ const Profile = () => {
                     toast.warning("Passwords doesn't match");
                     return;
                 }
-                const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/set/password`, password, { withCredentials: true });
+                const { data }: { data: any } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/set/password`, password, { withCredentials: true });
                 dispatch(userExist(data.user));
             } else {
                 if (!password.oldPassword || !password.newPassword || !password.confirmPassword) {
@@ -127,7 +130,7 @@ const Profile = () => {
                     toast.warning("Passwords doesn't match");
                     return;
                 }
-                const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, password, { withCredentials: true });
+                const { data }: { data: any } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/:token`, password, { withCredentials: true });
                 dispatch(userExist(data.user));
             }
             toast.success("Password Updated Successfully");
@@ -152,7 +155,7 @@ const Profile = () => {
     ) : (
         <>
             <Helmet>
-                <title>Voolata | Profile {user?.name}</title>
+                <title>Voolata | Profile {user?.profile.firstName}</title>
                 <meta name="description" content={`This is the profile page of Voolata`} />
                 <meta name="keywords" content="profile, voolata" />
             </Helmet>
@@ -166,7 +169,11 @@ const Profile = () => {
                         <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="name" className="text-lg font-semibold">Name</label>
-                                <input type="text" value={profileData.name} onChange={(e) => setProfileData({ ...profileData, name: e.target.value })} placeholder="Enter you Name" className="border-2 px-3 py-2 rounded-lg" />
+                                <input type="text" value={profileData.firstName} onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })} placeholder="Enter you Name" className="border-2 px-3 py-2 rounded-lg" />
+                            </div>
+                            <div className="flex flex-col gap-4">
+                                <label htmlFor="name" className="text-lg font-semibold">Name</label>
+                                <input type="text" value={profileData.lastName} onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })} placeholder="Enter you Name" className="border-2 px-3 py-2 rounded-lg" />
                             </div>
                             <div className="flex flex-col gap-4">
                                 <label htmlFor="phone" className="text-lg font-semibold">Phone</label>
@@ -257,7 +264,7 @@ const Profile = () => {
                             <button className="px-3 py-2 border-2 rounded-lg" onClick={() => setOpenPassword(false)}>Close</button>
                         </div>
                         <form onSubmit={handleResetPassword} className="flex flex-col gap-4">
-                            {user?.accountType !== "google" && (
+                            {!(["google"] as any).includes(user?.account.accountType) && (
                                 <div className="flex flex-col gap-4">
                                     <label htmlFor="oldPassword" className="text-lg font-semibold">Previous Passowrd</label>
                                     <input type="text" value={password.oldPassword} onChange={(e) => setPassword({ ...password, oldPassword: e.target.value })} placeholder="Enter your previous password" className="border-2 px-3 py-2 rounded-lg" />
@@ -297,7 +304,7 @@ const Profile = () => {
                     <div className="flex bg-[#6371FB] w-full min-h-[80vh] px-8 py-4 mt-4 rounded-lg shadow-lg">
                         <div className="flex  w-full flex-col justify-between mt-6">
                             <nav className="flex flex-col justify-center gap-4">
-                                <h1 className="mx-4 text-2xl text-white font-bold capitalize">Welcome, <span className="text-xl font-semibold">{user?.name}</span></h1>
+                                <h1 className="mx-4 text-2xl text-white font-bold capitalize">Welcome, <span className="text-xl font-semibold">{user?.profile.firstName}</span></h1>
 
                                 <hr className="my-2 border-2 border-white" />
 
@@ -364,15 +371,15 @@ const Profile = () => {
                 <div className="w-full md:3/4 lg:w-4/5 lg:ml-[30%] pt-24 pb-16">
                     <div className="w-full bg-white px-8 py-4 lg:mt-2 rounded-lg shadow-md">
                         <div className="flex -mt-16 justify-end">
-                            {user?.image ? (
+                            {user?.profile.profilePicture ? (
                                 <img
                                     className="object-cover w-20 h-20 border-4 border-gray-300 rounded-full"
-                                    alt={user?.name}
-                                    src={user?.image}
+                                    alt={user?.profile.firstName}
+                                    src={user?.profile.profilePicture}
                                 />
                             ) : (
                                 <div className='h-20 w-20 rounded-full bg-gray-300 border-4 border-gray-300 flex items-center justify-center'>
-                                    <p className='text-3xl font-semibold text-black'>{user?.name[0].toUpperCase()}</p>
+                                    <p className='text-3xl font-semibold text-black'>{user?.profile.firstName.toUpperCase()}</p>
                                 </div>
                             )}
                         </div>
@@ -382,9 +389,9 @@ const Profile = () => {
                         <hr className="my-2 border-gray-400 " />
                         <div className="flex  flex-col md:flex-row justify-between mt-2">
                             <div>
-                                <p className="mt-2 text-md font-semibold">Name: <span className="mt-2 text-sm text-gray-600">{user?.name}</span></p>
-                                <p className="mt-2 text-md font-semibold">Email: <span className="mt-2 text-sm text-gray-600">{user?.email}</span></p>
-                                <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.phone}</span></p>
+                                <p className="mt-2 text-md font-semibold">Name: <span className="mt-2 text-sm text-gray-600">{user?.profile.firstName}</span></p>
+                                <p className="mt-2 text-md font-semibold">Email: <span className="mt-2 text-sm text-gray-600">{user?.profile.email}</span></p>
+                                <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.phoneNumber}</span></p>
                             </div>
                             <button onClick={() => setOpenProfile(true)} className="text-md mt-4 md:mt-0  underline">Edit Profile</button>
                         </div>
@@ -395,34 +402,34 @@ const Profile = () => {
                             <button onClick={() => setOpenBilling(true)} className="text-md bg-white underline">Edit Address</button>
                         </div>
                         <hr className="my-2 border-gray-400 " />
-                        <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.street}</span></p>
-                        <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.city}</span></p>
-                        <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.state}</span></p>
-                        <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.postalCode}</span></p>
-                        <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.billingAddress?.country}</span></p>
+                        <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address.street}</span></p>
+                        <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address.city}</span></p>
+                        <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address.state}</span></p>
+                        <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address.postalCode}</span></p>
+                        <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address.country}</span></p>
                     </div>
-                    {user?.role === "org" && (
+                    {user?.profile.role === UserRoleEnum.ORGANIZATION && (
                         <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                             <div className="flex justify-between">
                                 <h1 className="text-xl font-semibold">Organisation Details</h1>
                                 <button onClick={() => setOpenOrg(true)} className="text-md bg-white underline">Edit</button>
                             </div>
                             <hr className="my-2 border-gray-400 " />
-                            <p className="mt-2 text-md font-semibold">website: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.website}</span></p>
-                            <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.phone}</span></p>
+                            <p className="mt-2 text-md font-semibold">website: <span className="mt-2 text-sm text-gray-600">{user.organization?.website}</span></p>
+                            <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling.phoneNumber}</span></p>
                             <h2 className="mt-4 text-xl font-semibold">Address</h2>
-                            <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.street}</span></p>
-                            <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.city}</span></p>
-                            <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.state}</span></p>
-                            <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.postalCode}</span></p>
-                            <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.orgDetails?.address?.country}</span></p>
+                            <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling.address.street}</span></p>
+                            <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling.address.city}</span></p>
+                            <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling.address.state}</span></p>
+                            <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling.address.postalCode}</span></p>
+                            <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling.address.country}</span></p>
                         </div>
                     )}
                     <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                         <h1 className="text-xl font-semibold">Privacy Settings</h1>
                         <hr className="my-2 border-gray-400 " />
-                        <p className="mt-2 text-gray-500 italic">You can {user?.accountType === "google" ? "" : "re"}set your password here</p>
-                        <button onClick={() => setOpenPassword(true)} className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">{user?.accountType === "google" ? "S" : "Res"}et Password</button>
+                        <p className="mt-2 text-gray-500 italic">You can {(["google"] as any).includes(user?.account.accountType) ? "" : "re"}set your password here</p>
+                        <button onClick={() => setOpenPassword(true)} className="mt-2 border-2 border-gray-500 text-md text-gray-500 bg-white px-3 py-2 rounded-lg">{(["google"] as any).includes(user?.account.accountType) ? "S" : "Res"}et Password</button>
                     </div>
                     <div className="w-full px-8 py-4 mt-4 bg-white rounded-lg shadow-lg">
                         <h1 className="text-xl font-semibold">Account Actions</h1>

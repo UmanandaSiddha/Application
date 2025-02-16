@@ -10,7 +10,6 @@ import ProtectedRoute from "./components/rest/protected-route";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { DonatorResponse, UserResponse } from "./types/api-types";
 import axios from "axios";
 import ErrorBoundary from "./components/rest/error-boundary";
 import { donatorExist, donatorNotExist } from "./redux/reducer/donatorReducer";
@@ -43,7 +42,7 @@ import Register from "./pages/auth/register";
 import Login from "./pages/auth/login";
 import UnBlockPage from "./pages/auth/unblock";
 import ReportPage from "./pages/others/report";
-import DisplayCard from "./pages/cards/display-card";
+// import DisplayCard from "./pages/cards/display-card";
 import OnBoarding from "./pages/auth/onboarding";
 import ContactUs from "./pages/others/contact";
 import DonationLogin from "./pages/donation/login";
@@ -53,7 +52,18 @@ import TermsAndConditions from "./pages/others/terms";
 import Footer from "./components/rest/footer";
 import DetailsCard from "./pages/card/details-card";
 import { useMediaQuery } from "react-responsive";
+import { IDonator, IUser } from "./types/type";
 // import Dash from "./pages/card/dashboard";
+
+interface UserResponse {
+    success: boolean;
+    user: IUser;
+};
+
+interface DonatorResponse {
+    success: boolean;
+    donator: IDonator;
+}
 
 const App = () => {
     const location = useLocation();
@@ -125,7 +135,7 @@ const App = () => {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/about-us" element={<HomePage />} />
                     <Route path="/plans" element={<PlanPage />} />
-                    <Route path="/d/:shortId/:type?/:id?" element={<DisplayCard />} />
+                    {/* <Route path="/d/:shortId/:type?/:id?" element={<DisplayCard />} /> */}
                     <Route path="/onboarding" element={<OnBoarding />} />
                     <Route path="/donation/login" element={<DonationLogin />} />
                     <Route path="/contact" element={<ContactUs />} />
@@ -137,7 +147,7 @@ const App = () => {
                     <Route path="/terms-conditions" element={<TermsAndConditions />} />
 
                     {/* Not logged In Route */}
-                    <Route path="/login" element={user === null ? <Login /> : <Navigate to={user?.isVerified ? "/profile" : "/verify"} />} />
+                    <Route path="/login" element={user === null ? <Login /> : <Navigate to={user?.account.isVerified ? "/profile" : "/verify"} />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/org/register" element={<OrgRegister />} />
                     <Route path="/reset/:token/:user" element={<ResetPassword />} />

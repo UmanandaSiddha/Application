@@ -16,11 +16,11 @@ export const emailInfo = [
 ];
 
 export const socials = [
-    { name: "", label: "Instagram", text: "Enter Your Instagram Profile", type: "text" },
-    { name: "", label: "Youtube", text: "Enter Your Youtube Profile", type: "text" },
-    { name: "", label: "Facebook", text: "Enter Your Facebook Profile", type: "text" },
-    { name: "", label: "Discord", text: "Enter Your Discord Profile", type: "text" },
-    { name: "", label: "X", text: "Enter Your X Profile", type: "text" },
+    { link: "", label: "Instagram", text: "Enter Your Instagram Profile", type: "text" },
+    { link: "", label: "Youtube", text: "Enter Your Youtube Profile", type: "text" },
+    { link: "", label: "Facebook", text: "Enter Your Facebook Profile", type: "text" },
+    { link: "", label: "Discord", text: "Enter Your Discord Profile", type: "text" },
+    { link: "", label: "X", text: "Enter Your X Profile", type: "text" },
 ];
 
 export const lifestyle = [

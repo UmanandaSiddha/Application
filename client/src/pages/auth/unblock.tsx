@@ -1,4 +1,4 @@
-import { UserResponse } from "@/types/api-types";
+// import { UserResponse } from "@/types/api-types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -17,7 +17,7 @@ const UnBlockPage = () => {
 
     const fetchBlocked = async () => {
         try {
-            const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/block/${id}`, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/block/${id}`, { withCredentials: true });
             setBlockData({
                 isBlocked: data.user.isBlocked ? true : false,
                 count: data.user.loginAttempt.count,

@@ -10,13 +10,10 @@ import Subscription from "../models/payment/subscription.model.js";
 
 // Create Card
 export const createCard = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
-    if (!user.access.freeAccess && user.access.cards.total.extra <= user.access.cards.created) {
-        return next(new ErrorHandler(`You have reached your total card limit.`, 403));
-    }
+    const { user } = req;
+    if (!user) return next(new ErrorHandler("User not found", 404));
+    const totalCards = user.access.cards.total.extra + user.access.cards.total.initial;
+    if (!user.access.freeAccess && totalCards <= user.access.cards.created) return next(new ErrorHandler(`You have reached your total card limit.`, 403))
 
     let shortId = `sh${Date.now().toString(36)}`;
     let exists = await Card.findOne({ shortCode: shortId });
@@ -26,12 +23,8 @@ export const createCard = catchAsyncErrors(async (req: UserRequest, res: Respons
     }
 
     const { type } = req.query;
-    if (!type) {
-        return next(new ErrorHandler("Card type is required", 400));
-    }
-    if (!Object.values(CardEnum).includes(type as any)) {
-        return next(new ErrorHandler("Invalid card type", 400));
-    }
+    if (!type) return next(new ErrorHandler("Card type is required", 400));
+    if (!Object.values(CardEnum).includes(type as any)) return next(new ErrorHandler("Invalid card type", 400));
 
     const card = await Card.create({
         type,
@@ -51,28 +44,21 @@ export const createCard = catchAsyncErrors(async (req: UserRequest, res: Respons
 
 // Batch Create Cards
 export const createBatchCards = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
+    const { user } = req;
+    if (!user) return next(new ErrorHandler("User not found", 404));
 
     const { names, total } = req.body;
-    if (!Array.isArray(names) || total === 0) {
-        return next(new ErrorHandler('Invalid request: Provide an array of card names.', 400));
-    }
-    if (!user.access.freeAccess && user.access.cards.total.extra < user.access.cards.created + total) {
+    if (!Array.isArray(names) || total === 0) return next(new ErrorHandler('Invalid request: Provide an array of card names.', 400));
+    const totalCards = user.access.cards.total.extra + user.access.cards.total.initial;
+    if (!user.access.freeAccess && totalCards < user.access.cards.created + total) {
         return next(new ErrorHandler(`You have reached your total card limit.`, 403));
     }
 
     const batchCards = [];
 
     const { type } = req.query;
-    if (!type) {
-        return next(new ErrorHandler("Card type is required", 400));
-    }
-    if (!Object.values(CardEnum).includes(type as any)) {
-        return next(new ErrorHandler("Invalid card type", 400));
-    }
+    if (!type) return next(new ErrorHandler("Card type is required", 400));
+    if (!Object.values(CardEnum).includes(type as any)) return next(new ErrorHandler("Invalid card type", 400));
 
     for (const cardName of names) {
         let shortId = `sh${Date.now().toString(36)}${names.indexOf(cardName)}`;
@@ -107,58 +93,39 @@ export const createBatchCards = catchAsyncErrors(async (req: UserRequest, res: R
 // Update Card
 export const updateCard = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return next(new ErrorHandler("Invalid ID format", 400));
-    }
+    if (!mongoose.Types.ObjectId.isValid(id)) return next(new ErrorHandler("Invalid ID format", 400));
     const card = await Card.findById(id);
-    if (!card) {
-        return next(new ErrorHandler(`Card does not exist with Id: ${id}`, 404));
-    }
+    if (!card) return next(new ErrorHandler(`Card does not exist with Id: ${id}`, 404));
 
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
-    if (card.userId.toString() !== user._id.toString()) {
-        return next(new ErrorHandler("Unauthorized to update this vCard", 401));
-    }
-    if (!user.access.freeAccess && user.access.cards.total.extra <= user.access.cards.created) {
-        return next(new ErrorHandler(`You have reached your total card limit.`, 403));
-    }
+    const { user } = req;
+    if (!user) return next(new ErrorHandler("User not found", 404));
+    if (card.userId.toString() !== user._id.toString()) return next(new ErrorHandler("Unauthorized to update this vCard", 401));
+    const totalCards = user.access.cards.total.extra + user.access.cards.total.initial;
+    if (!user.access.freeAccess && totalCards <= user.access.cards.created) return next(new ErrorHandler(`You have reached your total card limit.`, 403));
 
-    const updatedVCard = await Card.findByIdAndUpdate(
+    const updatedCard = await Card.findByIdAndUpdate(
         id,
-        req.body,
+        { data: req.body },
         { new: true, runValidators: true, useFindAndModify: false }
     );
-    if (!updatedVCard) {
-        return next(new ErrorHandler(`Update Failed`, 404));
-    }
+    if (!updatedCard) return next(new ErrorHandler(`Update Failed`, 404));
 
     res.status(200).json({
         success: true,
-        updatedVCard,
+        card: updatedCard,
     });
 });
 
 // Delete Card
 export const deleteCard = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return next(new ErrorHandler("Invalid ID format", 400));
-    }
+    if (!mongoose.Types.ObjectId.isValid(id)) return next(new ErrorHandler("Invalid ID format", 400));
     const card = await Card.findById(id);
-    if (!card) {
-        return next(new ErrorHandler(`Card does not exist with Id: ${id}`, 404));
-    }
+    if (!card) return next(new ErrorHandler(`Card does not exist with Id: ${id}`, 404));
 
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
-    if (card.userId.toString() !== user._id.toString()) {
-        return next(new ErrorHandler("Unauthorized to delete this vCard", 401));
-    }
+    const { user } = req;
+    if (!user) return next(new ErrorHandler("User not found", 404));
+    if (card.userId.toString() !== user._id.toString()) return next(new ErrorHandler("Unauthorized to delete this vCard", 401));
 
     await Card.findByIdAndDelete(id);
 
@@ -174,10 +141,16 @@ export const deleteCard = catchAsyncErrors(async (req: UserRequest, res: Respons
 // Fetch User Cards
 export const getUserCards = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const resultPerPage = 20;
-    const count = await Card.countDocuments({ userId: req.user?._id });
+    const filter: any = { userId: req.user?._id };
+
+    if (req.query.type !== "ALL") {
+        filter.type = req.query.type;
+    }
+
+    const count = await Card.countDocuments(filter);
 
     const apiFeatures = new ApiFeatures(
-        Card.find({ userId: req.user?._id }).select("data.name shortCode createdAt").sort({ $natural: -1 }),
+        Card.find(filter).select("data.name type shortCode createdAt").sort({ $natural: -1 }),
         req.query
     ).searchCard();
 
@@ -199,13 +172,9 @@ export const getUserCards = catchAsyncErrors(async (req: UserRequest, res: Respo
 // Get Display Card
 export const getDisplayCard = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const card = await Card.findById(req.params.id);
-    if (!card) {
-        return next(new ErrorHandler("Card Not Found", 404));
-    }
-    const user = await User.findById(card.userId);
-    if (!user) {
-        return next(new ErrorHandler("User Not Found", 404));
-    }
+    if (!card) return next(new ErrorHandler("Card Not Found", 404));
+    const { user } = req;
+    if (!user) return next(new ErrorHandler("User not found", 404));
 
     if (!user.access.freeAccess &&
         !user.access.latestSubscription && 
@@ -219,9 +188,7 @@ export const getDisplayCard = catchAsyncErrors(async (req: UserRequest, res: Res
         });
     }
 
-    if (!user.access.freeAccess && user.profile.role !== UserRoleEnum.ADMIN) {
-        return next(new ErrorHandler("Card Not Found", 404));
-    }
+    if (!user.access.freeAccess && user.profile.role !== UserRoleEnum.ADMIN) return next(new ErrorHandler("Card Not Found", 404));
 
     const subscription = await Subscription.findById(user.access.latestSubscription);
     if (user.profile.role !== UserRoleEnum.ADMIN && (!subscription || !["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < new Date(Date.now())))) {
@@ -241,17 +208,11 @@ export const getGeneralCard = catchAsyncErrors(async (req: UserRequest, res: Res
         return next(new ErrorHandler("Invalid ID format", 400));
     }
     const card = await Card.findById(id);
-    if (!card) {
-        return next(new ErrorHandler("Card Not Found", 400));
-    }
+    if (!card) return next(new ErrorHandler("Card Not Found", 400));
 
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
-    if (card.userId.toString() !== user._id.toString()) {
-        return next(new ErrorHandler("Unauthorized to fetch this vCard", 401));
-    }
+    const { user } = req;
+    if (!user) return next(new ErrorHandler("User not found", 404));
+    if (card.userId.toString() !== user._id.toString())  return next(new ErrorHandler("Unauthorized to fetch this vCard", 401));
 
     res.status(200).json({
         success: true,

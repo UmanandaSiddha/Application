@@ -3,7 +3,6 @@ import { RootState } from "../../../redux/store";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import { SingleCreatorResponse } from "@/types/api-types";
 import axios from "axios";
 // import SideBar from "@/components/rest/sidebar";
 import { IoMdLink } from "react-icons/io";
@@ -11,26 +10,22 @@ import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { setSvg } from "@/lib/helper";
 import { Helmet } from "react-helmet-async";
+import { CardResponse } from "./animal";
+import { CreatorData } from "@/types/type";
 
-type ArrayInput = {
-    name: string;
+export type ArrayInput = {
+    link: string;
     label: string;
-    text: string;
+    text?: string;
 }
 
 const inputs = [
-    { name: "", label: "Instagram", text: "Enter Your Instagram Profile" },
-    { name: "", label: "Youtube", text: "Enter Your Youtube Profile" },
-    { name: "", label: "Facebook", text: "Enter Your Facebook Profile" },
-    { name: "", label: "Discord", text: "Enter Your Discord Profile" },
-    { name: "", label: "X", text: "Enter Your X Profile" },
+    { link: "", label: "Instagram", text: "Enter Your Instagram Profile" },
+    { link: "", label: "Youtube", text: "Enter Your Youtube Profile" },
+    { link: "", label: "Facebook", text: "Enter Your Facebook Profile" },
+    { link: "", label: "Discord", text: "Enter Your Discord Profile" },
+    { link: "", label: "X", text: "Enter Your X Profile" },
 ];
-
-type LinkType = {
-    name: string;
-    label: string;
-    text: string;
-}
 
 const CreatorInput = () => {
     const navigate = useNavigate();
@@ -51,10 +46,11 @@ const CreatorInput = () => {
     const fetchCreator = async () => {
         if (id) {
             try {
-                const { data }: { data: SingleCreatorResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=creator`, { withCredentials: true });
+                const { data }: { data: CardResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=creator`, { withCredentials: true });
                 setIsCreator(true);
-                setName(data.vCard.name);
-                setArrData(data.vCard.links);
+                const { name, links } = data.card.data as CreatorData;
+                setName(name);
+                setArrData(links.length > 0 ? links : inputs);
             } catch (error: any) {
                 toast.error(error.response.data.message);
             }
@@ -77,7 +73,7 @@ const CreatorInput = () => {
                 const updatedArr = [...arrData];
                 updatedArr[index] = {
                     ...updatedArr[index],
-                    name: otherLink,
+                    link: otherLink,
                     text: `Enter Your ${otherName} Profile`,
                 };
                 setArrData(updatedArr);
@@ -87,7 +83,7 @@ const CreatorInput = () => {
             setArrData([
                 ...arrData,
                 {
-                    name: otherLink,
+                    link: otherLink,
                     label: otherName,
                     text: `Enter Your ${otherName} Profile`,
                 },
@@ -115,35 +111,34 @@ const CreatorInput = () => {
         for (let i = 0; i < arrData.length; i++) {
             const element = {
                 label: arrData[i].label,
-                name: arrData[i].name,
+                link: arrData[i].link,
             };
-            if (element.name) {
+            if (element.link) {
                 final.push(element);
             }
         }
         const creatorData = {
             name,
             links: final,
-            user: user?._id,
         };
-        if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
+        if (!isPaid && user?.access.cards?.total.extra! > 10 && user?.profile.role !== "ADMIN") {
             navigate("/plans");
         } else {
             setCreatorLoading(true);
             try {
                 if (isCreator) {
-                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=creator`, creatorData, { withCredentials: true });
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=CREATOR`, creatorData, { withCredentials: true });
                     // toast.success("Creator VCard Updated");
                 } else {
                     await axios.post(
-                        `${import.meta.env.VITE_BASE_URL}/cards/new?type=creator`, creatorData, { withCredentials: true }
+                        `${import.meta.env.VITE_BASE_URL}/cards/new?type=CREATOR`, creatorData, { withCredentials: true }
                     );
                     // toast.success("Creator VCard Created");
                 }
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
-                navigate("/plans");
+                // navigate("/plans");
             } finally {
                 setCreatorLoading(false);
             }
@@ -171,8 +166,8 @@ const CreatorInput = () => {
                 <meta name="description" content={`This is the creator form page of Voolata`} />
                 <meta name="keywords" content="creator, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen pt-6">
-                <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
+            <div className="flex justify-center h-screen pt-12 md:pt-6">
+                <div className="flex flex-col lg:flex-row w-[90%] md:w-[60%] lg:w-[50%] space-y-6 lg:space-y-0 lg:space-x-4">
                     {/* <div className="basis-1/4 hidden lg:block">
                         <SideBar />
                     </div> */}
@@ -219,7 +214,7 @@ const CreatorInput = () => {
                                         </div>
 
                                         <h1 className="text-2xl font-bold">Socials</h1>
-                                        {arrData?.map((arr: LinkType, index: number) => (
+                                        {arrData?.map((arr: ArrayInput, index: number) => (
                                             <div
                                                 className="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-4"
                                                 key={index}
@@ -253,8 +248,8 @@ const CreatorInput = () => {
                                                         <input
                                                             type="text"
                                                             id={`name-${index}`}
-                                                            name="name"
-                                                            value={arr.name}
+                                                            name="link"
+                                                            value={arr.link}
                                                             onChange={(e) => handleChange(e, index)}
                                                             placeholder={arr.text}
                                                             autoComplete="off"
@@ -262,14 +257,14 @@ const CreatorInput = () => {
                                                         />
                                                         <span className="absolute left-0 bottom-0 h-[2px] w-full bg-transparent scale-x-0 border-gray-500 transition-transform duration-300 peer-focus:scale-x-100 peer-focus:bg-gray-900"></span>
                                                     </div>
-                                                    {arr.name && (
+                                                    {arr.link && (
                                                         <>
                                                             <button
                                                                 type="button"
                                                                 className="p-2"
                                                                 onClick={() => {
                                                                     setIsEditable(true);
-                                                                    setOtherLink(arr.name);
+                                                                    setOtherLink(arr.link);
                                                                     setOtherName(arr.label);
                                                                     setOpen(true);
                                                                 }}
@@ -291,7 +286,7 @@ const CreatorInput = () => {
 
                                         <div className="flex justify-center">
                                             <button
-                                                className="px-4 py-2 mt-4 rounded-lg w-full lg:w-[70%] text-white bg-black text-lg"
+                                                className="px-4 py-2 mt-4 rounded-md w-full text-white bg-black text-lg"
                                                 type="button"
                                                 onClick={() => setOpen(true)}
                                             >
@@ -376,7 +371,7 @@ const CreatorInput = () => {
 
                                         <div className="flex justify-center pb-2">
                                             <button
-                                                className="px-4 py-2 mt-4 rounded-lg w-full lg:w-[70%] text-white bg-purple-500 text-lg"
+                                                className="px-4 py-2 mt-4 rounded-md w-full text-white bg-purple-500 text-lg"
                                                 type="submit"
                                                 disabled={creatorLoading}
                                             >

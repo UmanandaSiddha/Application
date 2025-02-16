@@ -25,22 +25,27 @@ const BotanyCardSchema: Schema<BotanyData> = new mongoose.Schema(
             type: String,
             required: true,
         },
+        waterRequirement: String,
+        sunlightRequirement: String,
+        commonPestsDiseases: String,
+        symptoms: String,
+        nutritionalNeeds: String,
         scientificName: String,
-        family: String,
-        origin: String,
-        habitat: String,
+        // family: String,
+        // origin: String,
+        // habitat: String,
         description: String,
         height: String,
         leafType: String,
-        flowerColor: String,
-        uses: String,
+        // flowerColor: String,
+        // uses: String,
         careInstructions: String,
         specialFeatures: String,
         caretakerMobileNumber: String,
         additionalNotes: String,
     }, {
-        _id: false
-    }
+    _id: false
+}
 );
 
 const MedicalCardSchema: Schema<MedicalData> = new mongoose.Schema(
@@ -82,8 +87,8 @@ const MedicalCardSchema: Schema<MedicalData> = new mongoose.Schema(
         insurancePolicyNumber: String,
         insuranceGrpNumber: String,
     }, {
-        _id: false
-    }
+    _id: false
+}
 );
 
 const IndividualCardSchema: Schema<IndividualData> = new mongoose.Schema(
@@ -173,8 +178,8 @@ const IndividualCardSchema: Schema<IndividualData> = new mongoose.Schema(
             default: []
         },
     }, {
-        _id: false
-    }
+    _id: false
+}
 );
 
 const CreatorCardSchema: Schema<CreatorData> = new mongoose.Schema(
@@ -191,8 +196,8 @@ const CreatorCardSchema: Schema<CreatorData> = new mongoose.Schema(
             default: []
         },
     }, {
-        _id: false
-    }
+    _id: false
+}
 );
 
 const AnimalCardSchema: Schema<AnimalData> = new mongoose.Schema(
@@ -201,21 +206,20 @@ const AnimalCardSchema: Schema<AnimalData> = new mongoose.Schema(
             type: String,
             required: true,
         },
-        scientificName: String,
-        habitat: String,
-        geographicalRange: String,
+        signIllness: String,
+        vaccination: String,
+        commonHealth: String,
         physicalDescription: String,
         diet: String,
         lifespan: String,
         behavior: String,
-        conservationStatus: String,
         ownerName: String,
         location: String,
         caretakerMobileNumber: String,
         additionalNotes: String,
     }, {
-        _id: false
-    }
+    _id: false
+}
 );
 
 const CardSchema: Schema<ICard> = new mongoose.Schema(
@@ -226,7 +230,7 @@ const CardSchema: Schema<ICard> = new mongoose.Schema(
             required: true,
         },
         data: {
-            type: BotanyCardSchema || MedicalCardSchema || IndividualCardSchema || CreatorCardSchema || AnimalCardSchema,
+            type: Schema.Types.Mixed,
             required: true,
             validate: {
                 validator: function (value: any) {

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { getGoogleAuthUrl } from "@/lib/google";
 import { useState } from "react";
 import axios from "axios";
-import { UserResponse } from "@/types/api-types";
+// import { UserResponse } from "@/types/api-types";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
 import { RxCross2 } from "react-icons/rx";
@@ -39,7 +39,7 @@ const Login = () => {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             };
-            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, userData, config);
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, userData, config);
             dispatch(userExist(data.user));
             toast.success("Logged In!");
             navigate(from, { replace: true });

@@ -128,14 +128,14 @@ export const requestVerification = catchAsyncErrors(async (req: UserRequest, res
 });
 
 // Verify User
-export const verifyUser = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const verifyUser = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const { otp } = req.body;
     if (!otp) {
         return next(new ErrorHandler("Please enter OTP", 400));
     }
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return next(new ErrorHandler("Invalid ID format", 400));
+    const { user } = req;
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
     }
 
     const oneTimePassword = crypto
@@ -143,26 +143,26 @@ export const verifyUser = catchAsyncErrors(async (req: Request, res: Response, n
         .update(otp.toString())
         .digest("hex");
 
-    const user = await User.findOne({
-        _id: id,
+    const otpUser = await User.findOne({
+        _id: user._id,
         oneTimePassword,
         oneTimeExpire: { $gt: Date.now() },
     });
-    if (!user) {
+    if (!otpUser) {
         return next(new ErrorHandler("Email Veification OTP has Expired", 400));
     }
 
-    user.account.isVerified = true;
-    user.oneTimePassword = undefined;
-    user.oneTimeExpire = undefined;
-    await user.save();
+    otpUser.account.isVerified = true;
+    otpUser.oneTimePassword = undefined;
+    otpUser.oneTimeExpire = undefined;
+    await otpUser.save();
     
     try {
         const options= {
             templateId: EMAIL_ACCOUNT_CREATED,
-            recieverEmail: user.profile.email,
+            recieverEmail: otpUser.profile.email,
             dynamicData: {
-                name: `${user.profile.firstName} ${user.profile.lastName}`,
+                name: `${otpUser.profile.firstName} ${otpUser.profile.lastName}`,
             }
         }
         await sendMail(options);
@@ -170,7 +170,7 @@ export const verifyUser = catchAsyncErrors(async (req: Request, res: Response, n
         console.log(error.message);
     }
 
-    sendToken(user, 200, res);
+    sendToken(otpUser, 200, res);
 });
 
 // User Login

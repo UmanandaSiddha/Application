@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plan } from "@/types/plan_types";
-import { PlanResponse, UserResponse } from "@/types/api-types";
+// import { Plan } from "@/types/plan_types";
+// import { PlanResponse, UserResponse } from "@/types/api-types";
 import { toast } from "react-toastify";
 import { togglePaid, userExist } from "@/redux/reducer/userReducer";
 import Loader from "@/components/rest/loader";
 import { Helmet } from "react-helmet-async";
+import { IPlan, PlanEnum } from "@/types/type";
 
 export const periodEnum = {
     DAILY: "daily",
@@ -21,7 +22,7 @@ const PlanPage = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [plans, setPlans] = useState<Plan[] | null>();
+    const [plans, setPlans] = useState<IPlan[] | null>();
     const { user, isPaid, loading } = useSelector((state: RootState) => state.userReducer);
 
     const periodToDays = (period: string) => {
@@ -39,7 +40,7 @@ const PlanPage = () => {
 
     const fetchPlans = async () => {
         try {
-            const { data }: { data: PlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/all`, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(`${import.meta.env.VITE_BASE_URL}/plan/all`, { withCredentials: true });
             setPlans(data.plans);
             const chachedPlan = {
                 created: Date.now() + 30 * 1000,
@@ -67,7 +68,7 @@ const PlanPage = () => {
 
     const handleFreePlan = async (id: string) => {
         try {
-            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new/free/${id}`, { data: "null" }, { withCredentials: true });
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new/free/${id}`, { data: "null" }, { withCredentials: true });
             dispatch(userExist(data.user));
             dispatch(togglePaid(true));
             toast.success("Free plan activated successfully");
@@ -85,7 +86,7 @@ const PlanPage = () => {
                 <meta name="description" content={`This is the pricing page of Voolata`} />
                 <meta name="keywords" content="pricing, voolata" />
             </Helmet>
-            <div className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] flex flex-col justify-center items-center py-6 pt-24">
+            <div className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] flex flex-col justify-center items-center py-8 pt-28">
             {/* <div className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] flex flex-col justify-center items-center py-6"> */}
                 <div className="text-center">
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold">
@@ -116,8 +117,8 @@ const PlanPage = () => {
                                     </span>
                                 </h1>
                                 <h2 className="text-sm mb-5">
-                                    {user?.activePlan?.planId === plan._id &&
-                                        ["active", "pending"].includes(user?.activePlan?.status) &&
+                                    {user?.access.latestSubscription?.planId === plan._id &&
+                                        ["active", "pending"].includes(user.access.latestSubscription.status) &&
                                         "active"}
                                 </h2>
                                 <hr />
@@ -134,7 +135,7 @@ const PlanPage = () => {
                                             toast.warning("You already have a plan");
                                             return;
                                         }
-                                        if (plan.planType === "free") {
+                                        if (plan.planType === PlanEnum.FREE) {
                                             handleFreePlan(plan._id);
                                         } else {
                                             navigate(`/checkout/${plan?._id}`);

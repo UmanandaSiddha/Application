@@ -4,7 +4,6 @@ import { createSubscription } from "../controllers/donator.controller.js";
 import {
     cancelSubscription,
     captureSubscription,
-    createFreeSubscription,
     getLatestSubscription,
     getParticularTransaction,
     getUserTransactions,
@@ -14,7 +13,6 @@ import {
 const router = express.Router();
 
 router.route("/new").post(isAuthenticatedUser, isUserVerified, createSubscription);
-router.route("/new/free/:id").post(isAuthenticatedUser, isUserVerified, createFreeSubscription);
 router.route("/capture").post(isAuthenticatedUser, isUserVerified, captureSubscription);
 router.route("/webhook/sub").post(verifySubscription);
 router.route("/cancel/:id").get(isAuthenticatedUser, isUserVerified, cancelSubscription);

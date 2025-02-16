@@ -1,27 +1,27 @@
 import { createQRCode } from '@/lib/helper';
-import { Animal, Creator, MedicalType, Personal, Tree } from '@/types/card_types';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface PropTypes {
     type: string;
-    card: Tree | Personal | MedicalType | Creator | Animal;
+    shortCode: string;
 }
 
-const GenerateQRCode = ({ type, card }: PropTypes) => {
+const GenerateQRCode = ({ shortCode, type }: PropTypes) => {
 
     const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
 
     useEffect(() => {
-        const qrCode = createQRCode(type, card.shortCode);
+        const qrCode = createQRCode(type, shortCode);
 
         qrCode.getRawData("png").then((data) => {
             if (data) {
                 const dataUrl = URL.createObjectURL(new Blob([data], { type: "image/png" }));
                 setQrCodeDataUrl(dataUrl);
+                console.log(dataUrl);
             }
         });
-    }, [type, card]);
+    }, [type, shortCode]);
 
     if (!qrCodeDataUrl) {
         return <Loader2 className="text-center animate-spin" />
@@ -30,7 +30,7 @@ const GenerateQRCode = ({ type, card }: PropTypes) => {
     return (
         <img
             src={qrCodeDataUrl}
-            alt={card.name}
+            alt={shortCode}
             className="rounded-lg object-cover"
         />
     )

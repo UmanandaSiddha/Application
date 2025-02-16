@@ -70,30 +70,30 @@ export const hasAccess = catchAsyncErrors( async (req: UserRequest, res: Respons
     next();
 });
 
-// export const checkCancellation = catchAsyncErrors( async (req: UserRequest, res: Response, next: NextFunction) => {
-//     const updateUserCards = async () => {
-//         if (req.user?.access.cards.total.extra !== 0) {
-//             await User.findByIdAndUpdate(
-//                 req.user?._id,
-//                 { "cards.total.extra": 0 },
-//                 { new: true, runValidators: true, useFindAndModify: false }
-//             );
-//         }
-//     };
+export const checkCancellation = catchAsyncErrors( async (req: UserRequest, res: Response, next: NextFunction) => {
+    const updateUserCards = async () => {
+        if (req.user?.access.cards.total.extra !== 0) {
+            await User.findByIdAndUpdate(
+                req.user?._id,
+                { "cards.total.extra": 0 },
+                { new: true, runValidators: true, useFindAndModify: false }
+            );
+        }
+    };
 
-//     const status = req.user?.access.freePlan;
-//     if (status) {
-//         await updateUserCards();
-//     }
+    const status = req.user?.access.freeAccess;
+    if (status) {
+        await updateUserCards();
+    }
 
-//     if (req.user?.access.latestSubsciption) {
-//         const subscription = await Subscription.findById(req.user?.access.latestSubsciption);
-//         if (subscription && subscription.status === "cancelled" && subscription.currentEnd <= new Date(Date.now())) {
-//             await updateUserCards();
-//         }
-//     }
-//     next();
-// });
+    if (req.user?.access.latestSubscription) {
+        const subscription = await Subscription.findById(req.user?.access.latestSubscription);
+        if (subscription && subscription.status === "cancelled" && subscription.currentEnd <= new Date(Date.now())) {
+            await updateUserCards();
+        }
+    }
+    next();
+});
 
 export const authorizeRoles = (...roles: string[]) => {
     return (req: UserRequest, res: Response, next: NextFunction) => {

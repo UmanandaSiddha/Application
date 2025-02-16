@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 import { toast } from "react-toastify";
-import { UserResponse } from "@/types/api-types";
+// import { UserResponse } from "@/types/api-types";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
@@ -65,7 +65,7 @@ const OrgRegister = () => {
         };
         try {
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: UserResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register?type=org`, registerData, config);
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register?type=org`, registerData, config);
             dispatch(userExist(data.user));
             toast.success("User Registered!");
             navigate("/verify?otpSent=true");

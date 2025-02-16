@@ -1,6 +1,5 @@
 import OtpInput from "@/components/rest/otp-input";
 import { donatorExist, donatorNotExist } from "@/redux/reducer/donatorReducer";
-import { DonatorResponse } from "@/types/api-types";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -49,7 +48,7 @@ const DonationLogin = () => {
         }
         setVerifyLoading(true);
         try {
-            const { data }: { data: DonatorResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/donate/login`, { email, otp }, { withCredentials: true });
+            const { data }: { data: any } = await axios.put(`${import.meta.env.VITE_BASE_URL}/donate/login`, { email, otp }, { withCredentials: true });
             dispatch(donatorExist(data.donator));
             toast.success("Logged in successfully");
             navigate(from, { replace: true });

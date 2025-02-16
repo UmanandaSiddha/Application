@@ -1,7 +1,8 @@
 import Loader from "@/components/rest/loader";
 import "@/css/print.css";
 import { RootState } from "@/redux/store";
-import { Transaction } from "@/types/plan_types";
+import { ITransaction } from "@/types/type";
+// import { Transaction } from "@/types/plan_types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -12,7 +13,7 @@ import { toast } from "react-toastify";
 const RecieptPage = () => {
 
     const { type, id } = useParams();
-    const [transaction, setTransaction] = useState<Transaction | null>();
+    const [transaction, setTransaction] = useState<ITransaction | null>();
     const { donator } = useSelector((state: RootState) => state.donatorReducer);
     const [reciept, setReciept] = useState(false);
 
@@ -50,9 +51,9 @@ const RecieptPage = () => {
                             <img src="/voolata_sqaure_r.png" alt="" className="w-12 md:w-14 mt-2 md:mt-0 sm:mr-16" />
                         </div>
                         <div className="flex flex-col gap-5 w-full md:w-[90%] pl-4 mx-auto">
-                            {type === "donate" && donator?.pan && (
+                            {/* {type === "donate" && donator?.pan && (
                                 <h2 className="mt-2 text-xl md:text-2xl font-semibold text-center">{reciept ? "80g Receipt" : "Invoice"}</h2>
-                            )}
+                            )} */}
                             <div className="flex flex-col md:flex-row gap-6">
                                 <div className="mt-6 flex flex-col items-start">
                                     <h2 className="text-lg md:text-xl font-semibold">Premium Delux Plan</h2>
@@ -70,8 +71,8 @@ const RecieptPage = () => {
                                         <p>Payment Id: {transaction.razorpayPaymentId}</p>
                                         <p>Order Id: {transaction.razorpayOrderId}</p>
                                         <p>Currency: {transaction.currency.toUpperCase()}</p>
-                                        <p>Payment Method: {transaction.paymentMethod?.methodType.toUpperCase()}</p>
-                                        {type === "donate" && donator?.pan && (
+                                        <p>Payment Method: {transaction.paymentMethod?.methodType && transaction.paymentMethod?.methodType.toUpperCase()}</p>
+                                        {/* {type === "donate" && donator?.pan && (
                                             <div className="flex justify-center items-center h-full w-full mt-3">
                                                 <div className="inline-flex justify-center items-center border-2 border-blue-500 shadow-x rounded-lg">
                                                     <button
@@ -92,7 +93,7 @@ const RecieptPage = () => {
                                                     </button>
                                                 </div>
                                             </div>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             </div>

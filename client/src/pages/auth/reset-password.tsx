@@ -4,7 +4,7 @@ import { userExist, userNotExist } from "../../redux/reducer/userReducer";
 
 import { toast } from "react-toastify";
 import { useState } from "react";
-import { UserResponse } from "@/types/api-types";
+// import { UserResponse } from "@/types/api-types";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -47,7 +47,7 @@ const ResetPassword = () => {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             };
-            const { data }: { data: UserResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/${token}`, resetData, config);
+            const { data }: { data: any } = await axios.put(`${import.meta.env.VITE_BASE_URL}/user/password/reset/${token}`, resetData, config);
             dispatch(userExist(data.user));
             toast.success("Password Reset Successfully");
             navigate("/dashboard");

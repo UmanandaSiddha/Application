@@ -1,7 +1,5 @@
 # Database Schema
 
- 
-
 ## Users
 
 | Field | Type | Constraints |
@@ -11,7 +9,7 @@
 | email | String | Unique, Required |
 | password | String | Required |
 
-## Posts
+## Cards
 
 | Field | Type | Constraints |
 | --- | --- | --- |

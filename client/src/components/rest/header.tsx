@@ -89,12 +89,12 @@ export default function Header() {
                 <div className="hidden lg:block">
                     {user ? (
                         <div onClick={() => navigate("/profile")} className="flex items-center gap-3">
-                            <p className="hidden cursor-pointer sm:block text-md">{user.name.split(" ")[0]}</p>
-                            {user.image ? (
-                                <img src={user.image} className='h-8 w-8 rounded-full' alt="avatar" />
+                            <p className="hidden cursor-pointer sm:block text-md">{user.profile.firstName[0]}</p>
+                            {user.profile.profilePicture ? (
+                                <img src={user.profile.profilePicture} className='h-8 w-8 rounded-full' alt="avatar" />
                             ) : (
                                 <div className='h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center'>
-                                    <p className='text-sm font-semibold text-black'>{user.name[0].toUpperCase()}</p>
+                                    <p className='text-sm font-semibold text-black'>{user.profile.firstName[0].toUpperCase()}</p>
                                 </div>
                             )}
                         </div>
@@ -157,14 +157,14 @@ export default function Header() {
                                 {user ? (
                                     <div className="flex items-center justify-center gap-2">
                                         <Link to="/profile" className='flex items-center'>
-                                            {user.image ? (
-                                                <img src={user.image} className='h-10 w-10 rounded-full' alt="avatar" />
+                                            {user.profile.profilePicture ? (
+                                                <img src={user.profile.profilePicture} className='h-10 w-10 rounded-full' alt="avatar" />
                                             ) : (
                                                 <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
-                                                    <p className='text-xl font-semibold text-black'>{user.name[0].toUpperCase()}</p>
+                                                    <p className='text-xl font-semibold text-black'>{user.profile.firstName[0].toUpperCase()}</p>
                                                 </div>
                                             )}
-                                            <span className="mx-2 font-medium text-gray-800">{user.name}</span>
+                                            <span className="mx-2 font-medium text-gray-800">{user.profile.firstName}</span>
                                         </Link>
                                         <IoIosLogOut onClick={logout} className="object-cover mx-2 rounded-full h-6 w-6" />
                                     </div>

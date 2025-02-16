@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { SinglePersonalResponse } from "@/types/api-types";
 // import SideBar from "@/components/rest/sidebar";
 import { IoMdLink } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
@@ -32,12 +31,9 @@ import TextInput from "@/components/rest/text-input";
 import SelectInput from "@/components/rest/select-input";
 import MultiSelectInput from "@/components/rest/multi-select-input";
 import { Helmet } from "react-helmet-async";
-
-type LinkType = {
-    name: string;
-    label: string;
-    text: string;
-}
+import { CardResponse } from "./animal";
+import { IndividualData } from "@/types/type";
+import { ArrayInput } from "./creator";
 
 const CreatePersonal = () => {
     const navigate = useNavigate();
@@ -48,7 +44,7 @@ const CreatePersonal = () => {
     const [otherLink, setOtherLink] = useState("");
     const [otherName, setOtherName] = useState("");
     const [open, setOpen] = useState<boolean>(false);
-    const [socialData, setSocialData] = useState<LinkType[]>(socials);
+    const [socialData, setSocialData] = useState<ArrayInput[]>(socials);
     const [isEditable, setIsEditable] = useState(false);
 
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
@@ -76,10 +72,11 @@ const CreatePersonal = () => {
     const fetchPersonal = async () => {
         if (id) {
             try {
-                const { data }: { data: SinglePersonalResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=individual`, { withCredentials: true });
+                const { data }: { data: CardResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/cards/detailed/${id}?type=individual`, { withCredentials: true });
                 setIsPersonal(true);
-                reset(convertToStrings(data.vCard));
-                setSocialData(data.vCard.socialMedia);
+                const individualData = data.card.data as IndividualData;
+                reset(convertToStrings(individualData));
+                setSocialData(individualData.socialMedia.length > 0 ? individualData.socialMedia : socials);
             } catch (error: any) {
                 toast.error(error.response.data.message);
             }
@@ -91,18 +88,18 @@ const CreatePersonal = () => {
     }, [id, reset]);
 
     const handleAdd = () => {
-        if (!isEditable && Array.isArray(socialData) && socialData.find((arr: LinkType) => arr.label.trim().toLowerCase() === otherName.trim().toLowerCase())) {
+        if (!isEditable && Array.isArray(socialData) && socialData.find((arr: ArrayInput) => arr.label.trim().toLowerCase() === otherName.trim().toLowerCase())) {
             toast.warning("Platform already exists!");
             return;
         }
         if (isEditable) {
             const normalizedOtherName = otherName.trim().toLowerCase();
-            const index = socialData.findIndex((arr: LinkType) => arr.label.trim().toLowerCase() === normalizedOtherName);
+            const index = socialData.findIndex((arr: ArrayInput) => arr.label.trim().toLowerCase() === normalizedOtherName);
             if (index !== -1) {
                 const updatedArr = [...socialData];
                 updatedArr[index] = {
                     ...updatedArr[index],
-                    name: otherLink,
+                    link: otherLink,
                     text: `Enter Your ${otherName} Profile`,
                 };
                 setSocialData(updatedArr);
@@ -112,7 +109,7 @@ const CreatePersonal = () => {
             setSocialData([
                 ...socialData,
                 {
-                    name: otherLink,
+                    link: otherLink,
                     label: otherName,
                     text: `Enter Your ${otherName} Profile`,
                 },
@@ -139,31 +136,31 @@ const CreatePersonal = () => {
         for (let i = 0; i < socialData.length; i++) {
             const element = {
                 label: socialData[i].label,
-                name: socialData[i].name,
+                link: socialData[i].link,
             };
-            if (element.name) {
+            if (element.link) {
                 final.push(element);
             }
         }
         const personalData = {
             ...values,
             socialMedia: final,
-            user: user?._id,
+            // user: user?._id,
         };
-        if (!isPaid && user?.cards?.total! > 10 && user?.role !== "admin") {
+        if (!isPaid && user?.access.cards?.total.extra! > 10 && user?.profile.role !== "ADMIN") {
             navigate("/plans");
         } else {
             setPersonalLoading(true);
             try {
                 if (isPersonal) {
-                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=individual`, personalData, { withCredentials: true });
+                    await axios.put(`${import.meta.env.VITE_BASE_URL}/cards/edit/${id}?type=INDIVIDUAL`, personalData, { withCredentials: true });
                 } else {
-                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=individual`, personalData, { withCredentials: true });
+                    await axios.post(`${import.meta.env.VITE_BASE_URL}/cards/new?type=INDIVIDUAL`, personalData, { withCredentials: true });
                 }
                 navigate(-1);
             } catch (error: any) {
                 toast.error(error.response.data.message);
-                navigate("/plans");
+                // navigate("/plans");
             } finally {
                 setPersonalLoading(false);
             }
@@ -180,7 +177,7 @@ const CreatePersonal = () => {
 
     const handleDeleteSocial = (label: string) => {
         const normalizedLabel = label.trim().toLowerCase();
-        const updatedArr = socialData.filter((arr: LinkType) => arr.label.trim().toLowerCase() != normalizedLabel);
+        const updatedArr = socialData.filter((arr: ArrayInput) => arr.label.trim().toLowerCase() != normalizedLabel);
         setSocialData(updatedArr);
     }
 
@@ -199,7 +196,7 @@ const CreatePersonal = () => {
                         />
 
                         <h1 className="py-4 text-2xl font-semibold">Socials</h1>
-                        {socialData?.map((arr: LinkType, index: number) => (
+                        {socialData?.map((arr: ArrayInput, index: number) => (
                             <div className="relative w-full flex items-center" key={index}>
                                 <label
                                     htmlFor={`name-${index}`}
@@ -230,8 +227,8 @@ const CreatePersonal = () => {
                                         <input
                                             type="text"
                                             id={`name-${index}`}
-                                            name="name"
-                                            value={arr.name}
+                                            name="link"
+                                            value={arr.link}
                                             onChange={(e) => handleChange(e, index)}
                                             placeholder={arr.text}
                                             autoComplete="off"
@@ -239,14 +236,14 @@ const CreatePersonal = () => {
                                         />
                                         <span className="after:content[' '] pointer-events-none absolute left-0 bottom-0 h-[2px] w-full bg-transparent transition-transform duration-300 scale-x-0 border-gray-500 peer-focus:scale-x-100 peer-focus:bg-gray-900 peer-placeholder-shown:border-blue-gray-200"></span>
                                     </div>
-                                    {arr.name != "" && (
+                                    {arr.link != "" && (
                                         <>
                                             <button
                                                 type="button"
                                                 className="p-2"
                                                 onClick={() => {
                                                     setIsEditable(true);
-                                                    setOtherLink(arr.name);
+                                                    setOtherLink(arr.link);
                                                     setOtherName(arr.label);
                                                     setOpen(true);
                                                 }}
@@ -572,8 +569,8 @@ const CreatePersonal = () => {
                 <meta name="description" content={`This is the individual form page of Voolata`} />
                 <meta name="keywords" content="individual, form, voolata" />
             </Helmet>
-            <div className="flex justify-center h-screen pt-6">
-                <div className="flex flex-col lg:flex-row w-[90%] md:w-[85%] lg:w-[80%] space-y-6 lg:space-y-0 lg:space-x-4">
+            <div className="flex justify-center h-screen pt-12 md:pt-6">
+                <div className="flex flex-col lg:flex-row w-[90%] md:w-[60%] lg:w-[50%] space-y-6 lg:space-y-0 lg:space-x-4">
                     {/* <div className="basis-1/4 hidden lg:block">
                         <SideBar />
                     </div> */}
@@ -594,7 +591,7 @@ const CreatePersonal = () => {
 
                         <form
                             onSubmit={handleSubmit(onSubmit)}
-                            className="flex flex-col space-y-2 w-full lg:w-[90%] mx-auto px-4 md:px-0"
+                            className="flex flex-col space-y-2 w-full mx-auto px-4 md:px-0"
                         >
                             <div className="flex gap-10 lg:gap-20 justify-center items-center">
                                 <button
@@ -622,7 +619,7 @@ const CreatePersonal = () => {
 
                             <div className="flex justify-center w-full lg:w-[70%] mx-auto gap-4 pb-4">
                                 <button
-                                    className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
+                                    className="sm:hidden px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                     type="button"
                                     disabled={progressBar === 1}
                                     onClick={() => setProgressBar((currPage) => currPage - 1)}
@@ -631,7 +628,7 @@ const CreatePersonal = () => {
                                 </button>
                                 {progressBar === 5 ? (
                                     <button
-                                        className="px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
+                                        className="px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="submit"
                                         disabled={personalLoading}
                                     >
@@ -639,7 +636,7 @@ const CreatePersonal = () => {
                                     </button>
                                 ) : (
                                     <button
-                                        className="sm:hidden px-4 py-2 mt-4 rounded-lg hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
+                                        className="sm:hidden px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-purple-500 text-lg"
                                         type="button"
                                         onClick={() => setProgressBar((currPage) => currPage + 1)}
                                     >

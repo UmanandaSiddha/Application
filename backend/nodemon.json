@@ -3,7 +3,7 @@
         "src"
     ],
     "ext": "ts,js",
-    "exec": "node --loader ts-node/esm ./src/index.ts",
+    "exec": "tsx ./src/index.ts",
     "ignore": [
         "node_modules",
         "dist"

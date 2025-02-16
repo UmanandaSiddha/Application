@@ -34,16 +34,17 @@ export const setSvg = (input: string) => {
     }
 }
 
-export const qrStyles: Record<string, { qrColor: string; dotColor: string }> = {
-    botanical: { qrColor: "#4ade80", dotColor: "#22c55e" },
-    individual: { qrColor: "#60a5fa", dotColor: "#3b82f6" },
-    medical: { qrColor: "#818cf8", dotColor: "#6366f1" },
-    creator: { qrColor: "#22d3ee", dotColor: "#06b6d4" },
-    animal: { qrColor: "#f87171", dotColor: "#ef4444" },
-    default: { qrColor: "#9ca3af", dotColor: "#6b7280" },
+export const qrStyles: Record<string, { qrColor: string; dotColor: string; bgColor: string; textColor: string }> = {
+    botanical: { qrColor: "#4ade80", dotColor: "#22c55e", bgColor: "bg-[#22c55e]", textColor: "text-[#22c55e]" },
+    individual: { qrColor: "#60a5fa", dotColor: "#3b82f6", bgColor: "bg-[#3b82f6]", textColor: "text-[#3b82f6]" },
+    medical: { qrColor: "#818cf8", dotColor: "#6366f1", bgColor: "bg-[#6366f1]", textColor: "text-[#6366f1]" },
+    creator: { qrColor: "#22d3ee", dotColor: "#06b6d4", bgColor: "bg-[#06b6d4]", textColor: "text-[#06b6d4]" },
+    animal: { qrColor: "#f87171", dotColor: "#ef4444", bgColor: "bg-[#ef4444]", textColor: "text-[#ef4444]" },
+    default: { qrColor: "#9ca3af", dotColor: "#6b7280", bgColor: "bg-[#6b7280]", textColor: "text-[#6b7280]" },
 };
 
 export const createQRCode = (type: string, cardId: string) => {
+    type = type.toLowerCase();
     const styles = type && qrStyles[type] ? qrStyles[type] : qrStyles.default;
     let baseUrl = `${window.location.protocol}//${window.location.host}`;
     if (!baseUrl) {

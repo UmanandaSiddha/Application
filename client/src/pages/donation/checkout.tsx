@@ -4,7 +4,6 @@ import { RootState } from "../../redux/store";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { DonatorResponse } from "@/types/api-types";
 import { donatorExist } from "@/redux/reducer/donatorReducer";
 import { Helmet } from "react-helmet-async";
 import { Loader2 } from "lucide-react";
@@ -51,8 +50,9 @@ const DonationCheckout = () => {
     });
     const [checkoutLoading, setCheckoutLoading] = useState(false);
     const [updateData, setUpdateData] = useState({
-        name: donator?.name || "",
-        phone: donator?.phone || "",
+        firstName: donator?.firstName || "",
+        lastName: donator?.lastName || "",
+        phoneNumber: donator?.phoneNumber || "",
         street: donator?.address?.street || "",
         state: donator?.address?.state || "",
         city: donator?.address?.city || "",
@@ -65,11 +65,12 @@ const DonationCheckout = () => {
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { name, phone, address } = donator || {};
+        const { firstName, lastName, phoneNumber, address } = donator || {};
         const { street, state, city, postalCode, country } = address || {};
         const isDataSame =
-            name === updateData.name &&
-            phone === updateData.phone &&
+            firstName === updateData.firstName &&
+            lastName === updateData.lastName &&
+            phoneNumber === updateData.phoneNumber &&
             street === updateData.street &&
             state === updateData.state &&
             city === updateData.city &&
@@ -87,7 +88,7 @@ const DonationCheckout = () => {
         }
         setUpdateLoading(true);
         try {
-            const { data }: { data: DonatorResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new`, updateData, { withCredentials: true });
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new`, updateData, { withCredentials: true });
             dispatch(donatorExist(data.donator));
             toast.success("Succssfully updated");
         } catch (error: any) {
@@ -99,8 +100,8 @@ const DonationCheckout = () => {
 
     const handleCheckout = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { name, phone, address } = donator || {};
-        if (!name || !phone || !address) {
+        const { firstName, lastName, phoneNumber, address } = donator || {};
+        if (!firstName || !lastName || !phoneNumber || !address) {
             toast.warning("Please update your billing details");
             return;
         }
@@ -169,7 +170,7 @@ const DonationCheckout = () => {
                     timeout: 120,
                     readonly: {
                         email: donator?.email,
-                        name: donator?.name,
+                        name: donator?.firstName,
                     },
                     theme: {
                         color: "#3399cc",
@@ -215,7 +216,7 @@ const DonationCheckout = () => {
                     timeout: 120,
                     readonly: {
                         email: donator?.email,
-                        name: donator?.name,
+                        name: donator?.firstName,
                     },
                     theme: {
                         color: "#3399cc",
@@ -271,15 +272,27 @@ const DonationCheckout = () => {
                             </div>
                             <form onSubmit={handleUpdate} className="mt-8 space-y-2">
                                 <div>
-                                    <label htmlFor="name" className="block text-sm font-medium">Name</label>
+                                    <label htmlFor="name" className="block text-sm font-medium">First Name</label>
                                     <input
                                         type="text"
                                         id="name"
-                                        name="name"
+                                        name="first-name"
                                         className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
-                                        placeholder="Your Name"
-                                        value={updateData.name}
-                                        onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
+                                        placeholder="First Name"
+                                        value={updateData.firstName}
+                                        onChange={(e) => setUpdateData({ ...updateData, firstName: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="name" className="block text-sm font-medium">Last Name</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="last-name"
+                                        className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
+                                        placeholder="Last Name"
+                                        value={updateData.lastName}
+                                        onChange={(e) => setUpdateData({ ...updateData, lastName: e.target.value })}
                                     />
                                 </div>
                                 <div>
@@ -290,8 +303,8 @@ const DonationCheckout = () => {
                                         name="phone"
                                         className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:border-blue-500 focus:ring-blue-500"
                                         placeholder="123-456-7890"
-                                        value={updateData.phone}
-                                        onChange={(e) => setUpdateData({ ...updateData, phone: e.target.value })}
+                                        value={updateData.phoneNumber}
+                                        onChange={(e) => setUpdateData({ ...updateData, phoneNumber: e.target.value })}
                                     />
                                 </div>
                                 <div>
