@@ -1,7 +1,55 @@
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import Slider from "react-slick";
+import donation from '../../assets/extra/donation.svg';
+import inovation from '../../assets/extra/innovation.svg';
+import server from '../../assets/extra/server.svg';
+import support from '../../assets/extra/support.svg';
+import sustain from '../../assets/extra/sustain.svg';
+import foster from '../../assets/extra/foster.svg';
+import arrow from '../../assets/extra/arrow.svg';
+import rocket from '../../assets/extra/rocket.svg';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+const data = [
+    {
+        title: "Sustainability",
+        image: sustain,
+        alt: "Sustainability",
+        description: "Sustainable innovations that support the future.",
+    },
+    {
+        title: "Empowering Communities",
+        image: foster,
+        alt: "Empowerment",
+        description: "Building smarter, user-friendly solutions.",
+    },
+    {
+        title: "Creating Jobs",
+        image: foster,
+        alt: "Jobs",
+        description: "Fostering employment and economic growth.",
+    }
+];
 
 const Donation = () => {
+    var settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: { slidesToShow: 2, slidesToScroll: 1, dots: true }
+            },
+            {
+                breakpoint: 768,
+                settings: { slidesToShow: 1, slidesToScroll: 1 }
+            }
+        ]
+    };
     return (
         <>
             <Helmet>
@@ -10,75 +58,98 @@ const Donation = () => {
                 <meta name="keywords" content="donation, voolata" />
             </Helmet>
             {/* <div className='w-[85%] mx-auto lg:mt-0 mt-10' > */}
-            <div className='w-[85%] mx-auto lg:mt-0 mt-10 max-sm:pt-10' >
-                <h1 className='text-3xl text-center md:text-6xl font-semibold lg:pb-20 lg:pt-16 sm:pt-10'>WHY WE NEED YOUR <span className='text-purple-500'>SUPPORT</span> </h1>
-                <div className='flex flex-col lg:flex-row lg:gap-10'>
-                    <div className='flex flex-col lg:h-96 max-lg:pt-20 lg:pt-16 lg:shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.3)] lg:w-1/3 gap-5 lg:rounded-xl max-lg:border-b-black max-lg:border-b-[3px] border-dotted lg:border-red-400 lg:border-[3px] lg:p-5'>
-                        <div className="flex gap-3 justify-center items-center">
-                            <img src="./research.png" alt="" className="sm:w-10 w-10 h-10" />
-                            <h1 className='text-2xl font-semibold max-lg:text-center '>Research and Development</h1>
-                        </div>
-                        <p className=' max-lg:text-justify max-lg:pb-20 p-5 lg:-mt-3'>
-                            Innovation is at the heart of what we do. Your donations will help us invest in cutting-edge research and development to create new technological solutions that address everyday challenges and improve lives.
+            <div className='p-6 md:p-10 lg:p-20'>
+                <div className='flex flex-col lg:flex-row items-center justify-between text-center lg:text-left gap-6'>
+                    <div className='lg:w-1/2'>
+                        <p className='text-2xl sm:text-3xl md:text-4xl font-bold leading-tight'>
+                            Donate now and be a part of the <span className='text-[#1858F0]'>Change!</span>
                         </p>
+                        <p className='text-base sm:text-lg md:text-xl mt-3 text-gray-700'>
+                            Join us in our mission to make a positive impact on the world.
+                        </p>
+                        <button className='mt-5 px-6 py-2 text-lg font-bold bg-[#1858F0] text-white rounded-lg hover:bg-blue-700 transition'>
+                            Donate
+                        </button>
                     </div>
-                    <div className='flex flex-col lg:pt-16 lg:h-96 lg:shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.3)] lg:w-1/3 lg:rounded-xl lg:border-red-400 max-lg:pt-20 max-lg:border-b-black max-lg:border-b-[3px] border-dotted lg:border-[3px] gap-10 lg:p-5 '>
-                        <div className="flex gap-7 justify-center items-center">
-                            <img src="./server.png" alt="" className="w-8 h-8" />
-                            <h1 className='text-2xl font-semibold sm:text-center md:text-left'>Server and Maintenance Costs</h1>
-                        </div>
-                        <p className=" max-lg:text-justify max-lg:pb-20 p-3 lg:-mt-9">
-                            To ensure our platforms run smoothly and securely, we need to cover ongoing server and maintenance expenses. Your support helps us maintain the reliability and efficiency of our services.
-                        </p>
-                    </div>
-                    <div className='flex flex-col lg:pt-16 lg:h-96 max-lg:pt-20 lg:shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.3)] lg:rounded-xl lg:w-1/3 lg:border-[3px] lg:border-red-400  max-lg:border-b-black max-lg:border-b-[3px] border-dotted gap-5 lg:p-5 '>
-                        <div className="flex gap-6 sm:justify-center items-center">
-                            <img src="./team.png" alt="" className="sm:w-10 w-8" />
-                            <h1 className='text-2xl font-semibold max-lg:text-center'>Team Support</h1>
-                        </div>
-                        <p className=" max-lg:text-justify max-lg:pb-20 p-6">
-                            Our dedicated team of professionals works tirelessly to develop and manage our platforms. Your contributions help us attract and retain top talent, ensuring that we continue to deliver high-quality solutions.
-                        </p>
+                    <div className='lg:w-1/2 flex justify-center'>
+                        <img src={donation} alt="Donation Illustration" className='w-40 sm:w-52 md:w-64' />
                     </div>
                 </div>
-                <h1 className='text-2xl md:text-4xl pb-20 pt-16 font-medium'>HOW YOUR DONATIONS MAKE A DIFFERENCE</h1>
-                <div className='flex gap-6 max-lg:flex-col lg:text-sm'>
-                    <div className='relative flex flex-col lg:w-1/3  '>
-                        <img src="./no-1.svg" alt="" className='w-20 max-sm:w-16 left-5 absolute z-10 ' />
-                        <div className='mt-8 flex flex-col gap-5 sm:pt-16 p-10 rounded-[30px] h-72 bg-[#f1bfdb] shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)]'>
-                            <h1 className='text-lg font-bold'>Empowering Communities</h1>
-                            <p>
-                                By supporting our projects, you help us create user-friendly platforms that make life easier and more efficient for individuals and businesses
-                            </p>
-                        </div>
-                    </div>
-                    <div className='relative flex flex-col lg:w-1/3 '>
-                        <img src="./no-2.svg" alt="" className='w-20 max-sm:w-16 left-5 absolute z-10' />
-                        <div className=' mt-8  flex flex-col gap-5 sm:pt-16  p-10 rounded-[30px] h-72 bg-[#f1bfdb] shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)] '>
-                            <h1 className='text-lg font-bold'>Creating Job Opportunities</h1>
-                            <p>
-                                Your donations enable us to generate employment through the platforms we develop, fostering financial independence and long-term growth.
-                            </p>
-                        </div>
-                    </div>
-                    <div className='relative flex flex-col lg:w-1/3 '>
-                        <img src="./no-3.svg" alt="" className='w-20 max-sm:w-16 left-5 absolute z-10 ' />
-                        <div className=' mt-8  flex flex-col gap-5 sm:pt-16  p-10 rounded-[30px] h-72 shadow-[-3px_12px_46px_-2px_rgba(0,_0,_0,_0.2)] bg-[#f1bfdb]'>
-                            <h1 className='text-lg font-bold'>Promoting Sustainability</h1>
-                            <p className='max-sm:text-sm'>
-                                We design eco-friendly solutions that encourage sustainable living practices. Our initiatives help conserve natural resources, reduce waste, and contribute to a healthier environment overall. By promoting digital solutions, we aim to create a more sustainable future for everyone.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <p className='md:text-2xl pt-20 pb-16'>
-                    Together, we can create a future where technology drives sustainable development and enhances the quality of life for all. Join us in our mission to make a positive impact on the world.
-                </p>
-                <h2 className='md:text-3xl pb-16'><span className="text-purple-700 font-semibold"><Link to="/donation/dashboard">Donate</Link></span> Now and be a part of the <span className='text-purple-500'>CHANGE!</span></h2>
 
-                <div className="text-center pb-56">
-                    <Link to="/donation/dashboard" className="bg-purple-600 shadow-xl hover:bg-purple-500 text-white text-xl md:text-2xl font-semibold px-6 py-3 rounded-full">Donate Now</Link>
+                <div className='mt-12 md:mt-16 text-center'>
+                    <p className='text-2xl sm:text-3xl md:text-4xl font-semibold'>
+                        Why Do We Need Your <span className='text-[#1858F0]'>Support</span>?
+                    </p>
+                    <p className='mt-4 md:mt-5 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700'>
+                        Your donations help fund research, server maintenance, and team growth, ensuring our platforms remain secure and innovative.
+                    </p>
                 </div>
+
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 mt-12 md:mt-16'>
+                    <div className='border border-gray-300 shadow-lg rounded-lg p-6 text-center'>
+                        <img src={inovation} alt='Innovation & Research' className='mx-auto mb-4 w-16' />
+                        <p className='text-lg font-bold'>Innovation & Research</p>
+                        <p className='text-gray-700 mt-2 text-sm'>
+                            Driving new technological advancements to solve everyday challenges.
+                        </p>
+                    </div>
+                    <div className='border border-gray-300 shadow-lg rounded-lg p-6 text-center'>
+                        <img src={server} alt='Server & Maintenance' className='mx-auto mb-4 w-16' />
+                        <p className='text-lg font-bold'>Server & Maintenance</p>
+                        <p className='text-gray-700 mt-2 text-sm'>
+                            Ensuring our platforms run smoothly, securely, and efficiently.
+                        </p>
+                    </div>
+                    <div className='border border-gray-300 shadow-lg rounded-lg p-6 text-center'>
+                        <img src={support} alt='Team Support' className='mx-auto mb-4 w-16' />
+                        <p className='text-lg font-bold'>Team Support</p>
+                        <p className='text-gray-700 mt-2 text-sm'>
+                            Helping us attract and retain top talent to continue delivering high-quality solutions.
+                        </p>
+                    </div>
+                </div>
+
+                <div className='mt-12 md:mt-16 text-center'>
+                    <p className='text-2xl sm:text-3xl font-semibold'>
+                        How Your <span className='text-[#1858F0]'>Donations</span> Help
+                    </p>
+                    <p className='mt-4 max-w-lg mx-auto text-base sm:text-lg text-gray-700'>
+                        Your donation empowers innovation, creates jobs, and drives a sustainable future!
+                    </p>
+                </div>
+
+                <div className='mt-6 md:mt-10'>
+                    <Slider {...settings}>
+                        {data.map((item, index) => (
+                            <div key={index} className='p-4'>
+                                <div className='p-6 rounded-lg shadow-lg text-center bg-gray-100'>
+                                    <img src={item.image} alt={item.alt} className='mx-auto mb-4 w-20' />
+                                    <p className='text-lg font-bold'>{item.title}</p>
+                                    <p className='text-gray-700 mt-2 text-sm'>{item.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </Slider>
+                </div>
+
+                <div className='mt-12 md:mt-16 bg-gray-200 p-6 sm:p-8 md:p-10 lg:p-12 rounded-[32px] md:rounded-[64px] text-center relative max-w-[90%] md:max-w-3xl mx-auto flex flex-col items-center'>
+                    <img src={arrow} className='absolute top-[-20px] left-4 hidden sm:block' alt="Arrow" />
+
+                    <p className='text-[28px] sm:text-[36px] md:text-[42px] lg:text-[48px] font-bold leading-tight'>
+                        Together, We Create Impact!
+                    </p>
+
+                    <p className='mt-2 text-gray-700 text-[16px] sm:text-[18px] md:text-[20px] lg:text-[24px] max-w-xl sm:max-w-2xl mx-auto'>
+                        Your donations help drive innovation, create job opportunities, and promote sustainability. Join us in making a lasting impact.
+                    </p>
+
+                    <button className='mt-5 px-6 py-3 text-lg font-bold bg-[#1858F0] text-white rounded-lg hover:bg-blue-700 transition'>
+                        Donate Now
+                    </button>
+
+                    <img src={rocket} alt="Rocket" className='absolute bottom-[-20px] right-4 w-10 sm:w-12 hidden sm:block' />
+                </div>
+
             </div>
         </>
     );

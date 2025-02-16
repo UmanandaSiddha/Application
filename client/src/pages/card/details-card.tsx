@@ -181,7 +181,7 @@ const DetailsCard = () => {
                                         </>
                                     ) : (
 
-                                        <CardQR shortCode={card.shortCode} type={card.type} ref={cardRef} />
+                                        <CardQR shortCode={card.shortCode} name={card.data.name} type={card.type} ref={cardRef} />
                                     )}
                                 </div>
                             </div>
