@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLocation } from "react-router-dom";
-// import { Link, useLocation } from "react-router-dom";
-// import { Helmet } from 'react-helmet-async';
-// import { url } from "inspector";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const HomePage = () => {
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (location.pathname === "/about-us") {
@@ -99,16 +97,14 @@ const HomePage = () => {
                         <h3 className="font-semibold text-lg w-[80%] sm:text-xl text-white pt-7">
                             Welcome to Voolata, your go-to platform for creating <br /> versatile QR codes and links.
                         </h3>
-                        <button className="bg-gradient-to-br from-[#1858F0] via-[#6571FB] to-[#4D63F4] text-white flex justify-center items-center w-36 text-lg font-semibold rounded-2xl mt-6 h-14">
+                        <button onClick={() => navigate("/dashboard")} className="bg-gradient-to-br from-[#1858F0] via-[#6571FB] to-[#4D63F4] text-white flex justify-center items-center w-36 text-lg font-semibold rounded-2xl mt-6 h-14">
                             Create now
                         </button>
                     </div>
                     <div className="hidden sm:flex">
                         <img src="/CORE_QR.png" alt="" className="lg:w-[20rem] lg:h-[20rem]" />
                     </div>
-
                 </div>
-
             </div>
             {/* hero section ends here */}
 
@@ -122,7 +118,7 @@ const HomePage = () => {
                     <div className="flex-col flex items-center pt-8 ">
                         <h1 className="sm:text-5xl text-4xl w-[90%] font-semibold text-center">Create <span className={titleColor}>{titleData}</span> QR codes and QR Cards </h1>
                         <p className="sm:text-xl w-[90%] text-center pt-4 sm:w-[65%] text-gray-600">{titlePara}</p>
-                        <button className="w-28 h-10 bg-gradient-to-br from-[#1858F0] via-[#6571FB] to-[#4D63F4] text-white font-semibold rounded-lg mt-4">
+                        <button onClick={() => navigate("/dashboard")} className="w-28 h-10 bg-gradient-to-br from-[#1858F0] via-[#6571FB] to-[#4D63F4] text-white font-semibold rounded-lg mt-4">
                             Get started
                         </button>
                     </div>

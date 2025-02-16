@@ -180,7 +180,7 @@ const CreatorInput = () => {
                             <div className="flex justify-center w-full lg:w-[70%] mx-auto mb-4 px-4 md:px-0">
                                 <div className="w-full h-2 bg-blue-100 rounded-full">
                                     <div
-                                        className="h-2 bg-purple-400 rounded-full"
+                                        className="h-2 bg-[#6571FB] rounded-full"
                                         style={{ width: `100%` }}
                                     ></div>
                                 </div>
@@ -371,7 +371,7 @@ const CreatorInput = () => {
 
                                         <div className="flex justify-center pb-2">
                                             <button
-                                                className="px-4 py-2 mt-4 rounded-md w-full text-white bg-purple-500 text-lg"
+                                                className="px-4 py-2 mt-4 rounded-md w-full text-white bg-[#6571FB] text-lg"
                                                 type="submit"
                                                 disabled={creatorLoading}
                                             >

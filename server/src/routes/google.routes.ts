@@ -31,7 +31,7 @@ const getGoogleAuthToken = async (code: string | ParsedQs | string[] | ParsedQs[
         );
         return res.data;
     } catch (error: any) {
-        console.error(error);
+        console.error("AUth Token: ", error.message);
         throw new Error(error.message);
     }
 }
@@ -48,7 +48,7 @@ const getGoogleUser = async (id_token: string, access_token: string) => {
         );
         return res.data;
     } catch (error: any) {
-        console.error(error);
+        console.error("Google User: ", error.message);
         throw new Error(error.message);
     }
 }
