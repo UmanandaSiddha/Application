@@ -3,8 +3,8 @@ import { authorizeRoles, isAuthenticatedUser, isUserVerified } from "../middlewa
 import { UserRoleEnum } from "../models/accounts/user.model.js";
 import { getAllDonators, getSingleDonator } from "../controllers/admin/donator.controller.js";
 import { deleteErrorLogs, deleteInfoLogs, getErrorLogs, getInfoLogs } from "../controllers/admin/logs.controller.js";
-import { adminLogin, blockUser, deleteUser, freeAccess, getAllUsers, getSingleUser, reActivateUser, revokeFreeAccess, unBlockUser, updateRole } from "../controllers/admin/user.controller.js";
-import { deleteCard, getUserCards, updateCard } from "../controllers/card.controller.js";
+import { adminLogin, blockUser, deleteUser, freeAccess, getAllUsers, getSingleUser, reActivateUser, revokeFreeAccess, unBlockUser, updateCard, updateRole } from "../controllers/admin/user.controller.js";
+import { deleteCard, getUserCards } from "../controllers/card.controller.js";
 import { getAllCards, getCardStats, getSingleCard } from "../controllers/admin/card.controller.js";
 import { deleteContact, getAllContacts, getSingleContact, switchAttendedContact } from "../controllers/admin/contact.controller.js";
 import { attendCustomRequests, createCustomPlan, deleteRequest, getAllCustomRequests, getParticularRequest, rejectCustomPlan } from "../controllers/admin/request.controller.js";
