@@ -192,7 +192,7 @@ export const updateRole = catchAsyncErrors(async (req: UserRequest, res: Respons
 
     await User.findByIdAndUpdate(
         id,
-        { profile: { role: req.body.role }},
+        { "profile.role": req.body.role },
         { new: true, runValidators: true, useFindAndModify: false }
     );
 
