@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 // import { Link, useLocation } from "react-router-dom";
 // import { Helmet } from 'react-helmet-async';
@@ -85,14 +86,12 @@ const HomePage = () => {
 
     return (
         <>
-            {/* <Helmet>
+            <Helmet>
                 <title>Voolata | {location.pathname === "/about-us" ? "About Us" : "Home"}</title>
                 <meta name="description" content={`This is the ${location.pathname === "/about-us" ? "about" : "home"} page of Voolata`} />
                 <meta name="keywords" content="home, voolata" />
             </Helmet>
 
-            
-                {/* hero section starts here */}
             <div className="bg-[url(/bg_placeholder.png)] bg-cover bg-center lg:h-[800px] h-[560px] max-sm:pt-24 flex justify-center items-center ">
                 <div className="w-[85%] mx-auto flex justify-between items-center lg:mt-8">
                     <div className="flex-col justify-center items-center">
