@@ -188,9 +188,9 @@ const Dashboard = () => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsDropdownOpen(false);
             }
-            if (cardDropdownRef.current && !cardDropdownRef.current.contains(event.target as Node)) {
-                setActiveDropdownId(null);
-            }
+            // if (cardDropdownRef.current && !cardDropdownRef.current.contains(event.target as Node)) {
+            //     setActiveDropdownId(null);
+            // }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
@@ -733,7 +733,7 @@ const Dashboard = () => {
                                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                         onClick={() => {
                                             navigate(`/dashboard/${card.type}/create/${card._id}`);
-                                            setActiveDropdownId(null);
+                                            // setActiveDropdownId(null);
                                         }}
                                     >
                                         Edit
@@ -747,7 +747,7 @@ const Dashboard = () => {
                                                 setOpen(true)
                                                 setCurrentIndex(cards.indexOf(card as any));
                                             }
-                                            setActiveDropdownId(null);
+                                            // setActiveDropdownId(null);
                                         }}
                                     >
                                         View
