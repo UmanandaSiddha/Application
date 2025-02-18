@@ -174,35 +174,51 @@ export const getUserCards = catchAsyncErrors(async (req: UserRequest, res: Respo
 });
 
 // Get Display Card
+// export const getDisplayCard = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//     const card = await Card.findOne({ shortCode: req.params.id });
+//     if (!card) return next(new ErrorHandler("Card Not Found", 404));
+//     const user = await User.findById(card.userId);
+//     if (!user) return next(new ErrorHandler("User not found", 404));
+
+//     if (!user.access.freeAccess &&
+//         !user.access.latestSubscription && 
+//         user.access.cards?.total.extra !== undefined && user.access.cards?.created !== undefined &&
+//         // user.access.cards?.total.extra === user.access.cards.total.initial &&
+//         (user.access.cards?.total.initial + user.access.cards?.total.extra) > user.access.cards?.created
+//     ) {
+//         res.status(200).json({
+//             success: true,
+//             card,
+//         });
+//     }
+
+//     if (!user.access.freeAccess && user.profile.role !== UserRoleEnum.ADMIN) return next(new ErrorHandler("Card Not Found", 404));
+
+//     const subscription = await Subscription.findById(user.access.latestSubscription);
+//     if (user.profile.role !== UserRoleEnum.ADMIN && (!subscription || !["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < new Date(Date.now())))) {
+//         return next(new ErrorHandler("Card Not Found", 404));
+//     }
+
+//     res.status(200).json({
+//         success: true,
+//         card,
+//     });
+// });
+
 export const getDisplayCard = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const card = await Card.findOne({ shortCode: req.params.id });
     if (!card) return next(new ErrorHandler("Card Not Found", 404));
     const user = await User.findById(card.userId);
-    if (!user) return next(new ErrorHandler("User not found", 404));
-
-    if (!user.access.freeAccess &&
-        !user.access.latestSubscription && 
-        user.access.cards?.total.extra !== undefined && user.access.cards?.created !== undefined &&
-        // user.access.cards?.total.extra === user.access.cards.total.initial &&
-        (user.access.cards?.total.initial + user.access.cards?.total.extra) > user.access.cards?.created
-    ) {
-        res.status(200).json({
-            success: true,
-            card,
-        });
+    if (!user) return next(new ErrorHandler("User Not Found", 404));
+    const returnCard = () => res.status(200).json({ success: true, card });
+    if (user.access.freeAccess) returnCard();
+    if (user.access.latestSubscription) {
+        const subscription = await Subscription.findById(user.access.latestSubscription);
+        if (subscription && ["active", "pending"].includes(subscription.status)) returnCard();
     }
-
-    if (!user.access.freeAccess && user.profile.role !== UserRoleEnum.ADMIN) return next(new ErrorHandler("Card Not Found", 404));
-
-    const subscription = await Subscription.findById(user.access.latestSubscription);
-    if (user.profile.role !== UserRoleEnum.ADMIN && (!subscription || !["active", "pending"].includes(subscription?.status) || (subscription?.status === "cancelled" && subscription?.currentEnd < new Date(Date.now())))) {
-        return next(new ErrorHandler("Card Not Found", 404));
-    }
-
-    res.status(200).json({
-        success: true,
-        card,
-    });
+    if (user.profile.role === UserRoleEnum.ADMIN) returnCard();
+    if ((user.access.cards?.created ?? 0) < (user.access.cards?.total.initial ?? 0)) returnCard();
+    return next(new ErrorHandler("No Cards", 403));
 });
 
 // Get General User Card
