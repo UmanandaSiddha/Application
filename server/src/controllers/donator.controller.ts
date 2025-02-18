@@ -20,13 +20,9 @@ import mongoose from "mongoose";
 
 export const sendDonatorOTP = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email } = req.body;
-    if (!email) {
-        return next(new ErrorHandler("Please enter Email", 400));
-    }
+    if (!email) return next(new ErrorHandler("Please enter Email", 400));
     let donator = await Donator.findOne({ email });
-    if (!donator) {
-        donator = await Donator.create({ email })
-    }
+    if (!donator) donator = await Donator.create({ email });
 
     const otp = donator.getOneTimePassword();
     await donator.save({ validateBeforeSave: false });
@@ -49,7 +45,6 @@ export const sendDonatorOTP = catchAsyncErrors(async (req: Request, res: Respons
         donator.oneTimePassword = undefined;
         donator.oneTimeExpire = undefined;
         await donator.save({ validateBeforeSave: false });
-        console.log(error);
 
         return next(new ErrorHandler(error.message, 500));
     }
@@ -119,14 +114,10 @@ export const createDonatorDetails = catchAsyncErrors(async (req: DonatorRequest,
 
 export const createDonationPlan = catchAsyncErrors(async (req: DonatorRequest, res: Response, next: NextFunction): Promise<void> => {
     const { amount, period } = req.body;
-    if (!amount || !period) {
-        return next(new ErrorHandler("All fields are required", 404));
-    };
+    if (!amount || !period) return next(new ErrorHandler("All fields are required", 404));
 
     const donator = await Donator.findById(req.donator?._id);
-    if (!donator) {
-        return next(new ErrorHandler("Donator not found", 404));
-    }
+    if (!donator) return next(new ErrorHandler("Donator not found", 404));
     
     const razorPlan = await instance.plans.create({
         period,
@@ -138,9 +129,7 @@ export const createDonationPlan = catchAsyncErrors(async (req: DonatorRequest, r
             description: `Donation Plan for ${donator._id}`,
         },
     });   
-    if (!razorPlan) {
-        return next(new ErrorHandler("Failed to create plan from backend", 404));
-    }
+    if (!razorPlan) return next(new ErrorHandler("Failed to create plan from backend", 404));
 
     const plan = await Plan.create({
         name: donator._id,
@@ -161,9 +150,7 @@ export const createDonationPlan = catchAsyncErrors(async (req: DonatorRequest, r
 
 export const createSubscription = catchAsyncErrors(async (req: DonatorRequest, res: Response, next: NextFunction): Promise<void> => {
     const donator = await Donator.findById(req.donator?._id);
-    if (!donator) {
-        return next(new ErrorHandler("Donator not found", 404));
-    }
+    if (!donator) return next(new ErrorHandler("Donator not found", 404));
     if (donator.latestDonation) {
         const existingSubscription = await Subscription.findById(donator.latestDonation);
         if (existingSubscription) {
@@ -179,9 +166,7 @@ export const createSubscription = catchAsyncErrors(async (req: DonatorRequest, r
     }
 
     const plan = await Plan.findOne({ razorPlanId: req.body.id });
-    if (!plan) {
-        return next(new ErrorHandler("Invalid Plan", 404));
-    }
+    if (!plan) return next(new ErrorHandler("Invalid Plan", 404));
 
     const razorSubscription = await instance.subscriptions.create({
         plan_id: req.body.id,
@@ -189,9 +174,7 @@ export const createSubscription = catchAsyncErrors(async (req: DonatorRequest, r
         quantity: 1,
         customer_notify: 0,
     });
-    if (!razorSubscription) {
-        return next(new ErrorHandler("Failed to create subscription", 404));
-    }
+    if (!razorSubscription) return next(new ErrorHandler("Failed to create subscription", 404));
 
     const subscription = await Subscription.create({
         planId: plan._id,

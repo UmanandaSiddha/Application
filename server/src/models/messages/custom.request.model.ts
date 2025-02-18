@@ -5,7 +5,7 @@ export const AcceptedEnum = {
     PENDING: "PENDING",
     ACCEPTED: "ACCEPTED",
     REJECTED: "REJECTED",
-}
+} as const;
 
 interface ICustomRequest extends Document {
     _id: mongoose.Schema.Types.ObjectId;

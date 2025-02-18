@@ -9,22 +9,34 @@ interface PropTypes {
 
 const GenerateQRCode = ({ shortCode, type }: PropTypes) => {
     const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    console.log(isLoaded);
 
     useEffect(() => {
-        const qrCode = createQRCode(type, shortCode);
+        const storageKey = `qrCodeDataUrl_${type}_${shortCode}`;
+        const existingQrDataUrl = window.localStorage.getItem(storageKey);
 
-        qrCode.getRawData("png").then(async (data) => {
-            if (data) {
-                const base64Data = await blobToBase64(new Blob([data], { type: "image/png" }));
-                setQrCodeDataUrl(base64Data);
+        if (existingQrDataUrl) {
+            setQrCodeDataUrl(existingQrDataUrl);
+            return;
+        }
+
+        const generateQR = async () => {
+            try {
+                const qrCode = createQRCode(type, shortCode);
+                const data = await qrCode.getRawData("png");
+
+                if (data) {
+                    const base64Data = await blobToBase64(new Blob([data], { type: "image/png" }));
+                    setQrCodeDataUrl(base64Data);
+                    window.localStorage.setItem(storageKey, base64Data);
+                }
+            } catch (error) {
+                console.error("QR Code Generation Error:", error);
             }
-        });
+        };
+
+        generateQR();
     }, [type, shortCode]);
 
-    // Helper function to convert Blob to Base64
     const blobToBase64 = (blob: Blob): Promise<string> => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -40,7 +52,6 @@ const GenerateQRCode = ({ shortCode, type }: PropTypes) => {
                 src={qrCodeDataUrl}
                 alt={shortCode}
                 className="rounded-lg object-cover"
-                onLoad={() => setIsLoaded(true)} // Ensure the image is fully loaded before capturing
             />
         ) : (
             <Loader2 className="text-center animate-spin" />

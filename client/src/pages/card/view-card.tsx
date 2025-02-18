@@ -21,6 +21,7 @@ import { AnimalData, BotanyData, CreatorData, ICard, IndividualData, MedicalData
 import { useEffect, useState } from "react";
 import API from "@/config/apiConfig";
 import { toast } from "react-toastify";
+import Loader from "@/components/rest/loader";
 
 interface SingleCardResponse {
     success: boolean;
@@ -113,15 +114,13 @@ const ViewCard = () => {
         }
     };
 
-    useEffect(() => {
-
-    }, []);
+    if (loading) return <Loader />;
 
     return (
         <div className="">
             {!isDesktop && type === "MEDICAL" ? (
                 <MedicalDesktopViewCard />
-            ) : !loading && card ? (
+            ) : card ? (
                 <>
                     <div
                         className={`flex flex-col justify-center items-center gap-2 w-full h-[30vh] bg-cover bg-bottom`}

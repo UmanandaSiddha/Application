@@ -223,6 +223,7 @@ const DetailsCard = () => {
                 </div>
                 <button
                     className={`flex justify-center items-center space-x-2 ${styles.bgColor} px-4 py-3 text-white rounded-md w-full`}
+                    onClick={() => navigate(`/dashboard/${type}/create`)}
                 >
                     <FaPlus />
                     <p className="text-lg font-semibold">Add New Card</p>

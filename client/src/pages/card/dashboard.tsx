@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { CiMenuKebab, CiSearch } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 import QRCode from "@/components/cards/qr-code";
 import CardQR from "@/components/cards/card-qr";
@@ -18,31 +17,9 @@ import { IoShareSocialOutline } from "react-icons/io5";
 import { Loader2 } from "lucide-react";
 import { NoQR } from "@/constants/cards/actions";
 import { ICard } from "@/types/type";
-// import html2canvas from "html2canvas";
+import Papa from "papaparse";
 import Backdrop from "@/components/cards/backdrop";
-
-// const downloadDivAsImage = async () => {
-//     const element = document.getElementById("cardDiv");
-
-//     if (!element) return;
-
-//     // Ensure all images inside the div are fully loaded
-//     const images = element.getElementsByTagName("img");
-//     await Promise.all([...images].map(img => {
-//         return new Promise(resolve => {
-//             if (img.complete) resolve(true);
-//             else img.onload = () => resolve(true);
-//         });
-//     }));
-
-//     // Now capture the div
-//     html2canvas(element, { useCORS: true }).then((canvas) => {
-//         const link = document.createElement("a");
-//         link.href = canvas.toDataURL("image/png");
-//         link.download = "card.png";
-//         link.click();
-//     });
-// };
+import API from "@/config/apiConfig";
 
 const categories = [
     {
@@ -117,7 +94,7 @@ const Dashboard = () => {
 
     const fetchData = async (link: string) => {
         try {
-            const { data }: { data: FetchUserCardsResponse } = await axios.get(link, { withCredentials: true });
+            const { data }: { data: FetchUserCardsResponse } = await API.get(link);
             setCards(data.cards);
             setCounts(prev => ({
                 ...prev,
@@ -211,9 +188,9 @@ const Dashboard = () => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsDropdownOpen(false);
             }
-            // if (cardDropdownRef.current && !cardDropdownRef.current.contains(event.target as Node)) {
-            //     setActiveDropdownId(null);
-            // }
+            if (cardDropdownRef.current && !cardDropdownRef.current.contains(event.target as Node)) {
+                setActiveDropdownId(null);
+            }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
@@ -222,6 +199,76 @@ const Dashboard = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
+    const [columns, setColumns] = useState<string[]>([""]);
+    const [batchLoading, setBatchLoading] = useState(false);
+    const [batchCardName, setBatchCardName] = useState("");
+    const [batchQuantity, setBatchQuantity] = useState<number>(0);
+    const [batchCardType, setBatchCardType] = useState<"INDIVIDUAL" | "BOTANICAL" | "ANIMAL" | "CREATOR" | "MEDICAL">(type !=="ALL" ? type : "BOTANICAL");
+
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const fileType = file.name.split('.').pop()?.toLowerCase();
+
+        if (fileType === "csv") {
+            handleCSV(file);
+        } else {
+            toast.warning("Unsupported file type! Please upload a CSV or XLSX file.");
+        }
+    };
+
+    const handleCSV = (file: File) => {
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (results) => {
+                if (results.meta.fields && results.meta.fields.includes("name")) {
+                    setColumns(results.data.map((d: any) => d["name"]));
+                } else {
+                    toast.error("CSV file must contain a 'name' column");
+                    return;
+                }
+            },
+            error: (error) => {
+                console.error("Error parsing CSV:", error);
+            },
+        });
+    };
+
+    const validNames = columns.filter((col) => col && col.length > 0);
+
+    const handleSubmitBatch = async (batchType: "file" | "qunatity") => {
+        setBatchLoading(true);
+        if (batchType === "file" && validNames.length === 0) {
+            toast.error("No names specified");
+            return;
+        }
+        if (batchType === "qunatity" && (!batchCardName || batchQuantity === 0)) {
+            toast.error("Please specify a card name and quantity");
+            return;
+        }
+        try {
+            const batchBody: any = {};
+            if (batchType === "file") {
+                batchBody.names = validNames;
+            } else {
+                batchBody.name = batchCardName;
+                batchBody.quantity = batchQuantity;
+            }
+            await API.post(`/cards/new/batch?type=${batchCardType}`, batchBody);
+            toast.success("Successfully Created Cards");
+            // fetchData(counts.currentPage);
+            fetchData(`/cards/user?page=1&type=${type}`);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Error creating cards");
+        } finally {
+            setOpenUpload(false);
+            setOpenBulk(false);
+            setBatchLoading(false);
+        }
+    }
 
     return (
         <div className="p-4 sm:p-6 lg:p-10">
@@ -257,27 +304,29 @@ const Dashboard = () => {
                             className="absolute right-2 mt-2 w-40 bg-white border border-gray-300 rounded-md shadow-lg"
                         >
                             <ul className="py-2">
+                                {type !== "ALL" && (
+                                    <li
+                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                        onClick={() => navigate(`/dashboard/${type}/create`)}
+                                    >
+                                        Create QR
+                                    </li>
+                                )}
                                 <li
                                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                     onClick={() => {
-                                        if (type === "ALL") {
-                                            return;
-                                        } else {
-                                            navigate(`/dashboard/${type}/create`)
-                                        }
+                                        setOpenBulk(true);
+                                        setBatchCardType(type !=="ALL" ? type : "BOTANICAL");
                                     }}
-                                >
-                                    Create QR
-                                </li>
-                                <li
-                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                    onClick={() => setOpenBulk(true)}
                                 >
                                     Bulk QR
                                 </li>
                                 <li
                                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                    onClick={() => setOpenUpload(true)}
+                                    onClick={() => {
+                                        setOpenUpload(true);
+                                        setBatchCardType(type !=="ALL" ? type : "BOTANICAL");
+                                    }}
                                 >
                                     Import Bulk
                                 </li>
@@ -293,7 +342,7 @@ const Dashboard = () => {
                         <p className="font-normal">QR code type</p>
                     ) : (
                         <div className="flex items-center justify-center gap-2">
-                            <input type="checkbox" className="w-4 h-4" />
+                            <input type="checkbox" onChange={() => {}} checked={true} className="w-4 h-4" />
                             <p className="capitalize">{type}</p>
                         </div>
                     )}
@@ -311,10 +360,13 @@ const Dashboard = () => {
                         {categories.map(category => (
                             <div
                                 key={category.id}
-                                onClick={() => setType(category.type as CardCategory)}
+                                onClick={() => {
+                                    setType(category.type as CardCategory);
+                                    setIsMobileCardType(false);
+                                }}
                             >
                                 <div className="border border-gray-400 rounded-md py-1 px-2 flex items-center gap-2">
-                                    <input type="checkbox" className="w-4 h-4" />
+                                    <input type="checkbox" onChange={() => setType(category.type as CardCategory)} checked={category.type === type} className="w-4 h-4" />
                                     {category.name}
                                 </div>
                             </div>
@@ -338,7 +390,7 @@ const Dashboard = () => {
 
             {open && (
                 <div
-                    className="fixed inset-0 bg-black/70 backdrop-blur-xl flex justify-center items-center z-[999]"
+                    className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[999]"
                     onClick={() => setOpen(false)}
                 >
                     <div className="flex flex-col justify-between items-center gap-16 h-full w-full py-12">
@@ -375,8 +427,7 @@ const Dashboard = () => {
                                             {activeTab === "qr" ? (
                                                 <QRCode shortCode={card.shortCode} type={card.type} />
                                             ) : (
-
-                                                <CardQR shortCode={card.shortCode} name={card.data.name} type={card.type} ref={cardRef} />
+                                                <CardQR name={card.data.name} shortCode={card.shortCode} type={card.type} ref={cardRef} />
                                             )}
                                         </div>
                                         <p className={`text-white ${index === currentIndex ? 'block' : 'hidden'}`}>{card.shortCode}{activeTab === "qr" ? "?type=qr" : "?type=card"}</p>
@@ -436,18 +487,54 @@ const Dashboard = () => {
                         </div>
                         <h1 className="text-2xl font-semibold text-gray-600">Import Your File</h1>
                         <p className="text-gray-400 text-sm px-14">Easily create multiple QR codes in one go by uploading your file. Supported file formats: CSV, Excel (.xlsx), and TXT.</p>
-                        <div className="flex items-center justify-center w-full">
-                            <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                    </svg>
-                                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
-                                </div>
-                                <input id="dropzone-file" type="file" className="hidden" />
-                            </label>
-                        </div>
+                        {validNames.length > 0 ? (
+                            <div className="flex flex-col items-center justify-center gap-6 w-full">
+                                <select
+                                    value={batchCardType}
+                                    onChange={(e) => setBatchCardType(e.target.value as "INDIVIDUAL" | "BOTANICAL" | "ANIMAL" | "CREATOR" | "MEDICAL")}
+                                    className="px-4 py-3 w-full md:w-3/12 rounded-md border border-gray-600 outline-none"
+                                >
+                                    <option value="INDIVIDUAL">INDIVIDUAL</option>
+                                    <option value="BOTANICAL">BOTANICAL</option>
+                                    <option value="ANIMAL">ANIMAL</option>
+                                    <option value="MEDICAL">MEDICAL</option>
+                                    <option value="CREATOR">CREATOR</option>
+                                </select>
+                                <p className="text-xl font-semibold text-gray-500">Uploaded Names - {validNames.length}</p>
+                                <button
+                                    className="px-4 py-3 w-1/2 text-lg rounded-md border border-red-600 bg-red-600 text-white outline-none"
+                                    onClick={() => setColumns([])}
+                                >
+                                    Remove All
+                                </button>
+                                <button
+                                    className="px-4 py-3 w-1/2 text-lg rounded-md border border-gray-600 bg-gray-600 text-white outline-none"
+                                    onClick={() => handleSubmitBatch("file")}
+                                >
+                                    Submit
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center w-full">
+                                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                        </svg>
+                                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        accept=".csv"
+                                        id="dropzone-file"
+                                        onChange={handleFileUpload}
+                                        disabled={batchLoading}
+                                        className="hidden"
+                                    />
+                                </label>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -463,7 +550,11 @@ const Dashboard = () => {
                         </div>
                         <h1 className="text-2xl text-center font-semibold text-gray-600">Bulk QR</h1>
                         <div className="flex flex-col md:flex-row justify-center items-center gap-4 w-full">
-                            <select className="px-4 py-3 w-full md:w-3/12 rounded-md border border-gray-600 outline-none">
+                            <select
+                                value={batchCardType}
+                                onChange={(e) => setBatchCardType(e.target.value as "INDIVIDUAL" | "BOTANICAL" | "ANIMAL" | "CREATOR" | "MEDICAL")}
+                                className="px-4 py-3 w-full md:w-3/12 rounded-md border border-gray-600 outline-none"
+                            >
                                 <option value="INDIVIDUAL">INDIVIDUAL</option>
                                 <option value="BOTANICAL">BOTANICAL</option>
                                 <option value="ANIMAL">ANIMAL</option>
@@ -473,15 +564,25 @@ const Dashboard = () => {
                             <input
                                 type="text"
                                 placeholder="Name"
+                                value={batchCardName}
+                                onChange={(e) => setBatchCardName(e.target.value)}
                                 className="px-4 py-3 w-full md:w-6/12 rounded-md border border-gray-600 outline-none"
                             />
                             <input
                                 type="number"
                                 placeholder="Quantity"
+                                value={batchQuantity}
+                                onChange={(e) => setBatchQuantity(Number(e.target.value))}
                                 className="px-4 py-3 w-full md:w-3/12 rounded-md border border-gray-600 outline-none"
                             />
                         </div>
-                        <button className="px-4 py-3 w-1/2 text-lg rounded-md border border-gray-600 bg-gray-600 text-white outline-none">Submit</button>
+                        <button
+                            disabled={!batchCardName || !batchQuantity}
+                            onClick={() => handleSubmitBatch("qunatity")}
+                            className="px-4 py-3 w-1/2 text-lg rounded-md border border-gray-600 bg-gray-600 text-white outline-none"
+                        >
+                            Submit
+                        </button>
                     </div>
                 </div>
             )}
@@ -522,7 +623,7 @@ const Dashboard = () => {
                     <div className="flex justify-center items-center">
                         <Loader2 className="text-center animate-spin" />
                     </div>
-                ) : cards && cards.length > 0 ? cards.map(card => (
+                ) : cards && cards.length > 0 ? (type === "ALL" ? cards : cards.filter(card => card.type === type)).map(card => (
                     <div
                         key={card._id}
                         onClick={() => navigate(`/dashboard/cards/card/${card.type}/${card._id}`)}
@@ -602,7 +703,7 @@ const Dashboard = () => {
                     <div className="flex justify-center items-center">
                         <Loader2 className="text-center animate-spin" />
                     </div>
-                ) : cards && cards.length > 0 ? cards.map(card => (
+                ) : cards && cards.length > 0 ? (type === "ALL" ? cards : cards.filter(card => card.type === type)).map(card => (
                     <div
                         key={card._id}
                         onClick={() => navigate(`/dashboard/cards/card/${card.type}/${card._id}`)}
