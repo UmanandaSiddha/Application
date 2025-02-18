@@ -21,7 +21,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import useCardTraversal from "@/hooks/useCardTraversal";
 import { Loader2 } from "lucide-react";
-import DotIndicator from "@/components/cards/dot-indicator";
+// import DotIndicator from "@/components/cards/dot-indicator";
 import { ICard } from "@/types/type";
 import { ActiveTabs, CardCategory, FetchUserCardsResponse } from "./dashboard";
 import { qrStyles } from "@/lib/helper";
@@ -205,9 +205,9 @@ const DetailsCard = () => {
                 </div>
             </div>
             <div className='flex flex-col md:pt-4 pt-8 space-y-6 px-6 pb-12'>
-                <div className="flex items-center justify-center gap-3">
+                {/* <div className="flex items-center justify-center gap-3">
                     <DotIndicator totalCards={counts.totalCards} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
-                </div>
+                </div> */}
                 <div className='flex flow-row justify-evenly space-x-4 w-full'>
                     <CardActionsButton
                         imageSrc={ShareButtonIcon}

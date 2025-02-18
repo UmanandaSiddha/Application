@@ -69,7 +69,7 @@ const App = () => {
     const location = useLocation();
     const isDesktop = useMediaQuery({ maxWidth: 1024 });
 
-    const weirdHeader = location.pathname.startsWith("/dashboard/cards/card/") && !(location.pathname.startsWith("/dashboard/cards/card/medical") && !isDesktop);
+    const weirdHeader = (location.pathname.startsWith("/dashboard/cards/card/") || location.pathname.startsWith("/d/")) && !(location.pathname.startsWith("/dashboard/cards/card/medical") && !isDesktop);
 
     // const noPaddingTopRoutes = ["/login", "/register", "/org/register"];
     const noPaddingTopRoutes = ["/login", "/register", "/org/register", "/contact", "/", "/about-us", "/plans"];

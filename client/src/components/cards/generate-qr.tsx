@@ -1,6 +1,7 @@
 import { createQRCode } from '@/lib/helper';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { openDB } from "idb";
 
 interface PropTypes {
     type: string;
@@ -12,14 +13,22 @@ const GenerateQRCode = ({ shortCode, type }: PropTypes) => {
 
     useEffect(() => {
         const storageKey = `qrCodeDataUrl_${type}_${shortCode}`;
-        const existingQrDataUrl = window.localStorage.getItem(storageKey);
 
-        if (existingQrDataUrl) {
-            setQrCodeDataUrl(existingQrDataUrl);
-            return;
-        }
+        const getQrFromDB = async () => {
+            const db = await openDB("QRCodeDB", 1, {
+                upgrade(db) {
+                    if (!db.objectStoreNames.contains("qrCodes")) {
+                        db.createObjectStore("qrCodes");
+                    }
+                },
+            });
 
-        const generateQR = async () => {
+            const storedQr = await db.get("qrCodes", storageKey);
+            if (storedQr) {
+                setQrCodeDataUrl(storedQr);
+                return;
+            }
+
             try {
                 const qrCode = createQRCode(type, shortCode);
                 const data = await qrCode.getRawData("png");
@@ -27,14 +36,14 @@ const GenerateQRCode = ({ shortCode, type }: PropTypes) => {
                 if (data) {
                     const base64Data = await blobToBase64(new Blob([data], { type: "image/png" }));
                     setQrCodeDataUrl(base64Data);
-                    window.localStorage.setItem(storageKey, base64Data);
+                    await db.put("qrCodes", base64Data, storageKey);
                 }
             } catch (error) {
                 console.error("QR Code Generation Error:", error);
             }
         };
 
-        generateQR();
+        getQrFromDB();
     }, [type, shortCode]);
 
     const blobToBase64 = (blob: Blob): Promise<string> => {
@@ -46,16 +55,10 @@ const GenerateQRCode = ({ shortCode, type }: PropTypes) => {
         });
     };
 
-    return (
-        qrCodeDataUrl ? (
-            <img
-                src={qrCodeDataUrl}
-                alt={shortCode}
-                className="rounded-lg object-cover"
-            />
-        ) : (
-            <Loader2 className="text-center animate-spin" />
-        )
+    return qrCodeDataUrl ? (
+        <img src={qrCodeDataUrl} alt={shortCode} className="rounded-lg object-cover" />
+    ) : (
+        <Loader2 className="text-center animate-spin" />
     );
 };
 

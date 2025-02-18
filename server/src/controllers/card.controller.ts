@@ -183,8 +183,8 @@ export const getDisplayCard = catchAsyncErrors(async (req: Request, res: Respons
     if (!user.access.freeAccess &&
         !user.access.latestSubscription && 
         user.access.cards?.total.extra !== undefined && user.access.cards?.created !== undefined &&
-        user.access.cards?.total.extra === user.access.cards.total.initial &&
-        user.access.cards?.total.extra > user.access.cards?.created
+        // user.access.cards?.total.extra === user.access.cards.total.initial &&
+        (user.access.cards?.total.initial + user.access.cards?.total.extra) > user.access.cards?.created
     ) {
         res.status(200).json({
             success: true,
