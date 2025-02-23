@@ -99,7 +99,7 @@ const PlanPage = () => {
                 </div>
                 <div className="flex flex-wrap justify-center gap-6 mt-10 px-4 sm:px-6">
                     {plans
-                        ?.filter(plan => plan.visible && ["user", "org", "free"].includes(plan.planType))
+                        ?.filter(plan => plan.visible && ["USER", "ORGANIZATION", "FREE"].includes(plan.planType))
                         .map((plan, index) => (
                             <div
                                 key={index}

@@ -34,6 +34,7 @@ export const createSubscription = catchAsyncErrors(async (req: UserRequest, res:
     }
 
     const { id } = req.params;
+    if (!id) return next(new ErrorHandler("Plan Id not found", 404));
     if (!mongoose.Types.ObjectId.isValid(id)) return next(new ErrorHandler("Invalid ID format", 400));
     // const plan = await Plan.findOne({ razorPlanId: req.body.id, visible: true });
     const plan = await Plan.findById(id);

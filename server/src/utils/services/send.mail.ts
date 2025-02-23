@@ -104,6 +104,7 @@ const sendMail = async (options: EmailOptions): Promise<void> => {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
     try {
         const { templateId, recieverEmail, dynamicData } = options;
+        console.log(options)
         const templateMapping = emailTemplateMappings.find(mapping => mapping.emailTemplate === templateId);
         if (!templateMapping) {
             throw new Error(`Template ID not found for ${templateId}`);

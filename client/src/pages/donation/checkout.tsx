@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { donatorExist } from "@/redux/reducer/donatorReducer";
 import { Helmet } from "react-helmet-async";
 import { Loader2 } from "lucide-react";
+import { GPaySvg, MasterCardSvg, PaytmSvg, RazorPaySvg, RupaySvg, UpiSvg, VisaSvg } from "@/constants/icons/checkout";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -438,16 +439,16 @@ const DonationCheckout = () => {
                         </form>
 
                         <div className="mt-4 flex items-center justify-center space-x-2">
-                            <img src="/upi.svg" alt="UPI" className="h-6" />
-                            <img src="/visa.svg" alt="Visa" className="h-8" />
-                            <img src="/mastercard.svg" alt="Mastercard" className="h-6" />
-                            <img src="/google-pay.svg" alt="GooglePay" className="h-10" />
-                            <img src="/paytm.svg" alt="Paytm" className="h-4" />
-                            <img src="/rupay.svg" alt="Rupay" className="h-4" />
+                            <img src={UpiSvg} alt="UPI" className="h-6" />
+                            <img src={VisaSvg} alt="Visa" className="h-8" />
+                            <img src={MasterCardSvg} alt="Mastercard" className="h-6" />
+                            <img src={GPaySvg} alt="GooglePay" className="h-10" />
+                            <img src={PaytmSvg} alt="Paytm" className="h-4" />
+                            <img src={RupaySvg} alt="Rupay" className="h-4" />
                         </div>
 
                         <p className="mt-4 text-center italic text-md text-bold text-gray-700 flex items-center justify-center">
-                            Powered by <img src="/razorpay.svg" alt="Razorpay" className="h-5 ml-2" />
+                            Powered by <img src={RazorPaySvg} alt="Razorpay" className="h-5 ml-2" />
                         </p>
                     </div>
                 </div>

@@ -10,6 +10,7 @@ import { togglePaid, userExist } from "@/redux/reducer/userReducer";
 import { Helmet } from "react-helmet-async";
 import { Loader2 } from "lucide-react";
 import { IPlan } from "@/types/type";
+import { GPaySvg, MasterCardSvg, PaytmSvg, RazorPaySvg, RupaySvg, UpiSvg, VisaSvg } from "@/constants/icons/checkout";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -40,11 +41,11 @@ const Checkout = () => {
     const { user, isPaid } = useSelector((state: RootState) => state.userReducer);
     const [updateData, setUpdateData] = useState({
         phone: user?.access.billingInfo?.phoneNumber,
-        street: user?.access.billingInfo?.address.street,
-        state: user?.access.billingInfo?.address.state,
-        city: user?.access.billingInfo?.address.city,
-        postalCode: user?.access.billingInfo?.address.postalCode,
-        country: user?.access.billingInfo?.address.country,
+        street: user?.access.billingInfo?.address?.street,
+        state: user?.access.billingInfo?.address?.state,
+        city: user?.access.billingInfo?.address?.city,
+        postalCode: user?.access.billingInfo?.address?.postalCode,
+        country: user?.access.billingInfo?.address?.country,
     });
     const [updateLoading, setUpdateLoading] = useState(false);
     const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -120,7 +121,7 @@ const Checkout = () => {
         }
     }
 
-    const handleCheckout = async (razId: string) => {
+    const handleCheckout = async () => {
         if (isPaid) {
             toast.info("You are already a paid subscriber");
             navigate(from, { replace: true });
@@ -144,7 +145,7 @@ const Checkout = () => {
             setMessage("Processing Payment");
             setCheckoutLoading(true);
             const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
-            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new`, { id: razId }, config);
+            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/sub/new/${id}`, {  }, config);
             if (!data) {
                 toast.error("Failed to Execute Payment");
                 return;
@@ -343,7 +344,7 @@ const Checkout = () => {
                                 disabled={!user || !id || plan?._id !== id}
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    handleCheckout(plan?.razorPlanId!);
+                                    handleCheckout();
                                 }}
                                 className="mt-4 w-full flex items-center justify-center gap-2 rounded-md bg-gray-900 px-6 py-3 font-medium text-white shadow-sm"
                             >
@@ -351,16 +352,16 @@ const Checkout = () => {
                             </button>
 
                             <div className="mt-4 flex items-center justify-center space-x-2">
-                                <img src="./upi.svg" alt="UPI" className="h-6" />
-                                <img src="./visa.svg" alt="Visa" className="h-8" />
-                                <img src="./mastercard.svg" alt="Mastercard" className="h-6" />
-                                <img src="./google-pay.svg" alt="GooglePay" className="h-10" />
-                                <img src="./paytm.svg" alt="Paytm" className="h-4" />
-                                <img src="./rupay.svg" alt="Rupay" className="h-4" />
+                                <img src={UpiSvg} alt="UPI" className="h-6" />
+                                <img src={VisaSvg} alt="Visa" className="h-8" />
+                                <img src={MasterCardSvg} alt="Mastercard" className="h-6" />
+                                <img src={GPaySvg} alt="GooglePay" className="h-10" />
+                                <img src={PaytmSvg} alt="Paytm" className="h-4" />
+                                <img src={RupaySvg} alt="Rupay" className="h-4" />
                             </div>
 
                             <p className="mt-4 text-center italic text-md text-bold text-gray-700 flex items-center justify-center">
-                                Powered by <img src="./razorpay.svg" alt="Razorpay" className="h-5 ml-2" />
+                                Powered by <img src={RazorPaySvg} alt="Razorpay" className="h-5 ml-2" />
                             </p>
                         </div>
                     ) : (

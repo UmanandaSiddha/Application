@@ -8,7 +8,7 @@ import CardQR from "@/components/cards/card-qr";
 import { RxCross1, RxCross2 } from "react-icons/rx";
 import { useMediaQuery } from "react-responsive";
 import { FiDownload, FiEye, FiPlus } from "react-icons/fi";
-import { BsSliders } from "react-icons/bs";
+import { BsQrCodeScan, BsSliders } from "react-icons/bs";
 import useCardTraversal from "@/hooks/useCardTraversal";
 import { LuPencilLine } from "react-icons/lu";
 import { IoIosArrowBack } from "react-icons/io";
@@ -204,7 +204,7 @@ const Dashboard = () => {
     const [batchLoading, setBatchLoading] = useState(false);
     const [batchCardName, setBatchCardName] = useState("");
     const [batchQuantity, setBatchQuantity] = useState<number>(0);
-    const [batchCardType, setBatchCardType] = useState<"INDIVIDUAL" | "BOTANICAL" | "ANIMAL" | "CREATOR" | "MEDICAL">(type !=="ALL" ? type : "BOTANICAL");
+    const [batchCardType, setBatchCardType] = useState<"INDIVIDUAL" | "BOTANICAL" | "ANIMAL" | "CREATOR" | "MEDICAL">(type !== "ALL" ? type : "BOTANICAL");
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -316,7 +316,7 @@ const Dashboard = () => {
                                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                     onClick={() => {
                                         setOpenBulk(true);
-                                        setBatchCardType(type !=="ALL" ? type : "BOTANICAL");
+                                        setBatchCardType(type !== "ALL" ? type : "BOTANICAL");
                                     }}
                                 >
                                     Bulk QR
@@ -325,7 +325,7 @@ const Dashboard = () => {
                                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                     onClick={() => {
                                         setOpenUpload(true);
-                                        setBatchCardType(type !=="ALL" ? type : "BOTANICAL");
+                                        setBatchCardType(type !== "ALL" ? type : "BOTANICAL");
                                     }}
                                 >
                                     Import Bulk
@@ -342,7 +342,7 @@ const Dashboard = () => {
                         <p className="font-normal">QR code type</p>
                     ) : (
                         <div className="flex items-center justify-center gap-2">
-                            <input type="checkbox" onChange={() => {}} checked={true} className="w-4 h-4" />
+                            <input type="checkbox" onChange={() => { }} checked={true} className="w-4 h-4" />
                             <p className="capitalize">{type}</p>
                         </div>
                     )}
@@ -394,12 +394,15 @@ const Dashboard = () => {
                     onClick={() => setOpen(false)}
                 >
                     <div className="flex flex-col justify-between items-center gap-16 h-full w-full py-12">
-                        <div onClick={(e) => e.stopPropagation()} className="flex justify-center items-center gap-4 text-white">
-                            <button onClick={() => setActiveTab("qr")} className={activeTab === "qr" ? "underline" : ""}>
-                                Qr Code
+                        <div onClick={(e) => e.stopPropagation()} className="flex justify-center items-center gap-6 text-white">
+                            {/* <button onClick={() => setActiveTab("qr")} className={activeTab === "qr" ? "underline" : ""}> */}
+                            <button onClick={() => setActiveTab("qr")} className={`flex justify-center items-center gap-2 px-3 py-2 ${activeTab === "qr" ? "bg-white text-black rounded-md" : ""}`}>
+                                <BsQrCodeScan size={20} />
+                                <p className='text-md font-semibold'>QR CODE</p>
                             </button>
-                            <button onClick={() => setActiveTab("card")} className={activeTab === "card" ? "underline" : ""}>
-                                Card
+                            <button onClick={() => setActiveTab("card")} className={`flex justify-center items-center gap-2 px-3 py-2 ${activeTab === "card" ? "bg-white text-black rounded-md" : ""}`}>
+                                <BsQrCodeScan size={20} />
+                                <p className='text-md font-semibold'>CARD QR</p>
                             </button>
                         </div>
                         <div className="flex flex-row justify-between items-center w-full px-6">

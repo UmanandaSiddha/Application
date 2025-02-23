@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import API from "@/config/apiConfig";
 import { toast } from "react-toastify";
 import Loader from "@/components/rest/loader";
+import { AnimalCardIcon, BotanicalCardIcon, CreatorCardIcon, IndividualCardIcon, MedicalCardIcon } from "@/constants/cards/icons";
 
 interface SingleCardResponse {
     success: boolean;
@@ -77,24 +78,31 @@ const ViewCard = () => {
     }, [type, id, shortId]);
 
     let backgroundImage;
+    let cardIcon;
     switch (type?.toLowerCase()) {
         case "individual":
             backgroundImage = isMobile ? IndividualViewCardBackgroundMobile : IndividualViewCardBackgroundDesktop;
+            cardIcon = IndividualCardIcon;
             break;
         case "botanical":
             backgroundImage = isMobile ? BotanicalViewCardBackgroundMobile : BotanicalViewCardBackgroundDesktop;
+            cardIcon = BotanicalCardIcon;
             break;
         case "animal":
             backgroundImage = isMobile ? AnimalViewCardBackgroundMobile : AnimalViewCardBackgroundDesktop;
+            cardIcon = AnimalCardIcon;
             break;
         case "creator":
             backgroundImage = isMobile ? CreatorViewCardBackgroundMobile : CreatorViewCardBackgroundDesktop;
+            cardIcon = CreatorCardIcon;
             break;
         case "medical":
             backgroundImage = MedicalViewCardBackgroundMobile;
+            cardIcon = MedicalCardIcon;
             break;
         default:
             backgroundImage = isMobile ? IndividualViewCardBackgroundMobile : IndividualViewCardBackgroundDesktop;
+            cardIcon = IndividualCardIcon;
     }
 
     const renderCard = () => {
@@ -126,7 +134,9 @@ const ViewCard = () => {
                         className={`flex flex-col justify-center items-center gap-2 w-full h-[30vh] bg-cover bg-bottom`}
                         style={{ backgroundImage: `url(${backgroundImage})` }}
                     >
-                        <div className="h-14 w-14 bg-white rounded-full"></div>
+                        <div className="h-14 w-14 bg-white rounded-full">
+                            <img src={cardIcon} className="h-full w-full rounded-full" alt="card-icon" />
+                        </div>
                         <h2 className="text-white text-lg font-semibold">{card?.data.name}</h2>
                     </div>
                     <div className="px-2 mb-12">

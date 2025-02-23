@@ -39,7 +39,7 @@ export const registerUser = catchAsyncErrors(async (req: Request, res: Response,
         }
     };
 
-    const address = {street, city, state, postalCode, country };
+    const address = { street, city, state, postalCode, country };
 
     if (req.query.type === UserRoleEnum.ORGANIZATION) {
         userPayload.profile.role = UserRoleEnum.ORGANIZATION;
@@ -63,7 +63,7 @@ export const registerUser = catchAsyncErrors(async (req: Request, res: Response,
     await user.save({ validateBeforeSave: false });
 
     try {
-        const options= {
+        const options = {
             templateId: EMAIL_OTP_VERIFICATION,
             recieverEmail: user.profile.email,
             dynamicData: {
@@ -90,7 +90,7 @@ export const requestVerification = catchAsyncErrors(async (req: UserRequest, res
     await user.save({ validateBeforeSave: false });
 
     try {
-        const options= {
+        const options = {
             templateId: EMAIL_OTP_VERIFICATION,
             recieverEmail: user.profile.email,
             dynamicData: {
@@ -135,9 +135,9 @@ export const verifyUser = catchAsyncErrors(async (req: UserRequest, res: Respons
     otpUser.oneTimePassword = undefined;
     otpUser.oneTimeExpire = undefined;
     await otpUser.save();
-    
+
     try {
-        const options= {
+        const options = {
             templateId: EMAIL_ACCOUNT_CREATED,
             recieverEmail: otpUser.profile.email,
             dynamicData: {
@@ -238,7 +238,7 @@ export const unblockUser = catchAsyncErrors(async (req: Request, res: Response, 
     loginAttempt.count = 0;
     loginAttempt.lastLogin = undefined;
     await user.save();
-    
+
     sendToken(user, 200, res);
 });
 
@@ -264,7 +264,7 @@ export const forgotPassword = catchAsyncErrors(async (req: Request, res: Respons
     await user.save({ validateBeforeSave: false });
 
     try {
-        const options= {
+        const options = {
             templateId: EMAIL_RESET_PASSWORD,
             recieverEmail: user.profile.email,
             dynamicData: {
@@ -345,24 +345,40 @@ export const getUserDetails = catchAsyncErrors(async (req: UserRequest, res: Res
 
 export const updateBillingInfo = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const { phone, street, state, city, postalCode, country } = req.body;
-
     const user = req.user;
     if (!user) return next(new ErrorHandler("User not found", 404));
 
-    const updateBillingAddress = { ...user.access.billingInfo };
+    const billingInfo = user.access.billingInfo ? user.access.billingInfo.toObject() : null;
+    const updateBillingAddress = billingInfo ?? {
+        phoneNumber: "",
+        address: {
+            street: "",
+            state: "",
+            city: "",
+            postalCode: "",
+            country: "",
+        },
+    };
+
+    updateBillingAddress.address = updateBillingAddress.address || {
+        street: "",
+        state: "",
+        city: "",
+        postalCode: "",
+        country: "",
+    };
+
     if (phone) updateBillingAddress.phoneNumber = phone;
-    if (street && updateBillingAddress.address) updateBillingAddress.address.street = street;
-    if (state && updateBillingAddress.address) updateBillingAddress.address.state = state;
-    if (city && updateBillingAddress.address) updateBillingAddress.address.city = city;
-    if (postalCode && updateBillingAddress.address) updateBillingAddress.address.postalCode = postalCode;
-    if (country && updateBillingAddress.address) updateBillingAddress.address.country = country;
+    if (street) updateBillingAddress.address.street = street;
+    if (state) updateBillingAddress.address.state = state;
+    if (city) updateBillingAddress.address.city = city;
+    if (postalCode) updateBillingAddress.address.postalCode = postalCode;
+    if (country) updateBillingAddress.address.country = country;
 
     const newUser = await User.findByIdAndUpdate(
         user._id,
         {
-            access: {
-                billingInfo: updateBillingAddress,
-            }
+            "access.billingInfo": updateBillingAddress,
         },
         { new: true, runValidators: true, useFindAndModify: false }
     );
@@ -454,7 +470,7 @@ export const deleteAccount = catchAsyncErrors(async (req: UserRequest, res: Resp
     await user.save();
 
     try {
-        const options= {
+        const options = {
             templateId: EMAIL_ACCOUNT_DEACTIVATED,
             recieverEmail: user.profile.email,
             dynamicData: {

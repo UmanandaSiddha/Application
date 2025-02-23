@@ -141,8 +141,8 @@ const IndividualViewCard = ({ cardData }: PropTypes) => {
             )}
             <div className='w-full flex flex-col justify-center items-center gap-3.5'>
                 {(selected ? accordonData.filter(arr => arr.id === selected) : accordonData).map(acc => (
-                    <>
-                        <div key={acc.id} onClick={() => handleSelect(acc.id)} className='select-none w-full bg-white border-[1.5px] border-[#292929] p-2 flex justify-between items-center rounded-full'>
+                    <div key={acc.id} className='w-full'>
+                        <div onClick={() => handleSelect(acc.id)} className='select-none w-full bg-white border-[1.5px] border-[#292929] p-2 flex justify-between items-center rounded-full'>
                             <div className='flex justify-between items-center gap-2'>
                                 <img src={acc.svg} alt="" />
                                 <p className='text-lg text-[#292929] font-bold truncate'>{acc.name}</p>
@@ -163,7 +163,7 @@ const IndividualViewCard = ({ cardData }: PropTypes) => {
                                 ))}
                             </div>
                         )}
-                    </>
+                    </div>
                 ))}
             </div>
         </div>

@@ -89,7 +89,7 @@ const Verify = () => {
                 <meta name="description" content={`This is the verify page of Voolata`} />
                 <meta name="keywords" content="verify, voolata" />
             </Helmet>
-            <div className="pt-6 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
+            <div className="pt-16 lg:pt-24 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
                 <div className="w-[95%] md:w-[80%] lg:w-[70%] mx-auto mt-2 rounded-lg bg-white shadow-xl">
                     <div className="flex flex-col lg:flex-row justify-center items-center lg:items-stretch rounded-2xl p-6">
                         <img

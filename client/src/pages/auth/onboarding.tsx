@@ -29,7 +29,7 @@ const OnBoarding = () => {
                 <meta name="description" content={`This is the onboarding page of Voolata`} />
                 <meta name="keywords" content="onboarding, voolata" />
             </Helmet>
-            <div className="pt-6 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
+            <div className="pt-16 lg:pt-24 pb-12 h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
                 <div className="w-[95%] md:w-[80%] lg:w-[70%] mx-auto mt-2 rounded-lg bg-white shadow-xl">
                     <div className="p-4 pt-4 sm:pt-6 md:pt-8 mx-auto w-full md:w-[70%] lg:w-[65%]">
                         <h1 className="text-2xl text-center sm:text-3xl md:text-4xl lg:text-4xl  md:text-center font-bold">
