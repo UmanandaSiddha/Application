@@ -15,17 +15,12 @@ import Card from "../models/card/card.model.js";
 // User Registration
 export const registerUser = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { firstName, lastName, email, password, street, city, state, postalCode, country, website, phone } = req.body;
-    if (!firstName || !lastName || !email || !password) {
-        return next(new ErrorHandler("Please enter Name, Email and Password", 400));
-    }
-    if (req.query.type === UserRoleEnum.ORGANIZATION && (!street || !city || !state || !postalCode || !country || !website || !phone)) {
-        return next(new ErrorHandler("All organization fields are required", 400));
-    }
+    if (!firstName || !lastName || !email || !password) return next(new ErrorHandler("Please enter Name, Email and Password", 400));
+    if (req.query.type === UserRoleEnum.ORGANIZATION &&
+        (!street || !city || !state || !postalCode || !country || !website || !phone)) return next(new ErrorHandler("All organization fields are required", 400));
 
     const userExists = await User.findOne({ "profile.email": email });
-    if (userExists) {
-        return next(new ErrorHandler("Email already exists", 409));
-    }
+    if (userExists) return next(new ErrorHandler("Email already exists", 409));
 
     const size = 200;
     const gravatarUrl = getGravatarUrl(email, size);
@@ -62,9 +57,7 @@ export const registerUser = catchAsyncErrors(async (req: Request, res: Response,
     }
 
     const user = await User.create(userPayload);
-    if (!user) {
-        return next(new ErrorHandler("Error Registering User, Try Again Later", 500));
-    }
+    if (!user) return next(new ErrorHandler("Error Registering User, Try Again Later", 500));
 
     const otp = user.getOneTimePassword();
     await user.save({ validateBeforeSave: false });
@@ -90,16 +83,8 @@ export const registerUser = catchAsyncErrors(async (req: Request, res: Response,
 // Request Verification
 export const requestVerification = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const { user } = req;
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
-    // const user = await User.findById(req.user?._id);
-    // if (!user) {
-    //     return next(new ErrorHandler("User not found", 404));
-    // }
-    if (user.account.isVerified) {
-        return next(new ErrorHandler("User is already verified", 400));
-    }
+    if (!user) return next(new ErrorHandler("User not found", 404));
+    if (user.account.isVerified) return next(new ErrorHandler("User is already verified", 400));
 
     const otp = user.getOneTimePassword();
     await user.save({ validateBeforeSave: false });
@@ -130,13 +115,9 @@ export const requestVerification = catchAsyncErrors(async (req: UserRequest, res
 // Verify User
 export const verifyUser = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const { otp } = req.body;
-    if (!otp) {
-        return next(new ErrorHandler("Please enter OTP", 400));
-    }
+    if (!otp) return next(new ErrorHandler("Please enter OTP", 400));
     const { user } = req;
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
+    if (!user) return next(new ErrorHandler("User not found", 404));
 
     const oneTimePassword = crypto
         .createHash("sha256")
@@ -148,9 +129,7 @@ export const verifyUser = catchAsyncErrors(async (req: UserRequest, res: Respons
         oneTimePassword,
         oneTimeExpire: { $gt: Date.now() },
     });
-    if (!otpUser) {
-        return next(new ErrorHandler("Email Veification OTP has Expired", 400));
-    }
+    if (!otpUser) return next(new ErrorHandler("Email Veification OTP has Expired", 400));
 
     otpUser.account.isVerified = true;
     otpUser.oneTimePassword = undefined;
@@ -176,17 +155,11 @@ export const verifyUser = catchAsyncErrors(async (req: UserRequest, res: Respons
 // User Login
 export const loginUser = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password } = req.body;
-    if (!email || !password) {
-        return next(new ErrorHandler("Please enter Email and Password", 400));
-    }
+    if (!email || !password) return next(new ErrorHandler("Please enter Email and Password", 400));
 
     const user = await User.findOne({ "profile.email": email }).select("+profile.password");
-    if (!user) {
-        return next(new ErrorHandler("Invalid Credentials", 401));
-    }
-    if (user.account.isDeactivated) {
-        return next(new ErrorHandler("Your account is deactivated, contact support to reactivate", 401));
-    }
+    if (!user) return next(new ErrorHandler("Invalid Credentials", 401));
+    if (user.account.isDeactivated) return next(new ErrorHandler("Your account is deactivated, contact support to reactivate", 401));
 
     const loginAttempt = user.account.loginAttempt || { count: 0, lastLogin: undefined };
 
@@ -240,17 +213,11 @@ export const loginUser = catchAsyncErrors(async (req: Request, res: Response, ne
 // Get Block User
 export const fetchBlocked = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return next(new ErrorHandler("Invalid ID format", 400));
-    }
+    if (!mongoose.Types.ObjectId.isValid(id)) return next(new ErrorHandler("Invalid ID format", 400));
 
     const user = await User.findById(id);
-    if (!user) {
-        return next(new ErrorHandler("User not Found", 404));
-    }
-    if (!user.account.isBlocked) {
-        return next(new ErrorHandler("User is not Blocked", 401));
-    }
+    if (!user) return next(new ErrorHandler("User not Found", 404));
+    if (!user.account.isBlocked) return next(new ErrorHandler("User is not Blocked", 401));
 
     res.status(200).json({
         success: true,
@@ -261,13 +228,11 @@ export const fetchBlocked = catchAsyncErrors(async (req: Request, res: Response,
 //Unblock User
 export const unblockUser = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return next(new ErrorHandler("Invalid ID format", 400));
-    }
+    if (!mongoose.Types.ObjectId.isValid(id)) return next(new ErrorHandler("Invalid ID format", 400));
+
     const user = await User.findById(id);
-    if (!user) {
-        return next(new ErrorHandler("User not Found", 404));
-    }
+    if (!user) return next(new ErrorHandler("User not Found", 404));
+
     user.account.isBlocked = false;
     const loginAttempt = user.account.loginAttempt || { count: 0, lastLogin: undefined };
     loginAttempt.count = 0;
@@ -292,10 +257,8 @@ export const logoutUser = catchAsyncErrors(async (req: Request, res: Response, n
 
 // Forgot Password
 export const forgotPassword = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const user = await User.findOne({ profile: { email: req.body.email } });
-    if (!user) {
-        return next(new ErrorHandler("User not Found", 404));
-    }
+    const user = await User.findOne({ "profile.email": req.body.email });
+    if (!user) return next(new ErrorHandler("User not Found", 404));
 
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
@@ -326,9 +289,7 @@ export const forgotPassword = catchAsyncErrors(async (req: Request, res: Respons
 // Reset Password
 export const resetPassword = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { token } = req.params;
-    if (!token) {
-        return next(new ErrorHandler("Broken Link", 500));
-    }
+    if (!token) return next(new ErrorHandler("Broken Link", 500));
 
     const resetPasswordToken = crypto
         .createHash("sha256")
@@ -340,17 +301,11 @@ export const resetPassword = catchAsyncErrors(async (req: Request, res: Response
         resetPasswordToken,
         resetPasswordExpire: { $gt: Date.now() },
     });
-    if (!user) {
-        return next(new ErrorHandler("Reset Password Token is Invalid or has Expired", 400));
-    }
+    if (!user) return next(new ErrorHandler("Reset Password Token is Invalid or has Expired", 400));
 
     const { newPassword, confirmPassword } = req.body;
-    if (!newPassword || !confirmPassword) {
-        return next(new ErrorHandler("All fields are required", 404));
-    }
-    if (newPassword !== confirmPassword) {
-        return next(new ErrorHandler("Password does not match", 400));
-    }
+    if (!newPassword || !confirmPassword) return next(new ErrorHandler("All fields are required", 404));
+    if (newPassword !== confirmPassword) return next(new ErrorHandler("Password does not match", 400));
 
     user.profile.password = newPassword;
     user.resetPasswordToken = undefined;
@@ -362,24 +317,15 @@ export const resetPassword = catchAsyncErrors(async (req: Request, res: Response
 
 export const setPassword = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const user = await User.findById(req.user?._id).select("+password");
-    if (!user) {
-        return next(new ErrorHandler("User not Found", 404));
-    }
-    if (!user.account.accountType.includes(UserAccountEnum.GOOGLE)) {
-        return next(new ErrorHandler("Password Already Saved", 400));
-    }
+    if (!user) return next(new ErrorHandler("User not Found", 404));
+    if (!user.account.accountType.includes(UserAccountEnum.GOOGLE)) return next(new ErrorHandler("Password Already Saved", 400));
 
     const { newPassword, confirmPassword } = req.body;
-    if (!newPassword || !confirmPassword) {
-        return next(new ErrorHandler("All fields are required", 404));
-    }
-    if (newPassword !== confirmPassword) {
-        return next(new ErrorHandler("Password does not match", 400));
-    }
+    if (!newPassword || !confirmPassword) return next(new ErrorHandler("All fields are required", 404));
+    if (newPassword !== confirmPassword) return next(new ErrorHandler("Password does not match", 400));
 
     user.profile.password = newPassword;
     user.account.accountType = [...user.account.accountType, UserAccountEnum.EMAIL];
-
     await user.save();
 
     sendToken(user, 200, res);
@@ -400,10 +346,8 @@ export const getUserDetails = catchAsyncErrors(async (req: UserRequest, res: Res
 export const updateBillingInfo = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const { phone, street, state, city, postalCode, country } = req.body;
 
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
+    const user = req.user;
+    if (!user) return next(new ErrorHandler("User not found", 404));
 
     const updateBillingAddress = { ...user.access.billingInfo };
     if (phone) updateBillingAddress.phoneNumber = phone;
@@ -414,7 +358,7 @@ export const updateBillingInfo = catchAsyncErrors(async (req: UserRequest, res: 
     if (country && updateBillingAddress.address) updateBillingAddress.address.country = country;
 
     const newUser = await User.findByIdAndUpdate(
-        req.user?._id,
+        user._id,
         {
             access: {
                 billingInfo: updateBillingAddress,
@@ -432,21 +376,13 @@ export const updateBillingInfo = catchAsyncErrors(async (req: UserRequest, res: 
 // Update User Password
 export const updatePassword = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const user = await User.findById(req.user?._id).select("+password");
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
+    if (!user) return next(new ErrorHandler("User not found", 404));
 
     const { oldPassword, newPassword, confirmPassword } = req.body;
-    if (!oldPassword || !newPassword || !confirmPassword) {
-        return next(new ErrorHandler("All fields are required", 404));
-    }
-    if (newPassword !== confirmPassword) {
-        return next(new ErrorHandler("Password does not match", 400));
-    }
+    if (!oldPassword || !newPassword || !confirmPassword) return next(new ErrorHandler("All fields are required", 404));
+    if (newPassword !== confirmPassword) return next(new ErrorHandler("Password does not match", 400));
     const isPasswordMatched = await user.comparePassword(oldPassword);
-    if (!isPasswordMatched) {
-        return next(new ErrorHandler("Password is incorrect", 400));
-    }
+    if (!isPasswordMatched) return next(new ErrorHandler("Password is incorrect", 400));
 
     user.profile.password = newPassword;
     await user.save();
@@ -456,10 +392,8 @@ export const updatePassword = catchAsyncErrors(async (req: UserRequest, res: Res
 
 // Update User Profile
 export const updateProfile = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
-    const userExists = await User.findById(req.user?._id);
-    if (!userExists) {
-        return next(new ErrorHandler("User not found", 404));
-    }
+    const userExists = req.user;
+    if (!userExists) return next(new ErrorHandler("User not found", 404));
 
     const { firstName, lastName, phone } = req.body;
     const updateUser: any = {};
@@ -468,7 +402,7 @@ export const updateProfile = catchAsyncErrors(async (req: UserRequest, res: Resp
     phone ? updateUser.access.billingInfo.phoneNumber = phone : userExists.access.billingInfo?.phoneNumber;
 
     const user = await User.findByIdAndUpdate(
-        req.user?._id,
+        userExists._id,
         updateUser,
         { new: true, runValidators: true, useFindAndModify: false }
     );
@@ -481,24 +415,22 @@ export const updateProfile = catchAsyncErrors(async (req: UserRequest, res: Resp
 
 // Update Organization Details
 export const updateOrganisationDetails = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
-    const { phone, website, address } = req.body;
+    const { phone, website, street, state, city, postalCode, country } = req.body;
 
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
+    const user = req.user;
+    if (!user) return next(new ErrorHandler("User not found", 404));
 
     const updateOrganisation = { ...user.organization };
     if (phone && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.phoneNumber = phone;
     if (website && updateOrganisation.organizationBilling) updateOrganisation.website = website;
-    if (address.street && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.street = address.street;
-    if (address.state && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.state = address.state;
-    if (address.city && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.city = address.city;
-    if (address.postalCode && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.postalCode = address.postalCode;
-    if (address.country && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.country = address.country;
+    if (street && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.street = street;
+    if (state && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.state = state;
+    if (city && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.city = city;
+    if (postalCode && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.postalCode = postalCode;
+    if (country && updateOrganisation.organizationBilling) updateOrganisation.organizationBilling.address.country = country;
 
     const newUser = await User.findByIdAndUpdate(
-        req.user?._id,
+        user._id,
         {
             organization: updateOrganisation
         },
@@ -513,13 +445,9 @@ export const updateOrganisationDetails = catchAsyncErrors(async (req: UserReques
 
 // Delete Account
 export const deleteAccount = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-    }
-    if (user.account.isDeactivated) {
-        return next(new ErrorHandler(`You are already deactivated`, 400));
-    }
+    const user = req.user;
+    if (!user) return next(new ErrorHandler("User not found", 404));
+    if (user.account.isDeactivated) return next(new ErrorHandler(`You are already deactivated`, 400));
 
     await Card.deleteMany({ userId: user._id });
     user.account.isDeactivated = true;

@@ -48,7 +48,7 @@ export default function Header() {
     return (
         <header className="bg-white shadow-[0_4px_8px_rgba(0,0,0,0.05),0_-4px_8px_rgba(0,0,0,0.05),4px_0_8px_rgba(0,0,0,0.05),-4px_0_8px_rgba(0,0,0,0.05)] fixed sm:top-7 left-0 right-0 sm:w-[85%] mx-auto sm:rounded-full z-20 h-14 md:h-16">
             {/* <nav className="mx-auto w-[90%] md:w-[80%] flex items-center justify-between py-3"> */}
-            <nav className="flex items-center justify-between px-8 py-3">
+            <nav className="flex items-center justify-between px-4 py-3">
                 <Link to='/'>
                     <img className="h-8 w-auto flex " src="/voolata_long_r.png" alt="" />
                 </Link>
@@ -63,14 +63,14 @@ export default function Header() {
                         Pricing
                     </Link>
                     <Link to='/about-us' className="text-md font-semibold leading-6">
-                        About Us
+                        About
                     </Link>
                     <Link to='/contact' className="text-md font-semibold leading-6">
                         Contact
                     </Link>
                 </div>
 
-                <div className="lg:hidden ">
+                <div className="lg:hidden">
                     {user ? (
                         <button
                             type="button"
@@ -88,13 +88,13 @@ export default function Header() {
 
                 <div className="hidden lg:block">
                     {user ? (
-                        <div onClick={() => navigate("/profile")} className="flex items-center gap-3">
-                            <p className="hidden cursor-pointer sm:block text-md">{user.profile.firstName[0]}</p>
+                        <div onClick={() => navigate("/profile")} className="flex cursor-pointer items-center gap-3">
+                            {/* <p className="hidden cursor-pointer sm:block text-md">{`${user.profile.firstName} ${user.profile.lastName}`}</p> */}
                             {user.profile.profilePicture ? (
-                                <img src={user.profile.profilePicture} className='h-8 w-8 rounded-full' alt="avatar" />
+                                <img src={user.profile.profilePicture} className='h-10 w-10 rounded-full' alt="avatar" />
                             ) : (
-                                <div className='h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center'>
-                                    <p className='text-sm font-semibold text-black'>{user.profile.firstName[0].toUpperCase()}</p>
+                                <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
+                                    <p className='text-sm font-semibold text-black'>{`${user.profile.firstName[0].toUpperCase()}${user.profile.lastName[0].toUpperCase()}`}</p>
                                 </div>
                             )}
                         </div>
@@ -109,9 +109,9 @@ export default function Header() {
             {mobileMenuOpen && (
                 <div
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="hide-scrollbar h-screen lg:hidden fixed inset-0 bg-opacity-30 backdrop-blur z-10  "
+                    className="hide-scrollbar h-screen lg:hidden fixed inset-0 bg-opacity-30 backdrop-blur z-10"
                 >
-                    <aside className="flex flex-col w-64 h-screen px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l  rounded-r-xl" >
+                    <aside className="flex flex-col w-64 h-screen px-6 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l rounded-r-xl" >
                         <Link to='/'>
                             <img className="h-8" src="/voolata_long_r.png" alt="" />
                         </Link>
@@ -126,7 +126,7 @@ export default function Header() {
                                 </Link>
                                 <Link to="/about-us" className={`flex items-center p-2 mt-1 rounded-md ${location.pathname === "/about-us" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <img src="/about_icon_nav.svg" alt="" className='w-5 h-5'/>
-                                    <span className="mx-4 font-semibold text-base">About Us</span>
+                                    <span className="mx-4 font-semibold text-base">About</span>
                                 </Link>
                                 <Link to="/contact" className={`flex items-center p-2 mt-1 rounded-md ${location.pathname === "/contact" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <img src="/contact_icon.svg" alt="" className='h-5 w-5'/>
@@ -161,16 +161,16 @@ export default function Header() {
                             <div className="pb-10">
                                 <hr className='mb-8 bg-gray-500'/>
                                 {user ? (
-                                    <div className="flex  gap-5 mx-2">
+                                    <div className="flex justify-center items-center gap-5">
                                         <Link to="/profile" className='flex items-center '>
                                             {user.profile.profilePicture ? (
-                                                <img src={user.profile.profilePicture} className='h-5 w-5 rounded-full' alt="avatar" />
+                                                <img src={user.profile.profilePicture} className='h-8 w-8 rounded-full' alt="avatar" />
                                             ) : (
-                                                <div className='h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center'>
-                                                    <p className='text-xl font-semibold text-black'>{user.profile.firstName[0].toUpperCase()}</p>
+                                                <div className='h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center'>
+                                                    <p className='text-xl font-semibold text-black'>{`${user.profile.firstName[0].toUpperCase()}${user.profile.lastName[0].toUpperCase()}`}</p>
                                                 </div>
                                             )}
-                                            <span className="ml-4 font-medium text-gray-800">{user.profile.firstName}</span>
+                                            <span className="ml-4 font-medium text-gray-800">{`${user.profile.firstName} ${user.profile.lastName}`}</span>
                                         </Link>
                                         <IoIosLogOut onClick={logout} className="object-cover mx-2 rounded-full h-6 w-6" />
                                     </div>
@@ -179,10 +179,10 @@ export default function Header() {
                                         Login
                                     </Link>
                                 )}
-                                <Link to="/" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/plans" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
+                                {/* <Link to="/" className={`flex items-center p-2 mt-5 rounded-md ${location.pathname === "/plans" ? "text-gray-700 bg-gray-100" : "text-gray-600 transition-colors duration-300 transform hover:bg-gray-100 hover:text-gray-700"}`}>
                                     <img src="/settings_icon.svg" alt="" className='w-5 h-5'/>
                                     <span className="mx-4 font-semibold text-base">Settings</span>
-                                </Link>
+                                </Link> */}
                             </div>
                         </div>
                     </aside>

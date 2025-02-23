@@ -9,9 +9,7 @@ import Plan, { PlanEnum } from "../models/payment/plan.model.js";
 
 export const requestCustomPlan = catchAsyncErrors(async  (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
     const { email, cards, comment, period, interval } = req.body;
-    if (!email || !cards || !comment || !period || !interval) {
-        return next(new ErrorHandler("All fields are required", 404));
-    }
+    if (!email || !cards || !comment || !period || !interval) return next(new ErrorHandler("All fields are required", 404));
 
     const newRequest = await CustomRequest.create({
         email,
@@ -49,15 +47,9 @@ export const requestCustomPlan = catchAsyncErrors(async  (req: UserRequest, res:
 
 export const getCustomPlan = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const plan = await Plan.findById(req.params.id);
-    if (!plan) {
-        return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
-    }
-    if (plan.planType !== PlanEnum.CUSTOM) {
-        return next(new ErrorHandler(`Plan ${req.params.id} is not a Custom Plan`, 403));
-    }
-    if (plan.name !== req.query.user) {
-        return next(new ErrorHandler(`Plan mismatch`, 403));
-    }
+    if (!plan) return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
+    if (plan.planType !== PlanEnum.CUSTOM) return next(new ErrorHandler(`Plan ${req.params.id} is not a Custom Plan`, 403));
+    if (plan.name !== req.query.user) return next(new ErrorHandler(`Plan mismatch`, 403));
     
     res.status(200).json({
         success: true,
@@ -76,12 +68,8 @@ export const getAllPlans = catchAsyncErrors(async (req: Request, res: Response, 
 
 export const getPlan = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const plan = await Plan.findById(req.params.id);
-    if (!plan) {
-        return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
-    };
-    if (plan.planType === PlanEnum.CUSTOM) {
-        return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
-    }
+    if (!plan) return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
+    if (plan.planType === PlanEnum.CUSTOM) return next(new ErrorHandler(`No Plan By Id ${req.params.id}`, 404));
 
     res.status(200).json({
         success: true,
