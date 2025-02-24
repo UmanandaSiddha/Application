@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import AboutUsImage from "../assets/about.png";
 
 export default function AboutUs() {
     return (
@@ -7,12 +8,11 @@ export default function AboutUs() {
                 ABOUT US
             </h1>
             <div className='flex flex-col lg:flex-row items-center gap-10 md:gap-20'>
-                <img src="about_us_final.png" alt="" className='sm:w-full lg:w-[40rem] xl:w-[45rem] rounded-lg' />
+                <img src={AboutUsImage} alt="" className='sm:w-full lg:w-[30rem] xl:w-[35rem] rounded-lg' />
                 <p className='text-lg md:text-[1.6rem] text-justify mt-5 '>
                     Founded on September 5, 2024, Evool Foundation is the first NGO in India to harness the power of technology for social good. We believe in the transformative potential of technology to drive positive change and improve lives. Our commitment is to use technology selflessly for the benefit of humanity and the planet.
                 </p>
             </div>
         </div>
-
     )
 }

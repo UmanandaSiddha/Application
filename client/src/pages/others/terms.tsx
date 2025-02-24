@@ -9,7 +9,7 @@ const TermsAndConditions: React.FC = () => {
                 <meta name="description" content={`This is the terms and condition page of Voolata`} />
                 <meta name="keywords" content="terms and condition, voolata" />
             </Helmet>
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] px-4">
+            <div className="min-h-screen pt-24 flex items-center justify-center bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] px-4">
                 <div className="h-full bg-white shadow-2xl w-full max-w-[1000px] rounded-lg p-6 md:p-10 m-8">
                     {/* Title Section */}
                     <div className="flex flex-col md:flex-row items-center justify-start p-4 md:p-8 mb-4 gap-4 md:gap-0">

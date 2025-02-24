@@ -105,7 +105,8 @@ export const updateCard = catchAsyncErrors(async (req: UserRequest, res: Respons
     if (!user) return next(new ErrorHandler("User not found", 404));
     if (card.userId.toString() !== user._id.toString()) return next(new ErrorHandler("Unauthorized to update this vCard", 401));
     const totalCards = user.access.cards.total.extra + user.access.cards.total.initial;
-    if (!user.access.freeAccess && totalCards <= user.access.cards.created) return next(new ErrorHandler(`You have reached your total card limit.`, 403));
+    // if (!user.access.freeAccess && totalCards <= user.access.cards.created) return next(new ErrorHandler(`You have reached your total card limit.`, 403));
+    if (user.profile.role !== UserRoleEnum.ADMIN && !user.access.freeAccess && totalCards <= user.access.cards.created) return next(new ErrorHandler(`You have reached your total card limit.`, 403));
 
     const updatedCard = await Card.findByIdAndUpdate(
         id,
@@ -139,6 +140,46 @@ export const deleteCard = catchAsyncErrors(async (req: UserRequest, res: Respons
     res.status(200).json({
         success: true,
         message: `Card deleted`,
+    });
+});
+
+export const deleteCards = catchAsyncErrors(async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
+    const { ids } = req.body; // Expecting an array of card IDs in request body
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+        return next(new ErrorHandler("Invalid request. Provide an array of card IDs.", 400));
+    }
+
+    // Validate ObjectIDs
+    const invalidIds = ids.filter(id => !mongoose.Types.ObjectId.isValid(id));
+    if (invalidIds.length > 0) {
+        return next(new ErrorHandler(`Invalid ID format(s): ${invalidIds.join(", ")}`, 400));
+    }
+
+    const { user } = req;
+    if (!user) return next(new ErrorHandler("User not found", 404));
+
+    // Find all cards by IDs
+    const cards = await Card.find({ _id: { $in: ids } });
+
+    if (cards.length === 0) return next(new ErrorHandler("No matching cards found", 404));
+
+    // Check if the user owns all these cards
+    const unauthorizedCards = cards.filter(card => card.userId.toString() !== user._id.toString());
+    if (unauthorizedCards.length > 0) {
+        return next(new ErrorHandler("Unauthorized to delete one or more vCards", 401));
+    }
+
+    // Perform deletion
+    const deleteCount = await Card.deleteMany({ _id: { $in: ids } });
+
+    // Update user's created card count
+    user.access.cards.created = Math.max(user.access.cards.created - deleteCount.deletedCount, 0);
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+        message: `Successfully deleted ${deleteCount.deletedCount} card(s)`,
     });
 });
 

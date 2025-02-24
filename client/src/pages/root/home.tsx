@@ -1,3 +1,4 @@
+import { MainLogoGif } from "@/constants/icons/main";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -102,7 +103,7 @@ const HomePage = () => {
                         </button>
                     </div>
                     <div className="hidden sm:flex">
-                        <img src="/CORE_QR.png" alt="" className="lg:w-[20rem] lg:h-[20rem]" />
+                        <img src={MainLogoGif} loading="lazy" alt="main-logo" className="lg:w-[20rem] lg:h-[20rem]" />
                     </div>
                 </div>
             </div>

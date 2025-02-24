@@ -91,6 +91,7 @@ const Dashboard = () => {
     const cardDropdownRef = useRef<HTMLDivElement | null>(null);
     const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [selectedCards, setSelectedCards] = useState<string[]>([]);
 
     const fetchData = async (link: string) => {
         try {
@@ -148,7 +149,7 @@ const Dashboard = () => {
         setLoading(true);
         const debouncedSearch = debounceFetch(() => {
             setCounts(prev => ({ ...prev, currentPage: 1 }));
-            fetchData(`${import.meta.env.VITE_BASE_URL}/cards/user?page=1&type=${type}&keyword=${keyword}`);
+            fetchData(`/cards/user?page=1&type=${type}&keyword=${keyword}`);
             setSearchParams(prev => {
                 prev.set("keyword", keyword);
                 prev.set("currentPage", "1");
@@ -166,13 +167,15 @@ const Dashboard = () => {
     }, []);
 
     useEffect(() => {
-        setSearchParams(prev => {
-            prev.set("currentPage", counts.currentPage.toString());
-            prev.set("currentIndex", currentIndex.toString());
-            prev.set("type", type);
-            prev.set("activeTab", activeTab);
-            return prev;
-        }, { replace: true });
+        if (counts.currentPage || currentIndex || type || activeTab) {
+            setSearchParams(prev => {
+                prev.set("currentPage", counts.currentPage.toString());
+                prev.set("currentIndex", currentIndex.toString());
+                prev.set("type", type);
+                prev.set("activeTab", activeTab);
+                return prev;
+            }, { replace: true });
+        }
     }, [counts.currentPage, currentIndex, type, activeTab]);
 
     useEffect(() => {
@@ -270,6 +273,41 @@ const Dashboard = () => {
         }
     }
 
+    const handleToggleSelection = (data: string[] | string) => {
+        if (typeof data === "string") {
+            if (selectedCards.includes(data)) {
+                setSelectedCards(prevCards => prevCards.filter(card => card !== data));
+            } else {
+                setSelectedCards(prevCards => [...prevCards, data]);
+            }
+        } else {
+            if (selectedCards.length === cards?.length) {
+                setSelectedCards([]);
+            } else {
+                setSelectedCards(data);
+            }
+        }
+    }
+
+    const handleDeleteCards = async () => {
+        try {
+            const cardsToDelete: any = {};
+            if (selectedCards.length === 0) {
+                cardsToDelete.ids = [cards && cards[currentIndex]._id];
+            } else {
+                cardsToDelete.ids = selectedCards
+            }
+            await API.put("/cards/multi/delete", cardsToDelete);
+            toast.success(`Deleted ${selectedCards.length === 0 ? "1 card" : `${selectedCards.length} cards`}`);
+            fetchData(`/cards/user?page=1&type=${type}&keyword=${keyword}`);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Error creating cards");
+        } finally {
+            setOpenDelete(false);
+            setSelectedCards([]);
+        }
+    }
+
     return (
         <div className="p-4 sm:p-6 lg:p-10">
             <Backdrop />
@@ -290,7 +328,17 @@ const Dashboard = () => {
             <div className="flex justify-between items-center mx-4 sm:mx-16 mt-5">
                 <h2 className="text-xl sm:text-2xl font-semibold">My QR Codes</h2>
                 <div className="flex items-center gap-3 sm:gap-5 relative" ref={dropdownRef}>
-                    <RiDeleteBin6Line onClick={() => setOpenDelete(true)} size={24} className="cursor-pointer hover:opacity-75" />
+                    {/* <button
+                    >
+                        <RiDownloadLine size={24} className="hover:opacity-75" />
+                    </button> */}
+                    <button
+                        onClick={() => setOpenDelete(true)}
+                        disabled={selectedCards.length === 0}
+                        className={`${selectedCards.length === 0 ? "cursor-not-allowed" : "cursor-pointer"}`}
+                    >
+                        <RiDeleteBin6Line size={24} className="hover:opacity-75" />
+                    </button>
                     <button
                         className="flex items-center justify-center bg-[#454545] text-white rounded-full sm:rounded-md p-1 md:px-3 md:py-1 text-sm font-medium hover:bg-gray-700 transition"
                         onClick={() => setIsDropdownOpen(prev => !prev)}
@@ -471,7 +519,10 @@ const Dashboard = () => {
                             >
                                 <LuPencilLine size={24} className="text-white" />
                             </button>
-                            <button className="bg-[rgb(0,0,0,0.24)] p-3 cursor-pointer hover:opacity-75 rounded-full">
+                            <button
+                                onClick={handleDeleteCards}
+                                className="bg-[rgb(0,0,0,0.24)] p-3 cursor-pointer hover:opacity-75 rounded-full"
+                            >
                                 <RiDeleteBin6Line size={24} className="text-white" />
                             </button>
                         </div>
@@ -595,13 +646,18 @@ const Dashboard = () => {
                     className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[999]"
                     onClick={() => setOpenDelete(false)}
                 >
-                    <div onClick={(e) => e.stopPropagation()} className="bg-white w-[90%] md:w-[50%] h-[50vh] rounded-md flex flex-col justify-between items-center px-4 md:px-14 py-4 md:py-12 gap-2 relative">
+                    <div onClick={(e) => e.stopPropagation()} className="bg-white w-[90%] md:w-[50%] h-[40vh] rounded-md flex flex-col justify-between items-center px-4 md:px-14 py-4 md:py-12 gap-2 relative">
                         <div className="cursor-pointer absolute top-0 right-0 p-4">
                             <RxCross1 onClick={() => setOpenDelete(false)} size={24} />
                         </div>
                         <h1 className="text-2xl text-center font-semibold text-red-600">Delete</h1>
-                        <p className="text-lg font-semibold">some delete text</p>
-                        <button className="px-4 py-3 w-1/2 text-lg rounded-md border border-gray-600 bg-gray-600 text-white outline-none">Submit</button>
+                        <p className="text-lg font-semibold">Are you sure you want to delete {selectedCards.length === 1 ? "this card" : "these cards"}?</p>
+                        <button
+                            onClick={handleDeleteCards}
+                            className="px-4 py-3 w-1/2 text-lg rounded-md border border-gray-600 bg-gray-600 text-white outline-none"
+                        >
+                            Submit
+                        </button>
                     </div>
                 </div>
             )}
@@ -609,7 +665,12 @@ const Dashboard = () => {
             <div className="hidden lg:block border rounded-lg mx-4 sm:mx-16 mt-5 overflow-x-auto">
                 <div className="flex items-center justify-between px-4 py-3 bg-gray-100 border-b">
                     <div className="flex items-center gap-3 w-[450px]">
-                        <input type="checkbox" className="w-4 h-4" />
+                        <input
+                            type="checkbox"
+                            className="w-4 h-4"
+                            checked={selectedCards.length === cards?.length}
+                            onChange={() => cards && handleToggleSelection(cards?.map(card => card._id))}
+                        />
                         <div className="font-semibold text-sm sm:text-base">Name</div>
                     </div>
                     <div className="hidden md:flex w-full justify-between text-sm font-semibold">
@@ -633,7 +694,13 @@ const Dashboard = () => {
                         className="flex items-center justify-between px-4 py-3 cursor-pointer border-t"
                     >
                         <div className="flex items-center gap-3 w-[450px]">
-                            <input type="checkbox" className="w-4 h-4" />
+                            <input
+                                type="checkbox"
+                                className="w-4 h-4"
+                                checked={selectedCards.includes(card._id)}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={() => handleToggleSelection(card._id)}
+                            />
                             <div className="">{card.data.name}</div>
                         </div>
                         <div className="hidden md:flex w-full justify-between text-sm">
@@ -713,7 +780,12 @@ const Dashboard = () => {
                         className="border flex items-center gap-3 p-3 rounded-lg mx-4 sm:mx-16 mt-5"
                         ref={cardDropdownRef}
                     >
-                        <input type="checkbox" className="w-4 h-4" />
+                        <input
+                            type="checkbox"
+                            className="w-4 h-4"
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={() => handleToggleSelection(card._id)}
+                        />
                         <div className="flex flex-col font-medium text-sm sm:text-base">
                             <div>{card.data.name}</div>
                             <div className="w-fit mt-1 text-center border border-gray-400 px-3 py-1 rounded-full">

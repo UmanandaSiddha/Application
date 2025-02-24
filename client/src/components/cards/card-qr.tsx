@@ -9,7 +9,6 @@ interface PropTypes {
 }
 
 const CardQR = forwardRef<HTMLDivElement, PropTypes>(({ shortCode, type, name }, ref) => {
-
     return (
         <div>
             <Backdrop />
@@ -19,9 +18,9 @@ const CardQR = forwardRef<HTMLDivElement, PropTypes>(({ shortCode, type, name },
                     <div className="flex flex-row justify-center items-center gap-12 z-10 ">
                         <div className="flex flex-col justify-center gap-[3px] ">
                             <img src="/voolata_long_r.png" alt="Voolata Logo" className="h-4 w-auto" />
-                            <h1 className="text-[6px] font-medium">An Evol foundation product</h1>
+                            <h1 className="text-[5px] font-medium">An Initiative Evool Foundation</h1>
                         </div>
-                        <p className="text-white text-xs">Individual Card</p>
+                        <p className={`text-xs capitalize text-[#135EF2]`}>{type.toLowerCase()} Card</p>
                     </div>
                     <div className="mt-8 bg-white p-1 rounded-md h-32 w-32 z-10">
                         <GenerateQRCode shortCode={shortCode} type={type} />

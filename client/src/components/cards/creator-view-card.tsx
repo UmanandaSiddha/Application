@@ -11,7 +11,7 @@ const CreatorViewCard = ({ cardData }: PropTypes) => {
         <div className='w-full md:w-[50%] lg:w-[30%] mx-auto px-6'>
             <div className='flex flex-col justify-center w-full'>
                 <div className='w-full py-6'>
-                    {cardData && cardData.links.length > 0 ? cardData.links.map((link, index: number) => (
+                    {cardData && cardData.links?.length > 0 ? cardData.links.map((link, index: number) => (
                         <Link
                             to={link.link}
                             target="blank"

@@ -6,7 +6,11 @@ const Backdrop = () => {
         >
             <img src="/voolata_long_r.png" alt="Voolata Logo" className="w-24" />
             <p className="h-16 text-[6px] text-white">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ut hendrerit odio...
+                105, P-17, Omkar CHS Ltd, Noopur Nagar Mataji Mandir, Mira Road, Thane, Thane- 401107
+                <br />
+                +91 91368 95794
+                <br />
+                contactus@evoolfoundation.org
             </p>
         </div>
     );

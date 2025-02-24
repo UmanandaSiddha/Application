@@ -3,7 +3,7 @@ export const perInfo = [
     { name: "dateOfBirth", label: "Date of Birth", text: "Enter your Date of Birth", type: "date" },
     { name: "gender", label: "Gender", text: "Enter your Gender", type: "text" },
     { name: "phone", label: "Phone Number", text: "Enter your Phone Number", type: "tel" },
-    { name: "email", label: "Email Address", text: "Enter your Email Address", type: "email" }
+    // { name: "email", label: "Email Address", text: "Enter your Email Address", type: "email" }
 ];
 
 export const emCon = [
@@ -32,11 +32,11 @@ export const medDetailBlood = [
 export const healthHistory = [
     {
         name: "allergyHistory", multiple: true, label: "Known Allergies", text: "Enter Known Allergies", type: "text",
-        options: ['Medications', 'Foods', 'Insects', 'Latex', 'Pollen', 'Other']
+        options: ['Medications', 'Foods', 'Insects', 'Latex', 'Pollen']
     },
     {
         name: "chronicHistory", multiple: true, label: "Chronic Conditions", text: "Enter Chronic Medical Conditions", type: "text",
-        options: ['Diabetes', 'Hypertension', 'Asthma', 'Heart Disease', 'Arthritis', 'Thyroid Disorder', 'Chronic Pain', 'Respiratory Issues', 'Chronic Obstructive Pulmonary Disease (COPD)', 'Cardiovascular Diseases', 'Cancer', 'Chronic Kidney Disease (CKD)', 'Tuberculosis', 'Rheumatic Heart Disease', 'Hepatitis', 'Alzheimer’s Disease', 'Osteoarthritis', 'Rheumatoid Arthritis', 'Bronchitis', 'Emphysema', 'Cystic Fibrosis', 'Eczema', 'Endometriosis', 'Ehlers-Danlos Syndrome', 'Other']
+        options: ['Diabetes', 'Hypertension', 'Asthma', 'Heart Disease', 'Arthritis', 'Thyroid Disorder', 'Chronic Pain', 'Respiratory Issues', 'Chronic Obstructive Pulmonary Disease (COPD)', 'Cardiovascular Diseases', 'Cancer', 'Chronic Kidney Disease (CKD)', 'Tuberculosis', 'Rheumatic Heart Disease', 'Hepatitis', 'Alzheimer’s Disease', 'Osteoarthritis', 'Rheumatoid Arthritis', 'Bronchitis', 'Emphysema', 'Cystic Fibrosis', 'Eczema', 'Endometriosis', 'Ehlers-Danlos Syndrome']
     }
 ];
 

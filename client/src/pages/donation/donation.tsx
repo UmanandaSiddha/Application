@@ -8,6 +8,7 @@ import support from '../../assets/extra/support.svg';
 // import foster from '../../assets/extra/foster.svg';
 import arrow from '../../assets/extra/arrow.svg';
 import rocket from '../../assets/extra/rocket.svg';
+import { useNavigate } from "react-router-dom";
 // import "slick-carousel/slick/slick.css";
 // import "slick-carousel/slick/slick-theme.css";
 
@@ -50,6 +51,9 @@ const Donation = () => {
     //         }
     //     ]
     // };
+
+    const navigate = useNavigate();
+
     return (
         <>
             <Helmet>
@@ -57,8 +61,7 @@ const Donation = () => {
                 <meta name="description" content={`This is the donation page of Voolata`} />
                 <meta name="keywords" content="donation, voolata" />
             </Helmet>
-            {/* <div className='w-[85%] mx-auto lg:mt-0 mt-10' > */}
-            <div className='p-6 md:p-10 lg:p-20'>
+            <div className='w-full lg:w-[85%] mx-auto px-8 py-24 lg:py-12'>
                 <div className='flex flex-col lg:flex-row items-center justify-between text-center lg:text-left gap-6'>
                     <div className='lg:w-1/2'>
                         <p className='text-2xl sm:text-3xl md:text-4xl font-bold leading-tight'>
@@ -67,7 +70,7 @@ const Donation = () => {
                         <p className='text-base sm:text-lg md:text-xl mt-3 text-gray-700'>
                             Join us in our mission to make a positive impact on the world.
                         </p>
-                        <button className='mt-5 px-6 py-2 text-lg font-bold bg-[#1858F0] text-white rounded-lg hover:bg-blue-700 transition'>
+                        <button onClick={() => navigate("/donation/dashboard")} className='mt-5 px-6 py-2 text-lg font-bold bg-[#1858F0] text-white rounded-lg hover:bg-blue-700 transition'>
                             Donate
                         </button>
                     </div>
@@ -143,7 +146,7 @@ const Donation = () => {
                         Your donations help drive innovation, create job opportunities, and promote sustainability. Join us in making a lasting impact.
                     </p>
 
-                    <button className='mt-5 px-6 py-3 text-lg font-bold bg-[#1858F0] text-white rounded-lg hover:bg-blue-700 transition'>
+                    <button onClick={() => navigate("/donation/dashboard")} className='mt-5 px-6 py-3 text-lg font-bold bg-[#1858F0] text-white rounded-lg hover:bg-blue-700 transition'>
                         Donate Now
                     </button>
 

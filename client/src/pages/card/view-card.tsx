@@ -127,7 +127,7 @@ const ViewCard = () => {
     return (
         <div className="">
             {!isDesktop && type === "MEDICAL" ? (
-                <MedicalDesktopViewCard />
+                card && <MedicalDesktopViewCard cardData={card.data as MedicalData} />
             ) : card ? (
                 <>
                     <div

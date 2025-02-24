@@ -64,6 +64,7 @@ export const loginDonator = catchAsyncErrors(async (req: Request, res: Response,
         oneTimePassword,
         oneTimeExpire: { $gt: Date.now() },
     });
+    console.log(donator);
     if (!donator) return next(new ErrorHandler("Email Veification OTP has Expired", 400));
 
     donator.oneTimePassword = undefined;
@@ -83,14 +84,15 @@ export const getDonator = catchAsyncErrors(async (req: DonatorRequest, res: Resp
 });
 
 export const createDonatorDetails = catchAsyncErrors(async (req: DonatorRequest, res: Response, next: NextFunction): Promise<void> => {
-    const { name, phone, street, city, state, postalCode, country } = req.body;
-    if (!name || !phone || !street || !city || !state || !postalCode || !country) {
+    const { firstName, lastName, phoneNumber, street, city, state, postalCode, country } = req.body;
+    if (!firstName || !lastName || !phoneNumber || !street || !city || !state || !postalCode || !country) {
         return next(new ErrorHandler("Please enter all the required fields", 400));
     }
 
     const updateData = {
-        name,
-        phone,
+        firstName,
+        lastName,
+        phoneNumber,
         address: {
             street,
             city,

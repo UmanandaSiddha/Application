@@ -345,7 +345,7 @@ const MedicalInput = () => {
                                 >
                                     Prev
                                 </button>
-                                {progressBar === 4 ? (
+                                {progressBar === 4 && (
                                     <button
                                         className="px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-[#6571FB] text-lg"
                                         type="submit"
@@ -353,7 +353,8 @@ const MedicalInput = () => {
                                     >
                                         {medicalLoading ? "Hold on..." : "Submit"}
                                     </button>
-                                ) : (
+                                )}
+                                {progressBar !==4 && (
                                     <button
                                         className="sm:hidden px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-[#6571FB] text-lg"
                                         type="button"

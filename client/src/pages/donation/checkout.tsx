@@ -8,6 +8,7 @@ import { donatorExist } from "@/redux/reducer/donatorReducer";
 import { Helmet } from "react-helmet-async";
 import { Loader2 } from "lucide-react";
 import { GPaySvg, MasterCardSvg, PaytmSvg, RazorPaySvg, RupaySvg, UpiSvg, VisaSvg } from "@/constants/icons/checkout";
+import API from "@/config/apiConfig";
 
 function loadScript(src: any) {
     return new Promise((resolve) => {
@@ -82,14 +83,14 @@ const DonationCheckout = () => {
             return;
         }
         for (const [field, value] of Object.entries(updateData)) {
-            if (field !== 'pan' && !value) {
+            if (!value) {
                 toast.warning(`${field} is required`);
                 return;
             }
         }
         setUpdateLoading(true);
         try {
-            const { data }: { data: any } = await axios.post(`${import.meta.env.VITE_BASE_URL}/donate/new`, updateData, { withCredentials: true });
+            const { data }: { data: any } = await API.post(`/donate/new`, updateData);
             dispatch(donatorExist(data.donator));
             toast.success("Succssfully updated");
         } catch (error: any) {

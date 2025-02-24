@@ -383,10 +383,10 @@ const Profile = () => {
                                 </div>
                             )}
                         </div>
-                        <h2 className="mt-2 text-xl font-semibold text-gray-800 md:mt-0">
+                        {/* <h2 className="mt-2 text-xl font-semibold text-gray-800 md:mt-0">
                             User ID: <span className="text-md">{user?._id}</span>
-                        </h2>
-                        <hr className="my-2 border-gray-400 " />
+                        </h2> */}
+                        {/* <hr className="my-2 border-gray-400 " /> */}
                         <div className="flex  flex-col md:flex-row justify-between mt-2">
                             <div>
                                 <p className="mt-2 text-md font-semibold">Name: <span className="mt-2 text-sm text-gray-600">{user?.profile.firstName}</span></p>

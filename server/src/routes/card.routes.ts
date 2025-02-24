@@ -4,6 +4,7 @@ import {
     createBatchCards,
     createCard,
     deleteCard,
+    deleteCards,
     getDisplayCard,
     getGeneralCard,
     getUserCards,
@@ -18,6 +19,7 @@ router.route("/new/batch").post(isAuthenticatedUser, isUserVerified, hasAccess, 
 router.route("/details/:id").get(getDisplayCard);
 router.route("/detailed/:id").get(isAuthenticatedUser, isUserVerified, getGeneralCard);
 router.route("/user").get(isAuthenticatedUser, isUserVerified, getUserCards);
+router.route("/multi/delete").put(isAuthenticatedUser, isUserVerified, hasAccess, deleteCards);
 router.route("/edit/:id")
     .delete(isAuthenticatedUser, isUserVerified, hasAccess, deleteCard)
     .put(isAuthenticatedUser, isUserVerified, hasAccess, updateCard);

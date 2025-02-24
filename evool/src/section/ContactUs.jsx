@@ -28,7 +28,7 @@ const ContactUs = () => {
         }
         try {
             await axios.post(`https://api.voolata.com/api/v1/contact/new`, payload, { withCredentials: true });
-            toast.success("Request Submitted!");
+            toast.success("Message sent!");
         } catch (error) {
             console.log(error);
             toast.error(error.response.data.message);

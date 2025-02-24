@@ -626,7 +626,7 @@ const CreatePersonal = () => {
                                 >
                                     Prev
                                 </button>
-                                {progressBar === 5 ? (
+                                {progressBar === 5 && (
                                     <button
                                         className="px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-[#6571FB] text-lg"
                                         type="submit"
@@ -634,7 +634,8 @@ const CreatePersonal = () => {
                                     >
                                         {personalLoading ? "Hold on..." : "Submit"}
                                     </button>
-                                ) : (
+                                )} 
+                                {progressBar !== 5 && (
                                     <button
                                         className="sm:hidden px-4 py-2 mt-4 rounded-md hover:cursor-pointer w-full text-white bg-[#6571FB] text-lg"
                                         type="button"

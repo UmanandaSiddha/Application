@@ -16,7 +16,7 @@ export const isAuthenticatedDonator = catchAsyncErrors( async (req: DonatorReque
         throw new ErrorHandler("Unauthorized access", StatusCodes.FORBIDDEN);
     }
 
-    const decoded = jwt.verify(donatorToken!, process.env.DONATOR_TOKEN_SECRET!) as JwtPayload & { id: string };
+    const decoded = jwt.verify(donatorToken!, process.env.JWT_SECRET as string) as JwtPayload & { id: string };
     const donator = await Donator.findById(decoded.id);
     if (!donator) {
         throw new ErrorHandler("Donator not found", StatusCodes.NOT_FOUND)

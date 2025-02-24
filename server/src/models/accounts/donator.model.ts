@@ -59,8 +59,8 @@ const DonatorSchema: Schema<IDonator> = new mongoose.Schema(
 DonatorSchema.methods.generateJWTToken = function (this: IDonator) {
     const token = jwt.sign(
         { id: this._id },
-        process.env.ACCESS_TOKEN_SECRET!, 
-        { expiresIn: process.env.ACCESS_TOKEN_EXPIRE }
+        process.env.JWT_SECRET as string, 
+        { expiresIn: process.env.JWT_EXPIRE as string }
     );
     return token;
 };

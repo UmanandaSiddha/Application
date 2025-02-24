@@ -72,7 +72,23 @@ const App = () => {
     const weirdHeader = (location.pathname.startsWith("/dashboard/cards/card/") || location.pathname.startsWith("/d/")) && !(location.pathname.startsWith("/dashboard/cards/card/medical") && !isDesktop);
 
     // const noPaddingTopRoutes = ["/login", "/register", "/org/register"];
-    const noPaddingTopRoutes = ["/login", "/register", "/org/register", "/contact", "/", "/about-us", "/plans", "/verify", "/onboarding"];
+    const noPaddingTopRoutes = [
+        "/login",
+        "/register",
+        "/org/register",
+        "/contact",
+        "/",
+        "/about-us",
+        "/plans",
+        "/verify",
+        "/onboarding",
+        "/donation/login",
+        "/donation/dashboard",
+        "/request-custom",
+        "/terms-conditions",
+        "/refund-policy",
+        "/privacy-policy"
+    ];
     const isWhiteSmokeRoute = ["/profile", "/billing", "/donation/billing", "/receipt", "/donation/dashboard"];
 
     const containerClass = noPaddingTopRoutes.includes(location.pathname) || weirdHeader

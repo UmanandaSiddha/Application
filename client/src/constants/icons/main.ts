@@ -1,0 +1,1 @@
+export { default as MainLogoGif } from "@/assets/gif/main.gif";
