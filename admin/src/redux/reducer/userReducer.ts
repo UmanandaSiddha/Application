@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserReducerInitialState } from "../../types/reducer-types";
-import { User } from "../../types/types";
+import { IUser } from "../../types/type";
+
+interface UserReducerInitialState {
+    user: IUser | null;
+    isPaid: boolean;
+    loading: boolean;
+}
 
 const initialState: UserReducerInitialState = {
     user: null,
@@ -12,7 +17,7 @@ export const userReducer = createSlice({
     name: "userReducer",
     initialState,
     reducers: {
-        userExist: (state, action: PayloadAction<User>) => {
+        userExist: (state, action: PayloadAction<IUser>) => {
             state.loading = false;
             state.user = action.payload;
             if (action.payload.activePlan?.status === "active") {
@@ -23,7 +28,7 @@ export const userReducer = createSlice({
             state.loading = false;
             state.user = null;
         },
-        togglePaid: (state, action: PayloadAction<User>) => {
+        togglePaid: (state, action: PayloadAction<IUser>) => {
             if (action.payload.activePlan?.status === "active") {
                 state.isPaid = true
             } else {

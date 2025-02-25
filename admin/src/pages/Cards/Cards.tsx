@@ -1,10 +1,9 @@
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
-import { Animal, Creator, Medical, Personal, Tree } from "../../types/types";
 import axios from "axios";
-import { AllCardsResponse } from "../../types/api-types";
 import { toast } from "react-toastify";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { ICard } from "../../types/type";
 
 type TypeOptions = "botanical" | "individual" | "medical" | "creator" | "animal";
 
@@ -15,7 +14,7 @@ const Cards = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const typeParams = searchParams.get('type');
-    const [cards, setCards] = useState<Tree[] | Personal[] | Medical[] | Creator[] | Animal[]>();
+    const [cards, setCards] = useState<ICard[]>();
     const [type, setType] = useState<TypeOptions>(
         validTypes.includes(typeParams as TypeOptions) ? (typeParams as TypeOptions) : "botanical"
     );
@@ -29,7 +28,7 @@ const Cards = () => {
 
     const fetchCards = async (url: string) => {
         try {
-            const { data }: { data: AllCardsResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(url, { withCredentials: true });
             setCards(data.cards);
             setCounts({
                 ...counts,

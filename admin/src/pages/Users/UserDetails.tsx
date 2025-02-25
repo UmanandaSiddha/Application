@@ -2,12 +2,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { AllCardsResponse, AllSubscriptionResponse, AllTransactionsResponse, UserResponse } from "../../types/api-types";
 import axios from "axios";
-import { Animal, Creator, Medical, Personal, Subscription, Transaction, Tree, User } from "../../types/types";
 import CardsChart from "../../components/Charts/CardsChart";
 import Loader from "../../components/Loader";
 import { Loader2 } from "lucide-react";
+import { ICard, ISubscription, ITransaction, IUser } from "../../types/type";
 
 interface CardStatsResponse {
     success: boolean;
@@ -30,12 +29,12 @@ const UserDetails = () => {
     const navigate = useNavigate();
     const id = search.get("id");
     const typeParams = search.get('type');
-    const [user, setUser] = useState<User>();
+    const [user, setUser] = useState<IUser>();
     const [type, setType] = useState<TypeOptions>(
         validTypes.includes(typeParams as TypeOptions) ? (typeParams as TypeOptions) : "botanical"
     );
     // const [type, setType] = useState<"botanical" | "individual" | "medical" | "creator" | "animal">((typeParams as "botanical" | "individual" | "medical" | "creator" | "animal") || "botanical");
-    const [cards, setCards] = useState<Tree[] | Personal[] | Medical[] | Creator[] | Animal[]>();
+    const [cards, setCards] = useState<ICard[]>();
     const [stats, setStats] = useState({
         botanical: 0,
         individual: 0,
@@ -43,8 +42,8 @@ const UserDetails = () => {
         medical: 0,
         animal: 0,
     });
-    const [transactions, setTransactions] = useState<Transaction[]>();
-    const [subscriptions, setSubscriptions] = useState<Subscription[]>();
+    const [transactions, setTransactions] = useState<ITransaction[]>();
+    const [subscriptions, setSubscriptions] = useState<ISubscription[]>();
     const [total, setTotal] = useState<number | null>(0);
     const [selectedOption, setSelectedOption] = useState<string>("");
     const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
@@ -95,7 +94,7 @@ const UserDetails = () => {
         window.sessionStorage.removeItem('user_byId');
 
         try {
-            const { data }: { data: UserResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/users/byId/${id}`, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/users/byId/${id}`, { withCredentials: true });
             setUser(data.user);
             setTotal(data.user.cards.total);
             setSelectedOption(data.user.role);
@@ -113,7 +112,7 @@ const UserDetails = () => {
 
     const fetchSubscriptions = async (url: string) => {
         try {
-            const { data }: { data: AllSubscriptionResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(url, { withCredentials: true });
             setSubscriptions(data.subscriptions);
             setSubscriptionCount({
                 ...subscriptionCount,
@@ -128,7 +127,7 @@ const UserDetails = () => {
 
     const fetchTrsanctions = async (url: string) => {
         try {
-            const { data }: { data: AllTransactionsResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(url, { withCredentials: true });
             setTransactions(data.transactions);
             setTransactionCount({
                 ...transactionCount,
@@ -143,7 +142,7 @@ const UserDetails = () => {
 
     const fetchCards = async (url: string) => {
         try {
-            const { data }: { data: AllCardsResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await axios.get(url, { withCredentials: true });
             setCards(data.cards);
             setCardsCount({
                 ...cardsCount,
@@ -172,7 +171,7 @@ const UserDetails = () => {
             toast.warning("Select a Role");
             return;
         }
-        if (selectedOption === user?.role) {
+        if (selectedOption === user?.profile.role) {
             toast.warning("Selecetd Role already exists");
             return;
         }
@@ -210,7 +209,7 @@ const UserDetails = () => {
 
             window.sessionStorage.removeItem('user_byId');
 
-            const { data }: { data: UserResponse } = await axios.put(link, {}, { withCredentials: true });
+            const { data }: { data: any } = await axios.put(link, {}, { withCredentials: true });
             setUser(data.user);
             setTotal(data.user.cards.total);
             setSelectedOption(data.user.role);
