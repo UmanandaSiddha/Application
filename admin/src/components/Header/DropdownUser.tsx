@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 // import UserOne from '../../images/user/user-01.png';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { userNotExist } from '../../redux/reducer/userReducer';
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { userNotExist } from "../../redux/reducer/userReducer";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -15,9 +15,7 @@ const DropdownUser = () => {
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
 
-  const { user } = useSelector(
-    (state: RootState) => state.userReducer
-  );
+  const { user } = useSelector((state: RootState) => state.userReducer);
 
   // close on click outside
   useEffect(() => {
@@ -31,8 +29,8 @@ const DropdownUser = () => {
         return;
       setDropdownOpen(false);
     };
-    document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
+    document.addEventListener("click", clickHandler);
+    return () => document.removeEventListener("click", clickHandler);
   });
 
   // close if the esc key is pressed
@@ -41,20 +39,22 @@ const DropdownUser = () => {
       if (!dropdownOpen || keyCode !== 27) return;
       setDropdownOpen(false);
     };
-    document.addEventListener('keydown', keyHandler);
-    return () => document.removeEventListener('keydown', keyHandler);
+    document.addEventListener("keydown", keyHandler);
+    return () => document.removeEventListener("keydown", keyHandler);
   });
 
   const logout = async () => {
     try {
-        await axios.get(`${import.meta.env.VITE_BASE_URL}/user/logout`, { withCredentials: true });
-        dispatch(userNotExist());
-        toast.success("User Logged Out Successfully");
-        navigate("/auth/signin");
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/user/logout`, {
+        withCredentials: true,
+      });
+      dispatch(userNotExist());
+      toast.success("User Logged Out Successfully");
+      navigate("/auth/signin");
     } catch (error: any) {
-        toast.error(error.response.data.message);
+      toast.error(error.response.data.message);
     }
-}
+  };
 
   return (
     <div className="relative">
@@ -66,13 +66,22 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {user?.name}
+            {user?.profile?.firstName}
+            {user?.profile?.lastName}
           </span>
-          <span className="block text-xs">{user?.role.toUpperCase()}</span>
+          <span className="block text-xs">
+            {user?.profile?.role.toUpperCase()}
+          </span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <img className="h-12 w-12 rounded-full" src={user?.image} alt={user?.name.charAt(0)} />
+          <img
+            className="h-12 w-12 rounded-full"
+            src={user?.profile?.profilePicture}
+            alt={`${user?.profile?.firstName?.charAt(
+              0
+            )}${user?.profile?.lastName?.charAt(0)}`}
+          />
         </span>
 
         <svg
@@ -98,14 +107,14 @@ const DropdownUser = () => {
         onFocus={() => setDropdownOpen(true)}
         onBlur={() => setDropdownOpen(false)}
         className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ${
-          dropdownOpen === true ? 'block' : 'hidden'
+          dropdownOpen === true ? "block" : "hidden"
         }`}
       >
         <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
           <li>
             <Link
               to={`${import.meta.env.VITE_CLIENT_URL}/profile`}
-              target='blank'
+              target="blank"
               className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
             >
               <svg
@@ -129,7 +138,10 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button onClick={logout} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <button
+          onClick={logout}
+          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+        >
           <svg
             className="fill-current"
             width="22"
