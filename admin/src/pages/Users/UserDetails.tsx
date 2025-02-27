@@ -6,7 +6,7 @@ import axios from "axios";
 import CardsChart from "../../components/Charts/CardsChart";
 import Loader from "../../components/Loader";
 import { Loader2 } from "lucide-react";
-import { ICard, ISubscription, ITransaction, IUser } from "../../types/type";
+import { ICard, ISubscription, ITransaction, IUser, UserRoleEnum } from "../../types/type";
 
 interface CardStatsResponse {
     success: boolean;
@@ -307,48 +307,49 @@ const UserDetails = () => {
         <DefaultLayout>
             <div className="flex flex-wrap items-center justify-evenly gap-8">
                 <div className="flex flex-col gap-1">
-                    {user?.image ? (
-                        <img className="h-15 w-15 rounded-full mb-4" src={user.image} alt={user.name} />
+                    {user?.profile?.profilePicture ? (
+                        <img className="h-15 w-15 rounded-full mb-4" src={user.profile.profilePicture} alt={`${user.profile.firstName}${user.profile.lastName}`} />
                     ) : (
                         <p className="h-15 w-15 mb-4 rounded-full flex items-center text-2xl font-semibold bg-slate-300 dark:bg-slate-500 justify-center">
-                            {user?.name.charAt(0).toUpperCase()}
+                            {user?.profile?.firstName.charAt(0).toUpperCase()}
+                            {user?.profile?.lastName.charAt(0).toUpperCase()}
                         </p>
                     )}
                     <p className="text-white"><span className="font-semibold">Id:</span> {user?._id}</p>
-                    <p className="text-white"><span className="font-semibold">Name</span> - {user?.name}</p>
-                    <p className="text-white"><span className="font-semibold">Email</span> - {user?.email}</p>
+                    <p className="text-white"><span className="font-semibold">Name</span> - {user?.profile.firstName}</p>
+                    <p className="text-white"><span className="font-semibold">Email</span> - {user?.profile?.email}</p>
                     <p className="text-white"><span className="font-semibold">Phone</span> - {user?.phone}</p>
-                    <p className="text-white"><span className="font-semibold">Cards</span> - {user?.cards.created} / {user?.cards.total}</p>
-                    <p className="text-white"><span className="font-semibold">Role</span> - {user?.role.toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Cards</span> - {user?.access?.cards.created} / {user?.access?.cards?.total?.initial}</p>
+                    <p className="text-white"><span className="font-semibold">Role</span> - {user?.profile?.role.toUpperCase()}</p>
 
                     <p className="text-white font-semibold text-xl">Billing Address</p>
-                    <p className="text-white pl-8"><span className="font-semibold">Street</span> - {user?.billingAddress?.street}</p>
-                    <p className="text-white pl-8"><span className="font-semibold">City</span> - {user?.billingAddress?.city}</p>
-                    <p className="text-white pl-8"><span className="font-semibold">State</span> - {user?.billingAddress?.state}</p>
-                    <p className="text-white pl-8"><span className="font-semibold">Country</span> - {user?.billingAddress?.country}</p>
-                    <p className="text-white pl-8"><span className="font-semibold">Postal Code</span> - {user?.billingAddress?.postalCode}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">Street</span> - {user?.access?.billingInfo?.address?.street}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">City</span> - {user?.access?.billingInfo?.address?.city}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">State</span> - {user?.access?.billingInfo?.address?.state}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">Country</span> - {user?.access?.billingInfo?.address?.country}</p>
+                    <p className="text-white pl-8"><span className="font-semibold">Postal Code</span> - {user?.access?.billingInfo?.address?.postalCode}</p>
 
-                    {user?.role === "org" && (
+                    {user?.profile?.role === UserRoleEnum.ORGANIZATION && (
                         <>
                             <p className="text-white font-semibold text-xl">Organisation Details</p>
-                            <p className="text-white pl-8"><span className="font-semibold">Phone</span> - {user?.orgDetails?.phone}</p>
-                            <p className="text-white pl-8"><span className="font-semibold">Website</span> - {user?.orgDetails?.website}</p>
+                            <p className="text-white pl-8"><span className="font-semibold">Phone</span> - {user?.organization?.organizationBilling?.phoneNumber}</p>
+                            <p className="text-white pl-8"><span className="font-semibold">Website</span> - {user?.organization?.website}</p>
                             <p className="text-white font-semibold pl-8 text-lg">Address</p>
-                            <p className="text-white pl-16"><span className="font-semibold">Street</span> - {user?.orgDetails?.address?.street}</p>
-                            <p className="text-white pl-16"><span className="font-semibold">City</span> - {user?.orgDetails?.address?.city}</p>
-                            <p className="text-white pl-16"><span className="font-semibold">State</span> - {user?.orgDetails?.address?.state}</p>
-                            <p className="text-white pl-16"><span className="font-semibold">Country</span> - {user?.orgDetails?.address?.country}</p>
-                            <p className="text-white pl-16"><span className="font-semibold">Postal Code</span> - {user?.orgDetails?.address?.postalCode}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">Street</span> - {user?.organization?.organizationBilling?.address?.street}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">City</span> - {user?.organization?.organizationBilling?.address?.city}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">State</span> - {user?.organization?.organizationBilling?.address?.state}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">Country</span> - {user?.organization?.organizationBilling?.address?.country}</p>
+                            <p className="text-white pl-16"><span className="font-semibold">Postal Code</span> - {user?.organization?.organizationBilling?.address?.postalCode}</p>
                         </>
                     )}
 
-                    <p className="text-white"><span className="font-semibold">Account Type</span> - {user?.accountType.toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Account Type</span> - {user?.account?.accountType.map(type => type.toUpperCase()).join(", ")}</p>
                     <p className="text-white"><span className="font-semibold">Free Plan</span> - {user?.freePlan?.status.toString().toUpperCase()}</p>
-                    <p className="text-white"><span className="font-semibold">Verified</span> - {String(user?.isVerified).toUpperCase()}</p>
-                    <p className="text-white"><span className="font-semibold">Blocked</span> - {String(user?.isBlocked).toUpperCase()}</p>
-                    <p className="text-white"><span className="font-semibold">Deactivated</span> - {String(user?.isDeactivated).toUpperCase()}</p>
-                    <p className="text-white"><span className="font-semibold">Login Attempts</span> - {user?.loginAttempt.count}</p>
-                    <p className="text-white"><span className="font-semibold">Last Attempt</span> - {user?.loginAttempt.time ? String(new Date(user?.loginAttempt.time).toDateString()) : "Not Available"}</p>
+                    <p className="text-white"><span className="font-semibold">Verified</span> - {String(user?.account?.isVerified).toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Blocked</span> - {String(user?.account?.isBlocked).toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Deactivated</span> - {String(user?.account?.isDeactivated).toUpperCase()}</p>
+                    <p className="text-white"> <span className="font-semibold">Login Attempts</span> - {user?.account?.loginAttempt?.count ?? "N/A"}</p>
+                    <p className="text-white"><span className="font-semibold">Last Attempt</span> - {user?.account?.loginAttempt?.lastLogin ? String(new Date(user?.account?.loginAttempt.lastLogin).toDateString()) : "Not Available"}</p>
                     <p className="text-white"><span className="font-semibold">Active Plan</span> - {user?.freePlan.status ? "FREE PLAN ( " + user.freePlan.type.toUpperCase() + " )" : user?.activePlan?._id}</p>
                     <p className="text-white"><span className="font-semibold">Plan Status</span> - {user?.activePlan?.status}</p>
                     <p className="text-white">
@@ -356,7 +357,7 @@ const UserDetails = () => {
                             {(user?.activePlan?.status === "cancelled" && (new Date(user?.activePlan?.currentEnd) > new Date(Date.now()))) ? "Valid Till" : "Next Billing"}
                         </span>
                         - {user?.activePlan?.currentEnd ? String(new Date(user?.activePlan?.currentEnd).toDateString()) : "Not Available"}</p>
-                    <p className="text-white"><span className="font-semibold">Google Id</span> - {user?.googleId === "GoogleID" ? "Not Set Yet" : user?.googleId}</p>
+                    <p className="text-white"><span className="font-semibold">Google Id</span> - {user?.profile?.googleId === "GoogleID" ? "Not Set Yet" : user?.profile?.googleId}</p>
                     <p className="text-white"><span className="font-semibold">Account Created</span> - {String(new Date(user?.createdAt!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Account Upadated</span> - {String(new Date(user?.updatedAt!).toDateString())}</p>
                 </div>
@@ -365,7 +366,7 @@ const UserDetails = () => {
                         <div className="rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-8 w-[90%] md:w-[50%] lg:w-[30%]">
                             <h2 className="text-2xl font-bold mb-4 text-center text-black dark:text-white">Are you sure you want to deactivate this user?</h2>
                             <div className="w-full mt-8 flex justify-between items-center gap-8">
-                                <button className="w-1/2 px-3 py-2 border-2 border-red-500 rounded-lg bg-red-500 text-white" onClick={() => handleDeactivate(user?.isDeactivated ? true : false)}>
+                                <button className="w-1/2 px-3 py-2 border-2 border-red-500 rounded-lg bg-red-500 text-white" onClick={() => handleDeactivate(user?.account?.isDeactivated ? true : false)}>
                                     Yes, I am sure!!
                                 </button>
                                 <button className="w-1/2 px-3 py-2 border-2 text-white rounded-lg" onClick={() => setOpen(false)}>
@@ -382,7 +383,7 @@ const UserDetails = () => {
                             <Loader2 size={60} />
                         </div>
                     ) : (
-                        <CardsChart stats={stats} total={user?.cards.total!} />
+                        <CardsChart stats={stats} total={(user?.access?.cards.total.initial ?? 0) + (user?.access?.cards.total?.extra ?? 0)} />
                     )}
 
                     <div className="flex flex-row gap-2 bg-transparent dark:bg-form-input">
@@ -423,21 +424,21 @@ const UserDetails = () => {
                         {(user?.freePlan.status && user.freePlan.type === "custom") ? "Revoke Free Access" : "Grant Free Access"}
                     </button>
 
-                    <button onClick={() => handleBlockUser(user?.isBlocked ? true : false)} className="flex w-full justify-center rounded bg-slate-500 p-3 font-medium text-gray hover:bg-opacity-90">
-                        {user?.isBlocked ? "Unblock User" : "Block User"}
+                    <button onClick={() => handleBlockUser(user?.account?.isBlocked ? true : false)} className="flex w-full justify-center rounded bg-slate-500 p-3 font-medium text-gray hover:bg-opacity-90">
+                        {user?.account?.isBlocked ? "Unblock User" : "Block User"}
                     </button>
 
                     <button
                         onClick={() => {
-                            if (user?.isDeactivated) {
+                            if (user?.account?.isDeactivated) {
                                 handleDeactivate(true)
                             } else {
                                 setOpen(true);
                             }
                         }}
-                        className={`flex w-full justify-center rounded ${user?.isDeactivated ? "bg-green-500" : "bg-red-500"} p-3 font-medium text-gray hover:bg-opacity-90`}
+                        className={`flex w-full justify-center rounded ${user?.account?.isDeactivated ? "bg-green-500" : "bg-red-500"} p-3 font-medium text-gray hover:bg-opacity-90`}
                     >
-                        {user?.isDeactivated ? "Reactivate User" : "Deactivate User"}
+                        {user?.account?.isDeactivated ? "Reactivate User" : "Deactivate User"}
                     </button>
                 </div>
             </div>
@@ -515,7 +516,7 @@ const UserDetails = () => {
                                     <div className="col-span-2 flex items-center">
                                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                                             <p className="text-sm text-black dark:text-white">
-                                                {card.name}
+                                            {card.data?.name ?? "Unknown"}
                                             </p>
                                         </div>
                                     </div>
@@ -534,10 +535,10 @@ const UserDetails = () => {
                                             className="text-sm text-meta-3 cursor-pointer"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                navigate(`/card-details?id=${card.user._id}`);
+                                                navigate(`/card-details?id=${card.userId}`);
                                             }}
                                         >
-                                            {card.user?._id}
+                                            {card.userId}
                                         </p>
                                     </div>
                                 </div>
