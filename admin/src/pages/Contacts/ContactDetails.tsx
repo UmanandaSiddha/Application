@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Contact } from "../../types/types";
+import { Contact } from "../../types/type";
 import { ContactResponse } from "../../types/api-types";
 import axios from "axios";
 import Loader from "../../components/Loader";

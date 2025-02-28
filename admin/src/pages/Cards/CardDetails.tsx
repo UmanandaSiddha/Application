@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CardResponse } from "../../types/api-types";
 import axios from "axios";
-import { Animal, Creator, Medical, Personal, Tree } from "../../types/types";
+import { AnimalData, CreatorData, MedicalData, IndividualData, BotanyData } from "../../types/type";
 import DefaultLayout from "../../layout/DefaultLayout";
 import QRCodeStyling from "qr-code-styling";
 import { Loader2 } from "lucide-react";
@@ -61,7 +61,7 @@ const CardDetails = () => {
     const id = search.get("id");
     const type = search.get("type");
     const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
-    const [card, setCard] = useState<Tree | Personal | Medical | Creator | Animal | null>(null);
+    const [card, setCard] = useState<BotanyData | IndividualData | MedicalData | CreatorData | AnimalData | null>(null);
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -73,7 +73,7 @@ const CardDetails = () => {
             const { data: cachedCards, expires, type: cachedType } = JSON.parse(cachedCardsAll);
 
             if (Date.now() < expires && type === cachedType) {
-                const cachedCard = cachedCards.find((card: Tree | Personal | Medical | Creator | Animal) => card._id === id);
+                const cachedCard = cachedCards.find((card: BotanyData | IndividualData | MedicalData | CreatorData | AnimalData) => card._id === id);
                 if (cachedCard) {
                     setCard(cachedCard);
                     setLoading(false);
@@ -175,15 +175,15 @@ const CardDetails = () => {
                 return (
                     <>
                         <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> - {(card as Tree)?.name}</p>
-                        <p className="text-white"><span className="font-semibold">Type:</span> - {(card as Tree)?.treeType}</p>
-                        <p className="text-white"><span className="font-semibold">Scientific Name</span> - {(card as Tree)?.scientificName}</p>
-                        <p className="text-white"><span className="font-semibold">Location</span> - {(card as Tree)?.location}</p>
-                        <p className="text-white"><span className="font-semibold">Description</span> - {(card as Tree)?.description}</p>
-                        <p className="text-white"><span className="font-semibold">Features</span> - {(card as Tree)?.features}</p>
-                        <p className="text-white"><span className="font-semibold">Maintenance</span> - {(card as Tree)?.maintenance}</p>
-                        <p className="text-white"><span className="font-semibold">Benefits</span> - {(card as Tree)?.benefits}</p>
-                        <p className="text-white"><span className="font-semibold">FunFact</span> - {(card as Tree)?.funFact}</p>
+                        <p className="text-white"><span className="font-semibold">Name:</span> - {(card as BotanyData)?.name}</p>
+                        <p className="text-white"><span className="font-semibold">Type:</span> - {(card as BotanyData)?.treeType}</p>
+                        <p className="text-white"><span className="font-semibold">Scientific Name</span> - {(card as BotanyData)?.scientificName}</p>
+                        <p className="text-white"><span className="font-semibold">Location</span> - {(card as BotanyData)?.location}</p>
+                        <p className="text-white"><span className="font-semibold">Description</span> - {(card as BotanyData)?.description}</p>
+                        <p className="text-white"><span className="font-semibold">Features</span> - {(card as BotanyData)?.features}</p>
+                        <p className="text-white"><span className="font-semibold">Maintenance</span> - {(card as BotanyData)?.maintenance}</p>
+                        <p className="text-white"><span className="font-semibold">Benefits</span> - {(card as BotanyData)?.benefits}</p>
+                        <p className="text-white"><span className="font-semibold">FunFact</span> - {(card as BotanyData)?.funFact}</p>
                         <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
                         <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
                         <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
