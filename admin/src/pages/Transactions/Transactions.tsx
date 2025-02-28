@@ -2,14 +2,14 @@ import { toast } from 'react-toastify';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Transaction } from '../../types/types';
+import { ITransaction } from '../../types/type';
 import axios from 'axios';
-import { AllTransactionsResponse } from '../../types/api-types';
+import { AllTransactionsResponse } from "../../types/api-types";
 
 const Transactions = () => {
 
     const navigate = useNavigate();
-    const [transactions, setTransactions] = useState<Transaction[]>();
+    const [transactions, setTransactions] = useState<ITransaction[]>();
     const [counts, setCounts] = useState({
         currentPage: 1,
         resultPerPage: 1,
