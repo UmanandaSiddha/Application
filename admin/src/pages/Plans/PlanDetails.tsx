@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plan } from "../../types/types";
+import { IPlan } from "../../types/type";
 import { PlanResponse } from "../../types/api-types";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -12,7 +12,7 @@ const PlanDetails = () => {
     const navigate = useNavigate();
     const [search] = useSearchParams();
     const id = search.get("id");
-    const [plan, setPlan] = useState<Plan>();
+    const [plan, setPlan] = useState<IPlan>();
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
