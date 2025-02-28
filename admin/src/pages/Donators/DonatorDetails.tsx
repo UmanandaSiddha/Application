@@ -1,7 +1,7 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
-import { Donator, Subscription, Transaction } from "../../types/types";
+import { IDonator, ISubscription, ITransaction } from "../../types/type";
 import { AllSubscriptionResponse, AllTransactionsResponse, DonatorResponse } from "../../types/api-types";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -12,9 +12,9 @@ const DonatorDetails = () => {
     const [search] = useSearchParams();
     const navigate = useNavigate();
     const id = search.get("id");
-    const [donator, setDonator] = useState<Donator>();
-    const [subscriptions, setSubscriptions] = useState<Subscription[]>();
-    const [transactions, setTransactions] = useState<Transaction[]>();
+    const [donator, setDonator] = useState<IDonator>();
+    const [subscriptions, setSubscriptions] = useState<ISubscription[]>();
+    const [transactions, setTransactions] = useState<ITransaction[]>();
     const [subscriptionCount, setSubscriptionCount] = useState({
         currentPage: 1,
         resultPerPage: 1,
@@ -138,11 +138,11 @@ const DonatorDetails = () => {
                     <div className="flex flex-col gap-1">
                         <p className="text-2xl font-semibold text-white underline">Donator Details</p>
                         <p className="text-white"><span className="font-semibold">Id:</span> {donator?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name</span> - {donator?.name}</p>
+                        <p className="text-white"><span className="font-semibold">Name</span> - {donator?.firstName}{donator?.lastName}</p>
                         <p className="text-white"><span className="font-semibold">Email</span> - {donator?.email}</p>
-                        <p className="text-white"><span className="font-semibold">Phone</span> - {donator?.phone}</p>
-                        <p className="text-white"><span className="font-semibold">Active Donation</span> - {donator?.activeDonation?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Pan</span> - {donator?.pan}</p>
+                        <p className="text-white"><span className="font-semibold">Phone</span> - {donator?.phoneNumber}</p>
+                        <p className="text-white"><span className="font-semibold">Active Donation</span> - {donator?.latestDonation?._id}</p>
+                        {/* <p className="text-white"><span className="font-semibold">Pan</span> - {donator?.pan}</p> */}
                     </div>
                     <div className="flex flex-col gap-1">
                         <p className="text-2xl font-semibold text-white underline">Address</p>
@@ -219,7 +219,7 @@ const DonatorDetails = () => {
                                         <div className="col-span-2 flex items-center">
                                             <p className="text-sm text-black dark:text-white">
                                                 {String(new Date(sub.start).toLocaleDateString())} - {String(new Date(sub.end).toLocaleDateString())}
-                                                {sub._id === donator?.activeDonation._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null}
+                                                {sub._id === donator?.latestDonation?._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null}
                                             </p>
                                         </div>
                                         <div className="col-span-2 flex items-center">
