@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
-import { Donator } from '../../types/types';
-import { AllDonatorsResponse } from '../../types/api-types';
+import { IDonator } from '../../types/type';
+import { AllDonatorsResponse } from "../../types/api-types";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const Donators = () => {
 
     const navigate = useNavigate();
-    const [donators, setDonators] = useState<Donator[]>();
+    const [donators, setDonators] = useState<IDonator[]>();
     const [keyword, setKeyword] = useState("");
     const [counts, setCounts] = useState({
         currentPage: 1,
@@ -115,7 +115,7 @@ const Donators = () => {
                                     onClick={() => navigate(`/donators/details?id=${donator._id}`)}
                                 >
                                     <div className="col-span-2 flex items-center">
-                                        <p className="text-sm text-black dark:text-white">{donator.name}</p>
+                                        <p className="text-sm text-black dark:text-white">{donator.firstName}{donator.lastName}</p>
                                     </div>
                                     <div className="col-span-2 hidden items-center sm:flex">
                                         <p className="text-sm text-black dark:text-white">
@@ -123,11 +123,11 @@ const Donators = () => {
                                         </p>
                                     </div>
                                     <div className="col-span-2 flex items-center">
-                                        <p className="text-sm text-black dark:text-white">{donator.phone}</p>
+                                        <p className="text-sm text-black dark:text-white">{donator.phoneNumber}</p>
                                     </div>
-                                    <div className="col-span-2 flex items-center">
+                                    {/* <div className="col-span-2 flex items-center">
                                         <p className="text-sm text-meta-3">{donator?.pan}</p>
-                                    </div>
+                                    </div> */}
                                 </div>
                             ))}
                         </>
