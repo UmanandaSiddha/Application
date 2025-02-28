@@ -318,6 +318,7 @@ const UserDetails = () => {
                     <p className="text-white"><span className="font-semibold">Id:</span> {user?._id}</p>
                     <p className="text-white"><span className="font-semibold">Name</span> - {user?.profile.firstName}</p>
                     <p className="text-white"><span className="font-semibold">Email</span> - {user?.profile?.email}</p>
+                    {/* phone nahi hai IUser mein 😔 */}
                     <p className="text-white"><span className="font-semibold">Phone</span> - {user?.phone}</p>
                     <p className="text-white"><span className="font-semibold">Cards</span> - {user?.access?.cards.created} / {user?.access?.cards?.total?.initial}</p>
                     <p className="text-white"><span className="font-semibold">Role</span> - {user?.profile?.role.toUpperCase()}</p>
