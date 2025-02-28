@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
-import { Subscription } from '../../types/types';
-import { AllSubscriptionResponse } from '../../types/api-types';
+import { ISubscription } from '../../types/type';
+import {AllSubscriptionResponse} from "../../types/api-types"
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const Subscriptions = () => {
 
     const navigate = useNavigate();
-    const [subscriptions, setSubscriptions] = useState<Subscription[]>();
+    const [subscriptions, setSubscriptions] = useState<ISubscription[]>();
     const [counts, setCounts] = useState({
         currentPage: 1,
         resultPerPage: 1,
