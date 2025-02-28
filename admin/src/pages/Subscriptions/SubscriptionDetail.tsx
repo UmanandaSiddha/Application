@@ -3,7 +3,7 @@ import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Subscription } from "../../types/types";
+import { ISubscription } from "../../types/type";
 import { SubscriptionResponse } from "../../types/api-types";
 import Loader from "../../components/Loader";
 
@@ -12,7 +12,7 @@ const SubscriptionDetail = () => {
     const [search] = useSearchParams();
     const navigate = useNavigate();
     const id = search.get("id");
-    const [subscription, setSubscription] = useState<Subscription>();
+    const [subscription, setSubscription] = useState<ISubscription>();
     const [status, setStatus] = useState("");
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -104,9 +104,12 @@ const SubscriptionDetail = () => {
                     <h1 className="text-3xl text-white underline font-semibold">Subscription Details</h1>
                     <p className="text-white"><span className="font-semibold">Id:</span> {subscription?._id}</p>
                     <p className="text-white"><span className="font-semibold">RazorPay Id:</span> {subscription?.razorSubscriptionId}</p>
-                    <p className="text-white"><span className="font-semibold">Plan Id:</span> {subscription?.planId?._id}</p>
-                    <p className="text-white"><span className="font-semibold">Plan Name:</span> {subscription?.planId?.name}</p>
-                    <p className="text-white"><span className="font-semibold">Plan Amount:</span> {subscription?.planId?.amount}</p>
+                    <p className="text-white"><span className="font-semibold">Plan Id:</span> {subscription?.planId}</p>
+
+                    {/* cannot find property named 'name' under ISubscription */}
+
+                    {/* <p className="text-white"><span className="font-semibold">Plan Name:</span> {subscription?.planId?.name}</p>
+                    <p className="text-white"><span className="font-semibold">Plan Amount:</span> {subscription?.planId?.amount}</p> */}
                     <p className="text-white"><span className="font-semibold">Billing Cycle:</span> {String(new Date(subscription?.start!).toDateString())} - {String(new Date(subscription?.end!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Current Cycle:</span> {String(new Date(subscription?.currentStart!).toDateString())} - {String(new Date(subscription?.currentEnd!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Next Billing:</span> {String(new Date(subscription?.nextBilling!).toDateString())}</p>
@@ -118,7 +121,7 @@ const SubscriptionDetail = () => {
                     <p className="text-white"><span className="font-semibold">Type:</span> {subscription?.subscriptionType.toUpperCase()}</p>
                     <p className="text-white"><span className="font-semibold">Payment Method:</span> {subscription?.paymentMethod?.methodType}</p>
                     <p className="text-white"><span className="font-semibold">Payment Details:</span> {subscription?.paymentMethod?.methodType === "card" ? `${subscription?.paymentMethod?.cardInfo?.name} ${subscription?.paymentMethod?.cardInfo?.cardType} ${subscription?.paymentMethod?.cardInfo?.last4}` : (subscription?.paymentMethod?.bankInfo || subscription?.paymentMethod?.upiInfo || subscription?.paymentMethod?.walletInfo)}</p>
-                    <p className="text-white"><span className="font-semibold">{subscription?.subscriptionType === "user" ? "User" : "Donator"}:</span> {subscription?.subscriptionType === "user" ? subscription?.user : subscription?.donator}</p>
+                    <p className="text-white"><span className="font-semibold">{subscription?.subscriptionType === "USER" ? "User" : "Donator"}:</span> {subscription?.subscriptionType === "USER" ? subscription?.user : subscription?.donator}</p>
                     <p className="text-white"><span className="font-semibold">Subscription Created</span> - {String(new Date(subscription?.createdAt!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Subscription Upadated</span> - {String(new Date(subscription?.updatedAt!).toDateString())}</p>
                 </div>
