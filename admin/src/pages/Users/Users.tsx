@@ -1,6 +1,6 @@
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
-import { User } from "../../types/types";
+import { IUser } from "../../types/type";
 import axios from "axios";
 import { AllUsersResponse } from "../../types/api-types";
 import { toast } from "react-toastify";
@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 const Users = () => {
 
     const navigate = useNavigate();
-    const [users, setUsers] = useState<User[]>();
+    const [users, setUsers] = useState<IUser[]>();
     const [filter, setFilter] = useState({
         keyword: "",
         role: "",
@@ -228,29 +228,30 @@ const Users = () => {
                                     <div className="col-span-3 flex items-center">
                                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                                             <div className="h-12.5 w-15 rounded-md hidden items-center sm:flex">
-                                                {user.image ? (
-                                                    <img className="h-15 w-15 rounded-full" src={user.image} alt={user.name} />
+                                                {user?.profile?.profilePicture ? (
+                                                    <img className="h-15 w-15 rounded-full" src={user.profile?.profilePicture} alt={user.profile.firstName} />
                                                 ) : (
                                                     <p className="h-15 w-15 rounded-full flex items-center text-2xl font-semibold bg-slate-300 dark:bg-slate-500 justify-center">
-                                                        {user.name.charAt(0).toUpperCase()}
+                                                        {user?.profile?.firstName.charAt(0).toUpperCase()}
+                                                        {user?.profile?.lastName.charAt(0).toUpperCase()}
                                                     </p>
                                                 )}
                                             </div>
                                             <p className="text-sm text-black dark:text-white">
-                                                {user.name}
+                                                {user?.profile?.firstName}{user?.profile?.lastName}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="col-span-3 hidden items-center sm:flex">
                                         <p className="text-sm text-black dark:text-white">
-                                            {user.email}
+                                            {user?.profile?.email}
                                         </p>
                                     </div>
                                     <div className="col-span-1 flex items-center">
-                                        <p className="text-sm text-black dark:text-white">{user.role.toUpperCase()}</p>
+                                        <p className="text-sm text-black dark:text-white">{user?.profile?.role.toUpperCase()}</p>
                                     </div>
                                     <div className="col-span-1 flex items-center">
-                                        <p className="text-sm text-meta-3">{user.accountType.toUpperCase()}</p>
+                                        <p className="text-sm text-meta-3">{user?.account?.accountType}</p>
                                     </div>
                                 </div>
                             ))}
