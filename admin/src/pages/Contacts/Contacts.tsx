@@ -1,7 +1,9 @@
+// cannot find contact interface in type.ts; leaving this page
+
 import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
-import { Contact } from '../../types/types';
+import { Contact } from '../../types/types'; //what to use instead of contact?
 import { AllContactResponse } from '../../types/api-types';
 import axios from 'axios';
 import { toast } from 'react-toastify';
