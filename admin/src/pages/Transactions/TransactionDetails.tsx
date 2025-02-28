@@ -1,8 +1,8 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
-import { Transaction } from "../../types/types";
+import { ITransaction } from "../../types/type";
 import { useEffect, useState } from "react";
-import { TransactionResponse } from "../../types/api-types";
+import { TransactionResponse } from "../../types/api-types"
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
@@ -12,7 +12,7 @@ const TransactionDetails = () => {
     const [search] = useSearchParams();
     const navigate = useNavigate();
     const id = search.get("id");
-    const [transaction, setTransaction] = useState<Transaction>();
+    const [transaction, setTransaction] = useState<ITransaction>();
     const [status, setStatus] = useState("");
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -121,7 +121,7 @@ const TransactionDetails = () => {
                         </>
                     )}
                     <p className="text-white"><span className="font-semibold">Payment Details:</span> {transaction?.paymentMethod?.methodType === "card" ? `${transaction?.paymentMethod?.cardInfo?.name} ${transaction?.paymentMethod?.cardInfo?.cardType} ${transaction?.paymentMethod?.cardInfo?.last4}` : (transaction?.paymentMethod?.bankInfo || transaction?.paymentMethod?.upiInfo || transaction?.paymentMethod?.walletInfo)}</p>
-                    <p className="text-white"><span className="font-semibold">{transaction?.transactionFor === "user" ? "User" : "Donator"}:</span> {transaction?.transactionFor === "user" ? transaction?.user : transaction?.donator}</p>
+                    <p className="text-white"><span className="font-semibold">{transaction?.transactionFor === "USER" ? "User" : "Donator"}:</span> {transaction?.transactionFor === "USER" ? transaction?.user : transaction?.donator}</p>
                     <p className="text-white"><span className="font-semibold">Subscription Created</span> - {String(new Date(transaction?.createdAt!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Subscription Upadated</span> - {String(new Date(transaction?.updatedAt!).toDateString())}</p>
                 </div>
