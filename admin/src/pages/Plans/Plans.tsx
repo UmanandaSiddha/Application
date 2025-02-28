@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
-import { Plan } from "../../types/types";
+import { IPlan } from "../../types/type";
 import { toast } from "react-toastify";
 import { AllPlansResponse } from "../../types/api-types";
 import axios from "axios";
@@ -16,7 +16,7 @@ const periodEnum = {
 const Plans = () => {
 
     const navigate = useNavigate();
-    const [plans, setPlans] = useState<Plan[]>();
+    const [plans, setPlans] = useState<IPlan[]>();
     const [filter, setFilter] = useState({
         visible: true,
         type: "",
