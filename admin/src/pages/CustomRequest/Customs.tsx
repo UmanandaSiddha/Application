@@ -1,3 +1,5 @@
+//custom request missing from type.ts
+
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import axios from "axios";

@@ -1,7 +1,9 @@
+// custom request does not exist in type.ts
+
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout"
 import { useEffect, useState } from "react";
-import { CustomReuest } from "../../types/types";
+import { CustomReuest } from "../../types/type";
 import { CustomRequestResponse } from "../../types/api-types";
 import axios from "axios";
 import { toast } from "react-toastify";
