@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CardResponse } from "../../types/api-types";
 import axios from "axios";
-import { AnimalData, CreatorData, MedicalData, IndividualData, BotanyData } from "../../types/type";
+import { AnimalData, CreatorData, MedicalData, IndividualData, BotanyData, ICard } from "../../types/type";
 import DefaultLayout from "../../layout/DefaultLayout";
 import QRCodeStyling from "qr-code-styling";
 import { Loader2 } from "lucide-react";
@@ -73,7 +73,8 @@ const CardDetails = () => {
             const { data: cachedCards, expires, type: cachedType } = JSON.parse(cachedCardsAll);
 
             if (Date.now() < expires && type === cachedType) {
-                const cachedCard = cachedCards.find((card: BotanyData | IndividualData | MedicalData | CreatorData | AnimalData) => card._id === id);
+                const cachedCard = cachedCards.find((card: ICard) => card._id === id);
+                // const cachedCard = cachedCards.find((card: BotanyData | IndividualData | MedicalData | CreatorData | AnimalData) => card._id === id);
                 if (cachedCard) {
                     setCard(cachedCard);
                     setLoading(false);
@@ -125,7 +126,7 @@ const CardDetails = () => {
 
     useEffect(() => {
         if (type && card) {
-            const qrCode = createQRCode(type, card.shortCode);
+            const qrCode = createQRCode(type!, card.shortCode); 
 
             qrCode.getRawData("png").then((data) => {
                 if (data) {
@@ -178,12 +179,12 @@ const CardDetails = () => {
                         <p className="text-white"><span className="font-semibold">Name:</span> - {(card as BotanyData)?.name}</p>
                         <p className="text-white"><span className="font-semibold">Type:</span> - {(card as BotanyData)?.treeType}</p>
                         <p className="text-white"><span className="font-semibold">Scientific Name</span> - {(card as BotanyData)?.scientificName}</p>
-                        <p className="text-white"><span className="font-semibold">Location</span> - {(card as BotanyData)?.location}</p>
+                        {/* <p className="text-white"><span className="font-semibold">Location</span> - {(card as BotanyData)?.location}</p> */}
                         <p className="text-white"><span className="font-semibold">Description</span> - {(card as BotanyData)?.description}</p>
-                        <p className="text-white"><span className="font-semibold">Features</span> - {(card as BotanyData)?.features}</p>
-                        <p className="text-white"><span className="font-semibold">Maintenance</span> - {(card as BotanyData)?.maintenance}</p>
-                        <p className="text-white"><span className="font-semibold">Benefits</span> - {(card as BotanyData)?.benefits}</p>
-                        <p className="text-white"><span className="font-semibold">FunFact</span> - {(card as BotanyData)?.funFact}</p>
+                        <p className="text-white"><span className="font-semibold">Features</span> - {(card as BotanyData)?.specialFeatures}</p>
+                        <p className="text-white"><span className="font-semibold">Maintenance</span> - {(card as BotanyData)?.nutritionalNeeds}</p>
+                        {/* <p className="text-white"><span className="font-semibold">Benefits</span> - {(card as BotanyData)?.benefits}</p>
+                        <p className="text-white"><span className="font-semibold">FunFact</span> - {(card as BotanyData)?.funFact}</p> */}
                         <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
                         <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
                         <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
@@ -193,58 +194,58 @@ const CardDetails = () => {
                 return (
                     <>
                         <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> - {(card as Personal)?.name}</p>
-                        <p className="text-white"><span className="font-semibold">Mobile Number:</span> - {(card as Personal)?.mobileNumer}</p>
-                        <p className="text-white"><span className="font-semibold">Home Number:</span> - {(card as Personal)?.homeNumber}</p>
-                        <p className="text-white"><span className="font-semibold">Work Number:</span> - {(card as Personal)?.workNumber}</p>
-                        <p className="text-white"><span className="font-semibold">Other Number:</span> - {(card as Personal)?.otherNumber}</p>
-                        <p className="text-white"><span className="font-semibold">Personal Email:</span> - {(card as Personal)?.personalEmail}</p>
-                        <p className="text-white"><span className="font-semibold">Work Email:</span> - {(card as Personal)?.workEmail}</p>
-                        <p className="text-white"><span className="font-semibold">Other Email:</span> - {(card as Personal)?.otherEmail}</p>
-                        <p className="text-white"><span className="font-semibold">About Me:</span> - {(card as Personal)?.aboutMe}</p>
-                        <p className="text-white"><span className="font-semibold">Date of Birth:</span> - {(card as Personal)?.dateOfBirth}</p>
-                        <p className="text-white"><span className="font-semibold">Home Town:</span> - {(card as Personal)?.homeTown}</p>
-                        <p className="text-white"><span className="font-semibold">Current City:</span> - {(card as Personal)?.currentCity}</p>
-                        <p className="text-white"><span className="font-semibold">Languages:</span> - {(card as Personal)?.languages}</p>
-                        <p className="text-white"><span className="font-semibold">Music:</span> - {(card as Personal)?.music}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite Color:</span> - {(card as Personal)?.color}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite City:</span> - {(card as Personal)?.city}</p>
-                        <p className="text-white"><span className="font-semibold">Travel Destination:</span> - {(card as Personal)?.travelDestination}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite Season:</span> - {(card as Personal)?.season}</p>
-                        <p className="text-white"><span className="font-semibold">Unique Skills:</span> - {(card as Personal)?.uniqueSkills}</p>
-                        <p className="text-white"><span className="font-semibold">Cuisine:</span> - {(card as Personal)?.cuisine}</p>
-                        <p className="text-white"><span className="font-semibold">Beverage:</span> - {(card as Personal)?.beverage}</p>
-                        <p className="text-white"><span className="font-semibold">Inspirational Quotes:</span> - {(card as Personal)?.inspirationalQuotes}</p>
-                        <p className="text-white"><span className="font-semibold">Funny Quotes:</span> - {(card as Personal)?.funnyQuotes}</p>
-                        <p className="text-white"><span className="font-semibold">Motivational Quotes:</span> - {(card as Personal)?.motivationalQuotes}</p>
-                        <p className="text-white"><span className="font-semibold">Other Quotes:</span> - {(card as Personal)?.otherQuotes}</p>
-                        <p className="text-white"><span className="font-semibold">Travel Mode:</span> - {(card as Personal)?.travelMode === "other" ? (card as Personal)?.travelMode_Other : (card as Personal)?.travelMode}</p>
-                        <p className="text-white"><span className="font-semibold">Pet Lover:</span> - {(card as Personal)?.petLover}</p>
-                        <p className="text-white"><span className="font-semibold">Party Enthusiast:</span> - {(card as Personal)?.partyEnthusiast}</p>
-                        <p className="text-white"><span className="font-semibold">Smoker:</span> - {(card as Personal)?.smoker}</p>
-                        <p className="text-white"><span className="font-semibold">Marital Status:</span> - {(card as Personal)?.maritalStatus}</p>
-                        <p className="text-white"><span className="font-semibold">Relationship Status:</span> - {(card as Personal)?.relationshipStatus}</p>
-                        <p className="text-white"><span className="font-semibold">Fitness Routine:</span> - {(card as Personal)?.fitnessRoutine}</p>
-                        <p className="text-white"><span className="font-semibold">Morning Person:</span> - {(card as Personal)?.morningPerson}</p>
-                        <p className="text-white"><span className="font-semibold">Diet:</span> - {(card as Personal)?.diet === "other" ? (card as Personal)?.diet_Other : (card as Personal)?.diet}</p>
-                        <p className="text-white"><span className="font-semibold">Sleeping Habit:</span> - {(card as Personal)?.sleepingHabit}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite Genre:</span> - {(card as Personal)?.genre === "other" ? (card as Personal)?.genre_Other : (card as Personal)?.genre}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite Sports:</span> - {(card as Personal)?.sports === "other" ? (card as Personal)?.sports_Other : (card as Personal)?.sports === "other"}</p>
-                        <p className="text-white"><span className="font-semibold">Artistic Pursuits:</span> - {(card as Personal)?.artistisPursuits === "other" ? (card as Personal)?.artistisPursuits_Other : (card as Personal)?.artistisPursuits}</p>
-                        <p className="text-white"><span className="font-semibold">Gaming:</span> - {(card as Personal)?.gaming === "other" ? (card as Personal)?.gaming_Other : (card as Personal)?.gaming}</p>
-                        <p className="text-white"><span className="font-semibold">Collecting Hobby:</span> - {(card as Personal)?.collectignHobby === "other" ? (card as Personal)?.collectignHobby_Other : (card as Personal)?.collectignHobby}</p>
-                        <p className="text-white"><span className="font-semibold">Coffee:</span> - {(card as Personal)?.coffee === "other" ? (card as Personal)?.coffee_Other : (card as Personal)?.coffee}</p>
-                        <p className="text-white"><span className="font-semibold">Cooking Skills:</span> - {(card as Personal)?.cookingSkills === "other" ? (card as Personal)?.cookingSkills_Other : (card as Personal)?.cookingSkills}</p>
-                        <p className="text-white"><span className="font-semibold">Current Occupation:</span> - {(card as Personal)?.currentOcupation}</p>
-                        <p className="text-white"><span className="font-semibold">Career Aspiration:</span> - {(card as Personal)?.careerAspiation}</p>
-                        <p className="text-white"><span className="font-semibold">Education:</span> - {(card as Personal)?.education}</p>
-                        <p className="text-white"><span className="font-semibold">Skills:</span> - {(card as Personal)?.skills}</p>
-                        <p className="text-white"><span className="font-semibold">Other Interests:</span> - {(card as Personal)?.otherInterests}</p>
-                        <p className="text-white"><span className="font-semibold">Future Goals:</span> - {(card as Personal)?.futureGoals}</p>
-                        <p className="text-white"><span className="font-semibold">Current Status:</span> - {(card as Personal)?.current}</p>
-                        <p className="text-white"><span className="font-semibold">Unusual Experience:</span> - {(card as Personal)?.unusualExperinece}</p>
-                        <p className="text-white"><span className="font-semibold">Strange Habits:</span> - {(card as Personal)?.strangeHabits}</p>
-                        {(card as Personal)?.socialMedia.map((item: { label: string; name: string }, index: number) => (
+                        <p className="text-white"><span className="font-semibold">Name:</span> - {(card as IndividualData)?.name}</p>
+                        <p className="text-white"><span className="font-semibold">Mobile Number:</span> - {(card as IndividualData)?.mobileNumer}</p>
+                        <p className="text-white"><span className="font-semibold">Home Number:</span> - {(card as IndividualData)?.homeNumber}</p>
+                        <p className="text-white"><span className="font-semibold">Work Number:</span> - {(card as IndividualData)?.workNumber}</p>
+                        <p className="text-white"><span className="font-semibold">Other Number:</span> - {(card as IndividualData)?.otherNumber}</p>
+                        <p className="text-white"><span className="font-semibold">Personal Email:</span> - {(card as IndividualData)?.personalEmail}</p>
+                        <p className="text-white"><span className="font-semibold">Work Email:</span> - {(card as IndividualData)?.workEmail}</p>
+                        <p className="text-white"><span className="font-semibold">Other Email:</span> - {(card as IndividualData)?.otherEmail}</p>
+                        <p className="text-white"><span className="font-semibold">About Me:</span> - {(card as IndividualData)?.aboutMe}</p>
+                        <p className="text-white"><span className="font-semibold">Date of Birth:</span> - {(card as IndividualData)?.dateOfBirth}</p>
+                        <p className="text-white"><span className="font-semibold">Home Town:</span> - {(card as IndividualData)?.homeTown}</p>
+                        <p className="text-white"><span className="font-semibold">Current City:</span> - {(card as IndividualData)?.currentCity}</p>
+                        <p className="text-white"><span className="font-semibold">Languages:</span> - {(card as IndividualData)?.languages}</p>
+                        <p className="text-white"><span className="font-semibold">Music:</span> - {(card as IndividualData)?.music}</p>
+                        <p className="text-white"><span className="font-semibold">Favorite Color:</span> - {(card as IndividualData)?.color}</p>
+                        <p className="text-white"><span className="font-semibold">Favorite City:</span> - {(card as IndividualData)?.city}</p>
+                        <p className="text-white"><span className="font-semibold">Travel Destination:</span> - {(card as IndividualData)?.travelDestination}</p>
+                        <p className="text-white"><span className="font-semibold">Favorite Season:</span> - {(card as IndividualData)?.season}</p>
+                        <p className="text-white"><span className="font-semibold">Unique Skills:</span> - {(card as IndividualData)?.uniqueSkills}</p>
+                        <p className="text-white"><span className="font-semibold">Cuisine:</span> - {(card as IndividualData)?.cuisine}</p>
+                        <p className="text-white"><span className="font-semibold">Beverage:</span> - {(card as IndividualData)?.beverage}</p>
+                        <p className="text-white"><span className="font-semibold">Inspirational Quotes:</span> - {(card as IndividualData)?.inspirationalQuotes}</p>
+                        <p className="text-white"><span className="font-semibold">Funny Quotes:</span> - {(card as IndividualData)?.funnyQuotes}</p>
+                        <p className="text-white"><span className="font-semibold">Motivational Quotes:</span> - {(card as IndividualData)?.motivationalQuotes}</p>
+                        <p className="text-white"><span className="font-semibold">Other Quotes:</span> - {(card as IndividualData)?.otherQuotes}</p>
+                        <p className="text-white"><span className="font-semibold">Travel Mode:</span> - {(card as IndividualData)?.travelMode === "other" ? (card as IndividualData)?.travelMode_Other : (card as IndividualData)?.travelMode}</p>
+                        <p className="text-white"><span className="font-semibold">Pet Lover:</span> - {(card as IndividualData)?.petLover}</p>
+                        <p className="text-white"><span className="font-semibold">Party Enthusiast:</span> - {(card as IndividualData)?.partyEnthusiast}</p>
+                        <p className="text-white"><span className="font-semibold">Smoker:</span> - {(card as IndividualData)?.smoker}</p>
+                        <p className="text-white"><span className="font-semibold">Marital Status:</span> - {(card as IndividualData)?.maritalStatus}</p>
+                        <p className="text-white"><span className="font-semibold">Relationship Status:</span> - {(card as IndividualData)?.relationshipStatus}</p>
+                        <p className="text-white"><span className="font-semibold">Fitness Routine:</span> - {(card as IndividualData)?.fitnessRoutine}</p>
+                        <p className="text-white"><span className="font-semibold">Morning Person:</span> - {(card as IndividualData)?.morningPerson}</p>
+                        <p className="text-white"><span className="font-semibold">Diet:</span> - {(card as IndividualData)?.diet === "other" ? (card as IndividualData)?.diet_Other : (card as IndividualData)?.diet}</p>
+                        <p className="text-white"><span className="font-semibold">Sleeping Habit:</span> - {(card as IndividualData)?.sleepingHabit}</p>
+                        <p className="text-white"><span className="font-semibold">Favorite Genre:</span> - {(card as IndividualData)?.genre === "other" ? (card as IndividualData)?.genre_Other : (card as IndividualData)?.genre}</p>
+                        <p className="text-white"><span className="font-semibold">Favorite Sports:</span> - {(card as IndividualData)?.sports === "other" ? (card as IndividualData)?.sports_Other : (card as IndividualData)?.sports === "other"}</p>
+                        <p className="text-white"><span className="font-semibold">Artistic Pursuits:</span> - {(card as IndividualData)?.artistisPursuits === "other" ? (card as IndividualData)?.artistisPursuits_Other : (card as IndividualData)?.artistisPursuits}</p>
+                        <p className="text-white"><span className="font-semibold">Gaming:</span> - {(card as IndividualData)?.gaming === "other" ? (card as IndividualData)?.gaming_Other : (card as IndividualData)?.gaming}</p>
+                        <p className="text-white"><span className="font-semibold">Collecting Hobby:</span> - {(card as IndividualData)?.collectignHobby === "other" ? (card as IndividualData)?.collectignHobby_Other : (card as IndividualData)?.collectignHobby}</p>
+                        <p className="text-white"><span className="font-semibold">Coffee:</span> - {(card as IndividualData)?.coffee === "other" ? (card as IndividualData)?.coffee_Other : (card as IndividualData)?.coffee}</p>
+                        <p className="text-white"><span className="font-semibold">Cooking Skills:</span> - {(card as IndividualData)?.cookingSkills === "other" ? (card as IndividualData)?.cookingSkills_Other : (card as IndividualData)?.cookingSkills}</p>
+                        <p className="text-white"><span className="font-semibold">Current Occupation:</span> - {(card as IndividualData)?.currentOcupation}</p>
+                        <p className="text-white"><span className="font-semibold">Career Aspiration:</span> - {(card as IndividualData)?.careerAspiation}</p>
+                        <p className="text-white"><span className="font-semibold">Education:</span> - {(card as IndividualData)?.education}</p>
+                        <p className="text-white"><span className="font-semibold">Skills:</span> - {(card as IndividualData)?.skills}</p>
+                        <p className="text-white"><span className="font-semibold">Other Interests:</span> - {(card as IndividualData)?.otherInterests}</p>
+                        <p className="text-white"><span className="font-semibold">Future Goals:</span> - {(card as IndividualData)?.futureGoals}</p>
+                        <p className="text-white"><span className="font-semibold">Current Status:</span> - {(card as IndividualData)?.current}</p>
+                        <p className="text-white"><span className="font-semibold">Unusual Experience:</span> - {(card as IndividualData)?.unusualExperinece}</p>
+                        <p className="text-white"><span className="font-semibold">Strange Habits:</span> - {(card as IndividualData)?.strangeHabits}</p>
+                        {(card as IndividualData)?.socialMedia.map((item: { label: string; name: string }, index: number) => (
                             <p key={index} className="text-white"><span className="font-semibold">{item.label}:</span> {item.name}</p>
                         ))}
                         <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
@@ -273,31 +274,31 @@ const CardDetails = () => {
                 return (
                     <>
                         <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as Medical)?.name}</p>
-                        <p className="text-white"><span className="font-semibold">Date of Birth:</span> {(card as Medical)?.dateOfBirth}</p>
-                        <p className="text-white"><span className="font-semibold">Gender:</span> {(card as Medical)?.gender}</p>
-                        <p className="text-white"><span className="font-semibold">Street:</span> {(card as Medical)?.street}</p>
-                        <p className="text-white"><span className="font-semibold">City:</span> {(card as Medical)?.city}</p>
-                        <p className="text-white"><span className="font-semibold">State:</span> {(card as Medical)?.state}</p>
-                        <p className="text-white"><span className="font-semibold">Postal Code:</span> {(card as Medical)?.postalCode}</p>
-                        <p className="text-white"><span className="font-semibold">Phone:</span> {(card as Medical)?.phone}</p>
-                        <p className="text-white"><span className="font-semibold">Email:</span> {(card as Medical)?.email}</p>
-                        <p className="text-white"><span className="font-semibold">Emergency Contact Name:</span> {(card as Medical)?.emergencyName}</p>
-                        <p className="text-white"><span className="font-semibold">Emergency Relation:</span> {(card as Medical)?.emergencyRelation}</p>
-                        <p className="text-white"><span className="font-semibold">Emergency Phone:</span> {(card as Medical)?.emergencyPhone}</p>
-                        <p className="text-white"><span className="font-semibold">Allergy History:</span> {(card as Medical)?.allergyHistory}</p>
-                        <p className="text-white"><span className="font-semibold">Chronic Conditions History:</span> {(card as Medical)?.chronicHistory}</p>
-                        <p className="text-white"><span className="font-semibold">Current Medication:</span> {(card as Medical)?.currentMedication}</p>
-                        <p className="text-white"><span className="font-semibold">Previous Surgeries:</span> {(card as Medical)?.previousSurgeries}</p>
-                        <p className="text-white"><span className="font-semibold">Smoker:</span> {(card as Medical)?.smoker}</p>
-                        <p className="text-white"><span className="font-semibold">Alcohol Consumption:</span> {(card as Medical)?.alcohol}</p>
-                        <p className="text-white"><span className="font-semibold">Exercise Routine:</span> {(card as Medical)?.exercise}</p>
-                        <p className="text-white"><span className="font-semibold">Diet:</span> {(card as Medical)?.diet}</p>
-                        <p className="text-white"><span className="font-semibold">Mental Condition:</span> {(card as Medical)?.mentalCondition}</p>
-                        <p className="text-white"><span className="font-semibold">Vaccination History:</span> {(card as Medical)?.vaccinationHistory}</p>
-                        <p className="text-white"><span className="font-semibold">Insurance Provider:</span> {(card as Medical)?.insuranceProvider}</p>
-                        <p className="text-white"><span className="font-semibold">Insurance Policy Number:</span> {(card as Medical)?.insurancePolicyNumber}</p>
-                        <p className="text-white"><span className="font-semibold">Insurance Group Number:</span> {(card as Medical)?.insuranceGrpNumber}</p>
+                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as MedicalData)?.name}</p>
+                        <p className="text-white"><span className="font-semibold">Date of Birth:</span> {(card as MedicalData)?.dateOfBirth}</p>
+                        <p className="text-white"><span className="font-semibold">Gender:</span> {(card as MedicalData)?.gender}</p>
+                        <p className="text-white"><span className="font-semibold">Street:</span> {(card as MedicalData)?.street}</p>
+                        <p className="text-white"><span className="font-semibold">City:</span> {(card as MedicalData)?.city}</p>
+                        <p className="text-white"><span className="font-semibold">State:</span> {(card as MedicalData)?.state}</p>
+                        <p className="text-white"><span className="font-semibold">Postal Code:</span> {(card as MedicalData)?.postalCode}</p>
+                        <p className="text-white"><span className="font-semibold">Phone:</span> {(card as MedicalData)?.phone}</p>
+                        <p className="text-white"><span className="font-semibold">Email:</span> {(card as MedicalData)?.email}</p>
+                        <p className="text-white"><span className="font-semibold">Emergency Contact Name:</span> {(card as MedicalData)?.emergencyName}</p>
+                        <p className="text-white"><span className="font-semibold">Emergency Relation:</span> {(card as MedicalData)?.emergencyRelation}</p>
+                        <p className="text-white"><span className="font-semibold">Emergency Phone:</span> {(card as MedicalData)?.emergencyPhone}</p>
+                        <p className="text-white"><span className="font-semibold">Allergy History:</span> {(card as MedicalData)?.allergyHistory}</p>
+                        <p className="text-white"><span className="font-semibold">Chronic Conditions History:</span> {(card as MedicalData)?.chronicHistory}</p>
+                        <p className="text-white"><span className="font-semibold">Current Medication:</span> {(card as MedicalData)?.currentMedication}</p>
+                        <p className="text-white"><span className="font-semibold">Previous Surgeries:</span> {(card as MedicalData)?.previousSurgeries}</p>
+                        <p className="text-white"><span className="font-semibold">Smoker:</span> {(card as MedicalData)?.smoker}</p>
+                        <p className="text-white"><span className="font-semibold">Alcohol Consumption:</span> {(card as MedicalData)?.alcohol}</p>
+                        <p className="text-white"><span className="font-semibold">Exercise Routine:</span> {(card as MedicalData)?.exercise}</p>
+                        <p className="text-white"><span className="font-semibold">Diet:</span> {(card as MedicalData)?.diet}</p>
+                        <p className="text-white"><span className="font-semibold">Mental Condition:</span> {(card as MedicalData)?.mentalCondition}</p>
+                        <p className="text-white"><span className="font-semibold">Vaccination History:</span> {(card as MedicalData)?.vaccinationHistory}</p>
+                        <p className="text-white"><span className="font-semibold">Insurance Provider:</span> {(card as MedicalData)?.insuranceProvider}</p>
+                        <p className="text-white"><span className="font-semibold">Insurance Policy Number:</span> {(card as MedicalData)?.insurancePolicyNumber}</p>
+                        <p className="text-white"><span className="font-semibold">Insurance Group Number:</span> {(card as MedicalData)?.insuranceGrpNumber}</p>
                         <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
                         <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
                         <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
