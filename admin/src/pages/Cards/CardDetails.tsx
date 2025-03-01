@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CardResponse } from "../../types/api-types";
 import axios from "axios";
-import { AnimalData, CreatorData, MedicalData, IndividualData, BotanyData, ICard } from "../../types/type";
+import { AnimalData, CreatorData, MedicalData, IndividualData, BotanyData } from "../../types/type";
 import DefaultLayout from "../../layout/DefaultLayout";
 import QRCodeStyling from "qr-code-styling";
 import { Loader2 } from "lucide-react";
@@ -257,14 +257,14 @@ const CardDetails = () => {
                 return (
                     <>
                         <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as Animal)?.name}</p>
-                        <p className="text-white"><span className="font-semibold">Species:</span> {(card as Animal)?.species}</p>
-                        <p className="text-white"><span className="font-semibold">Age:</span> {(card as Animal)?.age}</p>
-                        <p className="text-white"><span className="font-semibold">Gender:</span> {(card as Animal)?.gender}</p>
-                        <p className="text-white"><span className="font-semibold">Color:</span> {(card as Animal)?.color}</p>
-                        <p className="text-white"><span className="font-semibold">Location:</span> {(card as Animal)?.location}</p>
-                        <p className="text-white"><span className="font-semibold">Owner:</span> {(card as Animal)?.owner}</p>
-                        <p className="text-white"><span className="font-semibold">Phone:</span> {(card as Animal)?.phone}</p>
+                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as AnimalData)?.name}</p>
+                        <p className="text-white"><span className="font-semibold">Species:</span> {(card as AnimalData)?.species}</p>
+                        <p className="text-white"><span className="font-semibold">Lifespan:</span> {(card as AnimalData)?.lifespan}</p>
+                        {/* <p className="text-white"><span className="font-semibold">Gender:</span> {(card as AnimalData)?.gender}</p> */}
+                        {/* <p className="text-white"><span className="font-semibold">Color:</span> {(card as AnimalData)?.color}</p> */}
+                        <p className="text-white"><span className="font-semibold">Location:</span> {(card as AnimalData)?.location}</p>
+                        <p className="text-white"><span className="font-semibold">Owner:</span> {(card as AnimalData)?.ownerName}</p>
+                        <p className="text-white"><span className="font-semibold">Phone:</span> {(card as AnimalData)?.caretakerMobileNumber}</p>
                         <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
                         <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
                         <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
@@ -308,8 +308,8 @@ const CardDetails = () => {
                 return (
                     <>
                         <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as Creator)?.name}</p>
-                        {(card as Creator)?.links.map((item: { label: string; name: string }, index: number) => (
+                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as CreatorData)?.name}</p>
+                        {(card as CreatorData)?.links.map((item: { label: string; name: string }, index: number) => (
                             <p key={index} className="text-white"><span className="font-semibold">{item.label}:</span> {item.name}</p>
                         ))}
                         <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
