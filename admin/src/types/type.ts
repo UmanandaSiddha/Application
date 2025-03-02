@@ -76,7 +76,12 @@ export interface ITransaction {
 
 export interface ISubscription {
     _id: string;
-    planId:  string;
+    planId:  {
+        _id: string;
+        name: string;
+        amount: number;
+        currentEnd: Date;
+    }
     razorSubscriptionId?: string;
     start: Date;
     end: Date;
@@ -124,12 +129,19 @@ export interface IPlan {
     updatedAt: Date;
 }
 
+interface CardUser {
+    _id: string;
+    profile: {
+        email: string;
+    }
+}
+
 export interface ICard {
     _id: string;
     type: (typeof CardEnum)[keyof typeof CardEnum];
     data: IndividualData | BotanyData | CreatorData | AnimalData | MedicalData;
     shortCode: string;
-    userId: string;
+    userId: CardUser;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -187,6 +199,7 @@ export interface IUser {
             _id: string;
             planId: string;
             status: string;
+            currentEnd: Date;
         }
         freeAccess: boolean;
         cards: {
@@ -376,4 +389,40 @@ export interface MedicalData {
     insuranceProvider?: string;
     insurancePolicyNumber?: string;
     insuranceGrpNumber?: string;
+}
+
+export interface IContact {
+    _id: string;
+    email: string;
+    name: string;
+    message: string;
+    report: boolean;
+    attended: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export const AcceptedEnum = {
+    PENDING: "PENDING",
+    ACCEPTED: "ACCEPTED",
+    REJECTED: "REJECTED",
+} as const;
+
+export interface ICustomRequest {
+    _id: string
+    email: string;
+    attended: boolean;
+    accepted: (typeof AcceptedEnum)[keyof typeof AcceptedEnum];
+    reason?: string;
+    cards: number;
+    comment?: string;
+    period: (typeof PeriodEnum)[keyof typeof PeriodEnum];
+    interval: number;
+    user: {
+        _id: string;
+        name: string;
+        email: string;
+    }
+    createdAt: Date;
+    updatedAt: Date;
 }

@@ -18,33 +18,14 @@ const PlanDetails = () => {
 
     const fetchPlan = async () => {
         setLoading(true);
-
-        const cachedPlanById = window.sessionStorage.getItem('plan_byId');
-        if (cachedPlanById) {
-            const { data: cachedPlan, expires, id: cachedId } = JSON.parse(cachedPlanById);
-
-            if (Date.now() < expires && cachedId === id) {
-                setPlan(cachedPlan);
-                setLoading(false);
-                return;
-            }
-        }
-
-        window.sessionStorage.removeItem('plan_byId');
-
         try {
             const { data }: { data: PlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, { withCredentials: true });
             setPlan(data.plan);
-            const payload = {
-                id,
-                data: data.plan,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('plan_byId', JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     useEffect(() => {
@@ -54,7 +35,6 @@ const PlanDetails = () => {
     const handleSwitch = async () => {
         try {
             const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, { data: "random" }, { withCredentials: true });
-            window.sessionStorage.removeItem('plan_byId');
             toast.success(data.message);
             navigate(-1);
         } catch (error: any) {
@@ -65,13 +45,13 @@ const PlanDetails = () => {
     const handleDelete = async () => {
         try {
             const { data }: { data: { message: string } } = await axios.delete(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, { withCredentials: true });
-            window.sessionStorage.removeItem('plan_byId');
             toast.success(data.message);
             navigate(-1);
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setOpen(false);
         }
-        setOpen(false);
     }
 
     return loading ? (

@@ -3,9 +3,9 @@ import DefaultLayout from "../../layout/DefaultLayout";
 import { ITransaction } from "../../types/type";
 import { useEffect, useState } from "react";
 import { TransactionResponse } from "../../types/api-types"
-import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
+import API from "../../config/apiConfig";
 
 const TransactionDetails = () => {
 
@@ -19,35 +19,15 @@ const TransactionDetails = () => {
 
     const fetchTransaction = async () => {
         setLoading(true);
-
-        const cachedTransacById = window.sessionStorage.getItem('transac_byId');
-        if (cachedTransacById) {
-            const { data: cachedTransac, expires, id: cachedId } = JSON.parse(cachedTransacById);
-
-            if (Date.now() < expires && cachedId === id) {
-                setTransaction(cachedTransac);
-                setStatus(cachedTransac.status);
-                setLoading(false);
-                return;
-            }
-        }
-
-        window.sessionStorage.removeItem('transac_byId');
-
         try {
-            const { data }: { data: TransactionResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/transac/byId/${id}`, { withCredentials: true });
+            const { data }: { data: TransactionResponse } = await API.get(`/admin/transac/byId/${id}`);
             setTransaction(data.transaction);
             setStatus(data.transaction.status);
-            const payload = {
-                id,
-                data: data.transaction,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('transac_byId', JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     useEffect(() => {
@@ -56,14 +36,14 @@ const TransactionDetails = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`${import.meta.env.VITE_BASE_URL}/admin/transac/byId/${id}`, { withCredentials: true });
-            window.sessionStorage.removeItem('transac_byId');
+            await API.delete(`/admin/transac/byId/${id}`);
             toast.success("Subscription deleted successfully");
             navigate(-1);
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setOpen(false);
         }
-        setOpen(false);
     }
 
     const updateStatus = async () => {
@@ -76,18 +56,10 @@ const TransactionDetails = () => {
             return;
         }
 
-        window.sessionStorage.removeItem('transac_byId');
-
         try {
-            const { data }: { data: TransactionResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/transac/byId/${id}`, { status }, { withCredentials: true });
+            const { data }: { data: TransactionResponse } = await API.put(`/admin/transac/byId/${id}`, { status });
             setTransaction(data.transaction);
             setStatus(data.transaction.status);
-            const payload = {
-                id,
-                data: data.transaction,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('transac_byId', JSON.stringify(payload));
             toast.success("Subscription status updated successfully");
         } catch (error: any) {
             toast.error(error.response.data.message);

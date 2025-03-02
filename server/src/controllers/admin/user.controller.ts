@@ -17,7 +17,7 @@ export const adminLogin = catchAsyncErrors(async (req: Request, res: Response, n
         return next(new ErrorHandler("Please enter Email and Password", 400));
     }
 
-    const user = await User.findOne({ profile: { email } }).select("+password");
+    const user = await User.findOne({ "profile.email": email }).select("+profile.password");
     if (!user) {
         return next(new ErrorHandler("Invalid Credentials", 401));
     }

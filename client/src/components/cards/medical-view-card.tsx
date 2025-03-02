@@ -90,15 +90,6 @@ const MedicalViewCard = ({ cardData }: PropTypes) => {
             }
         ],
         actions: [
-            // {
-            //     name: "Health History",
-            //     data: [
-            //         {
-            //             label: "Health History",
-            //             value: ""
-            //         }
-            //     ]
-            // },
             {
                 name: "Insurance Info",
                 data: [

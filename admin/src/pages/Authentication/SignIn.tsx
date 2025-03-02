@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { userExist, userNotExist } from '../../redux/reducer/userReducer';
 import { toast } from 'react-toastify';
+import { LongLogoWhite } from '../../constants/logo';
 
 const SignIn: React.FC = () => {
 
@@ -47,12 +48,13 @@ const SignIn: React.FC = () => {
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="py-17.5 px-26 text-center">
               <Link className="mb-5.5 inline-block" to="/">
-                <p className='text-black dark:text-white text-4xl font-bold'>VOOLATA ADMIN</p>
+                {/* <p className='text-black dark:text-white text-4xl font-bold'>VOOLATA ADMIN</p> */}
+                <img src={LongLogoWhite} className='h-24' alt="" />
               </Link>
 
-              <p className="2xl:px-20">
+              {/* <p className="2xl:px-20">
                 Welcome to the Admin Pannel
-              </p>
+              </p> */}
 
               <span className="mt-15 inline-block">
                 <svg

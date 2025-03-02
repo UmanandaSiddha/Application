@@ -1,20 +1,18 @@
-// custom request does not exist in type.ts
-
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout"
 import { useEffect, useState } from "react";
-import { CustomReuest } from "../../types/type";
-import { CustomRequestResponse } from "../../types/api-types";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
+import { ICustomRequest } from "../../types/type";
+import API from "../../config/apiConfig";
 
 const CustomDetails = () => {
 
     const [search] = useSearchParams();
     const navigate = useNavigate();
     const id = search.get("id");
-    const [requests, setRequests] = useState<CustomReuest>();
+    const [requests, setRequests] = useState<ICustomRequest>();
     const [open, setOpen] = useState(false);
     const [openDel, setOpenDel] = useState(false);
     const [openAttend, setOpenAttend] = useState(false);
@@ -33,32 +31,8 @@ const CustomDetails = () => {
 
     const fetchRequests = async () => {
         setLoading(true);
-
-        const cachedCustomById = window.sessionStorage.getItem('custom_byId');
-        if (cachedCustomById) {
-            const { data: cachedCustom, expires, id: cachedId } = JSON.parse(cachedCustomById);
-
-            if (Date.now() < expires && cachedId === id) {
-                setRequests(cachedCustom);
-                setPlanData({
-                    period: cachedCustom.period,
-                    interval: Number(cachedCustom.interval),
-                    amount: Number(cachedCustom.amount),
-                    cards: Number(cachedCustom.cards)
-                });
-                setAttend({
-                    status: cachedCustom.accepted,
-                    reason: cachedCustom.reason || ""
-                });
-                setLoading(false);
-                return;
-            }
-        }
-
-        window.sessionStorage.removeItem('custom_byId');
-
         try {
-            const { data }: { data: CustomRequestResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/request/byId/${id}`, { withCredentials: true });
+            const { data }: { data: any } = await API.get(`/admin/request/byId/${id}`);
             setRequests(data.request);
             setPlanData({
                 period: data.request.period,
@@ -70,17 +44,11 @@ const CustomDetails = () => {
                 status: data.request.accepted,
                 reason: data.request.reason || ""
             });
-            const payload = {
-                id,
-                data: data.request,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('custom_byId', JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     }
 
     useEffect(() => {
@@ -100,10 +68,8 @@ const CustomDetails = () => {
             userId: requests?.user?._id
         };
 
-        window.sessionStorage.removeItem('custom_byId');
-
         try {
-            const { data }: { data: CustomRequestResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/request/reject/${id}`, payLoad, { withCredentials: true });
+            const { data }: { data: any } = await API.put(`/admin/request/reject/${id}`, payLoad);
             setRequests(data.request);
             setPlanData({
                 period: data.request.period,
@@ -115,19 +81,13 @@ const CustomDetails = () => {
                 status: data.request.accepted,
                 reason: data.request.reason || ""
             });
-            const payload = {
-                id,
-                data: data.request,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('custom_byId', JSON.stringify(payload));
             toast.success("Request rejected successfully");
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setIsReject(false);
+            setOpenAttend(false);
         }
-
-        setIsReject(false);
-        setOpenAttend(false);
     }
 
     const handleAttend = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -138,10 +98,8 @@ const CustomDetails = () => {
             return;
         }
 
-        window.sessionStorage.removeItem('custom_byId');
-
         try {
-            const { data }: { data: CustomRequestResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/request/attend/${id}`, attend, { withCredentials: true });
+            const { data }: { data: any } = await API.put(`/admin/request/attend/${id}`, attend);
             setRequests(data.request);
             setPlanData({
                 period: data.request.period,
@@ -153,18 +111,12 @@ const CustomDetails = () => {
                 status: data.request.accepted,
                 reason: data.request.reason || ""
             });
-            const payload = {
-                id,
-                data: data.request,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('custom_byId', JSON.stringify(payload));
             toast.success("Request attended successfully");
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setOpenAttend(false);
         }
-
-        setOpenAttend(false);
     }
 
     const handleAccept = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -183,10 +135,8 @@ const CustomDetails = () => {
             userId: requests?.user?._id
         };
 
-        window.sessionStorage.removeItem('custom_byId');
-
         try {
-            const { data }: { data: CustomRequestResponse } = await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/request/new/${id}`, payLoad, { withCredentials: true });
+            const { data }: { data: any } = await API.post(`/admin/request/new/${id}`, payLoad);
             setRequests(data.request);
             setPlanData({
                 period: data.request.period,
@@ -198,30 +148,24 @@ const CustomDetails = () => {
                 status: data.request.accepted,
                 reason: data.request.reason || ""
             });
-            const payload = {
-                id,
-                data: data.request,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('custom_byId', JSON.stringify(payload));
             toast.success("Request accepted successfully");
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setOpen(false);
         }
-
-        setOpen(false);
     }
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`${import.meta.env.VITE_BASE_URL}/admin/request/byId/${id}`, { withCredentials: true });
-            window.sessionStorage.removeItem('custom_byId');
+            await API.delete(`/admin/request/byId/${id}`);
             toast.success("Card deleted successfully");
             navigate(-1)
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setOpenDel(false);
         }
-        setOpenDel(false);
     }
 
     return loading ? (
@@ -234,11 +178,11 @@ const CustomDetails = () => {
                     <p className="text-white"><span className="font-semibold">Id:</span> {requests?._id}</p>
                     <p className="text-white"><span className="font-semibold">Email:</span> {requests?.email}</p>
                     <p className="text-white"><span className="font-semibold">Cards:</span> {requests?.cards}</p>
-                    <p className="text-white"><span className="font-semibold">Amount:</span> {requests?.amount}</p>
+                    {/* <p className="text-white"><span className="font-semibold">Amount:</span> {requests?.amount}</p> */}
                     <p className="text-white"><span className="font-semibold">Period:</span> {requests?.period}</p>
                     <p className="text-white"><span className="font-semibold">Interval:</span> {requests?.interval}</p>
                     <p className="text-white"><span className="font-semibold">Cards:</span> {requests?.comment}</p>
-                    {requests?.accepted === "accepted" ? (
+                    {requests?.accepted === "ACCEPTED" ? (
                         <Link to={`/plans/details?id=${requests?.reason}`} className="text-white"><span className="font-semibold">Plan:</span> {requests?.reason}</Link>
                     ) : (
                         <p className="text-white"><span className="font-semibold">Reason:</span> {requests?.reason}</p>

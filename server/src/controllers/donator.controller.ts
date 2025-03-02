@@ -188,7 +188,7 @@ export const createSubscription = catchAsyncErrors(async (req: DonatorRequest, r
     });
 
     await Donator.findByIdAndUpdate(donator._id,
-        { activeDonation: subscription._id },
+        { latestDonation: subscription._id },
         { new: true, runValidators: true, useFindAndModify: false }
     );
 
@@ -284,7 +284,7 @@ export const verifyPayment = catchAsyncErrors(async (req: DonatorRequest, res: R
 });
 
 export const getDonatorSubscription = catchAsyncErrors(async (req: DonatorRequest, res: Response, next: NextFunction): Promise<void> => {
-    const donator = await Donator.findById(req.donator?._id);
+    const { donator } = req;
     if (!donator) {
         return next(new ErrorHandler("Donator not found", 404));
     }

@@ -1,17 +1,14 @@
-// cannot find contact interface in type.ts; leaving this page
-
 import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
-import { Contact } from '../../types/types'; //what to use instead of contact?
-import { AllContactResponse } from '../../types/api-types';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import { IContact } from '../../types/type';
+import API from '../../config/apiConfig';
 
 const Contacts = () => {
 
     const navigate = useNavigate();
-    const [contacts, setContacts] = useState<Contact[]>();
+    const [contacts, setContacts] = useState<IContact[]>();
     const [counts, setCounts] = useState({
         currentPage: 1,
         resultPerPage: 1,
@@ -26,7 +23,7 @@ const Contacts = () => {
 
     const fetchContacts = async (url: string) => {
         try {
-            const { data }: { data: AllContactResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await API.get(url);
             setContacts(data.contacts);
             setCounts({
                 ...counts,
@@ -51,9 +48,9 @@ const Contacts = () => {
         setLoading(true);
 
         const delayDebounce = setTimeout(() => {
-            const link = `${import.meta.env.VITE_BASE_URL}/admin/contacts/all?${queryParams}`;
+            const link = `/admin/contacts/all?${queryParams}`;
             fetchContacts(link);
-            
+
             setLoading(false);
         }, 1000);
 
@@ -147,7 +144,7 @@ const Contacts = () => {
 
                     {loading ? (
                         <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
-                             <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
+                            <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                         </div>
                     ) : (
                         <>

@@ -134,18 +134,18 @@ const Plans = () => {
                                 }}
                             >
                                 <option value="">ALL</option>
-                                <option value="user">USER</option>
-                                <option value="org">ORG</option>
-                                <option value="free">FREE</option>
-                                <option value="custom">CUSTOM</option>
-                                <option value="donator">DONATOR</option>
+                                <option value="USER">USER</option>
+                                <option value="ORGANIZATION">ORG</option>
+                                <option value="FREE">FREE</option>
+                                <option value="CUSTOM">CUSTOM</option>
+                                <option value="DONATOR">DONATOR</option>
                             </select>
                             <label className="ms-3 text-md font-semibold text-slate-700 dark:text-white">Type</label>
                         </div>
 
                         <div>
-                            <button 
-                                onClick={() => navigate("/plans/new?type=free")} 
+                            <button
+                                onClick={() => navigate("/plans/new?type=free")}
                                 className="bg-indigo-500 text-white py-2 px-4 rounded-md"
                             >
                                 Create Free Plan
@@ -153,8 +153,8 @@ const Plans = () => {
                         </div>
 
                         <div>
-                            <button 
-                                onClick={() => navigate("/plans/new?type=usual")} 
+                            <button
+                                onClick={() => navigate("/plans/new?type=usual")}
                                 className="bg-green-500 text-white py-2 px-4 rounded-md"
                             >
                                 Create New Plan
@@ -188,7 +188,7 @@ const Plans = () => {
 
                     {loading ? (
                         <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
-                             <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
+                            <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                         </div>
                     ) : (
                         <>

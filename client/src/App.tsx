@@ -77,6 +77,7 @@ const App = () => {
         "/register",
         "/org/register",
         "/contact",
+        "/report",
         "/",
         "/about-us",
         "/plans",

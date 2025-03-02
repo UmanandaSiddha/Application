@@ -2,50 +2,29 @@ import { toast } from "react-toastify";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Contact } from "../../types/type";
-import { ContactResponse } from "../../types/api-types";
-import axios from "axios";
 import Loader from "../../components/Loader";
+import { IContact } from "../../types/type";
+import API from "../../config/apiConfig";
 
 const ContactDetails = () => {
 
     const [search] = useSearchParams();
     const navigate = useNavigate();
     const id = search.get("id");
-    const [contact, setContact] = useState<Contact>();
+    const [contact, setContact] = useState<IContact>();
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
     const fetchContact = async () => {
         setLoading(true);
-
-        const cachedContactById = window.sessionStorage.getItem('contacts_byId');
-        if (cachedContactById) {
-            const { data: cachedContact, expires, id: cachedId } = JSON.parse(cachedContactById);
-
-            if (Date.now() < expires && cachedId === id) {
-                setContact(cachedContact);
-                setLoading(false);
-                return;
-            }
-        }
-
-        window.sessionStorage.removeItem('contacts_byId');
-
         try {
-            const { data }: { data: ContactResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/contacts/byId/${id}`, { withCredentials: true });
+            const { data }: { data: any } = await API.get(`/admin/contacts/byId/${id}`);
             setContact(data.contact);
-            const payload = {
-                id,
-                data: data.contact,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('contacts_byId', JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     }
 
     useEffect(() => {
@@ -54,15 +33,8 @@ const ContactDetails = () => {
 
     const handleSwitch = async () => {
         try {
-            const { data }: { data: ContactResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/contacts/byId/${id}`, {}, { withCredentials: true });
+            const { data }: { data: any } = await API.put(`/admin/contacts/byId/${id}`, {});
             setContact(data.contact);
-            window.sessionStorage.removeItem('contacts_byId');
-            const payload = {
-                id,
-                data: data.contact,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('contacts_byId', JSON.stringify(payload));
             toast.success("Card updated successfully");
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -71,9 +43,8 @@ const ContactDetails = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`${import.meta.env.VITE_BASE_URL}/admin/contacts/byId/${id}`, { withCredentials: true });
+            await API.delete(`/admin/contacts/byId/${id}`);
             toast.success("Contact deleted successfully");
-            window.sessionStorage.removeItem('contacts_byId');
             navigate(-1)
         } catch (error: any) {
             toast.error(error.response.data.message);

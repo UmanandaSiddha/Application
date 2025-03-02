@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
 import { ISubscription } from '../../types/type';
-import {AllSubscriptionResponse} from "../../types/api-types"
+import { AllSubscriptionResponse } from "../../types/api-types"
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -121,8 +121,8 @@ const Subscriptions = () => {
                                 }}
                             >
                                 <option value="">ALL</option>
-                                <option value="user">USER</option>
-                                <option value="donator">DONATOR</option>
+                                <option value="USER">USER</option>
+                                <option value="DONATOR">DONATOR</option>
                             </select>
                             <label className="ms-3 text-md font-semibold text-slate-700 dark:text-white">Type</label>
                         </div>
@@ -151,7 +151,7 @@ const Subscriptions = () => {
 
                     {loading ? (
                         <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
-                             <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
+                            <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                         </div>
                     ) : (
                         <>

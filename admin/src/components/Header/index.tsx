@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import DropdownUser from './DropdownUser';
 // import LogoIcon from '../../images/logo/logo-icon.svg';
 import DarkModeSwitcher from './DarkModeSwitcher';
+// import { SquareLogo } from '../../constants/logo';
 
 const Header = (props: {
     sidebarOpen: string | boolean | undefined;
@@ -47,10 +48,9 @@ const Header = (props: {
                         </span>
                     </button>
 
-                    <Link className="block flex-shrink-0 lg:hidden" to="/">
-                        {/* <img src={LogoIcon} alt="Logo" /> */}
-                        <p className='text-2xl text-white font-bold'>ADMIN</p>
-                    </Link>
+                    {/* <Link className="block flex-shrink-0 lg:hidden" to="/">
+                        <img src={SquareLogo} className='h-6' alt="Voolata Logo" />
+                    </Link> */}
                 </div>
 
                 <div className="hidden sm:block">

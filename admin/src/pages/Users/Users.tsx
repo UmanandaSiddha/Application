@@ -1,10 +1,10 @@
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import { IUser } from "../../types/type";
-import axios from "axios";
 import { AllUsersResponse } from "../../types/api-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import API from "../../config/apiConfig";
 
 const Users = () => {
 
@@ -28,7 +28,8 @@ const Users = () => {
 
     const gotUsers = async (url: string) => {
         try {
-            const { data }: { data: AllUsersResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: AllUsersResponse } = await API.get(url);
+            console.log(data);
             setUsers(data.users);
             setCounts(prev => ({
                 ...prev,
@@ -56,11 +57,10 @@ const Users = () => {
         setLoading(true);
 
         const delayDebounce = setTimeout(() => {
-            const link = `${import.meta.env.VITE_BASE_URL}/admin/users/all?${queryParams}`;
+            const link = `/admin/users/all?${queryParams}`;
             gotUsers(link);
             setLoading(false);
         }, 1000);
-
 
         return () => clearTimeout(delayDebounce);
 
@@ -238,7 +238,7 @@ const Users = () => {
                                                 )}
                                             </div>
                                             <p className="text-sm text-black dark:text-white">
-                                                {user?.profile?.firstName}{user?.profile?.lastName}
+                                                {`${user?.profile.firstName} ${user?.profile.lastName}`}
                                             </p>
                                         </div>
                                     </div>

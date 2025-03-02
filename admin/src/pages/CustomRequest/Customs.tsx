@@ -1,17 +1,14 @@
-//custom request missing from type.ts
-
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { AllCustomReuestResponse } from "../../types/api-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { CustomReuest } from "../../types/types";
+import { ICustomRequest } from "../../types/type";
+import API from "../../config/apiConfig";
 
 const Custom = () => {
 
     const navigate = useNavigate();
-    const [requests, setRequests] = useState<CustomReuest[]>();
+    const [requests, setRequests] = useState<ICustomRequest[]>();
     const [counts, setCounts] = useState({
         currentPage: 1,
         resultPerPage: 1,
@@ -26,7 +23,7 @@ const Custom = () => {
 
     const fetchRequests = async (url: string) => {
         try {
-            const { data }: { data: AllCustomReuestResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await API.get(url);
             setRequests(data.requests);
             setCounts({
                 ...counts,
@@ -50,9 +47,9 @@ const Custom = () => {
         setLoading(true);
 
         const delayDebounce = setTimeout(() => {
-            const link = `${import.meta.env.VITE_BASE_URL}/admin/request/all?${queryParams}`;
+            const link = `/admin/request/all?${queryParams}`;
             fetchRequests(link);
-            
+
             setLoading(false);
         }, 1000);
 
@@ -132,9 +129,9 @@ const Custom = () => {
                         <div className="col-span-2 hidden items-center sm:flex">
                             <p className="font-medium">Email</p>
                         </div>
-                        <div className="col-span-1 flex items-center">
+                        {/* <div className="col-span-1 flex items-center">
                             <p className="font-medium">Amount</p>
-                        </div>
+                        </div> */}
                         <div className="col-span-1 flex items-center">
                             <p className="font-medium">Attended</p>
                         </div>
@@ -151,7 +148,7 @@ const Custom = () => {
 
                     {loading ? (
                         <div className="flex justify-center items-center border-t border-stroke py-4.5 px-4 dark:border-strokedark md:px-6 2xl:px-7.5">
-                             <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
+                            <div className={`h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent`}></div>
                         </div>
                     ) : (
                         <>
@@ -171,9 +168,9 @@ const Custom = () => {
                                             {request.email}
                                         </p>
                                     </div>
-                                    <div className="col-span-1 flex items-center">
+                                    {/* <div className="col-span-1 flex items-center">
                                         <p className="text-sm text-black dark:text-white">{request.amount}</p>
-                                    </div>
+                                    </div> */}
                                     <div className="col-span-1 flex items-center">
                                         <p className="text-sm text-black dark:text-white">{String(request.attended).toUpperCase()}</p>
                                     </div>

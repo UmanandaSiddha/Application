@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 // import Logo from '../../images/logo/logo.svg';
 import SideBarLink from './SideBarLink';
 import GroupDropdown from './GroupDropdown';
+import { LongLogoWhite } from '../../constants/logo';
 
 interface SidebarProps {
     sidebarOpen: boolean;
@@ -62,8 +63,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         >
             <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
                 <NavLink to="/" className="flex gap-2">
-                    <img className='h-8 w-8' src="https://merakiui.com/images/logo.svg" alt="Logo" />
-                    <p className='text-2xl text-white font-bold'>VOOLATA ADMIN</p>
+                    <img src={LongLogoWhite} className='h-12' alt="Voolata Logo" />
                 </NavLink>
 
                 <button
@@ -90,7 +90,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </div>
 
             <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-                <nav className="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
+                <nav className="mt-0 py-4 px-4 lg:px-6">
                     <div>
                         <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
                             MENU
@@ -169,7 +169,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             <SideBarLink path="/cards" label="Cards" />
                             <SideBarLink path='/logs' label="Logs" />
                             <SideBarLink path='/auth/signin' label="Sign In" />
-
                         </ul>
                     </div>
                 </nav>

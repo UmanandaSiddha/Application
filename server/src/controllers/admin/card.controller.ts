@@ -8,16 +8,31 @@ import mongoose from "mongoose";
 
 export const getAllCards = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const resultPerPage = 20;
-    const count = await Card.countDocuments();
+    const filter: any = {};
+    
+    if (req.query.type !== "ALL") {
+        filter.type = req.query.type;
+    }
 
-    const apiFeatures = new ApiFeatures(Card.find().populate("userId", "email").sort({ $natural: -1 }), req.query).pagination(resultPerPage);
-    const cards = await apiFeatures.getQuery();
+    const count = await Card.countDocuments(filter);
+
+    const apiFeatures = new ApiFeatures(
+        Card.find(filter).select("data.name type shortCode createdAt").populate("userId", "profile.email").sort({ $natural: -1 }),
+        req.query
+    ).searchCard();
+
+    let filteredCards = await apiFeatures.getQuery();
+    let filteredCardsCount = filteredCards.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredCards = await apiFeatures.getQuery().clone();
 
     res.status(200).json({
         success: true,
         count,
         resultPerPage,
-        cards
+        cards: filteredCards,
+        filteredCardsCount
     });
 });
 
@@ -31,11 +46,21 @@ export const getCardStats = catchAsyncErrors(async (req: Request, res: Response,
         return next(new ErrorHandler("User not found", 404));
     }
 
-    const card = await Card.countDocuments({ userId: user.id });
+    const botanicalCard = await Card.countDocuments({ userId: user.id, type: "BOTANICAL" });
+    const animalCard = await Card.countDocuments({ userId: user.id, type: "ANIMAL" });
+    const creatorCard = await Card.countDocuments({ userId: user.id, type: "CREATOR" });
+    const individualCard = await Card.countDocuments({ userId: user.id, type: "INDIVIDUAL" });
+    const medicalCard = await Card.countDocuments({ userId: user.id, type: "MEDICAL" });
 
     res.status(200).json({
         success: true,
-        count: card
+        count: {
+            botanical: botanicalCard,
+            individual: individualCard,
+            creator: creatorCard,
+            medical: medicalCard,
+            animal: animalCard
+        }
     });
 });
 
@@ -50,16 +75,31 @@ export const getUserCards = catchAsyncErrors(async (req: Request, res: Response,
     }
 
     const resultPerPage = 20;
-    const count = await Card.countDocuments({ userId: user._id });
+    const filter: any = { userId: user._id };
+    
+    if (req.query.type !== "ALL") {
+        filter.type = req.query.type;
+    }
 
-    const apiFeatures = new ApiFeatures(Card.find({ userId: user._id }).populate("userId", "email").sort({ $natural: -1 }), req.query).pagination(resultPerPage);
-    const cards = await apiFeatures.getQuery();
+    const count = await Card.countDocuments(filter);
+
+    const apiFeatures = new ApiFeatures(
+        Card.find(filter).select("data.name userId type shortCode createdAt").populate("userId", "profile.email").sort({ $natural: -1 }),
+        req.query
+    ).searchCard();
+
+    let filteredCards = await apiFeatures.getQuery();
+    let filteredCardsCount = filteredCards.length;
+
+    apiFeatures.pagination(resultPerPage);
+    filteredCards = await apiFeatures.getQuery().clone();
 
     res.status(200).json({
         success: true,
         count,
         resultPerPage,
-        cards
+        cards: filteredCards,
+        filteredCardsCount
     });
 });
 
@@ -68,7 +108,7 @@ export const getSingleCard = catchAsyncErrors(async (req: Request, res: Response
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new ErrorHandler("Invalid ID format", 400));
     }
-    const card = await Card.findById(id).populate("userId", "email");
+    const card = await Card.findById(id).populate("userId", "profile.email");
     if (!card) {
         return next(new ErrorHandler("Card Not Found", 404));
     }

@@ -25,10 +25,8 @@ const Profile = () => {
     );
 
     const [profileData, setProfileData] = useState({
-        // name: user?.name || "",
         firstName: user?.profile.firstName || "",
         lastName: user?.profile.lastName || "",
-        // email: user?.email || "",
         phone: user?.access.billingInfo?.phoneNumber || "",
     });
     const [billingAddress, setBillingAddress] = useState({
@@ -389,7 +387,7 @@ const Profile = () => {
                         {/* <hr className="my-2 border-gray-400 " /> */}
                         <div className="flex  flex-col md:flex-row justify-between mt-2">
                             <div>
-                                <p className="mt-2 text-md font-semibold">Name: <span className="mt-2 text-sm text-gray-600">{user?.profile.firstName}</span></p>
+                                <p className="mt-2 text-md font-semibold">Name: <span className="mt-2 text-sm text-gray-600">{`${user?.profile.firstName} ${user?.profile.lastName}`}</span></p>
                                 <p className="mt-2 text-md font-semibold">Email: <span className="mt-2 text-sm text-gray-600">{user?.profile.email}</span></p>
                                 <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.phoneNumber}</span></p>
                             </div>

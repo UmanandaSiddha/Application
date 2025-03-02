@@ -412,14 +412,14 @@ export const updateProfile = catchAsyncErrors(async (req: UserRequest, res: Resp
     if (!userExists) return next(new ErrorHandler("User not found", 404));
 
     const { firstName, lastName, phone } = req.body;
-    const updateUser: any = {};
-    firstName ? updateUser.profile.firstName = firstName : userExists.profile.firstName;
-    lastName ? updateUser.profile.lastName = lastName : userExists.profile.lastName;
-    phone ? updateUser.access.billingInfo.phoneNumber = phone : userExists.access.billingInfo?.phoneNumber;
 
     const user = await User.findByIdAndUpdate(
         userExists._id,
-        updateUser,
+        {
+            "profile.firstName": firstName,
+            "profile.lastName": lastName,
+            "access.billingInfo.phoneNumber": phone,
+        },
         { new: true, runValidators: true, useFindAndModify: false }
     );
 

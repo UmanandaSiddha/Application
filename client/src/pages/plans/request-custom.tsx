@@ -57,7 +57,7 @@ const RequestCustom = () => {
                 <meta name="keywords" content="custom plan, voolata" />
             </Helmet>
             <section className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd]">
-                <div className="flex flex-col min-h-screen max-w-6xl mx-auto px-4 py-6">
+                <div className="flex flex-col min-h-screen max-w-6xl mx-auto px-4 py-6 lg:py-24">
                     <div className="flex-1 lg:flex mt-4 gap-12">
                         <div className="lg:w-1/2 lg:pr-6 sm:px-4 mt-16">
                             <p className="mb-2 text-purple-600">Have Custom Needs</p>

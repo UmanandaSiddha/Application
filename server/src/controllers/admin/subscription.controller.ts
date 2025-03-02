@@ -17,7 +17,7 @@ export const getUserLatestSubscription = catchAsyncErrors(async (req: Request, r
         return next(new ErrorHandler(`User does not exist with Id: ${id}`, 404));
     }
 
-    const subscription = await Subscription.findById(user.access.latestSubscription).populate("planId", "_id name amount");
+    const subscription = await Subscription.findById(user.access.latestSubscription).populate("planId", "name amount currentEnd");
     if (!subscription) {
         return next(new ErrorHandler(`User does not exist with Id: ${id}`, 404));
     }
@@ -82,7 +82,7 @@ export const getParticularSubscription = catchAsyncErrors(async (req: Request, r
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new ErrorHandler("Invalid ID format", 400));
     }
-    const subscription = await Subscription.findById(id).populate("planId", "_id name amount");
+    const subscription = await Subscription.findById(id).populate("planId", "name amount currentEnd");
     if (!subscription) {
         return next(new ErrorHandler(`Subscription does not exist with Id: ${id}`, 404));
     }
@@ -152,7 +152,7 @@ export const getDonatorLatestSubscription = catchAsyncErrors(async (req: Request
         return next(new ErrorHandler(`User does not exist with Id: ${id}`, 404));
     }
 
-    const subscription = await Subscription.findById(donator.latestDonation).populate("planId", "_id name amount");
+    const subscription = await Subscription.findById(donator.latestDonation).populate("planId", "_id name amount currentEnd");
     if (!subscription) {
         return next(new ErrorHandler(`User does not exist with Id: ${id}`, 404));
     }

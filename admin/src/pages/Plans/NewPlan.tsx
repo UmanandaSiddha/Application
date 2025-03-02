@@ -28,27 +28,6 @@ const NewPlan = () => {
     const fetchPlan = async () => {
         setLoading(true);
 
-        const cachedPlanById = window.sessionStorage.getItem('plan_byId');
-        if (cachedPlanById) {
-            const { data: cachedPlan, expires, id: cachedId } = JSON.parse(cachedPlanById);
-
-            if (Date.now() < expires && cachedId === id) {
-                setPlanData({
-                    name: cachedPlan.name,
-                    description: cachedPlan.description,
-                    planType: cachedPlan.planType,
-                    cards: cachedPlan.cards,
-                    amount: cachedPlan.amount,
-                    period: cachedPlan.period,
-                    interval: cachedPlan.interval
-                });
-                setLoading(false);
-                return;
-            }
-        }
-
-        window.sessionStorage.removeItem('plan_byId');
-
         try {
             const { data }: { data: PlanResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/plans/byId/${id}`, { withCredentials: true });
             setPlanData({
@@ -60,16 +39,11 @@ const NewPlan = () => {
                 period: data.plan.period,
                 interval: data.plan.interval
             });
-            const payload = {
-                id,
-                data: data.plan,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('plan_byId', JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     useEffect(() => {
@@ -110,15 +84,12 @@ const NewPlan = () => {
 
             }
             toast.success(`${type === "free" ? "Free " : ""}Plan ${id ? "upadated" : "created"} successfully`);
-            const localPlan = window.localStorage.getItem("all_plans");
-            if (localPlan) {
-                window.localStorage.removeItem("all_plans");
-            }
             navigate(-1)
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setPlanLoading(false);
         }
-        setPlanLoading(false);
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -205,23 +176,23 @@ const NewPlan = () => {
                                                     <option value="" className="text-body dark:text-bodydark">
                                                         Choose Type
                                                     </option>
-                                                    <option value="user" className="text-body dark:text-bodydark">
+                                                    <option value="USER" className="text-body dark:text-bodydark">
                                                         USER
                                                     </option>
-                                                    <option value="org" className="text-body dark:text-bodydark">
-                                                        ORG
+                                                    <option value="ORGANIZATION" className="text-body dark:text-bodydark">
+                                                        ORGANIZATION
                                                     </option>
-                                                    {type === "donator" && (
-                                                        <option value="donator" className="text-body dark:text-bodydark">
+                                                    {type === "DONATOR" && (
+                                                        <option value="DONATOR" className="text-body dark:text-bodydark">
                                                             DONATOR
                                                         </option>
                                                     )}
                                                     {type !== "usual" && (
                                                         <>
-                                                            <option value="free" className="text-body dark:text-bodydark">
+                                                            <option value="FREE" className="text-body dark:text-bodydark">
                                                                 FREE
                                                             </option>
-                                                            <option value="custom" className="text-body dark:text-bodydark">
+                                                            <option value="CUSTOM" className="text-body dark:text-bodydark">
                                                                 CUSTOM
                                                             </option>
                                                         </>

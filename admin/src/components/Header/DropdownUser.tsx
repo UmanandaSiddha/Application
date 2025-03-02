@@ -66,8 +66,7 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {user?.profile?.firstName}
-            {user?.profile?.lastName}
+            {`${user?.profile?.firstName} ${user?.profile?.lastName}`}
           </span>
           <span className="block text-xs">
             {user?.profile?.role.toUpperCase()}
@@ -78,9 +77,7 @@ const DropdownUser = () => {
           <img
             className="h-12 w-12 rounded-full"
             src={user?.profile?.profilePicture}
-            alt={`${user?.profile?.firstName?.charAt(
-              0
-            )}${user?.profile?.lastName?.charAt(0)}`}
+            alt={`${user?.profile?.firstName?.charAt(0)}${user?.profile?.lastName?.charAt(0)}`}
           />
         </span>
 

@@ -3,8 +3,8 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ITransaction } from '../../types/type';
-import axios from 'axios';
 import { AllTransactionsResponse } from "../../types/api-types";
+import API from '../../config/apiConfig';
 
 const Transactions = () => {
 
@@ -25,7 +25,7 @@ const Transactions = () => {
 
     const fetchTransactions = async (url: string) => {
         try {
-            const { data }: { data: AllTransactionsResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: AllTransactionsResponse } = await API.get(url);
             setTransactions(data.transactions);
             setCounts({
                 ...counts,
@@ -51,11 +51,10 @@ const Transactions = () => {
         setLoading(true);
 
         const delayDebounce = setTimeout(() => {
-            let link = `${import.meta.env.VITE_BASE_URL}/admin/transac/all?${queryParams}`;
+            let link = `/admin/transac/all?${queryParams}`;
             fetchTransactions(link);
             setLoading(false);
         }, 1000);
-
 
         return () => clearTimeout(delayDebounce);
 
@@ -119,8 +118,8 @@ const Transactions = () => {
                                 }}
                             >
                                 <option value="">ALL</option>
-                                <option value="user">USER</option>
-                                <option value="donator">DONATOR</option>
+                                <option value="USER">USER</option>
+                                <option value="DONATOR">DONATOR</option>
                             </select>
                             <label className="ms-3 text-md font-semibold text-slate-700 dark:text-white">Account</label>
                         </div>
@@ -135,13 +134,13 @@ const Transactions = () => {
                                 }}
                             >
                                 <option value="">ALL</option>
-                                <option value="recurring">RECURRING</option>
-                                <option value="onetime">ONETIME</option>
+                                <option value="RECURRING">RECURRING</option>
+                                <option value="ONETIME">ONETIME</option>
                             </select>
                             <label className="ms-3 text-md font-semibold text-slate-700 dark:text-white">Type</label>
                         </div>
 
-                        <div className="inline-flex items-center cursor-pointer gap-4">
+                        {/* <div className="inline-flex items-center cursor-pointer gap-4">
                             <select
                                 className="text-black px-3 py-2 rounded-md border-2"
                                 value={filter.type}
@@ -151,11 +150,11 @@ const Transactions = () => {
                                 }}
                             >
                                 <option value="">ALL</option>
-                                <option value="recurring">RECURRING</option>
-                                <option value="onetime">ONETIME</option>
+                                <option value="RECURRING">RECURRING</option>
+                                <option value="ONETIME">ONETIME</option>
                             </select>
                             <label className="ms-3 text-md font-semibold text-slate-700 dark:text-white">Type</label>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="grid grid-cols-6 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">

@@ -20,30 +20,10 @@ const SubscriptionDetail = () => {
     const fetchSubscription = async () => {
         setLoading(true);
 
-        const cachedSubById = window.sessionStorage.getItem('sub_byId');
-        if (cachedSubById) {
-            const { data: cachedSub, expires, id: cachedId } = JSON.parse(cachedSubById);
-
-            if (Date.now() < expires && cachedId === id) {
-                setSubscription(cachedSub);
-                setStatus(cachedSub.status);
-                setLoading(false);
-                return;
-            }
-        }
-
-        window.sessionStorage.removeItem('sub_byId');
-
         try {
             const { data }: { data: SubscriptionResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/sub/byId/${id}`, { withCredentials: true });
             setSubscription(data.subscription);
             setStatus(data.subscription.status);
-            const payload = {
-                id,
-                data: data.subscription,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('sub_byId', JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
@@ -58,7 +38,6 @@ const SubscriptionDetail = () => {
     const handleDelete = async () => {
         try {
             await axios.delete(`${import.meta.env.VITE_BASE_URL}/admin/sub/byId/${id}`, { withCredentials: true });
-            window.sessionStorage.removeItem('sub_byId');
             toast.success("Subscription deleted successfully");
             navigate(-1);
         } catch (error: any) {
@@ -77,18 +56,10 @@ const SubscriptionDetail = () => {
             return;
         }
 
-        window.sessionStorage.removeItem('sub_byId');
-
         try {
             const { data }: { data: SubscriptionResponse } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/sub/byId/${id}`, { status }, { withCredentials: true });
             setSubscription(data.subscription);
             setStatus(data.subscription.status);
-            const payload = {
-                id,
-                data: data.subscription,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('sub_byId', JSON.stringify(payload));
             toast.success("Subscription status updated successfully");
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -104,12 +75,10 @@ const SubscriptionDetail = () => {
                     <h1 className="text-3xl text-white underline font-semibold">Subscription Details</h1>
                     <p className="text-white"><span className="font-semibold">Id:</span> {subscription?._id}</p>
                     <p className="text-white"><span className="font-semibold">RazorPay Id:</span> {subscription?.razorSubscriptionId}</p>
-                    <p className="text-white"><span className="font-semibold">Plan Id:</span> {subscription?.planId}</p>
+                    <p className="text-white"><span className="font-semibold">Plan Id:</span> {subscription?.planId._id}</p>
 
-                    {/* cannot find property named 'name' under ISubscription */}
-
-                    {/* <p className="text-white"><span className="font-semibold">Plan Name:</span> {subscription?.planId?.name}</p>
-                    <p className="text-white"><span className="font-semibold">Plan Amount:</span> {subscription?.planId?.amount}</p> */}
+                    <p className="text-white"><span className="font-semibold">Plan Name:</span> {subscription?.planId?.name}</p>
+                    <p className="text-white"><span className="font-semibold">Plan Amount:</span> {subscription?.planId?.amount}</p>
                     <p className="text-white"><span className="font-semibold">Billing Cycle:</span> {String(new Date(subscription?.start!).toDateString())} - {String(new Date(subscription?.end!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Current Cycle:</span> {String(new Date(subscription?.currentStart!).toDateString())} - {String(new Date(subscription?.currentEnd!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Next Billing:</span> {String(new Date(subscription?.nextBilling!).toDateString())}</p>

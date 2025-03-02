@@ -1,152 +1,50 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { CardResponse } from "../../types/api-types";
-import axios from "axios";
-import { AnimalData, CreatorData, MedicalData, IndividualData, BotanyData } from "../../types/type";
+import { AnimalData, CreatorData, MedicalData, IndividualData, BotanyData, ICard } from "../../types/type";
 import DefaultLayout from "../../layout/DefaultLayout";
-import QRCodeStyling from "qr-code-styling";
-import { Loader2 } from "lucide-react";
 import Loader from "../../components/Loader";
+import API from "../../config/apiConfig";
 
-const qrStyles: Record<string, { qrColor: string; dotColor: string }> = {
-    botanical: { qrColor: "#4ade80", dotColor: "#22c55e" },
-    individual: { qrColor: "#60a5fa", dotColor: "#3b82f6" },
-    medical: { qrColor: "#818cf8", dotColor: "#6366f1" },
-    creator: { qrColor: "#22d3ee", dotColor: "#06b6d4" },
-    animal: { qrColor: "#f87171", dotColor: "#ef4444" },
-    default: { qrColor: "#9ca3af", dotColor: "#6b7280" },
-};
+type CardType = "BOTANICAL"
+    | "INDIVIDUAL"
+    | "MEDICAL"
+    | "CREATOR"
+    | "ANIMAL";
 
-export const createQRCode = (type: string, cardId: string) => {
-    const styles = type && qrStyles[type] ? qrStyles[type] : qrStyles.default;
-
-    return new QRCodeStyling({
-        width: 300,
-        height: 300,
-        margin: 5,
-        data: `${import.meta.env.VITE_CLIENT_URL}/d/${cardId}`,
-        qrOptions: {
-            typeNumber: 0,
-            mode: "Byte",
-            errorCorrectionLevel: "H",
-        },
-        image: `/assets/${type}.svg`,
-        imageOptions: {
-            hideBackgroundDots: true,
-            imageSize: 0.4,
-            margin: 0,
-        },
-        dotsOptions: {
-            type: "extra-rounded",
-            color: styles.qrColor,
-        },
-        backgroundOptions: {
-            color: "#ffffff",
-        },
-        cornersSquareOptions: {
-            type: "extra-rounded",
-            color: styles.dotColor,
-        },
-        cornersDotOptions: {
-            color: styles.qrColor,
-        },
-    });
-};
+interface CardByIdResponse {
+    success: boolean;
+    card: ICard;
+}
 
 const CardDetails = () => {
 
-    const [search] = useSearchParams();
     const navigate = useNavigate();
-    const id = search.get("id");
-    const type = search.get("type");
-    const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
-    const [card, setCard] = useState<BotanyData | IndividualData | MedicalData | CreatorData | AnimalData | null>(null);
+    const [searchParams] = useSearchParams();
+    const id = searchParams.get("id");
+    const paramsType = (searchParams.get("type") as CardType) || "BOTANICAL";
+    // const [type, setType] = useState<CardType>(paramsType);
+    let type = paramsType;
+    const [card, setCard] = useState<ICard | null>(null);
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
     const fetchCard = async () => {
         setLoading(true);
-
-        const cachedCardsAll = window.sessionStorage.getItem('cards_all');
-        if (cachedCardsAll) {
-            const { data: cachedCards, expires, type: cachedType } = JSON.parse(cachedCardsAll);
-
-            if (Date.now() < expires && type === cachedType) {
-                const cachedCard = cachedCards.find((card: ICard) => card._id === id);
-                // const cachedCard = cachedCards.find((card: BotanyData | IndividualData | MedicalData | CreatorData | AnimalData) => card._id === id);
-                if (cachedCard) {
-                    setCard(cachedCard);
-                    setLoading(false);
-                    const payload = {
-                        type,
-                        id,
-                        data: cachedCard,
-                        expires: Date.now() + 60 * 1000
-                    }
-                    window.sessionStorage.setItem('cards_byId', JSON.stringify(payload));
-                    return;
-                }
-            }
-        }
-
-        const cachedCardById = window.sessionStorage.getItem('cards_byId');
-        if (cachedCardById) {
-            const { data: cachedCard, expires, type: cachedType, id: cachedId } = JSON.parse(cachedCardById);
-
-            if (Date.now() < expires && cachedId === id && cachedType === type) {
-                setCard(cachedCard);
-                setLoading(false);
-                return;
-            }
-        }
-
-        window.sessionStorage.removeItem('cards_byId');
-
         try {
-            const { data }: { data: CardResponse } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/cards/byId/${id!}?type=${type}`, { withCredentials: true });
+            const { data }: { data: CardByIdResponse } = await API.get(`/admin/cards/byId/${id!}?type=${type}`);
             setCard(data.card);
-            const payload = {
-                type,
-                id,
-                data: data.card,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem('cards_byId', JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
+            setCard(null);
+        } finally {
             setLoading(false);
         }
-        setLoading(false);
     }
 
     useEffect(() => {
         fetchCard();
     }, [id, type]);
-
-    useEffect(() => {
-        if (type && card) {
-            const qrCode = createQRCode(type!, card.shortCode); 
-
-            qrCode.getRawData("png").then((data) => {
-                if (data) {
-                    const dataUrl = URL.createObjectURL(new Blob([data], { type: "image/png" }));
-                    setQrCodeDataUrl(dataUrl);
-                }
-            });
-        }
-    }, [type, card]);
-
-    const handleDownload = () => {
-        if (card && type) {
-            const qrCode = createQRCode(type, card.shortCode);
-
-            qrCode.download({
-                name: card._id,
-                extension: "svg"
-            });
-        }
-    }
 
     const handleShare = () => {
         if (card && type) {
@@ -159,160 +57,384 @@ const CardDetails = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`${import.meta.env.VITE_BASE_URL}/admin/cards/byId/${id!}?type=${type}`, { withCredentials: true });
+            await API.delete(`/admin/cards/byId/${id!}?type=${type}`);
             toast.success("Card deleted successfully");
-            window.sessionStorage.removeItem('cards_byId');
-            window.sessionStorage.removeItem('cards_all');
             navigate(-1)
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setOpen(false);
         }
-        setOpen(false);
     }
 
     const renderCard = () => {
         switch (type) {
-            case "botanical":
-                return (
+            case "BOTANICAL":
+                let botanicalCardData = card && (card.data as BotanyData);
+                const botanicalData = [
+                    { label: "Scientific Name", value: botanicalCardData?.scientificName || "" },
+                    { label: "Water Requirement", value: botanicalCardData?.waterRequirement || "" },
+                    { label: "Sunlight Requirement", value: botanicalCardData?.sunlightRequirement || "" },
+                    { label: "Common Pests & Diseases", value: botanicalCardData?.commonPestsDiseases || "" },
+                    { label: "Description", value: botanicalCardData?.description || "" },
+                    { label: "Height", value: botanicalCardData?.height || "" },
+                    { label: "Leaf Type", value: botanicalCardData?.leafType || "" },
+                    { label: "Symptoms", value: botanicalCardData?.symptoms || "" },
+                    { label: "Nutritional Needs", value: botanicalCardData?.nutritionalNeeds || "" },
+                    { label: "Care Instructions", value: botanicalCardData?.careInstructions || "" },
+                    { label: "Special Features", value: botanicalCardData?.specialFeatures || "" },
+                    { label: "Caretaker Mobile Number", value: botanicalCardData?.caretakerMobileNumber || "" },
+                    { label: "Additional Notes", value: botanicalCardData?.additionalNotes || "" }
+                ]
+                return card && card.data && (
                     <>
                         <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> - {(card as BotanyData)?.name}</p>
-                        <p className="text-white"><span className="font-semibold">Type:</span> - {(card as BotanyData)?.treeType}</p>
-                        <p className="text-white"><span className="font-semibold">Scientific Name</span> - {(card as BotanyData)?.scientificName}</p>
-                        {/* <p className="text-white"><span className="font-semibold">Location</span> - {(card as BotanyData)?.location}</p> */}
-                        <p className="text-white"><span className="font-semibold">Description</span> - {(card as BotanyData)?.description}</p>
-                        <p className="text-white"><span className="font-semibold">Features</span> - {(card as BotanyData)?.specialFeatures}</p>
-                        <p className="text-white"><span className="font-semibold">Maintenance</span> - {(card as BotanyData)?.nutritionalNeeds}</p>
-                        {/* <p className="text-white"><span className="font-semibold">Benefits</span> - {(card as BotanyData)?.benefits}</p>
-                        <p className="text-white"><span className="font-semibold">FunFact</span> - {(card as BotanyData)?.funFact}</p> */}
-                        <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
-                        <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
-                        <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
-                    </>
-                )
-            case "individual":
-                return (
-                    <>
-                        <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> - {(card as IndividualData)?.name}</p>
-                        <p className="text-white"><span className="font-semibold">Mobile Number:</span> - {(card as IndividualData)?.mobileNumer}</p>
-                        <p className="text-white"><span className="font-semibold">Home Number:</span> - {(card as IndividualData)?.homeNumber}</p>
-                        <p className="text-white"><span className="font-semibold">Work Number:</span> - {(card as IndividualData)?.workNumber}</p>
-                        <p className="text-white"><span className="font-semibold">Other Number:</span> - {(card as IndividualData)?.otherNumber}</p>
-                        <p className="text-white"><span className="font-semibold">Personal Email:</span> - {(card as IndividualData)?.personalEmail}</p>
-                        <p className="text-white"><span className="font-semibold">Work Email:</span> - {(card as IndividualData)?.workEmail}</p>
-                        <p className="text-white"><span className="font-semibold">Other Email:</span> - {(card as IndividualData)?.otherEmail}</p>
-                        <p className="text-white"><span className="font-semibold">About Me:</span> - {(card as IndividualData)?.aboutMe}</p>
-                        <p className="text-white"><span className="font-semibold">Date of Birth:</span> - {(card as IndividualData)?.dateOfBirth}</p>
-                        <p className="text-white"><span className="font-semibold">Home Town:</span> - {(card as IndividualData)?.homeTown}</p>
-                        <p className="text-white"><span className="font-semibold">Current City:</span> - {(card as IndividualData)?.currentCity}</p>
-                        <p className="text-white"><span className="font-semibold">Languages:</span> - {(card as IndividualData)?.languages}</p>
-                        <p className="text-white"><span className="font-semibold">Music:</span> - {(card as IndividualData)?.music}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite Color:</span> - {(card as IndividualData)?.color}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite City:</span> - {(card as IndividualData)?.city}</p>
-                        <p className="text-white"><span className="font-semibold">Travel Destination:</span> - {(card as IndividualData)?.travelDestination}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite Season:</span> - {(card as IndividualData)?.season}</p>
-                        <p className="text-white"><span className="font-semibold">Unique Skills:</span> - {(card as IndividualData)?.uniqueSkills}</p>
-                        <p className="text-white"><span className="font-semibold">Cuisine:</span> - {(card as IndividualData)?.cuisine}</p>
-                        <p className="text-white"><span className="font-semibold">Beverage:</span> - {(card as IndividualData)?.beverage}</p>
-                        <p className="text-white"><span className="font-semibold">Inspirational Quotes:</span> - {(card as IndividualData)?.inspirationalQuotes}</p>
-                        <p className="text-white"><span className="font-semibold">Funny Quotes:</span> - {(card as IndividualData)?.funnyQuotes}</p>
-                        <p className="text-white"><span className="font-semibold">Motivational Quotes:</span> - {(card as IndividualData)?.motivationalQuotes}</p>
-                        <p className="text-white"><span className="font-semibold">Other Quotes:</span> - {(card as IndividualData)?.otherQuotes}</p>
-                        <p className="text-white"><span className="font-semibold">Travel Mode:</span> - {(card as IndividualData)?.travelMode === "other" ? (card as IndividualData)?.travelMode_Other : (card as IndividualData)?.travelMode}</p>
-                        <p className="text-white"><span className="font-semibold">Pet Lover:</span> - {(card as IndividualData)?.petLover}</p>
-                        <p className="text-white"><span className="font-semibold">Party Enthusiast:</span> - {(card as IndividualData)?.partyEnthusiast}</p>
-                        <p className="text-white"><span className="font-semibold">Smoker:</span> - {(card as IndividualData)?.smoker}</p>
-                        <p className="text-white"><span className="font-semibold">Marital Status:</span> - {(card as IndividualData)?.maritalStatus}</p>
-                        <p className="text-white"><span className="font-semibold">Relationship Status:</span> - {(card as IndividualData)?.relationshipStatus}</p>
-                        <p className="text-white"><span className="font-semibold">Fitness Routine:</span> - {(card as IndividualData)?.fitnessRoutine}</p>
-                        <p className="text-white"><span className="font-semibold">Morning Person:</span> - {(card as IndividualData)?.morningPerson}</p>
-                        <p className="text-white"><span className="font-semibold">Diet:</span> - {(card as IndividualData)?.diet === "other" ? (card as IndividualData)?.diet_Other : (card as IndividualData)?.diet}</p>
-                        <p className="text-white"><span className="font-semibold">Sleeping Habit:</span> - {(card as IndividualData)?.sleepingHabit}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite Genre:</span> - {(card as IndividualData)?.genre === "other" ? (card as IndividualData)?.genre_Other : (card as IndividualData)?.genre}</p>
-                        <p className="text-white"><span className="font-semibold">Favorite Sports:</span> - {(card as IndividualData)?.sports === "other" ? (card as IndividualData)?.sports_Other : (card as IndividualData)?.sports === "other"}</p>
-                        <p className="text-white"><span className="font-semibold">Artistic Pursuits:</span> - {(card as IndividualData)?.artistisPursuits === "other" ? (card as IndividualData)?.artistisPursuits_Other : (card as IndividualData)?.artistisPursuits}</p>
-                        <p className="text-white"><span className="font-semibold">Gaming:</span> - {(card as IndividualData)?.gaming === "other" ? (card as IndividualData)?.gaming_Other : (card as IndividualData)?.gaming}</p>
-                        <p className="text-white"><span className="font-semibold">Collecting Hobby:</span> - {(card as IndividualData)?.collectignHobby === "other" ? (card as IndividualData)?.collectignHobby_Other : (card as IndividualData)?.collectignHobby}</p>
-                        <p className="text-white"><span className="font-semibold">Coffee:</span> - {(card as IndividualData)?.coffee === "other" ? (card as IndividualData)?.coffee_Other : (card as IndividualData)?.coffee}</p>
-                        <p className="text-white"><span className="font-semibold">Cooking Skills:</span> - {(card as IndividualData)?.cookingSkills === "other" ? (card as IndividualData)?.cookingSkills_Other : (card as IndividualData)?.cookingSkills}</p>
-                        <p className="text-white"><span className="font-semibold">Current Occupation:</span> - {(card as IndividualData)?.currentOcupation}</p>
-                        <p className="text-white"><span className="font-semibold">Career Aspiration:</span> - {(card as IndividualData)?.careerAspiation}</p>
-                        <p className="text-white"><span className="font-semibold">Education:</span> - {(card as IndividualData)?.education}</p>
-                        <p className="text-white"><span className="font-semibold">Skills:</span> - {(card as IndividualData)?.skills}</p>
-                        <p className="text-white"><span className="font-semibold">Other Interests:</span> - {(card as IndividualData)?.otherInterests}</p>
-                        <p className="text-white"><span className="font-semibold">Future Goals:</span> - {(card as IndividualData)?.futureGoals}</p>
-                        <p className="text-white"><span className="font-semibold">Current Status:</span> - {(card as IndividualData)?.current}</p>
-                        <p className="text-white"><span className="font-semibold">Unusual Experience:</span> - {(card as IndividualData)?.unusualExperinece}</p>
-                        <p className="text-white"><span className="font-semibold">Strange Habits:</span> - {(card as IndividualData)?.strangeHabits}</p>
-                        {(card as IndividualData)?.socialMedia.map((item: { label: string; name: string }, index: number) => (
-                            <p key={index} className="text-white"><span className="font-semibold">{item.label}:</span> {item.name}</p>
+                        {botanicalData.map(dat => (
+                            <div key={dat.label} className='flex flex-wrap items-center gap-2'>
+                                <p className='text-md text-white font-bold whitespace-nowrap'>{dat.label} :</p>
+                                <p className='text-md text-white whitespace-nowrap'>{dat.value ? dat.value : "----------"}</p>
+                            </div>
                         ))}
-                        <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
+                        <Link to={`/users/details?id=${card?.userId?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.userId?._id}</Link>
                         <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
                         <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
                     </>
                 )
-            case "animal":
+            case "INDIVIDUAL":
+                let individualCardData = card && (card.data as IndividualData);
+                const individualData = [
+                    {
+                        id: 1,
+                        name: "Lifestyle",
+                        data: [
+                            { label: "Date of Birth", value: individualCardData?.dateOfBirth || "" },
+                            { label: "Home Town", value: individualCardData?.homeTown || "" },
+                            { label: "Current City", value: individualCardData?.currentCity || "" },
+                            { label: "Languages", value: individualCardData?.languages || "" },
+                            { label: "Marital Status", value: individualCardData?.maritalStatus || "" },
+                            { label: "Relationship Status", value: individualCardData?.relationshipStatus || "" },
+                            { label: "Fitness Routine", value: individualCardData?.fitnessRoutine || "" },
+                            { label: "Diet", value: individualCardData?.diet === "Other" ? individualCardData?.diet_Other || "" : individualCardData?.diet || "" },
+                            { label: "Sleeping Habit", value: individualCardData?.sleepingHabit || "" },
+                            { label: "Morning Person", value: individualCardData?.morningPerson || "" },
+                            { label: "Travel Mode", value: individualCardData?.travelMode === "Other" ? individualCardData?.travelMode_Other || "" : individualCardData?.travelMode || "" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: "Favourites",
+                        data: [
+                            { label: "Color", value: individualCardData?.color || "" },
+                            { label: "City", value: individualCardData?.city || "" },
+                            { label: "Travel Destination", value: individualCardData?.travelDestination || "" },
+                            { label: "Season", value: individualCardData?.season || "" },
+                            { label: "Cuisine", value: individualCardData?.cuisine || "" },
+                            { label: "Beverage", value: individualCardData?.beverage || "" },
+                            { label: "Music", value: individualCardData?.music || "" },
+                            { label: "Genre", value: individualCardData?.genre === "Other" ? individualCardData?.genre_Other || "" : individualCardData?.genre || "" },
+                            { label: "Sports", value: individualCardData?.sports === "Other" ? individualCardData?.sports_Other || "" : individualCardData?.sports || "" },
+                            { label: "Artistic Pursuits", value: individualCardData?.artistisPursuits === "Other" ? individualCardData?.artistisPursuits_Other || "" : individualCardData?.artistisPursuits || "" },
+                            { label: "Gaming", value: individualCardData?.gaming === "Other" ? individualCardData?.gaming_Other || "" : individualCardData?.gaming || "" },
+                            { label: "Collecting Hobby", value: individualCardData?.collectignHobby === "Other" ? individualCardData?.collectignHobby_Other || "" : individualCardData?.collectignHobby || "" },
+                            { label: "Coffee", value: individualCardData?.coffee === "Other" ? individualCardData?.coffee_Other || "" : individualCardData?.coffee || "" },
+                            { label: "Cooking Skills", value: individualCardData?.cookingSkills === "Other" ? individualCardData?.cookingSkills_Other || "" : individualCardData?.cookingSkills || "" }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        name: "Miscellaneous",
+                        data: [
+                            { label: "Weird Belief", value: individualCardData?.weirdBelief || "" },
+                            { label: "Other Interests", value: individualCardData?.otherInterests || "" },
+                            { label: "Future Goals", value: individualCardData?.futureGoals || "" },
+                            { label: "Current", value: individualCardData?.current || "" },
+                            { label: "Unusual Experience", value: individualCardData?.unusualExperinece || "" },
+                            { label: "Strange Habits", value: individualCardData?.strangeHabits || "" },
+                            { label: "Social Cause", value: individualCardData?.socialCause === "Other" ? individualCardData?.socialCause_Other || "" : individualCardData?.socialCause || "" },
+                            { label: "Philosophy", value: individualCardData?.philosophy === "Other" ? individualCardData?.philosophy_Other || "" : individualCardData?.philosophy || "" },
+                            { label: "Spiritual", value: individualCardData?.spiritual === "Other" ? individualCardData?.spiritual_Other || "" : individualCardData?.spiritual || "" },
+                            { label: "Core Beliefs", value: individualCardData?.core === "Other" ? individualCardData?.core_Other || "" : individualCardData?.core || "" }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        name: "Interests & Activities",
+                        data: [
+                            { label: "Global Issues", value: individualCardData?.globalIssues || "" },
+                            { label: "Social Cause", value: individualCardData?.socialCause === "Other" ? individualCardData?.socialCause_Other || "" : individualCardData?.socialCause || "" },
+                            { label: "Pet Lover", value: individualCardData?.petLover || "" },
+                            { label: "Party Enthusiast", value: individualCardData?.partyEnthusiast || "" },
+                            { label: "Smoker", value: individualCardData?.smoker || "" }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        name: "Professional Details",
+                        data: [
+                            { label: "Current Occupation", value: individualCardData?.currentOcupation === "Other" ? individualCardData?.currentOcupation_Other || "" : individualCardData?.currentOcupation || "" },
+                            { label: "Career Aspiration", value: individualCardData?.careerAspiation === "Other" ? individualCardData?.careerAspiation_Other || "" : individualCardData?.careerAspiation || "" },
+                            { label: "Education", value: individualCardData?.education === "Other" ? individualCardData?.education_Other || "" : individualCardData?.education || "" },
+                            { label: "Skills", value: individualCardData?.skills === "Other" ? individualCardData?.skills_Other || "" : individualCardData?.skills || "" }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        name: "Others",
+                        data: [
+                            { label: "Inspirational Quotes", value: individualCardData?.inspirationalQuotes || "" },
+                            { label: "Funny Quotes", value: individualCardData?.funnyQuotes || "" },
+                            { label: "Motivational Quotes", value: individualCardData?.motivationalQuotes || "" },
+                            { label: "Other Quotes", value: individualCardData?.otherQuotes || "" }
+                        ]
+                    }
+                ];
                 return (
                     <>
                         <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as AnimalData)?.name}</p>
-                        <p className="text-white"><span className="font-semibold">Species:</span> {(card as AnimalData)?.species}</p>
-                        <p className="text-white"><span className="font-semibold">Lifespan:</span> {(card as AnimalData)?.lifespan}</p>
-                        {/* <p className="text-white"><span className="font-semibold">Gender:</span> {(card as AnimalData)?.gender}</p> */}
-                        {/* <p className="text-white"><span className="font-semibold">Color:</span> {(card as AnimalData)?.color}</p> */}
-                        <p className="text-white"><span className="font-semibold">Location:</span> {(card as AnimalData)?.location}</p>
-                        <p className="text-white"><span className="font-semibold">Owner:</span> {(card as AnimalData)?.ownerName}</p>
-                        <p className="text-white"><span className="font-semibold">Phone:</span> {(card as AnimalData)?.caretakerMobileNumber}</p>
-                        <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
-                        <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
-                        <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
-                    </>
-                )
-            case "medical":
-                return (
-                    <>
-                        <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as MedicalData)?.name}</p>
-                        <p className="text-white"><span className="font-semibold">Date of Birth:</span> {(card as MedicalData)?.dateOfBirth}</p>
-                        <p className="text-white"><span className="font-semibold">Gender:</span> {(card as MedicalData)?.gender}</p>
-                        <p className="text-white"><span className="font-semibold">Street:</span> {(card as MedicalData)?.street}</p>
-                        <p className="text-white"><span className="font-semibold">City:</span> {(card as MedicalData)?.city}</p>
-                        <p className="text-white"><span className="font-semibold">State:</span> {(card as MedicalData)?.state}</p>
-                        <p className="text-white"><span className="font-semibold">Postal Code:</span> {(card as MedicalData)?.postalCode}</p>
-                        <p className="text-white"><span className="font-semibold">Phone:</span> {(card as MedicalData)?.phone}</p>
-                        <p className="text-white"><span className="font-semibold">Email:</span> {(card as MedicalData)?.email}</p>
-                        <p className="text-white"><span className="font-semibold">Emergency Contact Name:</span> {(card as MedicalData)?.emergencyName}</p>
-                        <p className="text-white"><span className="font-semibold">Emergency Relation:</span> {(card as MedicalData)?.emergencyRelation}</p>
-                        <p className="text-white"><span className="font-semibold">Emergency Phone:</span> {(card as MedicalData)?.emergencyPhone}</p>
-                        <p className="text-white"><span className="font-semibold">Allergy History:</span> {(card as MedicalData)?.allergyHistory}</p>
-                        <p className="text-white"><span className="font-semibold">Chronic Conditions History:</span> {(card as MedicalData)?.chronicHistory}</p>
-                        <p className="text-white"><span className="font-semibold">Current Medication:</span> {(card as MedicalData)?.currentMedication}</p>
-                        <p className="text-white"><span className="font-semibold">Previous Surgeries:</span> {(card as MedicalData)?.previousSurgeries}</p>
-                        <p className="text-white"><span className="font-semibold">Smoker:</span> {(card as MedicalData)?.smoker}</p>
-                        <p className="text-white"><span className="font-semibold">Alcohol Consumption:</span> {(card as MedicalData)?.alcohol}</p>
-                        <p className="text-white"><span className="font-semibold">Exercise Routine:</span> {(card as MedicalData)?.exercise}</p>
-                        <p className="text-white"><span className="font-semibold">Diet:</span> {(card as MedicalData)?.diet}</p>
-                        <p className="text-white"><span className="font-semibold">Mental Condition:</span> {(card as MedicalData)?.mentalCondition}</p>
-                        <p className="text-white"><span className="font-semibold">Vaccination History:</span> {(card as MedicalData)?.vaccinationHistory}</p>
-                        <p className="text-white"><span className="font-semibold">Insurance Provider:</span> {(card as MedicalData)?.insuranceProvider}</p>
-                        <p className="text-white"><span className="font-semibold">Insurance Policy Number:</span> {(card as MedicalData)?.insurancePolicyNumber}</p>
-                        <p className="text-white"><span className="font-semibold">Insurance Group Number:</span> {(card as MedicalData)?.insuranceGrpNumber}</p>
-                        <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
-                        <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
-                        <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
-                    </>
-                )
-            case "creator":
-                return (
-                    <>
-                        <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
-                        <p className="text-white"><span className="font-semibold">Name:</span> {(card as CreatorData)?.name}</p>
-                        {(card as CreatorData)?.links.map((item: { label: string; name: string }, index: number) => (
-                            <p key={index} className="text-white"><span className="font-semibold">{item.label}:</span> {item.name}</p>
+                        {individualData.map(dat => (
+                            <div key={dat.id} className="my-2">
+                                <h2 className="text-white text-2xl font-semibold underline">{dat.name}</h2>
+                                {dat.data.map(data => (
+                                    <div className='flex flex-wrap items-center gap-2'>
+                                        <p className='text-md text-white font-bold whitespace-nowrap'>{data.label} :</p>
+                                        <p className='text-md text-white whitespace-nowrap'>{data.value ? data.value : "----------"}</p>
+                                    </div>
+                                ))}
+                            </div>
                         ))}
-                        <Link to={`/users/details?id=${card?.user?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.user?._id}</Link>
+                        {individualCardData && individualCardData.socialMedia?.length > 0 ? individualCardData.socialMedia.map((link, index: number) => (
+                            <Link
+                                to={link.link}
+                                target="blank"
+                                className="w-full relative flex flex-col justify-center items-center py-3"
+                                key={index}
+                            >
+                                <p key={index} className="text-white"><span className="font-semibold">{link.label}:</span> {link.link}</p>
+                            </Link>
+                        )) : (
+                            <p className='text-center text-white text-lg'>No links available</p>
+                        )}
+                        <Link to={`/users/details?id=${card?.userId?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.userId?._id}</Link>
+                        <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
+                        <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
+                    </>
+                )
+            case "ANIMAL":
+                let animalCardData = card && (card.data as AnimalData);
+                const animalData = [
+                    { label: "Sign Illness", value: animalCardData?.signIllness || "" },
+                    { label: "Vaccination", value: animalCardData?.vaccination || "" },
+                    { label: "Physical Description", value: animalCardData?.physicalDescription || "" },
+                    { label: "Diet", value: animalCardData?.diet || "" },
+                    { label: "Lifespan", value: animalCardData?.lifespan || "" },
+                    { label: "Behavior", value: animalCardData?.behavior || "" },
+                    { label: "Common Health", value: animalCardData?.commonHealth || "" },
+                    { label: "Location", value: animalCardData?.location || "" },
+                    { label: "Additional Notes", value: animalCardData?.additionalNotes || "" }
+                ]
+                return (
+                    <>
+                        <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
+                        {animalData.map(dat => (
+                            <div key={dat.label} className='flex flex-wrap items-center gap-2'>
+                                <p className='text-md text-white font-bold whitespace-nowrap'>{dat.label} :</p>
+                                <p className='text-md text-white whitespace-nowrap'>{dat.value ? dat.value : "----------"}</p>
+                            </div>
+                        ))}
+                        <Link to={`/users/details?id=${card?.userId?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.userId?._id}</Link>
+                        <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
+                        <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
+                    </>
+                )
+            case "MEDICAL":
+                let medicalCardData = card && (card.data as MedicalData);
+                const medicalData = {
+                    profile: [
+                        {
+                            label: "Gender",
+                            value: medicalCardData?.gender || ""
+                        }, {
+                            label: "Age",
+                            value: medicalCardData?.age || ""
+                        }, {
+                            label: "Height",
+                            value: medicalCardData?.height || ""
+                        }, {
+                            label: "Weight",
+                            value: medicalCardData?.weight || ""
+                        }, {
+                            label: "Blood Type",
+                            value: medicalCardData?.blood || ""
+                        }, {
+                            label: "Date of Birth",
+                            value: medicalCardData?.dateOfBirth || ""
+                        }, {
+                            label: "Phone Number",
+                            value: medicalCardData?.phone || ""
+                        },
+                    ],
+                    address: {
+                        line1: `${medicalCardData?.street || ""} ${medicalCardData?.city || ""}`,
+                        state: medicalCardData?.state || "",
+                        postal_code: medicalCardData?.postalCode || ""
+                    },
+                    usual: [
+                        {
+                            name: "Previous Surgeries",
+                            value: medicalCardData?.previousSurgeries || ""
+                        },
+                        {
+                            name: "Smoker",
+                            value: medicalCardData?.smoker || ""
+                        },
+                        {
+                            name: "Alcohol Consumption",
+                            value: medicalCardData?.alcohol || ""
+                        },
+                        {
+                            name: "Exercise Routine",
+                            value: medicalCardData?.exercise === "Other" ? medicalCardData?.exercise_Other : medicalCardData?.exercise || ""
+                        },
+                        {
+                            name: "Dietry Preferences",
+                            value: medicalCardData?.diet === "Other" ? medicalCardData?.diet_Other : medicalCardData?.diet || ""
+                        },
+                        {
+                            name: "Current Medication",
+                            value: medicalCardData?.currentMedication || ""
+                        }
+                    ],
+                    contacts: [
+                        {
+                            name: medicalCardData?.emergencyName,
+                            relation: medicalCardData?.emergencyRelation,
+                            phone: medicalCardData?.emergencyPhone,
+                            action: "Call"
+                        },
+                    ],
+                    multiselect: [
+                        {
+                            name: "Known Allergies",
+                            data: medicalCardData?.allergyHistory?.split(",").map(item => item.trim()) || []
+                        },
+                        {
+                            name: "Mental Health",
+                            data: medicalCardData?.mentalCondition?.split(",").map(item => item.trim()) || []
+                        },
+                        {
+                            name: "Routine Vaccinations",
+                            data: medicalCardData?.vaccinationHistory?.split(",").map(item => item.trim()) || []
+                        },
+                        {
+                            name: "Chronic Conditions",
+                            data: medicalCardData?.chronicHistory?.split(",").map(item => item.trim()) || []
+                        }
+                    ],
+                    actions: [
+                        {
+                            name: "Insurance Info",
+                            data: [
+                                {
+                                    label: "Insurance Provider",
+                                    value: medicalCardData?.insuranceProvider || ""
+                                }, {
+                                    label: "Policy Number",
+                                    value: medicalCardData?.insurancePolicyNumber || ""
+                                }, {
+                                    label: "Group Number",
+                                    value: medicalCardData?.insuranceGrpNumber || ""
+                                }
+                            ]
+                        }
+                    ],
+                };
+                return (
+                    <>
+                        <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
+                        {medicalData.profile.map((dat, index) => (
+                            <div key={index} className='flex flex-wrap items-center gap-2'>
+                                <p className='text-md text-white font-semibold whitespace-nowrap'>{dat.label} :</p>
+                                <p className='text-md text-white whitespace-nowrap'>{dat.value ? dat.value : "----------"}</p>
+                            </div>
+                        ))}
+                        <div className="mt-2">
+                            <h2 className="text-white text-2xl font-semibold">Address</h2>
+                            <div>
+                                <p className="text-white">{medicalData.address.line1}</p>
+                                <p className="text-white">State - {medicalData.address.state}</p>
+                                <p className="text-white">Postal -{medicalData.address.postal_code}</p>
+                            </div>
+                        </div>
+                        {medicalData.usual.map((data, index) => (
+                            <div key={index} className="mt-4">
+                                <h2 className="text-white text-2xl font-semibold">{data.name}</h2>
+                                <p className="text-white">{data.value}</p>
+                                <hr className="border border-white mt-1" />
+                            </div>
+                        ))}
+                        <div className="mt-4">
+                            <h2 className="text-white text-2xl font-semibold">SOS</h2>
+                            <div className="flex gap-4 overflow-auto select-none hide-scrollbar">
+                                {medicalData.contacts.map((data, index) => (
+                                    <div key={index} className="flex flex-col justify-center items-center w-[200px] gap-1 py-2 px-5 bg-red-100 border rounded-2xl">
+                                        <p className="text-black text-lg font-semibold whitespace-nowrap">{data.name}</p>
+                                        <p className="text-black">{data.relation}</p>
+                                        <a href={`tel:${data.phone}`} className="bg-blue-100 text-center text-black text-lg font-semibold w-full py-1 rounded-md">{data.action}</a>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="mt-4">
+                            {medicalData.multiselect.map((dat, index) => (
+                                <div key={index} className="py-2">
+                                    <h1 className="text-white text-2xl font-semibold">{dat.name}</h1>
+                                    <div className="flex flex-wrap justify-start items-center gap-2">
+                                        {dat.data.map((dax, i) => (
+                                            <div key={i} className="px-3 py-2 rounded-md bg-blue-100">
+                                                <p className="text-blue-600 font-normal">{dax}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-4">
+                            {medicalData.actions.map((action, index) => (
+                                <div key={index}>
+                                    <h2 className="text-white text-xl font-semibold">{action.name}</h2>
+                                    {action.data.map((action, index) => (
+                                        <div key={index} className="flex flex-wrap items-center gap-2">
+                                            <p className='text-lg text-white font-semibold whitespace-nowrap'>{action.label} :</p>
+                                            <p className='text-lg text-white whitespace-nowrap'>{action.value ? action.value : "----------"}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                        <Link to={`/users/details?id=${card?.userId?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.userId?._id}</Link>
+                        <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
+                        <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
+                    </>
+                )
+            case "CREATOR":
+                let creatorCardData = card && (card.data as CreatorData)
+                return (
+                    <>
+                        <p className="text-white"><span className="font-semibold">Id:</span> {card?._id}</p>
+                        <p className="text-white"><span className="font-semibold">Name:</span> {creatorCardData?.name}</p>
+                        {creatorCardData && creatorCardData.links?.length > 0 ? creatorCardData.links.map((link, index: number) => (
+                            <Link
+                                to={link.link}
+                                target="blank"
+                                className="w-full relative flex flex-col justify-center items-center py-3"
+                                key={index}
+                            >
+                                <p key={index} className="text-white"><span className="font-semibold">{link.label}:</span> {link.link}</p>
+                            </Link>
+                        )) : (
+                            <p className='text-center text-white text-lg'>No links available</p>
+                        )}
+                        <Link to={`/users/details?id=${card?.userId?._id}`} className="text-white"><span className="font-semibold">User</span> - {card?.userId?._id}</Link>
                         <p className="text-white"><span className="font-semibold">Card Created</span> - {String(new Date(card?.createdAt!).toDateString())}</p>
                         <p className="text-white"><span className="font-semibold">Card Updated</span> - {String(new Date(card?.updatedAt!).toDateString())}</p>
                     </>
@@ -352,20 +474,20 @@ const CardDetails = () => {
 
                 <div className="flex flex-col gap-4">
                     <div className="h-full w-full">
-                        <div className="bg-white rounded-xl">
+                        {/* <div className="bg-white rounded-xl">
                             {qrCodeDataUrl ? (
                                 <img src={qrCodeDataUrl} alt={card?._id} className="rounded-lg object-cover" />
                             ) : (
                                 <Loader2 />
                             )}
-                        </div>
+                        </div> */}
                         <div className="flex items-center justify-center mt-3 text-2xl text-black font-semibold">
-                            {card?.name}
+                            {card?.data.name}
                         </div>
                     </div>
-                    <button onClick={handleDownload} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                    {/* <button onClick={handleDownload} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
                         Download Card
-                    </button>
+                    </button> */}
                     <button onClick={handleShare} className="flex w-full justify-center rounded bg-green-500 p-3 font-medium text-gray hover:bg-opacity-90">
                         Share Card
                     </button>

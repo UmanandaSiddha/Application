@@ -2,11 +2,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
 import CardsChart from "../../components/Charts/CardsChart";
 import Loader from "../../components/Loader";
 import { Loader2 } from "lucide-react";
 import { ICard, ISubscription, ITransaction, IUser, UserRoleEnum } from "../../types/type";
+import API from "../../config/apiConfig";
 
 interface CardStatsResponse {
     success: boolean;
@@ -19,21 +19,21 @@ interface CardStatsResponse {
     }
 }
 
-type TypeOptions = "botanical" | "individual" | "medical" | "creator" | "animal";
-
-const validTypes: TypeOptions[] = ["botanical", "individual", "medical", "creator", "animal"];
+type TypeOptions = "ALL"
+    | "BOTANICAL"
+    | "INDIVIDUAL"
+    | "MEDICAL"
+    | "CREATOR"
+    | "ANIMAL";
 
 const UserDetails = () => {
 
     const [search, setSearch] = useSearchParams();
     const navigate = useNavigate();
     const id = search.get("id");
-    const typeParams = search.get('type');
     const [user, setUser] = useState<IUser>();
-    const [type, setType] = useState<TypeOptions>(
-        validTypes.includes(typeParams as TypeOptions) ? (typeParams as TypeOptions) : "botanical"
-    );
-    // const [type, setType] = useState<"botanical" | "individual" | "medical" | "creator" | "animal">((typeParams as "botanical" | "individual" | "medical" | "creator" | "animal") || "botanical");
+    const paramsType = (search.get("type") as TypeOptions) || "ALL";
+    const [type, setType] = useState<TypeOptions>(paramsType);
     const [cards, setCards] = useState<ICard[]>();
     const [stats, setStats] = useState({
         botanical: 0,
@@ -47,10 +47,12 @@ const UserDetails = () => {
     const [total, setTotal] = useState<number | null>(0);
     const [selectedOption, setSelectedOption] = useState<string>("");
     const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
+    const [keyword, setKeyword] = useState("");
     const [open, setOpen] = useState(false);
     const [cardsCount, setCardsCount] = useState({
         currentPage: 1,
         resultPerPage: 1,
+        filteredCards: 1,
         totalCards: 1
     });
     const [subscriptionCount, setSubscriptionCount] = useState({
@@ -77,42 +79,21 @@ const UserDetails = () => {
 
     const gotUser = async () => {
         setLoading(true);
-
-        const cachedUserById = window.sessionStorage.getItem('user_byId');
-        if (cachedUserById) {
-            const { data: cachedUser, expires, id: cachedId } = JSON.parse(cachedUserById);
-
-            if (Date.now() < expires && cachedId === id) {
-                setUser(cachedUser);
-                setTotal(cachedUser.cards.total);
-                setSelectedOption(cachedUser.role);
-                setLoading(false);
-                return;
-            }
-        }
-
-        window.sessionStorage.removeItem('user_byId');
-
         try {
-            const { data }: { data: any } = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/users/byId/${id}`, { withCredentials: true });
+            const { data }: { data: any } = await API.get(`/admin/users/byId/${id}`);
             setUser(data.user);
             setTotal(data.user.cards.total);
             setSelectedOption(data.user.role);
-            const payload = {
-                id,
-                data: data.user,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem("user_byId", JSON.stringify(payload));
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     const fetchSubscriptions = async (url: string) => {
         try {
-            const { data }: { data: any } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await API.get(url);
             setSubscriptions(data.subscriptions);
             setSubscriptionCount({
                 ...subscriptionCount,
@@ -127,7 +108,7 @@ const UserDetails = () => {
 
     const fetchTrsanctions = async (url: string) => {
         try {
-            const { data }: { data: any } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await API.get(url);
             setTransactions(data.transactions);
             setTransactionCount({
                 ...transactionCount,
@@ -142,13 +123,14 @@ const UserDetails = () => {
 
     const fetchCards = async (url: string) => {
         try {
-            const { data }: { data: any } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: any } = await API.get(url);
             setCards(data.cards);
-            setCardsCount({
-                ...cardsCount,
+			setCardsCount(prev => ({
+                ...prev,
                 resultPerPage: data.resultPerPage,
+                filteredCards: data.filteredCardsCount,
                 totalCards: data.count
-            });
+            }));
         } catch (error: any) {
             toast.error(error.response.data.message);
         }
@@ -156,14 +138,14 @@ const UserDetails = () => {
 
     const fetchCardStats = async (url: string) => {
         setStatsLoading(true);
-
         try {
-            const { data }: { data: CardStatsResponse } = await axios.get(url, { withCredentials: true });
+            const { data }: { data: CardStatsResponse } = await API.get(url);
             setStats(data.count);
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setStatsLoading(false);
         }
-        setStatsLoading(false);
     }
 
     const handleRoleChange = async () => {
@@ -176,8 +158,7 @@ const UserDetails = () => {
             return;
         }
         try {
-            const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/byId/${id}`, { role: selectedOption }, { withCredentials: true });
-            window.sessionStorage.removeItem('user_byId');
+            const { data }: { data: { message: string } } = await API.put(`/admin/users/byId/${id}`, { role: selectedOption });
             toast.success(data.message);
             navigate(-1);
         } catch (error: any) {
@@ -191,8 +172,7 @@ const UserDetails = () => {
             return;
         }
         try {
-            const { data }: { data: { message: string } } = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/users/card/${id}`, { total }, { withCredentials: true });
-            window.sessionStorage.removeItem('user_byId');
+            const { data }: { data: { message: string } } = await API.put(`/admin/users/card/${id}`, { total });
             toast.success(data.message);
             navigate(-1);
         } catch (error: any) {
@@ -202,23 +182,15 @@ const UserDetails = () => {
 
     const handleFreeAccess = async (factor: boolean) => {
         try {
-            let link = `${import.meta.env.VITE_BASE_URL}/admin/users/free/access/${id}`;
+            let link = `/admin/users/free/access/${id}`;
             if (factor) {
-                link = `${import.meta.env.VITE_BASE_URL}/admin/users/free/revoke/${id}`
+                link = `/admin/users/free/revoke/${id}`
             }
 
-            window.sessionStorage.removeItem('user_byId');
-
-            const { data }: { data: any } = await axios.put(link, {}, { withCredentials: true });
+            const { data }: { data: any } = await API.put(link, {});
             setUser(data.user);
             setTotal(data.user.cards.total);
             setSelectedOption(data.user.role);
-            const payload = {
-                id,
-                data: data.user,
-                expires: Date.now() + 60 * 1000
-            }
-            window.sessionStorage.setItem("user_byId", JSON.stringify(payload));
             toast.success(factor ? "Free Access Revoked" : "Free Access Granted");
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -227,12 +199,11 @@ const UserDetails = () => {
 
     const handleBlockUser = async (factor: boolean) => {
         try {
-            let link = `${import.meta.env.VITE_BASE_URL}/admin/users/block/${id}`;
+            let link = `/admin/users/block/${id}`;
             if (factor) {
-                link = `${import.meta.env.VITE_BASE_URL}/admin/users/unblock/${id}`
+                link = `/admin/users/unblock/${id}`
             }
-            const { data }: { data: { message: string } } = await axios.put(link, {}, { withCredentials: true });
-            window.sessionStorage.removeItem('user_byId');
+            const { data }: { data: { message: string } } = await API.put(link, {});
             toast.success(data.message);
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -241,12 +212,11 @@ const UserDetails = () => {
 
     const handleDeactivate = async (factor: boolean) => {
         try {
-            let link = `${import.meta.env.VITE_BASE_URL}/admin/users/deactivate/${id}`;
+            let link = `/admin/users/deactivate/${id}`;
             if (factor) {
-                link = `${import.meta.env.VITE_BASE_URL}/admin/users/reactivate/${id}`
+                link = `/admin/users/reactivate/${id}`
             }
-            const { data }: { data: { message: string } } = await axios.put(link, {}, { withCredentials: true });
-            window.sessionStorage.removeItem('user_byId');
+            const { data }: { data: { message: string } } = await API.put(link, {});
             toast.success(data.message);
         } catch (error: any) {
             toast.error(error.response.data.message);
@@ -256,14 +226,14 @@ const UserDetails = () => {
 
     useEffect(() => {
         gotUser();
-        fetchCardStats(`${import.meta.env.VITE_BASE_URL}/admin/cards/stats/${id}`);
+        fetchCardStats(`/admin/cards/stats/${id}`);
     }, [id]);
 
     useEffect(() => {
         setCardLoading(true);
 
         const delayDebounce = setTimeout(() => {
-            let link = `${import.meta.env.VITE_BASE_URL}/admin/cards/user/${id}?page=${transactionCount.currentPage}&type=${type}`;
+            let link = `/admin/cards/user/${id}?page=${transactionCount.currentPage}&type=${type}&keyword=${keyword}`;
             fetchCards(link);
 
             setCardLoading(false);
@@ -271,13 +241,13 @@ const UserDetails = () => {
 
         return () => clearTimeout(delayDebounce);
 
-    }, [id, type, cardsCount.currentPage]);
+    }, [id, type, cardsCount.currentPage, keyword]);
 
     useEffect(() => {
         setTransacLoading(true);
 
         const delayDebounce = setTimeout(() => {
-            let link = `${import.meta.env.VITE_BASE_URL}/admin/transac/user/${id}?page=${transactionCount.currentPage}`;
+            let link = `/admin/transac/user/${id}?page=${transactionCount.currentPage}`;
             fetchTrsanctions(link);
 
             setTransacLoading(false);
@@ -291,7 +261,7 @@ const UserDetails = () => {
         setSubLoading(true);
 
         const delayDebounce = setTimeout(() => {
-            let link = `${import.meta.env.VITE_BASE_URL}/admin/sub/user/${id}?page=${subscriptionCount.currentPage}`;
+            let link = `/admin/sub/user/${id}?page=${subscriptionCount.currentPage}`;
             fetchSubscriptions(link);
 
             setSubLoading(false);
@@ -318,8 +288,7 @@ const UserDetails = () => {
                     <p className="text-white"><span className="font-semibold">Id:</span> {user?._id}</p>
                     <p className="text-white"><span className="font-semibold">Name</span> - {user?.profile.firstName}</p>
                     <p className="text-white"><span className="font-semibold">Email</span> - {user?.profile?.email}</p>
-                    {/* phone nahi hai IUser mein 😔 */}
-                    <p className="text-white"><span className="font-semibold">Phone</span> - {user?.phone}</p>
+                    <p className="text-white"><span className="font-semibold">Phone</span> - {user?.access.billingInfo?.phoneNumber}</p>
                     <p className="text-white"><span className="font-semibold">Cards</span> - {user?.access?.cards.created} / {user?.access?.cards?.total?.initial}</p>
                     <p className="text-white"><span className="font-semibold">Role</span> - {user?.profile?.role.toUpperCase()}</p>
 
@@ -345,19 +314,19 @@ const UserDetails = () => {
                     )}
 
                     <p className="text-white"><span className="font-semibold">Account Type</span> - {user?.account?.accountType.map(type => type.toUpperCase()).join(", ")}</p>
-                    <p className="text-white"><span className="font-semibold">Free Plan</span> - {user?.freePlan?.status.toString().toUpperCase()}</p>
+                    <p className="text-white"><span className="font-semibold">Free Access</span> - {user?.access.freeAccess.toString().toUpperCase()}</p>
                     <p className="text-white"><span className="font-semibold">Verified</span> - {String(user?.account?.isVerified).toUpperCase()}</p>
                     <p className="text-white"><span className="font-semibold">Blocked</span> - {String(user?.account?.isBlocked).toUpperCase()}</p>
                     <p className="text-white"><span className="font-semibold">Deactivated</span> - {String(user?.account?.isDeactivated).toUpperCase()}</p>
                     <p className="text-white"> <span className="font-semibold">Login Attempts</span> - {user?.account?.loginAttempt?.count ?? "N/A"}</p>
                     <p className="text-white"><span className="font-semibold">Last Attempt</span> - {user?.account?.loginAttempt?.lastLogin ? String(new Date(user?.account?.loginAttempt.lastLogin).toDateString()) : "Not Available"}</p>
-                    <p className="text-white"><span className="font-semibold">Active Plan</span> - {user?.freePlan.status ? "FREE PLAN ( " + user.freePlan.type.toUpperCase() + " )" : user?.activePlan?._id}</p>
-                    <p className="text-white"><span className="font-semibold">Plan Status</span> - {user?.activePlan?.status}</p>
+                    <p className="text-white"><span className="font-semibold">Active Plan</span> - {user?.access.latestSubscription?._id}</p>
+                    <p className="text-white"><span className="font-semibold">Plan Status</span> - {user?.access.latestSubscription?.status}</p>
                     <p className="text-white">
                         <span className="font-semibold">
-                            {(user?.activePlan?.status === "cancelled" && (new Date(user?.activePlan?.currentEnd) > new Date(Date.now()))) ? "Valid Till" : "Next Billing"}
+                            {(user?.access.latestSubscription?.status === "cancelled" && (new Date(user?.access.latestSubscription?.currentEnd) > new Date(Date.now()))) ? "Valid Till" : "Next Billing"}
                         </span>
-                        - {user?.activePlan?.currentEnd ? String(new Date(user?.activePlan?.currentEnd).toDateString()) : "Not Available"}</p>
+                        - {user?.access.latestSubscription?.currentEnd ? String(new Date(user?.access.latestSubscription?.currentEnd).toDateString()) : "Not Available"}</p>
                     <p className="text-white"><span className="font-semibold">Google Id</span> - {user?.profile?.googleId === "GoogleID" ? "Not Set Yet" : user?.profile?.googleId}</p>
                     <p className="text-white"><span className="font-semibold">Account Created</span> - {String(new Date(user?.createdAt!).toDateString())}</p>
                     <p className="text-white"><span className="font-semibold">Account Upadated</span> - {String(new Date(user?.updatedAt!).toDateString())}</p>
@@ -378,7 +347,6 @@ const UserDetails = () => {
                     </div>
                 )}
                 <div className="flex flex-col gap-4">
-
                     {statsLoading ? (
                         <div className="flex justify-center items-center w-full h-full">
                             <Loader2 size={60} />
@@ -421,8 +389,8 @@ const UserDetails = () => {
                         </button>
                     </div>
 
-                    <button onClick={() => handleFreeAccess(user?.freePlan.status && user.freePlan.type === "custom" ? true : false)} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                        {(user?.freePlan.status && user.freePlan.type === "custom") ? "Revoke Free Access" : "Grant Free Access"}
+                    <button onClick={() => handleFreeAccess(user?.access.freeAccess ? true : false)} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                        {user?.access.freeAccess ? "Revoke Free Access" : "Grant Free Access"}
                     </button>
 
                     <button onClick={() => handleBlockUser(user?.account?.isBlocked ? true : false)} className="flex w-full justify-center rounded bg-slate-500 p-3 font-medium text-gray hover:bg-opacity-90">
@@ -448,22 +416,38 @@ const UserDetails = () => {
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div className="flex flex-col md:flex-row justify-between items-center py-6 px-4 md:px-6 xl:px-7.5">
                         <h4 className="text-xl font-semibold text-black dark:text-white capitalize">
-                            {type} Cards
+                            Cards ( {cardsCount.totalCards} )
                         </h4>
+                        <div className="flex items-center justify-center">
+                            <input
+                                type="text"
+                                value={keyword}
+                                onChange={(e) => {
+                                    setKeyword(e.target.value);
+                                    setCardsCount({ ...cardsCount, currentPage: 1 });
+                                }}
+                                placeholder="Search Card..."
+                                className="w-full bg-transparent pl-9 pr-4 text-black focus:outline-none dark:text-white xl:w-125"
+                            />
+                        </div>
                         <div className="flex items-center justify-center">
                             <select
                                 className="text-black px-3 py-2 rounded-md"
                                 value={type}
                                 onChange={(e) => {
-                                    setType(e.target.value as "botanical" | "individual" | "medical" | "creator" | "animal");
-                                    setSearch({ type: e.target.value as "botanical" | "individual" | "medical" | "creator" | "animal" }, { replace: true });
+                                    setType(e.target.value as TypeOptions);
+                                    setSearch(prev => {
+                                        prev.set("type", e.target.value as TypeOptions);
+                                        return prev;
+                                    }, { replace: true });
                                 }}
                             >
-                                <option value="botanical">Botanical</option>
-                                <option value="animal">Animal</option>
-                                <option value="medical">Medical</option>
-                                <option value="creator">Creator</option>
-                                <option value="individual">Individual</option>
+                                <option value="ALL">All</option>
+								<option value="BOTANICAL">Botanical</option>
+								<option value="ANIMAL">Animal</option>
+								<option value="MEDICAL">Medical</option>
+								<option value="CREATOR">Creator</option>
+								<option value="INDIVIDUAL">Individual</option>
                             </select>
                         </div>
                         <div className="flex justify-center items-center space-x-4">
@@ -475,11 +459,11 @@ const UserDetails = () => {
                                 Prev
                             </button>
                             <p className="text-md font-semibold truncate">
-                                {cardsCount.currentPage} / {Math.ceil(cardsCount.totalCards / cardsCount.resultPerPage)}
+                                {cardsCount.currentPage} / {Math.ceil(cardsCount.filteredCards / cardsCount.resultPerPage)}
                             </p>
                             <button
                                 onClick={() => setCardsCount({ ...cardsCount, currentPage: cardsCount.currentPage + 1 })}
-                                disabled={cardsCount.currentPage === Math.ceil(cardsCount.totalCards / cardsCount.resultPerPage)}
+                                disabled={cardsCount.currentPage >= Math.ceil(cardsCount.filteredCards / cardsCount.resultPerPage)}
                                 className="bg-slate-600 text-white py-2 px-4 rounded-md"
                             >
                                 Next
@@ -491,15 +475,18 @@ const UserDetails = () => {
                         <div className="col-span-2 flex items-center">
                             <p className="font-medium">Name</p>
                         </div>
-                        <div className="col-span-2 hidden items-center sm:flex">
-                            <p className="font-medium">Card Type</p>
-                        </div>
-                        <div className="col-span-2 hidden items-center sm:flex">
-                            <p className="font-medium">Created</p>
-                        </div>
-                        <div className="col-span-2 flex items-center">
-                            <p className="font-medium">Creator</p>
-                        </div>
+                        <div className="col-span-1 hidden items-center sm:flex">
+							<p className="font-medium">Card Type</p>
+						</div>
+						<div className="col-span-2 hidden items-center sm:flex">
+							<p className="font-medium">Short Code</p>
+						</div>
+						<div className="col-span-1 hidden items-center sm:flex">
+							<p className="font-medium">Created</p>
+						</div>
+						<div className="col-span-2 flex items-center">
+							<p className="font-medium">Creator</p>
+						</div>
                     </div>
 
                     {cardLoading ? (
@@ -515,33 +502,38 @@ const UserDetails = () => {
                                     onClick={() => navigate(`/cards/details?id=${card._id}&type=${type}`)}
                                 >
                                     <div className="col-span-2 flex items-center">
-                                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                                            <p className="text-sm text-black dark:text-white">
-                                            {card.data?.name ?? "Unknown"}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="col-span-2 hidden items-center sm:flex">
-                                        <p className="text-sm text-black dark:text-white">
-                                            {type.toUpperCase()}
-                                        </p>
-                                    </div>
-                                    <div className="col-span-2 hidden items-center sm:flex">
-                                        <p className="text-sm text-black dark:text-white">
-                                            {String(new Date(card.createdAt).toLocaleDateString())}
-                                        </p>
-                                    </div>
-                                    <div className="col-span-2 flex items-center">
-                                        <p
-                                            className="text-sm text-meta-3 cursor-pointer"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                navigate(`/card-details?id=${card.userId}`);
-                                            }}
-                                        >
-                                            {card.userId}
-                                        </p>
-                                    </div>
+										<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+											<p className="text-sm text-black dark:text-white">
+												{card.data.name || "Unknown Name"}
+											</p>
+										</div>
+									</div>
+									<div className="col-span-1 hidden items-center sm:flex">
+										<p className="text-sm text-black dark:text-white">
+											{card.type}
+										</p>
+									</div>
+									<div className="col-span-2 hidden items-center sm:flex">
+										<p className="text-sm text-black dark:text-white">
+											{card.shortCode}
+										</p>
+									</div>
+									<div className="col-span-1 hidden items-center sm:flex">
+										<p className="text-sm text-black dark:text-white">
+											{String(new Date(card.createdAt).toLocaleDateString())}
+										</p>
+									</div>
+									<div className="col-span-2 flex items-center">
+										<p
+											className="text-sm text-meta-3 cursor-pointer"
+											onClick={(e) => {
+												e.stopPropagation();
+												navigate(`/users/details?id=${card.userId?._id}`);
+											}}
+										>
+											{card.userId?.profile.email}
+										</p>
+									</div>
                                 </div>
                             ))}
                         </>
@@ -613,7 +605,7 @@ const UserDetails = () => {
                                         <div className="col-span-2 flex items-center">
                                             <p className="text-sm text-black dark:text-white">
                                                 {String(new Date(sub.start).toLocaleDateString())} - {String(new Date(sub.end).toLocaleDateString())}
-                                                {sub._id === user?.activePlan._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null}
+                                                {sub._id === user?.access?.latestSubscription?._id ? (<span className="hidden lg:inline-block bg-green-300 text-black rounded-full px-2 py-1 ml-3 font-semibold">Latest</span>) : null}
                                             </p>
                                         </div>
                                         <div className="col-span-2 flex items-center">

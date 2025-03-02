@@ -129,7 +129,7 @@ const Dashboard = () => {
         setCards([]);
 
         if (type && ["ALL", "BOTANICAL", "INDIVIDUAL", "MEDICAL", "CREATOR", "ANIMAL"].includes(type)) {
-            const link = `${import.meta.env.VITE_BASE_URL}/cards/user?${queryParams}`;
+            const link = `/cards/user?${queryParams}`;
             fetchData(link);
         }
 

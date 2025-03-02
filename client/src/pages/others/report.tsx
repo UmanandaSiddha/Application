@@ -1,4 +1,4 @@
-import axios from "axios";
+import API from "@/config/apiConfig";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -11,6 +11,7 @@ const ReportPage = () => {
         email: "",
         name: "",
         message: "",
+        report: "true"
     });
     const [contactLoading, setContactLoading] = useState<boolean>(false);
 
@@ -23,7 +24,8 @@ const ReportPage = () => {
         }
         console.log(payload);
         try {
-            await axios.post(`${import.meta.env.VITE_BASE_URL}/not made`, contactData, { withCredentials: true });
+            // await axios.post(`${import.meta.env.VITE_BASE_URL}/not made`, contactData, { withCredentials: true });
+            await API.post(`/contact/new`, contactData);
             toast.success("Request Submitted!");
         } catch (error: any) {
             console.log(error);
@@ -40,8 +42,10 @@ const ReportPage = () => {
                 <meta name="description" content={`This is the report us page of Voolata`} />
                 <meta name="keywords" content="report us, voolata" />
             </Helmet>
-            <section className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 ">
-                <div className="container flex flex-col min-h-screen px-6 py-12 mx-auto">
+            {/* <section className="min-h-screen bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 max-sm:pt-20 max-sm:pb-10"> */}
+            <section className="bg-gradient-to-br from-[#efe8fa] to-[#fcfafd] dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 max-sm:pt-20 max-sm:pb-10">
+                {/* <div className="container flex flex-col min-h-screen px-6 py-12 mx-auto"> */}
+                <div className="container flex flex-col min-h-screen px-6 pt-0 lg:pt-24  mx-auto">
                     <div className="flex-1 lg:flex lg:items-center lg:-mx-6">
                         <div className="t lg:w-1/2 lg:mx-6">
                             <h1 className="text-2xl font-semibold capitalize lg:text-3xl">Report Us</h1>
