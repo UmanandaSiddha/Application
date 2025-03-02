@@ -20,7 +20,7 @@ export const userReducer = createSlice({
         userExist: (state, action: PayloadAction<IUser>) => {
             state.loading = false;
             state.user = action.payload;
-            if (action.payload.activePlan?.status === "active") {
+            if (action.payload.access.latestSubscription?.status === "active") {
                 state.isPaid = true
             }
         },
@@ -29,7 +29,7 @@ export const userReducer = createSlice({
             state.user = null;
         },
         togglePaid: (state, action: PayloadAction<IUser>) => {
-            if (action.payload.activePlan?.status === "active") {
+            if (action.payload.access.latestSubscription?.status === "active") {
                 state.isPaid = true
             } else {
                 state.isPaid = false
