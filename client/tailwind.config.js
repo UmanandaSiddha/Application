@@ -1,11 +1,11 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -39,11 +39,11 @@ module.exports = {
       },
     },
     screens: {
-      'lg' : '1030px',
-      'sm': '640px',
-      'md': '730px',
-      'tab': '815px'
-    }
+      lg: "1030px",
+      sm: "640px",
+      md: "730px",
+      tab: "815px",
+    },
   },
-  plugins: [require("tailwindcss-animate")],
-}
+  plugins: ["tailwindcss-animate"],
+};
