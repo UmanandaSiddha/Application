@@ -366,9 +366,9 @@ const UserDetails = () => {
                                 }`}
                         >
                             <option value="" disabled className="text-body dark:text-bodydark">SELECT ROLE</option>
-                            <option value="admin" className="text-body dark:text-bodydark">ADMIN</option>
-                            <option value="user" className="text-body dark:text-bodydark">USER</option>
-                            <option value="org" className="text-body dark:text-bodydark"> ORG</option>
+                            <option value="ADMIN" className="text-body dark:text-bodydark">ADMIN</option>
+                            <option value="USER" className="text-body dark:text-bodydark">USER</option>
+                            <option value="ORGANIZATION" className="text-body dark:text-bodydark"> ORG</option>
                         </select>
 
                         <button onClick={handleRoleChange} className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
