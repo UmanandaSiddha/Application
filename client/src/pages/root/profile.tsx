@@ -402,7 +402,7 @@ const Profile = () => {
                         <hr className="my-2 border-gray-400 " />
                         <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address?.street}</span></p>
                         <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address?.city}</span></p>
-                        <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address.state}</span></p>
+                        <p className="mt-2 text-md font-semibold">State: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address?.state}</span></p>
                         <p className="mt-2 text-md font-semibold">Postal Code: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address?.postalCode}</span></p>
                         <p className="mt-2 text-md font-semibold">Country: <span className="mt-2 text-sm text-gray-600">{user?.access.billingInfo?.address?.country}</span></p>
                     </div>
@@ -414,7 +414,7 @@ const Profile = () => {
                             </div>
                             <hr className="my-2 border-gray-400 " />
                             <p className="mt-2 text-md font-semibold">website: <span className="mt-2 text-sm text-gray-600">{user.organization?.website}</span></p>
-                            <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling.phoneNumber}</span></p>
+                            <p className="mt-2 text-md font-semibold">Phone: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling?.phoneNumber}</span></p>
                             <h2 className="mt-4 text-xl font-semibold">Address</h2>
                             <p className="mt-2 text-md font-semibold">Street: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling?.address?.street}</span></p>
                             <p className="mt-2 text-md font-semibold">City: <span className="mt-2 text-sm text-gray-600">{user?.organization?.organizationBilling?.address?.city}</span></p>
